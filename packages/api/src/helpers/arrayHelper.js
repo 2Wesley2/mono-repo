@@ -1,2 +1,1 @@
-export const sanitizeSingleValueToArray = (value) =>
-  Array.isArray(value) ? value : [value];
+export const sanitizeSingleValueToArray = (value) => (Array.isArray(value) ? value : [value]);

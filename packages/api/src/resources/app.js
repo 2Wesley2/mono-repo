@@ -4,7 +4,6 @@ import errorHandler from '../middlewares/errorHandler.js';
 
 const app = express();
 
-
 loaders.express.init(app);
 
 app.get('/', (_, res) => res.json('Welcome to the SmartShop API'));

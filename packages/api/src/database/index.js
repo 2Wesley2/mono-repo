@@ -21,7 +21,7 @@ export default class Database {
       .catch((error) =>
         console.error(`
 Fail to connect to ${dbName} database!
-${error.message}`)
+${error.message}`),
       );
   }
 
