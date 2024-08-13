@@ -8,3 +8,5 @@ dist
 .env.staging
 .env.production
 .nx/cache
+.nx/
+.vscode/
