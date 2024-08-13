@@ -6,6 +6,9 @@
   "author": "2Wesley2 <wesley.fer.almeida98@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+  "audit:all": "lerna exec -- yarn audit"
+  },
   "workspaces": [
     "packages/api",
     "packages/ui"
