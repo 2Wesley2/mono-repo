@@ -1,0 +1,18 @@
+{
+  "name": "mono-repo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/2Wesley2/mono-repo.git",
+  "author": "2Wesley2 <wesley.fer.almeida98@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/api",
+    "packages/ui"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@nrwl/workspace": "^19.5.7",
+    "lerna": "^8.1.8"
+  }
+}

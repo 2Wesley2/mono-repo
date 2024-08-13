@@ -1,0 +1,13 @@
+{
+  "targetDefaults": {
+    "start": {
+      "dependsOn": [
+        "^start"
+      ]
+    },
+    "lint:fix": {
+      "cache": true,
+      "dependsOn": []
+    }
+  }
+}

@@ -25,6 +25,11 @@ ${error.message}`),
       );
   }
 
+  static async disconnect() {
+    await mongoose.connection.close();
+    console.log('Database connection closed.');
+  }
+
   static configSchema({ schema, options }) {
     const newSchema = new mongoose.Schema(schema, options);
 
