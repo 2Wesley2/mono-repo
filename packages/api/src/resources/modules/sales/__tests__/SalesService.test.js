@@ -31,9 +31,13 @@ describe('SalesService', () => {
     await Database.disconnect();
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
     await SalesModel.Sales.deleteMany({});
     await ProductModel.deleteMany({});
+    const salesCount = await SalesModel.Sales.countDocuments();
+    const productCount = await ProductModel.countDocuments();
+    expect(salesCount).toBe(0);
+    expect(productCount).toBe(0);
   });
 
   it('should create a sale and calculate the total price correctly', async () => {

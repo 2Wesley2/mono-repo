@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node .",
     "lint:fix": "npx eslint --fix .",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest --runInBand"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

@@ -22,9 +22,13 @@ describe('SalesModel', () => {
     await Database.disconnect();
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
     await SalesModel.Sales.deleteMany({});
     await ProductModel.deleteMany({});
+    const salesCount = await SalesModel.Sales.countDocuments();
+    const productCount = await ProductModel.countDocuments();
+    expect(salesCount).toBe(0);
+    expect(productCount).toBe(0);
   });
 
   it('should create a valid sales record', async () => {
@@ -80,6 +84,8 @@ describe('SalesModel', () => {
       price: 150,
       quantity: 5,
     });
+
+    await SalesModel.Sales.deleteMany({});
 
     await SalesModel.create({
       productId: product1._id,
