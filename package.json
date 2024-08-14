@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-  "audit:all": "lerna exec -- yarn audit"
+    "audit:all": "lerna exec -- yarn audit"
   },
   "workspaces": [
     "packages/api",
