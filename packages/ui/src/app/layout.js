@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
+import { AppBar, Toolbar, Typography, Container } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +13,39 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+      <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" style={{ flexGrow: 1 }}>
+              Meu App
+            </Typography>
+            <nav>
+              <Link href="/" passHref>
+                <Typography variant="button" style={{ marginRight: '20px' }}>
+                  Home
+                </Typography>
+              </Link>
+              <Link href="/products" passHref>
+                <Typography variant="button" style={{ marginRight: '20px' }}>
+                  Produtos
+                </Typography>
+              </Link>
+              <Link href="/sales" passHref>
+                <Typography variant="button">
+                  Vendas
+                </Typography>
+              </Link>
+            </nav>
+          </Toolbar>
+        </AppBar>
+        <Container style={{ marginTop: '20px' }}>
+          {children}
+        </Container>
+        <footer style={{ marginTop: '20px', textAlign: 'center' }}>
+          © 2024 Minha Empresa
+        </footer>
+
+      </body>
     </html>
   );
 }

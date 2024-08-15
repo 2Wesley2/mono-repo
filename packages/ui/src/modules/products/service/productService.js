@@ -20,6 +20,26 @@ export const getProductById = async (id) => {
   }
 };
 
+export const getAllProducts = async () => {
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao obter os produtos');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro:', error.message);
+    throw error;
+  }
+};
+
 export const createProduct = async (productData) => {
   try {
     const response = await fetch(API_BASE_URL, {
