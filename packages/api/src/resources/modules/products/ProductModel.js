@@ -24,6 +24,10 @@ class ProductModel {
     return this.Product.findById(id);
   }
 
+  findAll() {
+    return this.Product.find();
+  }
+
   update(id, productData) {
     return this.Product.findByIdAndUpdate(id, productData, { new: true });
   }

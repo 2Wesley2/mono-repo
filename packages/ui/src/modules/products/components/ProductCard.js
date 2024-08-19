@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 
-class ProductCard extends Component {
-  render() {
-    const { product } = this.props;
-
+export const ProductCard =({ product })=> {
+  
     return (
       <Card>
         <CardContent>
@@ -21,6 +19,5 @@ class ProductCard extends Component {
       </Card>
     );
   }
-}
 
-export default ProductCard;
+

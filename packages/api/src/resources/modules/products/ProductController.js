@@ -10,8 +10,17 @@ class ProductController {
   routes() {
     this.router.post('/products', this.createProduct.bind(this));
     this.router.get('/products/:id', this.getProduct.bind(this));
+    this.router.get('/products', this.getAllProducts.bind(this));
     this.router.put('/products/:id', this.updateProduct.bind(this));
     this.router.delete('/products/:id', this.deleteProduct.bind(this));
+  }
+  async getAllProducts(req, res) {
+    try {
+      const products = await this.service.getAllProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
 
   async createProduct(req, res) {

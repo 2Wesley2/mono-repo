@@ -1,29 +1,36 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { getAllProducts } from '../service/productService';
-import ProductCard from './ProductCard';
+import { ProductCard } from './ProductCard';
 
-class ProductList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      products: [],
-      error: null
+export const ProductList = () => {
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    console.log("useEffect is called");
+    const fetchProducts = async () => {
+      console.log("Fetching products");
+      try {
+        const products = await getAllProducts();
+        console.log("Products fetched: ", products);
+        setProducts(products);
+        setIsLoading(false);
+      } catch (error) {
+        console.log("Error fetching products: ", error);
+        setError('Erro ao carregar os produtos');
+        setIsLoading(false);
+      }
     };
-  }
-
-  async componentDidMount() {
-    try {
-      const products = await getAllProducts();
-      this.setState({ products });
-    } catch (error) {
-      this.setState({ error: 'Erro ao carregar os produtos' });
+  
+    fetchProducts();
+  }, []);
+    
+    if (isLoading) {
+      return <Typography>Loading...</Typography>;
     }
-  }
-
-  render() {
-    const { products, error } = this.state;
-
+    
     return (
       <div>
         <Typography variant="h4" gutterBottom>
@@ -39,7 +46,5 @@ class ProductList extends Component {
         </Grid>
       </div>
     );
-  }
+  
 }
-
-export default ProductList;

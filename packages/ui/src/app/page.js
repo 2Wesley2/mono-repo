@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
 import { Typography, Grid, Card, CardContent } from "@mui/material";
@@ -33,6 +32,20 @@ export default function Home() {
                 </Typography>
                 <Typography variant="body2">
                   Visualize e gerencie suas vendas.
+                </Typography>
+              </Link>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item>
+          <Card>
+            <CardContent>
+              <Link href="/create">
+                <Typography variant="h5" component="div">
+                  Cadastrar Produto
+                </Typography>
+                <Typography variant="body2">
+                  Adicione novos produtos ao seu catálogo.
                 </Typography>
               </Link>
             </CardContent>

@@ -30,6 +30,11 @@ export default function RootLayout({ children }) {
                   Produtos
                 </Typography>
               </Link>
+              <Link href="/create" passHref>
+                <Typography variant="button" style={{ marginRight: '20px' }}>
+                  Cadastrar Produto
+                </Typography>
+              </Link>
               <Link href="/sales" passHref>
                 <Typography variant="button">
                   Vendas

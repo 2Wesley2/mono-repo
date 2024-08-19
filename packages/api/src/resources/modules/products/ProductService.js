@@ -11,6 +11,10 @@ class ProductService {
     return await this.repository.findProductById(id);
   }
 
+  async getAllProducts() {
+    return await this.repository.findAllProducts();
+  }
+
   async modifyProduct(id, productData) {
     return await this.repository.updateProduct(id, productData);
   }

@@ -11,6 +11,10 @@ class ProductRepository {
     return await this.model.findById(id);
   }
 
+  async findAllProducts() {
+    return await this.model.findAll();
+  }
+
   async updateProduct(id, productData) {
     return await this.model.update(id, productData);
   }

@@ -14,6 +14,13 @@ import SalesModel from './modules/sales/SalesModel.js';
 
 const app = express();
 
+app.use((req, res, next) => {
+  const { method, url } = req;
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${method} ${url}`);
+  next();
+});
+
 loaders.express.init(app);
 
 // Instância do módulo de produtos
