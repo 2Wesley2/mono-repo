@@ -1,50 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Typography } from '@mui/material';
-import { getAllProducts } from '../service/productService';
-import { ProductCard } from './ProductCard';
+import React from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableSortLabel,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
 
-export const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const ProductList = ({ products, onEdit, onDelete }) => {
+  const handleEditClick = (product) => {
+    onEdit(product);
+  };
 
-  useEffect(() => {
-    console.log("useEffect is called");
-    const fetchProducts = async () => {
-      console.log("Fetching products");
-      try {
-        const products = await getAllProducts();
-        console.log("Products fetched: ", products);
-        setProducts(products);
-        setIsLoading(false);
-      } catch (error) {
-        console.log("Error fetching products: ", error);
-        setError('Erro ao carregar os produtos');
-        setIsLoading(false);
-      }
-    };
-  
-    fetchProducts();
-  }, []);
-    
-    if (isLoading) {
-      return <Typography>Loading...</Typography>;
+  const handleDeleteClick = (productId) => {
+    if (window.confirm('Tem certeza que deseja deletar este produto?')) {
+      onDelete(productId);
     }
-    
-    return (
-      <div>
-        <Typography variant="h4" gutterBottom>
-          Lista de Produtos
-        </Typography>
-        {error && <Typography color="error">{error}</Typography>}
-        <Grid container spacing={4}>
-          {products.map(product => (
-            <Grid item key={product.id} xs={12} sm={6} md={4}>
-              <ProductCard product={product} />
-            </Grid>
+  };
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <TableSortLabel>Nome</TableSortLabel>
+            </TableCell>
+            <TableCell align="right">
+              <TableSortLabel>Preço</TableSortLabel>
+            </TableCell>
+            <TableCell align="right">
+              <TableSortLabel>Qtde</TableSortLabel>
+            </TableCell>
+            <TableCell align="right">Ações</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow key={product._id} hover>
+              <TableCell>{product.name}</TableCell>
+              <TableCell align="right">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
+              </TableCell>
+              <TableCell align="right">{product.quantity}</TableCell>
+              <TableCell align="right">
+                <Tooltip title="Editar">
+                  <IconButton onClick={() => handleEditClick(product)}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Deletar">
+                  <IconButton onClick={() => handleDeleteClick(product._id)}>
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
+            </TableRow>
           ))}
-        </Grid>
-      </div>
-    );
-  
-}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};

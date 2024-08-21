@@ -1,4 +1,4 @@
- "use client"
+'use client';
 import React from 'react';
 import SalesPage from '../../modules/sales/pages/sales/page';
 

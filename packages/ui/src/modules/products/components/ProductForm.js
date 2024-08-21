@@ -1,80 +1,56 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography } from '@mui/material';
+import { TextField, Button } from '@mui/material';
 import { createProduct } from '../service/productService';
 
-export const ProductForm = () => {
-  const [productData, setProductData] = useState({
-    name: '',
-    price: '',
-    quantity: '',
-  });
+export const ProductForm = ({ onSave }) => {
+  const [productName, setProductName] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productQuantity, setProductQuantity] = useState('');
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData({
-      ...productData,
-      [name]: value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSaveProduct = async () => {
     try {
-      const createdProduct = await createProduct(productData);
-      console.log('Produto criado com sucesso:', createdProduct);
-      // Redirecionar ou limpar o formulário após o sucesso
+      const newProduct = await createProduct({
+        name: productName,
+        price: parseFloat(productPrice),
+        quantity: parseInt(productQuantity),
+      });
+      onSave(newProduct);
+      setProductName('');
+      setProductPrice('');
+      setProductQuantity('');
     } catch (error) {
-      console.error('Erro ao criar o produto:', error);
-      setError('Erro ao criar o produto');
+      console.error('Erro ao salvar produto:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Typography variant="h4" gutterBottom>
-        Cadastro de Produto
-      </Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            label="Nome do Produto"
-            name="name"
-            value={productData.name}
-            onChange={handleChange}
-            fullWidth
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Preço"
-            name="price"
-            value={productData.price}
-            onChange={handleChange}
-            type="number"
-            fullWidth
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Quantidade"
-            name="quantity"
-            value={productData.quantity}
-            onChange={handleChange}
-            type="number"
-            fullWidth
-            required
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" type="submit" fullWidth>
-            Cadastrar Produto
-          </Button>
-        </Grid>
-      </Grid>
-    </form>
+    <div>
+      <TextField
+        fullWidth
+        label="Nome do Produto"
+        value={productName}
+        onChange={(e) => setProductName(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        label="Preço"
+        type="number"
+        value={productPrice}
+        onChange={(e) => setProductPrice(e.target.value)}
+        style={{ marginTop: '16px' }}
+      />
+      <TextField
+        fullWidth
+        label="Quantidade"
+        type="number"
+        value={productQuantity}
+        onChange={(e) => setProductQuantity(e.target.value)}
+        style={{ marginTop: '16px' }}
+      />
+      <Button variant="contained" color="primary" onClick={handleSaveProduct} style={{ marginTop: '16px' }}>
+        Salvar Produto
+      </Button>
+    </div>
   );
 };

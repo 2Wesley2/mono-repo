@@ -7,17 +7,11 @@ class SalesLayout extends Component {
       <div>
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="h6">
-              Gestão de Vendas
-            </Typography>
+            <Typography variant="h6">Gestão de Vendas</Typography>
           </Toolbar>
         </AppBar>
-        <Container>
-          {this.props.children}
-        </Container>
-        <footer style={{ marginTop: '20px', textAlign: 'center' }}>
-          © 2024 Minha Empresa
-        </footer>
+        <Container>{this.props.children}</Container>
+        <footer style={{ marginTop: '20px', textAlign: 'center' }}>© 2024 Minha Empresa</footer>
       </div>
     );
   }

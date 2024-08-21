@@ -8,7 +8,7 @@ class SaleList extends Component {
     super(props);
     this.state = {
       sales: [],
-      error: null
+      error: null,
     };
   }
 
@@ -31,7 +31,7 @@ class SaleList extends Component {
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
         <Grid container spacing={4}>
-          {sales.map(sale => (
+          {sales.map((sale) => (
             <Grid item key={sale.id} xs={12} sm={6} md={4}>
               <SaleCard sale={sale} />
             </Grid>

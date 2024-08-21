@@ -6,17 +6,11 @@ export const ProductsLayout = ({ children }) => {
     <div>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6">
-            Gestão de Produtos
-          </Typography>
+          <Typography variant="h6">Gestão de Produtos</Typography>
         </Toolbar>
       </AppBar>
-      <Container>
-        {children}
-      </Container>
-      <footer style={{ marginTop: '20px', textAlign: 'center' }}>
-        © 2024 Minha Empresa
-      </footer>
+      <Container>{children}</Container>
+      <footer style={{ marginTop: '20px', textAlign: 'center' }}>© 2024 Minha Empresa</footer>
     </div>
   );
 };

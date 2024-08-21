@@ -51,7 +51,9 @@ export const getAllProducts = async () => {
 };
 
 export const createProduct = async (productData) => {
-  console.log(`[createProduct] Creating product with data: ${JSON.stringify(productData)} at ${API_BASE_URL}/api/products`);
+  console.log(
+    `[createProduct] Creating product with data: ${JSON.stringify(productData)} at ${API_BASE_URL}/api/products`,
+  );
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/products`, {
@@ -77,7 +79,9 @@ export const createProduct = async (productData) => {
 };
 
 export const updateProduct = async (id, productData) => {
-  console.log(`[updateProduct] Updating product with ID: ${id} with data: ${JSON.stringify(productData)} at ${API_BASE_URL}/api/products/${id}`);
+  console.log(
+    `[updateProduct] Updating product with ID: ${id} with data: ${JSON.stringify(productData)} at ${API_BASE_URL}/api/products/${id}`,
+  );
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
@@ -119,7 +123,7 @@ export const deleteProduct = async (id) => {
     }
 
     if (response.status === 204) {
-      console.log(`[deleteProduct] Product deleted successfully.`);
+      console.log('[deleteProduct] Product deleted successfully.');
       return { message: 'Produto deletado com sucesso.' };
     }
 

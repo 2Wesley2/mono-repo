@@ -1,6 +1,6 @@
-import Link from "next/link";
-import styles from "./page.module.css";
-import { Typography, Grid, Card, CardContent } from "@mui/material";
+import Link from 'next/link';
+import styles from './page.module.css';
+import { Typography, Grid, Card, CardContent } from '@mui/material';
 
 export default function Home() {
   return (
@@ -16,9 +16,7 @@ export default function Home() {
                 <Typography variant="h5" component="div">
                   Produtos
                 </Typography>
-                <Typography variant="body2">
-                  Gerencie seus produtos.
-                </Typography>
+                <Typography variant="body2">Gerencie seus produtos.</Typography>
               </Link>
             </CardContent>
           </Card>
@@ -30,9 +28,7 @@ export default function Home() {
                 <Typography variant="h5" component="div">
                   Vendas
                 </Typography>
-                <Typography variant="body2">
-                  Visualize e gerencie suas vendas.
-                </Typography>
+                <Typography variant="body2">Visualize e gerencie suas vendas.</Typography>
               </Link>
             </CardContent>
           </Card>
@@ -44,9 +40,7 @@ export default function Home() {
                 <Typography variant="h5" component="div">
                   Cadastrar Produto
                 </Typography>
-                <Typography variant="body2">
-                  Adicione novos produtos ao seu catálogo.
-                </Typography>
+                <Typography variant="body2">Adicione novos produtos ao seu catálogo.</Typography>
               </Link>
             </CardContent>
           </Card>
