@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { AppBar, Toolbar, Typography, Container } from '@mui/material';
-import { NavigationDrawer } from '../components';
+import { Container } from '@mui/material';
+import { DynamicNavigationLayout } from '../components';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,12 +21,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AppBar position="static">
-          <Toolbar>
-            <NavigationDrawer links={navigationLinks} />
-          </Toolbar>
-        </AppBar>
-        <Container style={{ marginTop: '20px' }}>{children}</Container>
+        <DynamicNavigationLayout navigationLinks={navigationLinks}>
+          <Container style={{ marginTop: '20px' }}>{children}</Container>
+        </DynamicNavigationLayout>
         <footer style={{ marginTop: '20px', textAlign: 'center' }}>© 2024 Minha Empresa</footer>
       </body>
     </html>

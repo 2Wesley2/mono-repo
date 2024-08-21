@@ -49,16 +49,6 @@ export const ProductsManagementPage = () => {
         </Typography>
       </Grid>
 
-      {/* Menu */}
-      <Grid item xs={2}>
-        <Typography variant="h6">Menu</Typography>
-        <Typography variant="body1">Página Inicial</Typography>
-        <Typography variant="body1">Cadastrar Prod.</Typography>
-        <Typography variant="body1">Listar Prod.</Typography>
-        <Typography variant="body1">Configurações</Typography>
-        <Typography variant="body1">Sair</Typography>
-      </Grid>
-
       {/* Cadastro de Produto */}
       <Grid item xs={5}>
         <Typography variant="h6">Cadastro de Produto</Typography>

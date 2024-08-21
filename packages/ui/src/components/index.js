@@ -1,3 +1,3 @@
-import { NavigationDrawer } from './NavigationDrawer';
+import { DynamicNavigationLayout } from './DynamicNavigationLayout';
 
-export { NavigationDrawer };
+export { DynamicNavigationLayout };
