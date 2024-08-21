@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Container } from '@mui/material';
+import { NavigationDrawer } from '../components';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,34 +11,19 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const navigationLinks = [
+    { text: 'Home', href: '/' },
+    { text: 'Produtos', href: '/products' },
+    { text: 'Cadastrar Produto', href: '/create' },
+    { text: 'Vendas', href: '/sales' },
+  ];
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
-              Meu App
-            </Typography>
-            <nav>
-              <Link href="/" passHref>
-                <Typography variant="button" style={{ marginRight: '20px' }}>
-                  Home
-                </Typography>
-              </Link>
-              <Link href="/products" passHref>
-                <Typography variant="button" style={{ marginRight: '20px' }}>
-                  Produtos
-                </Typography>
-              </Link>
-              <Link href="/create" passHref>
-                <Typography variant="button" style={{ marginRight: '20px' }}>
-                  Cadastrar Produto
-                </Typography>
-              </Link>
-              <Link href="/sales" passHref>
-                <Typography variant="button">Vendas</Typography>
-              </Link>
-            </nav>
+            <NavigationDrawer links={navigationLinks} />
           </Toolbar>
         </AppBar>
         <Container style={{ marginTop: '20px' }}>{children}</Container>
