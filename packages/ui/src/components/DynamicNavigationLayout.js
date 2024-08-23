@@ -24,7 +24,6 @@ export const DynamicNavigationLayout = ({ children, navigationLinks }) => {
       </AppBar>
       <Box
         sx={{
-          transition: 'margin 0.3s ease-out',
           marginLeft: isDrawerOpen ? `${drawerWidth}px` : '0',
         }}
       >

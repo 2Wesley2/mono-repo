@@ -1,4 +1,3 @@
-'use client';
 import React from 'react';
 import { ProductsManagementPage } from '../../modules/products/pages/page.js';
 

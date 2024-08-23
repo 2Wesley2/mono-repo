@@ -12,16 +12,21 @@ describe('SalesRepository', () => {
 
   it('should create a sale', async () => {
     const salesData = {
-      productId: 'product_id',
-      quantity: 2,
+      products: [
+        {
+          product: 'product_id',
+          quantity: 2,
+          price: 100,
+        },
+      ],
       totalPrice: 200,
     };
-
-    SalesModel.create.mockResolvedValue(salesData);
-
+    const savedSale = { ...salesData, _id: 'sale_id' };
+    SalesModel.create.mockResolvedValue(savedSale);
+    SalesModel.findById.mockResolvedValue(savedSale);
     const result = await salesRepository.createSale(salesData);
 
-    expect(result).toEqual(salesData);
+    expect(result).toEqual(savedSale);
     expect(SalesModel.create).toHaveBeenCalledWith(salesData);
   });
 
@@ -47,11 +52,11 @@ describe('SalesRepository', () => {
       { _id: 'sale_id2', productId: 'product_id2', quantity: 3, totalPrice: 300 },
     ];
 
-    SalesModel.findAll.mockResolvedValue(sales);
+    SalesModel.find.mockResolvedValue(sales);
 
     const result = await salesRepository.findAllSales();
 
     expect(result).toEqual(sales);
-    expect(SalesModel.findAll).toHaveBeenCalled();
+    expect(SalesModel.find).toHaveBeenCalled();
   });
 });

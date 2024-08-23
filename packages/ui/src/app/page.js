@@ -33,18 +33,6 @@ export default function Home() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item>
-          <Card>
-            <CardContent>
-              <Link href="/create">
-                <Typography variant="h5" component="div">
-                  Cadastrar Produto
-                </Typography>
-                <Typography variant="body2">Adicione novos produtos ao seu catálogo.</Typography>
-              </Link>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
     </main>
   );

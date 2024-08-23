@@ -11,6 +11,8 @@ class SalesController {
     this.router.post('/sales', this.createSale.bind(this));
     this.router.get('/sales/:id', this.getSale.bind(this));
     this.router.get('/sales', this.getAllSales.bind(this));
+    this.router.put('/sales/:id', this.updateSale.bind(this));
+    this.router.delete('/sales/:id', this.deleteSale.bind(this));
   }
 
   async createSale(req, res) {
@@ -39,6 +41,32 @@ class SalesController {
     try {
       const sales = await this.service.getAllSales();
       res.json(sales);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async updateSale(req, res) {
+    try {
+      const sale = await this.service.updateSale(req.params.id, req.body);
+      if (sale) {
+        res.json(sale);
+      } else {
+        res.status(404).json({ message: 'Venda não encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async deleteSale(req, res) {
+    try {
+      const sale = await this.service.deleteSale(req.params.id);
+      if (sale) {
+        res.json({ message: 'Venda deletada com sucesso' });
+      } else {
+        res.status(404).json({ message: 'Venda não encontrada' });
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

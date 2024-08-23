@@ -19,6 +19,7 @@ describe('SalesService', () => {
   let salesRepository;
 
   beforeAll(async () => {
+    console.log('Connecting to the database...');
     await Database.connect('test');
     salesRepository = new SalesRepository(SalesModel);
     salesService = new SalesService(salesRepository, {
@@ -28,65 +29,85 @@ describe('SalesService', () => {
   });
 
   afterAll(async () => {
+    console.log('Disconnecting from the database...');
     await Database.disconnect();
   });
 
   beforeEach(async () => {
+    console.log('Clearing sales and products collections...');
     await SalesModel.Sales.deleteMany({});
     await ProductModel.deleteMany({});
     const salesCount = await SalesModel.Sales.countDocuments();
     const productCount = await ProductModel.countDocuments();
+    console.log(`Sales count after clearing: ${salesCount}`);
+    console.log(`Product count after clearing: ${productCount}`);
     expect(salesCount).toBe(0);
     expect(productCount).toBe(0);
   });
 
   it('should create a sale and calculate the total price correctly', async () => {
+    console.log('Creating a test product...');
     const product = await ProductModel.create({
       name: 'Test Product',
       price: 100,
       quantity: 10,
     });
-
+    console.log(`Product created with ID: ${product._id}`);
     const salesData = {
-      productId: product._id,
-      quantity: 3,
+      products: [
+        {
+          productId: product._id,
+          quantity: 3,
+        },
+      ],
     };
-
+    console.log('Creating a sale...');
     const sale = await salesService.createSale(salesData);
-
+    console.log('Sale created:', sale);
     expect(sale).toHaveProperty('_id');
-    expect(sale.totalPrice).toBe(300);
-    expect(sale.productId.toString()).toBe(product._id.toString());
-
+    expect(sale).toHaveProperty('totalPrice', 300);
+    expect(sale.products[0].product._id.toString()).toBe(product._id.toString());
     const updatedProduct = await ProductModel.findById(product._id);
-    expect(updatedProduct.quantity).toBe(7); // Original quantity 10 - 3 sold
+    console.log('Updated product:', updatedProduct);
+    expect(updatedProduct.quantity).toBe(7);
   });
 
   it('should throw an error if the product is not found', async () => {
     const salesData = {
-      productId: new mongoose.Types.ObjectId(),
-      quantity: 1,
+      products: [
+        {
+          productId: new mongoose.Types.ObjectId(),
+          quantity: 1,
+        },
+      ],
     };
-
-    await expect(salesService.createSale(salesData)).rejects.toThrow('Produto não encontrado');
+    console.log('Attempting to create a sale with a non-existent product...');
+    await expect(salesService.createSale(salesData)).rejects.toThrow(new RegExp(`Produto com ID .* não encontrado`));
   });
 
   it('should throw an error if the product quantity is insufficient', async () => {
+    console.log('Creating a product with limited quantity...');
     const product = await ProductModel.create({
       name: 'Test Product',
       price: 100,
       quantity: 2,
     });
-
     const salesData = {
-      productId: product._id,
-      quantity: 3,
+      products: [
+        {
+          productId: product._id,
+          quantity: 3,
+        },
+      ],
     };
-
-    await expect(salesService.createSale(salesData)).rejects.toThrow('Quantidade em estoque insuficiente');
+    console.log('Attempting to create a sale with insufficient product quantity...');
+    await expect(salesService.createSale(salesData)).rejects.toThrow(
+      'Quantidade insuficiente em estoque para o produto: Test Product',
+    );
   });
 
   it('should return a sale by ID', async () => {
+    console.log('Creating a product and a sale...');
     const product = await ProductModel.create({
       name: 'Test Product',
       price: 100,
@@ -94,18 +115,25 @@ describe('SalesService', () => {
     });
 
     const sale = await SalesModel.create({
-      productId: product._id,
-      quantity: 2,
+      products: [
+        {
+          product: product._id,
+          quantity: 2,
+          price: 100,
+        },
+      ],
       totalPrice: 200,
     });
+    console.log(`Retrieving sale with ID: ${sale._id}`);
 
     const foundSale = await salesService.getSale(sale._id);
-
+    console.log('Found sale:', foundSale);
     expect(foundSale).toBeTruthy();
-    expect(foundSale.productId._id.toString()).toBe(product._id.toString());
+    expect(foundSale.products[0].product._id.toString()).toBe(product._id.toString());
   });
 
   it('should return all sales', async () => {
+    console.log('Creating multiple products and sales...');
     const product1 = await ProductModel.create({
       name: 'Product 1',
       price: 100,
@@ -119,18 +147,29 @@ describe('SalesService', () => {
     });
 
     await SalesModel.create({
-      productId: product1._id,
-      quantity: 2,
+      products: [
+        {
+          product: product1._id,
+          quantity: 2,
+          price: 100,
+        },
+      ],
       totalPrice: 200,
     });
 
     await SalesModel.create({
-      productId: product2._id,
-      quantity: 3,
+      products: [
+        {
+          product: product2._id,
+          quantity: 3,
+          price: 150,
+        },
+      ],
       totalPrice: 450,
     });
-
+    console.log('Retrieving all sales...');
     const sales = await salesService.getAllSales();
+    console.log('All sales retrieved:', sales);
     expect(sales).toHaveLength(2);
   });
 });

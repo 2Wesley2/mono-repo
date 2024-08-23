@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { ProductForm, ProductList } from '../components';

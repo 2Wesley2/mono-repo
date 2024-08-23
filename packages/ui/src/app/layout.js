@@ -14,7 +14,6 @@ export default function RootLayout({ children }) {
   const navigationLinks = [
     { text: 'Home', href: '/' },
     { text: 'Produtos', href: '/products' },
-    { text: 'Cadastrar Produto', href: '/create' },
     { text: 'Vendas', href: '/sales' },
   ];
 

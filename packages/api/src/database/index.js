@@ -31,7 +31,8 @@ ${error.message}`),
   }
 
   static configSchema({ schema, options }) {
-    const newSchema = new mongoose.Schema(schema, options);
+    const newOptions = { timestamps: true, ...options };
+    const newSchema = new mongoose.Schema(schema, newOptions);
 
     newSchema.statics.findWith = async function findWith({ excludedIds, ...params }) {
       return this.findOne({
