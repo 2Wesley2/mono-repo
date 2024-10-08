@@ -17,5 +17,8 @@
   "devDependencies": {
     "@nrwl/workspace": "^19.5.7",
     "lerna": "^8.1.8"
+  },
+  "resolutions": {
+    "micromatch": "^4.0.8"
   }
 }

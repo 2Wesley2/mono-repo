@@ -1,9 +1,15 @@
-import startServer from './resources/server.js';
-import app from './resources/app.js';
-import config from './config/index.js';
+import Server from './resources/server.js';
 
-const port = config.apiPort || 3000;
+const startServer = async () => {
+  try {
+    const server = new Server();
+    await server.init();
 
-startServer(app, port)
-  .then(() => console.log(`HTTP Server listening on port: ${port}`))
-  .catch((error) => console.error(`Fail to connect with Express! ${error.message}`));
+    console.log('Servidor iniciado com sucesso.');
+  } catch (error) {
+    console.error('Erro ao iniciar o servidor:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

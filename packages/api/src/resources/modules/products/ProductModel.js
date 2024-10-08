@@ -1,40 +1,79 @@
-import mongoose from 'mongoose';
 import Database from '../../../database/index.js';
 
-const productSchema = Database.configSchema({
+const Product = Database.registerModel({
   schema: {
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-    createdAt: { type: Date, default: Date.now },
+    name: {
+      type: String,
+      required: [true, 'O nome do produto é obrigatório'],
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: [true, 'A descrição do produto é obrigatória'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'O preço do produto é obrigatório'],
+      min: [0, 'O preço não pode ser negativo'],
+    },
+    stock: {
+      type: Number,
+      required: [true, 'A quantidade em estoque é obrigatória'],
+      min: [0, 'O estoque não pode ser negativo'],
+    },
+    category: {
+      type: String,
+      required: [true, 'A categoria do produto é obrigatória'],
+      index: true,
+    },
+  },
+  modelName: 'Product',
+  options: {
+    timestamps: true,
+    indexes: [{ fields: { name: 1, category: 1 }, options: { unique: true } }, { fields: { price: 1 } }],
   },
 });
 
 class ProductModel {
-  constructor() {
-    this.Product = mongoose.model('Product', productSchema);
-  }
-
-  create(productData) {
-    const product = new this.Product(productData);
-    return product.save();
+  async create(productData) {
+    try {
+      const product = new Product(productData);
+      return await product.save();
+    } catch (error) {
+      throw new Error('Erro ao criar o produto: ' + error.message);
+    }
   }
 
   findById(id) {
-    return this.Product.findById(id);
+    return Product.findById(id);
   }
 
-  findAll() {
-    return this.Product.find();
+  findAll(filters = {}, options = {}) {
+    return Product.find(filters, null, options);
   }
 
-  update(id, productData) {
-    return this.Product.findByIdAndUpdate(id, productData, { new: true });
+  async update(id, productData) {
+    try {
+      return await Product.findByIdAndUpdate(id, productData, {
+        new: true,
+        runValidators: true,
+      });
+    } catch (error) {
+      throw new Error('Erro ao atualizar o produto: ' + error.message);
+    }
   }
 
-  delete(id) {
-    return this.Product.findByIdAndDelete(id);
+  async delete(id) {
+    try {
+      return await Product.findByIdAndDelete(id);
+    } catch (error) {
+      throw new Error('Erro ao deletar o produto: ' + error.message);
+    }
+  }
+
+  countProducts(filters) {
+    return Product.countDocuments(filters);
   }
 }
 
-export default new ProductModel();
+export default ProductModel;

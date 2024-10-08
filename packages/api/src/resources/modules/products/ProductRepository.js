@@ -3,24 +3,28 @@ class ProductRepository {
     this.model = model;
   }
 
-  async createProduct(productData) {
-    return await this.model.create(productData);
+  create(data) {
+    return this.model.create(data);
   }
 
-  async findProductById(id) {
-    return await this.model.findById(id);
+  findById(id) {
+    return this.model.findById(id);
   }
 
-  async findAllProducts() {
-    return await this.model.findAll();
+  findAll(filters = {}, options = {}) {
+    return this.model.findAll(filters, options);
   }
 
-  async updateProduct(id, productData) {
-    return await this.model.update(id, productData);
+  update(id, data) {
+    return this.model.update(id, data);
   }
 
-  async deleteProduct(id) {
-    return await this.model.delete(id);
+  delete(id) {
+    return this.model.delete(id);
+  }
+
+  count(filters) {
+    return this.model.countProducts(filters);
   }
 }
 

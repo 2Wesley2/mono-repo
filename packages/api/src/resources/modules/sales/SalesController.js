@@ -8,11 +8,11 @@ class SalesController {
   }
 
   routes() {
-    this.router.post('/sales', this.createSale.bind(this));
-    this.router.get('/sales/:id', this.getSale.bind(this));
-    this.router.get('/sales', this.getAllSales.bind(this));
-    this.router.put('/sales/:id', this.updateSale.bind(this));
-    this.router.delete('/sales/:id', this.deleteSale.bind(this));
+    this.router.post('/', this.createSale.bind(this));
+    this.router.get('/:id', this.getSale.bind(this));
+    this.router.get('/', this.getAllSales.bind(this));
+    this.router.put('/:id', this.updateSale.bind(this));
+    this.router.delete('/:id', this.deleteSale.bind(this));
   }
 
   async createSale(req, res) {

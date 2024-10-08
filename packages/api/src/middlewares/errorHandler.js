@@ -1,16 +1,22 @@
+import config from '../config/index.js';
+import AppError from '../errors/AppError.js';
+
 export default (err, _req, res, _next) => {
-  const { error } = err;
+  const { statusCode = 500, message } = err;
 
-  if (error) {
-    const { statusCode, message, errors: validationErrors } = error;
-
-    const responseError = {
-      ...(message ? { message } : {}),
-      ...(validationErrors ? { errors: validationErrors } : {}),
-    };
-
-    return res.status(statusCode).json(responseError);
+  if (config.nodeEnv !== 'production') {
+    console.error(err);
+  } else {
+    console.error(err.message);
   }
 
-  return res.status(500).json({ message: err.message });
+  if (err instanceof AppError) {
+    return res.status(statusCode).json({
+      message: config.nodeEnv === 'production' ? 'Internal Server Error' : message || 'Internal Server Error',
+    });
+  }
+
+  return res.status(500).json({
+    message: 'Internal Server Error',
+  });
 };

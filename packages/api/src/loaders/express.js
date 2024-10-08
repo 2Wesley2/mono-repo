@@ -1,9 +1,10 @@
-import bodyParser from 'body-parser';
+import express from 'express';
 import cors from 'cors';
 
 export default {
   init(app) {
-    app.use(bodyParser.json());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
     app.use(cors());
   },
 };

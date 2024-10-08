@@ -1,78 +1,67 @@
-import express from 'express';
+import { Router } from 'express';
 
 class ProductController {
   constructor(service) {
     this.service = service;
-    this.router = express.Router();
-    this.routes();
+    this.router = Router();
+    this.initializeRoutes();
   }
 
-  routes() {
-    this.router.post('/products', this.createProduct.bind(this));
-    this.router.get('/products/:id', this.getProduct.bind(this));
-    this.router.get('/products', this.getAllProducts.bind(this));
-    this.router.put('/products/:id', this.updateProduct.bind(this));
-    this.router.delete('/products/:id', this.deleteProduct.bind(this));
-  }
-  async getAllProducts(req, res) {
-    try {
-      const products = await this.service.getAllProducts();
-      res.json(products);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async createProduct(req, res) {
-    try {
-      const product = await this.service.addProduct(req.body);
-      res.status(201).json(product);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async getProduct(req, res) {
-    try {
-      const product = await this.service.getProduct(req.params.id);
-      if (product) {
-        res.json(product);
-      } else {
-        res.status(404).json({ message: 'Produto não encontrado' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async updateProduct(req, res) {
-    try {
-      const product = await this.service.modifyProduct(req.params.id, req.body);
-      if (product) {
-        res.json(product);
-      } else {
-        res.status(404).json({ message: 'Produto não encontrado' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async deleteProduct(req, res) {
-    try {
-      const product = await this.service.removeProduct(req.params.id);
-      if (product) {
-        res.json({ message: 'Produto removido com sucesso' });
-      } else {
-        res.status(404).json({ message: 'Produto não encontrado' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  initializeRoutes() {
+    this.router.get('/', this.getAllProducts.bind(this));
+    this.router.post('/', this.createProduct.bind(this));
+    this.router.get('/:id', this.getProductById.bind(this));
+    this.router.put('/:id', this.updateProduct.bind(this));
+    this.router.delete('/:id', this.deleteProduct.bind(this));
   }
 
   getRouter() {
     return this.router;
+  }
+
+  async getAllProducts(req, res, next) {
+    try {
+      const products = await this.service.getAllProducts(req.query);
+      res.json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createProduct(req, res, next) {
+    try {
+      const product = await this.service.createProduct(req.body);
+      res.status(201).json(product);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProductById(req, res, next) {
+    try {
+      const product = await this.service.getProductById(req.params.id);
+      res.json(product);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateProduct(req, res, next) {
+    try {
+      const updatedProduct = await this.service.updateProduct(req.params.id, req.body);
+      res.json(updatedProduct);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteProduct(req, res, next) {
+    try {
+      await this.service.deleteProduct(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
   }
 }
 
