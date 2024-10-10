@@ -1,24 +1,21 @@
 import Database from '../../../database/index.js';
-
+import mongoose from 'mongoose';
 const Cashback = Database.registerModel({
   schema: {
     customerId: {
-      type: Database.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Customer',
-      required: true,
+      required: [true, 'O ID do cliente é obrigatório'],
     },
-    amount: {
-      type: Number,
-      required: true,
-      min: [0, 'O valor do cashback não pode ser negativo'],
-    },
-    dateIssued: {
+    vouchersGenerated: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Voucher',
+      },
+    ],
+    lastUpdate: {
       type: Date,
       default: Date.now,
-    },
-    used: {
-      type: Boolean,
-      default: false,
     },
   },
   modelName: 'Cashback',
@@ -28,17 +25,35 @@ const Cashback = Database.registerModel({
 });
 
 class CashbackModel {
-  async create(data) {
-    const cashback = new Cashback(data);
-    return await cashback.save();
+  // Adiciona um voucher gerado ao registro de cashback do cliente
+  async addVoucher(customerId, voucherId) {
+    try {
+      const cashbackRecord = await Cashback.findOne({ customerId });
+
+      if (cashbackRecord) {
+        cashbackRecord.vouchersGenerated.push(voucherId);
+        cashbackRecord.lastUpdate = Date.now();
+        return await cashbackRecord.save();
+      } else {
+        const newCashback = new Cashback({
+          customerId,
+          vouchersGenerated: [voucherId],
+        });
+        return await newCashback.save();
+      }
+    } catch (error) {
+      throw new Error('Erro ao registrar/atualizar o cashback: ' + error.message);
+    }
   }
 
-  findByCustomer(customerId) {
-    return Cashback.find({ customerId, used: false });
+  // Busca os vouchers gerados para um cliente específico
+  async getVouchersByCustomerId(customerId) {
+    return Cashback.findOne({ customerId }).populate('vouchersGenerated');
   }
 
-  markAsUsed(cashbackId) {
-    return Cashback.findByIdAndUpdate(cashbackId, { used: true }, { new: true });
+  // Resetar o histórico de cashback (geração de vouchers)
+  async resetCashback(customerId) {
+    return Cashback.findOneAndUpdate({ customerId }, { vouchersGenerated: [], lastUpdate: Date.now() });
   }
 }
 

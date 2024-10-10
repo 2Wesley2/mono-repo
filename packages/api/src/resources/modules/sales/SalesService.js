@@ -1,74 +1,72 @@
-class SalesService {
-  constructor(repository, productService) {
-    this.repository = repository;
-    this.productService = productService;
+import AppError from '../../../errors/AppError.js';
+
+class SaleService {
+  constructor(saleRepository, cashbackService, customerService, voucherService) {
+    this.saleRepository = saleRepository;
+    this.cashbackService = cashbackService;
+    this.customerService = customerService;
+    this.voucherService = voucherService;
   }
 
-  async createSale(salesData) {
-    let totalPrice = 0;
-    const updatedProducts = [];
+  validateObjectId(id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(400, 'ID inválido.');
+    }
+  }
 
-    for (const item of salesData.products) {
-      const product = await this.productService.getProduct(item.productId);
+  async createSale(saleData) {
+    const { customerId, amount, voucherId } = saleData;
 
-      if (!product) {
-        throw new Error(`Produto com ID ${item.productId} não encontrado`);
-      }
+    this.validateObjectId(customerId);
 
-      if (product.quantity < item.quantity) {
-        throw new Error(`Quantidade insuficiente em estoque para o produto: ${product.name}`);
-      }
-
-      totalPrice += item.quantity * product.price;
-      product.quantity -= item.quantity;
-      await this.productService.modifyProduct(product._id, { quantity: product.quantity });
-
-      updatedProducts.push({ product: product._id, quantity: item.quantity, price: product.price });
+    // Verificar se o cliente existe
+    const customer = await this.customerService.customerRepository.findById(customerId);
+    if (!customer) {
+      throw new AppError(404, 'Cliente não encontrado.');
     }
 
-    const sale = await this.repository.createSale({
-      products: updatedProducts,
-      totalPrice,
-    });
+    let finalAmount = amount;
+    let voucherUsed = null;
 
-    return sale;
-  }
-
-  async getSale(id) {
-    const sale = await this.repository.findSaleById(id);
-
-    if (!sale) {
-      throw new Error('Venda não encontrada');
+    // Verificar se um voucherId foi fornecido e aplicar o voucher
+    if (voucherId) {
+      const voucher = await this.voucherService.applyVoucherToSale(customerId, amount, voucherId);
+      finalAmount = voucher.finalAmount; // Desconto aplicado
+      voucherUsed = voucherId;
     }
 
-    sale.products = sale.products.map((p) => ({
-      ...p,
-      product: { _id: p.product },
-    }));
+    // Registra a venda
+    const sale = await this.saleRepository.create({ ...saleData, finalAmount, voucherId: voucherUsed });
 
-    return sale;
+    // Gera voucher baseado no valor da compra, se aplicável
+    const newVoucher = await this.cashbackService.generateVoucherBasedOnAmount(customerId, amount);
+
+    return {
+      sale,
+      voucherUsed,
+      newVoucher,
+      finalAmount,
+    };
   }
 
-  async getAllSales() {
-    return await this.repository.findAllSales();
+  async getAllSales(query) {
+    return this.saleRepository.findAll(query);
   }
 
-  async updateSale(id, updateData) {
-    const sale = await this.repository.updateSaleById(id, updateData);
-    if (!sale) {
-      throw new Error('Venda não encontrada para atualização');
-    }
-    return sale;
+  async getSaleById(saleId) {
+    this.validateObjectId(saleId);
+    return this.saleRepository.findById(saleId);
   }
 
-  async deleteSale(id) {
-    const result = await this.repository.deleteSaleById(id);
+  async updateSale(saleId, saleData) {
+    this.validateObjectId(saleId);
+    return this.saleRepository.update(saleId, saleData);
+  }
 
-    if (!result) {
-      throw new Error('Venda não encontrada para deleção');
-    }
-    return result;
+  async deleteSale(saleId) {
+    this.validateObjectId(saleId);
+    return this.saleRepository.delete(saleId);
   }
 }
 
-export default SalesService;
+export default SaleService;

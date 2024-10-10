@@ -5,9 +5,8 @@ import errorHandler from '../middlewares/errorHandler.js';
 import {
   productController,
   // orderController,
-  //paymentController,
+  saleController,
   customerController,
-  cashbackController,
   employeeController,
 } from '../resources/modules/index.js';
 
@@ -30,7 +29,7 @@ export default class App {
     //this.app.use('/api/orders', orderController.getRouter());
     //this.app.use('/api/payments', paymentController.getRouter());
     this.app.use('/api/customer', customerController.getRouter());
-    this.app.use('/api/cashback', cashbackController.getRouter());
+    this.app.use('/api/sale', saleController.getRouter());
     this.app.use('/api/employee', employeeController.getRouter());
   }
 

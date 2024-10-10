@@ -1,45 +1,86 @@
-import mongoose from 'mongoose';
 import Database from '../../../database/index.js';
+import mongoose from 'mongoose';
 
-const salesSchema = Database.configSchema({
+const Sale = Database.registerModel({
   schema: {
-    products: [
-      {
-        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-        quantity: { type: Number, required: true },
-        price: { type: Number, required: true },
-      },
-    ],
-    totalPrice: { type: Number, required: true },
-    createdAt: { type: Date, default: Date.now },
+    customerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Customer',
+      required: [true, 'O ID do cliente é obrigatório'],
+    },
+    fuelType: {
+      type: String,
+      enum: ['gasolina', 'alcool'],
+      required: [true, 'O tipo de combustível é obrigatório'],
+    },
+    amount: {
+      type: Number,
+      required: [true, 'O valor da venda é obrigatório'],
+    },
+    finalAmount: {
+      type: Number,
+      required: true,
+    },
+    cashbackUsed: {
+      type: Number,
+      default: 0,
+    },
+    voucherUsed: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Voucher',
+      required: false,
+    },
+    voucherDiscount: {
+      type: Number,
+      default: 0,
+    },
+    paymentMethod: {
+      type: String,
+      required: false,
+    },
+  },
+  modelName: 'Sale',
+  options: {
+    timestamps: true,
   },
 });
 
-class SalesModel {
-  constructor() {
-    this.Sales = mongoose.model('Sales', salesSchema);
-  }
-
-  create(salesData) {
-    const sales = new this.Sales(salesData);
-    return sales.save();
+class SaleModel {
+  async create(saleData) {
+    try {
+      const sale = new Sale(saleData);
+      return await sale.save();
+    } catch (error) {
+      throw new Error('Erro ao registrar a venda: ' + error.message);
+    }
   }
 
   findById(id) {
-    return this.Sales.findById(id).populate('products.product');
+    return Sale.findById(id);
   }
 
-  find() {
-    return this.Sales.find().populate('products.product');
+  findAll(filters = {}, options = {}) {
+    return Sale.find(filters, null, options);
   }
 
-  update(id, salesData) {
-    return this.Sales.findByIdAndUpdate(id, salesData, { new: true });
+  async update(id, saleData) {
+    try {
+      return await Sale.findByIdAndUpdate(id, saleData, {
+        new: true,
+        runValidators: true,
+      }).populate('voucherUsed');
+    } catch (error) {
+      throw new Error('Erro ao atualizar a venda: ' + error.message);
+    }
   }
 
-  delete(id) {
-    return this.Sales.findByIdAndDelete(id);
+  async delete(id) {
+    try {
+      return await Sale.findByIdAndDelete(id);
+    } catch (error) {
+      throw new Error('Erro ao deletar a venda: ' + error.message);
+    }
   }
 }
 
-export default new SalesModel();
+export default SaleModel;

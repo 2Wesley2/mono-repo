@@ -1,80 +1,69 @@
-import express from 'express';
+import { Router } from 'express';
 
-class SalesController {
+class SaleController {
   constructor(service) {
     this.service = service;
-    this.router = express.Router();
-    this.routes();
+    this.router = Router();
+    this.initializeRoutes();
   }
 
-  routes() {
-    this.router.post('/', this.createSale.bind(this));
-    this.router.get('/:id', this.getSale.bind(this));
+  initializeRoutes() {
     this.router.get('/', this.getAllSales.bind(this));
+    this.router.post('/', this.createSale.bind(this));
+    this.router.get('/:id', this.getSaleById.bind(this));
     this.router.put('/:id', this.updateSale.bind(this));
     this.router.delete('/:id', this.deleteSale.bind(this));
-  }
-
-  async createSale(req, res) {
-    try {
-      const sale = await this.service.createSale(req.body);
-      res.status(201).json(sale);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async getSale(req, res) {
-    try {
-      const sale = await this.service.getSale(req.params.id);
-      if (sale) {
-        res.json(sale);
-      } else {
-        res.status(404).json({ message: 'Venda não encontrada' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async getAllSales(req, res) {
-    try {
-      const sales = await this.service.getAllSales();
-      res.json(sales);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async updateSale(req, res) {
-    try {
-      const sale = await this.service.updateSale(req.params.id, req.body);
-      if (sale) {
-        res.json(sale);
-      } else {
-        res.status(404).json({ message: 'Venda não encontrada' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async deleteSale(req, res) {
-    try {
-      const sale = await this.service.deleteSale(req.params.id);
-      if (sale) {
-        res.json({ message: 'Venda deletada com sucesso' });
-      } else {
-        res.status(404).json({ message: 'Venda não encontrada' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
   }
 
   getRouter() {
     return this.router;
   }
+
+  async getAllSales(req, res, next) {
+    try {
+      const sales = await this.service.getAllSales(req.query);
+      res.json(sales);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createSale(req, res, next) {
+    try {
+      const { voucherId } = req.body;
+      const sale = await this.service.createSale({ ...req.body, voucherId });
+      res.status(201).json(sale);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getSaleById(req, res, next) {
+    try {
+      const sale = await this.service.getSaleById(req.params.id);
+      res.json(sale);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateSale(req, res, next) {
+    try {
+      const updatedSale = await this.service.updateSale(req.params.id, req.body);
+      res.json(updatedSale);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteSale(req, res, next) {
+    try {
+      await this.service.deleteSale(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
-export default SalesController;
+export default SaleController;

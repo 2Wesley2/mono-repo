@@ -1,31 +1,27 @@
-class SalesRepository {
+class SaleRepository {
   constructor(model) {
     this.model = model;
   }
 
-  async createSale(salesData) {
-    console.log('Saving sale with data:', salesData);
-    const sale = await this.model.create(salesData);
-    const savedSale = await this.model.findById(sale._id);
-    console.log('Sale saved and retrieved:', savedSale);
-    return savedSale;
+  create(data) {
+    return this.model.create(data);
   }
 
-  async findSaleById(id) {
-    return await this.model.findById(id);
+  findById(id) {
+    return this.model.findById(id).populate('voucherUsed');
   }
 
-  async findAllSales() {
-    return await this.model.find();
+  findAll(filters = {}, options = {}) {
+    return this.model.findAll(filters, options).populate('voucherUsed');
   }
 
-  async updateSaleById(id, updateData) {
-    return await this.model.updateById(id, updateData);
+  update(id, data) {
+    return this.model.update(id, data).populate('voucherUsed');
   }
 
-  async deleteSaleById(id) {
-    return await this.model.deleteById(id);
+  delete(id) {
+    return this.model.delete(id);
   }
 }
 
-export default SalesRepository;
+export default SaleRepository;

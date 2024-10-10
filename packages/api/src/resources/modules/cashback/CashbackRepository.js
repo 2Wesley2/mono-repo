@@ -3,16 +3,16 @@ class CashbackRepository {
     this.model = model;
   }
 
-  create(data) {
-    return this.model.create(data);
+  createOrUpdate(customerId, cashbackAmount) {
+    return this.model.createOrUpdate(customerId, cashbackAmount);
   }
 
-  findByCustomer(customerId) {
-    return this.model.findByCustomer(customerId);
+  getCashbackByCustomerId(customerId) {
+    return this.model.getCashbackByCustomerId(customerId);
   }
 
-  markAsUsed(cashbackId) {
-    return this.model.markAsUsed(cashbackId);
+  resetCashback(customerId) {
+    return this.model.resetCashback(customerId);
   }
 }
 

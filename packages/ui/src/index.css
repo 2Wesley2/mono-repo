@@ -1,11 +1,15 @@
 html,
 body,
 #root {
-  font-family: Arial, sans-serif;
+  box-sizing: border-box;
   background-color: #FFFFFF;
 }
 
-#root {
-  display: flex;
-  min-height: 90vh;
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: auto;
 }

@@ -8,28 +8,17 @@ class CustomerController {
   }
 
   initializeRoutes() {
-    this.router.post('/:id/cashback', this.addCashback.bind(this));
-    this.router.post('/:id/use-cashback', this.useCashback.bind(this));
+    this.router.post('/:id/voucher', this.addVoucherToCustomer.bind(this));
   }
 
   getRouter() {
     return this.router;
   }
 
-  async addCashback(req, res, next) {
+  async addVoucherToCustomer(req, res, next) {
     try {
-      const { amount } = req.body;
-      const customer = await this.service.addCashbackToCustomer(req.params.id, amount);
-      res.json(customer);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async useCashback(req, res, next) {
-    try {
-      const { amount } = req.body;
-      const customer = await this.service.useCashbackFromCustomer(req.params.id, amount);
+      const { voucherId } = req.body;
+      const customer = await this.service.addVoucherToCustomer(req.params.id, voucherId);
       res.json(customer);
     } catch (error) {
       next(error);

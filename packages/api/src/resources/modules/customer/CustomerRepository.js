@@ -8,15 +8,15 @@ class CustomerRepository {
   }
 
   findById(id) {
-    return this.model.findById(id);
+    return this.model.findById(id).populate('vouchers');
   }
 
   findAll(filters = {}, options = {}) {
-    return this.model.findAll(filters, options);
+    return this.model.findAll(filters, options).populate('vouchers');
   }
 
   update(id, data) {
-    return this.model.update(id, data);
+    return this.model.update(id, data).populate('vouchers');
   }
 
   delete(id) {
@@ -24,7 +24,7 @@ class CustomerRepository {
   }
 
   count(filters) {
-    return this.model.countCustomers(filters);
+    return this.model.countDocuments(filters);
   }
 }
 

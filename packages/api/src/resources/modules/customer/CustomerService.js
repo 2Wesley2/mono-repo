@@ -1,7 +1,8 @@
 class CustomerService {
-  constructor(customerRepository, cashbackRepository) {
+  constructor(customerRepository, cashbackRepository, voucherRepository) {
     this.customerRepository = customerRepository;
     this.cashbackRepository = cashbackRepository;
+    this.voucherRepository = voucherRepository;
   }
 
   async createCustomer(data) {
@@ -16,36 +17,21 @@ class CustomerService {
     return this.customerRepository.delete(id);
   }
 
-  async addCashbackToCustomer(customerId, amount) {
-    if (amount <= 0) {
-      throw new Error('O valor do cashback deve ser positivo');
-    }
-
-    await this.cashbackRepository.create({ customerId, amount });
-    return this.customerRepository.findById(customerId);
-  }
-
-  async useCashbackFromCustomer(customerId, amount) {
+  async addVoucherToCustomer(customerId, voucherId) {
     const customer = await this.customerRepository.findById(customerId);
-
-    if (customer.cashbackBalance < amount) {
-      throw new Error('Saldo de cashback insuficiente');
+    if (!customer) {
+      throw new Error('Cliente não encontrado.');
     }
 
-    const availableCashbacks = await this.cashbackRepository.findByCustomer(customerId);
-
-    let remainingAmount = amount;
-    for (let cashback of availableCashbacks) {
-      if (cashback.amount <= remainingAmount) {
-        await this.cashbackRepository.markAsUsed(cashback._id);
-        remainingAmount -= cashback.amount;
-      } else {
-        break;
-      }
+    const voucher = await this.voucherRepository.findById(voucherId);
+    if (!voucher) {
+      throw new Error('Voucher não encontrado.');
     }
 
-    await this.customerRepository.update(customerId, { cashbackBalance: customer.cashbackBalance - amount });
-    return this.customerRepository.findById(customerId);
+    customer.vouchers.push(voucher._id);
+    await customer.save();
+
+    return customer;
   }
 }
 

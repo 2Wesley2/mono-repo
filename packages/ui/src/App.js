@@ -9,16 +9,22 @@ import SaleConfirmation2 from './pages/SaleConfirmation2';
 import Home from './pages/Home';
 
 function App() {
+  const routes = [
+    { path: '/', name: 'Home', element: <Home /> },
+    { path: '/gerenciar-funcionarios', name: 'Gerenciar Funcionários', element: <EmployeeManagement /> },
+    { path: '/gerenciar-clientes', name: 'Gerenciar Clientes', element: <CustomerManagement /> },
+    { path: '/gerenciar-vendas', name: 'Gerenciar Vendas', element: <SalesManagement /> },
+    { path: '/confirmar-venda-1', name: 'Confirmar Venda 1', element: <SaleConfirmation1 /> },
+    { path: '/confirmar-venda-2', name: 'Confirmar Venda 2', element: <SaleConfirmation2 /> },
+  ];
+
   return (
     <Router>
-      <Layout>
+      <Layout routes={routes}>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/gerenciar-funcionarios" element={<EmployeeManagement />} />
-          <Route path="/gerenciar-clientes" element={<CustomerManagement />} />
-          <Route path="/gerenciar-vendas" element={<SalesManagement />} />
-          <Route path="/confirmar-venda-1" element={<SaleConfirmation1 />} />
-          <Route path="/confirmar-venda-2" element={<SaleConfirmation2 />} />
+          {routes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
         </Routes>
       </Layout>
     </Router>
