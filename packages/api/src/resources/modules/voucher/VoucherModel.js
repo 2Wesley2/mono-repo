@@ -1,13 +1,12 @@
-import Database from '../../../database';
+import Database from '../../../database/index.js';
 
 const Voucher = Database.registerModel({
   schema: {
     customerId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Database.ObjectId,
       ref: 'Customer',
       required: [true, 'O ID do cliente é obrigatório'],
     },
-    // Desconto percentual (usado para valores acima de R$ 150)
     discountPercentage: {
       type: Number,
       min: [0, 'A porcentagem mínima é 0'],
@@ -70,11 +69,7 @@ class VoucherModel {
 
   async markAsUsed(voucherId) {
     try {
-      const voucher = await this.findById(voucherId);
-      if (voucher) {
-        voucher.isUsed = true;
-        await voucher.save();
-      }
+      await Voucher.findByIdAndUpdate(voucherId, { isUsed: true }, { new: true });
     } catch (error) {
       throw new Error('Erro ao marcar o voucher como usado: ' + error.message);
     }

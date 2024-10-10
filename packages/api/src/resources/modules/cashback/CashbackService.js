@@ -1,4 +1,4 @@
-import AppError from '../../../errors/AppError.js';
+import { validateObjectId } from '../../../helpers/validationHelper.js';
 
 class CashbackService {
   constructor(cashbackRepository, voucherRepository, customerRepository) {
@@ -7,15 +7,9 @@ class CashbackService {
     this.customerRepository = customerRepository;
   }
 
-  validateObjectId(id) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, 'ID inválido.');
-    }
-  }
-
-  // Geração de voucher baseada no valor gasto
+  // Gera um voucher baseado no valor gasto e adiciona ao histórico de cashback do cliente
   async generateVoucherBasedOnAmount(customerId, amount) {
-    this.validateObjectId(customerId);
+    validateObjectId(customerId);
 
     let voucherValue = 0;
     let discountPercentage = 0;
@@ -35,6 +29,9 @@ class CashbackService {
         voucherValue,
         validUntil: this.generateExpiryDate(),
       });
+
+      await this.cashbackRepository.createOrUpdateCashback(customerId, voucher._id);
+
       return voucher;
     }
 

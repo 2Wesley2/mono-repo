@@ -19,8 +19,12 @@ class CustomerRepository {
     return this.model.update(id, data).populate('vouchers');
   }
 
-  delete(id) {
-    return this.model.delete(id);
+  async delete(id) {
+    const result = await this.model.delete(id);
+    if (!result) {
+      throw new Error(`Cliente com id ${id} não encontrado.`);
+    }
+    return result;
   }
 
   count(filters) {

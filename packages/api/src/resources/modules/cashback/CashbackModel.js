@@ -1,15 +1,15 @@
 import Database from '../../../database/index.js';
-import mongoose from 'mongoose';
+
 const Cashback = Database.registerModel({
   schema: {
     customerId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Database.ObjectId,
       ref: 'Customer',
       required: [true, 'O ID do cliente é obrigatório'],
     },
     vouchersGenerated: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Database.ObjectId,
         ref: 'Voucher',
       },
     ],
@@ -25,8 +25,8 @@ const Cashback = Database.registerModel({
 });
 
 class CashbackModel {
-  // Adiciona um voucher gerado ao registro de cashback do cliente
-  async addVoucher(customerId, voucherId) {
+  // Adiciona ou atualiza o registro de cashback do cliente com um novo voucher
+  async createOrUpdateCashback(customerId, voucherId) {
     try {
       const cashbackRecord = await Cashback.findOne({ customerId });
 
@@ -46,12 +46,12 @@ class CashbackModel {
     }
   }
 
-  // Busca os vouchers gerados para um cliente específico
+  // Busca os vouchers gerados para um cliente específico com detalhes
   async getVouchersByCustomerId(customerId) {
     return Cashback.findOne({ customerId }).populate('vouchersGenerated');
   }
 
-  // Resetar o histórico de cashback (geração de vouchers)
+  // Reseta o histórico de cashback (geração de vouchers)
   async resetCashback(customerId) {
     return Cashback.findOneAndUpdate({ customerId }, { vouchersGenerated: [], lastUpdate: Date.now() });
   }

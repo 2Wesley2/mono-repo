@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { AppBar, Container, Drawer, IconButton, List, ListItem, ListItemText, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useLocation, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Layout = ({ children, routes }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const location = useLocation();
 
   const toggleDrawer = (open) => {
     setDrawerOpen(open);
@@ -28,13 +27,22 @@ const Layout = ({ children, routes }) => {
 
       <Drawer anchor="left" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         <List>
-          {routes
-            .filter((route) => route.path !== location.pathname)
-            .map((route, index) => (
-              <ListItem button component={Link} to={route.path} key={index} onClick={() => toggleDrawer(false)}>
+          {routes.map((route, index) => (
+            <ListItem button key={index} onClick={() => toggleDrawer(false)}>
+              <NavLink
+                to={route.path}
+                style={({ isActive }) => ({
+                  textDecoration: 'none',
+                  fontWeight: isActive ? 'bold' : 'normal',
+                  color: isActive ? 'blue' : 'inherit',
+                  display: 'block', // Certifique-se de que ocupa todo o espaço do ListItem
+                  width: '100%',
+                })}
+              >
                 <ListItemText primary={route.name} />
-              </ListItem>
-            ))}
+              </NavLink>
+            </ListItem>
+          ))}
         </List>
       </Drawer>
 

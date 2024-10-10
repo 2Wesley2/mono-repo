@@ -1,10 +1,9 @@
 import Database from '../../../database/index.js';
-import mongoose from 'mongoose';
 
 const Sale = Database.registerModel({
   schema: {
     customerId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Database.ObjectId,
       ref: 'Customer',
       required: [true, 'O ID do cliente é obrigatório'],
     },
@@ -26,7 +25,7 @@ const Sale = Database.registerModel({
       default: 0,
     },
     voucherUsed: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Database.ObjectId,
       ref: 'Voucher',
       required: false,
     },

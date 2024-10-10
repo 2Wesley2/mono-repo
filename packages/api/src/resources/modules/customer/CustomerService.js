@@ -1,3 +1,5 @@
+import { validateObjectId } from '../../../helpers/validationHelper.js';
+
 class CustomerService {
   constructor(customerRepository, cashbackRepository, voucherRepository) {
     this.customerRepository = customerRepository;
@@ -14,10 +16,13 @@ class CustomerService {
   }
 
   async deleteCustomer(id) {
+    validateObjectId(id);
     return this.customerRepository.delete(id);
   }
 
   async addVoucherToCustomer(customerId, voucherId) {
+    validateObjectId(customerId);
+    validateObjectId(voucherId);
     const customer = await this.customerRepository.findById(customerId);
     if (!customer) {
       throw new Error('Cliente não encontrado.');
@@ -32,6 +37,15 @@ class CustomerService {
     await customer.save();
 
     return customer;
+  }
+
+  async getCustomers() {
+    return this.customerRepository.findAll();
+  }
+
+  async getCustomerById(id) {
+    validateObjectId(id);
+    return this.customerRepository.findById(id);
   }
 }
 

@@ -131,4 +131,21 @@ ${error.message}`);
   static get Types() {
     return mongoose.Types;
   }
+
+  /**
+   * Retorna o ObjectId do Mongoose.
+   * @returns {mongoose.Schema.Types.ObjectId}
+   */
+  static get ObjectId() {
+    return mongoose.Schema.Types.ObjectId;
+  }
+
+  /**
+   * Valida um ObjectId.
+   * @param {string} id - O ID a ser validado.
+   * @returns {boolean} - True se o ID for válido, caso contrário, false.
+   */
+  static isValidObjectId(id) {
+    return mongoose.Types.ObjectId.isValid(id);
+  }
 }

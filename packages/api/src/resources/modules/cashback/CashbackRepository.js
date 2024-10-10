@@ -3,12 +3,12 @@ class CashbackRepository {
     this.model = model;
   }
 
-  createOrUpdate(customerId, cashbackAmount) {
-    return this.model.createOrUpdate(customerId, cashbackAmount);
+  createOrUpdateCashback(customerId, voucherId) {
+    return this.model.createOrUpdateCashback(customerId, voucherId);
   }
 
-  getCashbackByCustomerId(customerId) {
-    return this.model.getCashbackByCustomerId(customerId);
+  getVouchersByCustomerId(customerId) {
+    return this.model.getVouchersByCustomerId(customerId);
   }
 
   resetCashback(customerId) {

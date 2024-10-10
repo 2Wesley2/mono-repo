@@ -13,3 +13,8 @@ body {
 body {
   margin: auto;
 }
+
+.active {
+  font-weight: bold; /* Exemplo de estilo para o link ativo */
+  color: blue; /* Alterar a cor do link ativo */
+}

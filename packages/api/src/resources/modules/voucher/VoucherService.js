@@ -1,5 +1,5 @@
 import AppError from '../../../errors/AppError.js';
-import mongoose from 'mongoose';
+import { validateObjectId } from '../../../helpers/validationHelper.js';
 
 class VoucherService {
   constructor(voucherRepository, customerRepository) {
@@ -7,16 +7,10 @@ class VoucherService {
     this.customerRepository = customerRepository;
   }
 
-  validateObjectId(id) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, 'ID inválido.');
-    }
-  }
-
   // Aplicação do voucher na venda
   async applyVoucherToSale(customerId, saleAmount, voucherId) {
-    this.validateObjectId(customerId);
-    this.validateObjectId(voucherId);
+    validateObjectId(customerId);
+    validateObjectId(voucherId);
 
     // Verificar se o cliente existe
     const customer = await this.customerRepository.findById(customerId);
@@ -32,8 +26,11 @@ class VoucherService {
 
     // Verificar se o voucher já foi usado ou está expirado
     const now = new Date();
-    if (voucher.isUsed || voucher.validUntil < now) {
-      throw new AppError(400, 'Voucher inválido ou expirado.');
+    if (voucher.isUsed) {
+      throw new AppError(400, 'Voucher já foi usado.');
+    }
+    if (voucher.validUntil < now) {
+      throw new AppError(400, 'Voucher expirado.');
     }
 
     // Calcular o desconto, baseado em porcentagem ou valor fixo
@@ -46,7 +43,7 @@ class VoucherService {
 
     const finalAmount = saleAmount - discountAmount;
 
-    // Marcar o voucher como usado
+    // Marcar o voucher como usado (chamando a função otimizada no repositório)
     await this.voucherRepository.markAsUsed(voucherId);
 
     return {
@@ -57,6 +54,8 @@ class VoucherService {
 
   // Método para criar voucher
   async createVoucher(customerId, discountPercentage, voucherValue, validUntil) {
+    validateObjectId(customerId);
+
     return this.voucherRepository.create({
       customerId,
       discountPercentage,

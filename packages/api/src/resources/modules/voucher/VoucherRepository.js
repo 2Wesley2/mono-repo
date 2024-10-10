@@ -3,20 +3,36 @@ class VoucherRepository {
     this.model = model;
   }
 
-  findApplicableVoucher(customerId, amount) {
-    return this.model.findApplicableVoucher(customerId, amount);
+  async findApplicableVoucher(customerId, amount) {
+    try {
+      return await this.model.findApplicableVoucher(customerId, amount);
+    } catch (error) {
+      throw new Error('Erro ao buscar voucher aplicável no repositório: ' + error.message);
+    }
   }
 
-  findById(voucherId) {
-    return this.model.findById(voucherId);
+  async findById(voucherId) {
+    try {
+      return await this.model.findById(voucherId);
+    } catch (error) {
+      throw new Error('Erro ao buscar voucher no repositório: ' + error.message);
+    }
   }
 
-  markAsUsed(voucherId) {
-    return this.model.markAsUsed(voucherId);
+  async markAsUsed(voucherId) {
+    try {
+      await this.model.markAsUsed(voucherId);
+    } catch (error) {
+      throw new Error('Erro ao marcar voucher como usado no repositório: ' + error.message);
+    }
   }
 
-  create(voucherData) {
-    return this.model.create(voucherData);
+  async create(voucherData) {
+    try {
+      return await this.model.create(voucherData);
+    } catch (error) {
+      throw new Error('Erro ao criar voucher no repositório: ' + error.message);
+    }
   }
 }
 

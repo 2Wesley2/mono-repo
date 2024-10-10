@@ -45,18 +45,20 @@ const customerRepository = new CustomerRepository(customerModel);
 const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
-// Iniciação do módulo de Cashback com Vouchers
-const cashbackModel = new CashbackModel();
-const cashbackRepository = new CashbackRepository(cashbackModel);
+// Iniciação do módulo de Voucher
 const voucherModel = new VoucherModel();
 const voucherRepository = new VoucherRepository(voucherModel);
-const voucherService = new VoucherService(voucherRepository);
-const cashbackService = new CashbackService(cashbackRepository, voucherService);
+const voucherService = new VoucherService(voucherRepository, customerRepository);
 
-// Iniciação do módulo de Sales com Cashback
+// Iniciação do módulo de Cashback
+const cashbackModel = new CashbackModel();
+const cashbackRepository = new CashbackRepository(cashbackModel);
+const cashbackService = new CashbackService(cashbackRepository, voucherRepository, customerRepository);
+
+// Iniciação do módulo de Sales
 const saleModel = new SaleModel();
 const saleRepository = new SaleRepository(saleModel);
-const saleService = new SaleService(saleRepository, cashbackService);
+const saleService = new SaleService(saleRepository, cashbackService, customerService, voucherService);
 const saleController = new SaleController(saleService);
 
 // Iniciação do módulo de Employee

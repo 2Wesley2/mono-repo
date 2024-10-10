@@ -1,4 +1,4 @@
-const API_URL = "https://api.fakeurl.com/customers";
+const API_URL = "http://localhost:3001/api/customer";
 
 export const getCustomers = async () => {
   try {
@@ -64,12 +64,22 @@ export const deleteCustomer = async (id) => {
         'Content-Type': 'application/json',
       },
     });
+
+    // Verifica se a resposta é bem-sucedida
     if (!response.ok) {
       throw new Error('Erro ao excluir cliente');
     }
+
+    // Se o status for 204 (sem conteúdo), não tenta fazer o parse do JSON
+    if (response.status === 204) {
+      return null; // Retorna null para indicar que a exclusão foi bem-sucedida sem resposta
+    }
+
+    // Caso contrário, tenta fazer o parse do JSON
     return await response.json();
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+

@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import Database from '../../../database/index.js';
 
 const Customer = Database.registerModel({
@@ -16,7 +15,7 @@ const Customer = Database.registerModel({
     },
     vouchers: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Database.ObjectId,
         ref: 'Voucher',
       },
     ],
@@ -38,11 +37,11 @@ class CustomerModel {
   }
 
   findById(id) {
-    return Customer.findById(id).populate('vouchers');
+    return Customer.findById(id);
   }
 
   findAll(filters = {}, options = {}) {
-    return Customer.find(filters, null, options).populate('vouchers');
+    return Customer.find(filters, null, options);
   }
 
   async update(id, customerData) {
@@ -50,9 +49,21 @@ class CustomerModel {
       return await Customer.findByIdAndUpdate(id, customerData, {
         new: true,
         runValidators: true,
-      }).populate('vouchers');
+      });
     } catch (error) {
       throw new Error('Erro ao atualizar o cliente: ' + error.message);
+    }
+  }
+
+  async delete(id) {
+    try {
+      const result = await Customer.findByIdAndDelete(id);
+      if (!result) {
+        throw new Error('Cliente não encontrado.');
+      }
+      return result;
+    } catch (error) {
+      throw new Error('Erro ao deletar o cliente: ' + error.message);
     }
   }
 }

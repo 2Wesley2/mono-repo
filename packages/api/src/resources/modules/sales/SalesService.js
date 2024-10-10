@@ -1,4 +1,5 @@
 import AppError from '../../../errors/AppError.js';
+import { validateObjectId } from '../../../helpers/validationHelper.js';
 
 class SaleService {
   constructor(saleRepository, cashbackService, customerService, voucherService) {
@@ -8,16 +9,11 @@ class SaleService {
     this.voucherService = voucherService;
   }
 
-  validateObjectId(id) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, 'ID inválido.');
-    }
-  }
-
   async createSale(saleData) {
     const { customerId, amount, voucherId } = saleData;
 
-    this.validateObjectId(customerId);
+    // Validar o ID do cliente
+    validateObjectId(customerId);
 
     // Verificar se o cliente existe
     const customer = await this.customerService.customerRepository.findById(customerId);
@@ -27,19 +23,26 @@ class SaleService {
 
     let finalAmount = amount;
     let voucherUsed = null;
+    let voucherDiscount = 0;
 
-    // Verificar se um voucherId foi fornecido e aplicar o voucher
+    // Verificar se um voucherId foi fornecido e aplicar o voucher, caso o cliente opte por usá-lo
     if (voucherId) {
       const voucher = await this.voucherService.applyVoucherToSale(customerId, amount, voucherId);
       finalAmount = voucher.finalAmount; // Desconto aplicado
       voucherUsed = voucherId;
+      voucherDiscount = voucher.discountApplied; // Armazenar o valor do desconto aplicado
     }
 
-    // Registra a venda
-    const sale = await this.saleRepository.create({ ...saleData, finalAmount, voucherId: voucherUsed });
+    // Registra a venda com ou sem o desconto do voucher
+    const sale = await this.saleRepository.create({
+      ...saleData,
+      finalAmount,
+      voucherId: voucherUsed, // Pode ser null se o cliente não utilizar o voucher
+      voucherDiscount, // Pode ser 0 se o voucher não for aplicado
+    });
 
-    // Gera voucher baseado no valor da compra, se aplicável
-    const newVoucher = await this.cashbackService.generateVoucherBasedOnAmount(customerId, amount);
+    // Gera um novo voucher baseado no valor da compra, se aplicável
+    const newVoucher = await this.cashbackService.generateVoucherBasedOnAmount(customerId, finalAmount);
 
     return {
       sale,
@@ -54,17 +57,17 @@ class SaleService {
   }
 
   async getSaleById(saleId) {
-    this.validateObjectId(saleId);
+    validateObjectId(saleId);
     return this.saleRepository.findById(saleId);
   }
 
   async updateSale(saleId, saleData) {
-    this.validateObjectId(saleId);
+    validateObjectId(saleId);
     return this.saleRepository.update(saleId, saleData);
   }
 
   async deleteSale(saleId) {
-    this.validateObjectId(saleId);
+    validateObjectId(saleId);
     return this.saleRepository.delete(saleId);
   }
 }

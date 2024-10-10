@@ -9,7 +9,6 @@ class CashbackController {
 
   initializeRoutes() {
     this.router.get('/customer/:customerId', this.getCashbacksByCustomer.bind(this));
-    this.router.patch('/:id/mark-used', this.markCashbackAsUsed.bind(this));
   }
 
   getRouter() {
@@ -18,17 +17,8 @@ class CashbackController {
 
   async getCashbacksByCustomer(req, res, next) {
     try {
-      const cashbacks = await this.service.findCashbacksByCustomer(req.params.customerId);
+      const cashbacks = await this.service.getVouchersByCustomerId(req.params.customerId);
       res.json(cashbacks);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async markCashbackAsUsed(req, res, next) {
-    try {
-      const cashback = await this.service.markCashbackAsUsed(req.params.id);
-      res.json(cashback);
     } catch (error) {
       next(error);
     }
