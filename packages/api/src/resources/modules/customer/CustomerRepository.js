@@ -1,18 +1,8 @@
+import Repository from '../../core/Repository.js';
 import config from '../../../config/index.js';
-class CustomerRepository {
+class CustomerRepository extends Repository {
   constructor(model) {
-    this.model = model;
-  }
-
-  async create(data) {
-    try {
-      const result = await this.model.create(data);
-      config.logger.info('Repositório: Cliente criado', { data: result });
-      return result;
-    } catch (error) {
-      config.logger.error('Repositório: Erro ao criar cliente', { error });
-      throw error;
-    }
+    super(model);
   }
 
   async findByCPF(cpf) {

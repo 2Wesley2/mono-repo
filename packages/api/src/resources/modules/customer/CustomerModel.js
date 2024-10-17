@@ -1,3 +1,4 @@
+import Model from '../../core/Model.js';
 import Database from '../../../database/index.js';
 import config from '../../../config/index.js';
 
@@ -14,26 +15,9 @@ const customerSchema = {
   ],
 };
 
-const CustomerSchema = Database.registerModel({
-  schema: customerSchema,
-  modelName: 'Customer',
-});
-
-class CustomerModel {
+class CustomerModel extends Model {
   constructor() {
-    this.model = CustomerSchema;
-  }
-
-  async create(data) {
-    try {
-      const newCustomer = this.model(data);
-      const result = await newCustomer.save();
-      config.logger.info('Cliente criado com sucesso', { data: result });
-      return result;
-    } catch (error) {
-      config.logger.error('Erro ao criar cliente', { error });
-      throw error;
-    }
+    super(customerSchema, 'Customer');
   }
 
   async findByCPF(cpf) {

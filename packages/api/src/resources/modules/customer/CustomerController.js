@@ -1,27 +1,14 @@
-import { Router } from 'express';
+import Controller from '../../core/Controller.js';
 import config from '../../../config/index.js';
 
-class CustomerController {
+class CustomerController extends Controller {
   constructor(service) {
-    this.service = service;
-    this.router = Router();
-    this.initializeRoutes();
+    super(service);
+    this.initializeCustomRoutes();
   }
 
-  initializeRoutes() {
-    this.router.post('/', this.create.bind(this));
+  initializeCustomRoutes() {
     this.router.get('/:cpf', this.findByCPF.bind(this));
-  }
-
-  async create(req, res, next) {
-    try {
-      const customer = await this.service.create(req.body);
-      config.logger.info('Controlador: Cliente criado com sucesso', { data: customer });
-      res.status(201).json(customer);
-    } catch (error) {
-      config.logger.error('Controlador: Erro ao criar cliente', { error });
-      next(error);
-    }
   }
 
   async findByCPF(req, res, next) {
@@ -34,10 +21,6 @@ class CustomerController {
       config.logger.error('Controlador: Erro ao buscar cliente', { cpf, error });
       next(error);
     }
-  }
-
-  getRouter() {
-    return this.router;
   }
 }
 

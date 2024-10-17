@@ -1,8 +1,9 @@
+import Service from '../../core/Service.js';
 import config from '../../../config/index.js';
 
-class SalesService {
+class SalesService extends Service {
   constructor(repository, ticketService) {
-    this.repository = repository;
+    super(repository);
     this.ticketService = ticketService;
   }
 
@@ -64,39 +65,6 @@ class SalesService {
       return result;
     } catch (error) {
       config.logger.error('Serviço: Erro ao criar venda', { error });
-      throw error;
-    }
-  }
-
-  async findById(id) {
-    try {
-      const sale = await this.repository.findById(id);
-      config.logger.info('Serviço: Venda encontrada', { id });
-      return sale;
-    } catch (error) {
-      config.logger.error('Serviço: Erro ao buscar venda por ID', { id, error });
-      throw error;
-    }
-  }
-
-  async update(id, data) {
-    try {
-      const result = await this.repository.update(id, data);
-      config.logger.info('Serviço: Venda atualizada', { id, data: result });
-      return result;
-    } catch (error) {
-      config.logger.error('Serviço: Erro ao atualizar venda', { id, error });
-      throw error;
-    }
-  }
-
-  async delete(id) {
-    try {
-      await this.repository.delete(id);
-      config.logger.info('Serviço: Venda deletada', { id });
-      return true;
-    } catch (error) {
-      config.logger.error('Serviço: Erro ao deletar venda', { id, error });
       throw error;
     }
   }

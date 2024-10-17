@@ -1,18 +1,8 @@
+import Service from '../../core/Service.js';
 import config from '../../../config/index.js';
-class CustomerService {
+class CustomerService extends Service {
   constructor(repository) {
-    this.repository = repository;
-  }
-
-  async create(data) {
-    try {
-      const result = await this.repository.create(data);
-      config.logger.info('Serviço: Cliente criado com sucesso', { data: result });
-      return result;
-    } catch (error) {
-      config.logger.error('Serviço: Erro ao criar cliente', { error });
-      throw error;
-    }
+    super(repository);
   }
 
   async findByCPF(cpf) {
