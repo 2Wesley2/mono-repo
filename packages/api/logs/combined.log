@@ -1,0 +1,39 @@
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:37:24"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:41:09"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:41:09"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:41:09"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:41:50"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:41:50"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:41:50"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:42:01"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:42:01"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:42:01"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:42:23"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:42:23"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:42:23"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:45:47"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:45:47"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:45:47"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Endpoints do servidor listados.","timestamp":"2024-10-16 13:45:47"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor rodando na porta: 3001","timestamp":"2024-10-16 13:45:47"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"Recebido sinal SIGINT, desligando graciosamente...","timestamp":"2024-10-16 13:48:22"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Endpoints do servidor listados.","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor iniciado com sucesso.","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor rodando na porta: 3001","timestamp":"2024-10-16 13:57:08"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"Recebido sinal SIGINT, desligando graciosamente...","timestamp":"2024-10-16 14:10:09"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Endpoints do servidor listados.","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor iniciado com sucesso.","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor rodando na porta: 3001","timestamp":"2024-10-16 17:31:11"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"Recebido sinal SIGINT, desligando graciosamente...","timestamp":"2024-10-16 17:49:30"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Configurações iniciais da aplicação carregadas.","timestamp":"2024-10-16 17:49:40"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Definindo rotas para os controladores...","timestamp":"2024-10-16 17:49:40"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Middleware de tratamento de erros registrado.","timestamp":"2024-10-16 17:49:40"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Endpoints do servidor listados.","timestamp":"2024-10-16 17:49:40"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor iniciado com sucesso.","timestamp":"2024-10-16 17:49:40"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Servidor rodando na porta: 3001","timestamp":"2024-10-16 17:49:40"}

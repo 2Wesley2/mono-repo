@@ -1,6 +1,6 @@
-import config from '../../../config/index.js';
+import config from './config/index';
 
-class EmployeeRepository {
+class CamadaRepository {
   constructor(model) {
     this.model = model;
   }
@@ -27,16 +27,6 @@ class EmployeeRepository {
     }
   }
 
-  async findAll(filters = {}, options = {}) {
-    try {
-      const documents = await this.model.find(filters, null, options);
-      config.logger.info('Repositório: Documentos encontrados', { filters });
-      return documents;
-    } catch (error) {
-      config.logger.error('Repositório: Erro ao buscar documentos', { filters, error });
-      throw error;
-    }
-  }
   async update(id, data) {
     try {
       const result = await this.model.update(id, data);
@@ -60,4 +50,4 @@ class EmployeeRepository {
   }
 }
 
-export default EmployeeRepository;
+export default CamadaRepository;

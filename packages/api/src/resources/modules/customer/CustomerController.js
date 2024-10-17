@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import config from '../../../config/index.js';
 
 class CustomerController {
   constructor(service) {
@@ -8,65 +9,35 @@ class CustomerController {
   }
 
   initializeRoutes() {
-    this.router.post('/', this.createCustomer.bind(this));
-    this.router.post('/:id/voucher', this.addVoucherToCustomer.bind(this));
-    this.router.get('/', this.getCustomers.bind(this));
-    this.router.get('/:id', this.getCustomerById.bind(this));
-    this.router.delete('/:id', this.deleteCustomer.bind(this));
+    this.router.post('/', this.create.bind(this));
+    this.router.get('/:cpf', this.findByCPF.bind(this));
+  }
+
+  async create(req, res, next) {
+    try {
+      const customer = await this.service.create(req.body);
+      config.logger.info('Controlador: Cliente criado com sucesso', { data: customer });
+      res.status(201).json(customer);
+    } catch (error) {
+      config.logger.error('Controlador: Erro ao criar cliente', { error });
+      next(error);
+    }
+  }
+
+  async findByCPF(req, res, next) {
+    try {
+      const { cpf } = req.params;
+      const customer = await this.service.findByCPF(cpf);
+      config.logger.info('Controlador: Cliente encontrado', { cpf });
+      res.status(200).json(customer);
+    } catch (error) {
+      config.logger.error('Controlador: Erro ao buscar cliente', { cpf, error });
+      next(error);
+    }
   }
 
   getRouter() {
     return this.router;
-  }
-
-  async createCustomer(req, res, next) {
-    try {
-      const customer = await this.service.createCustomer(req.body);
-      res.status(201).json(customer);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async addVoucherToCustomer(req, res, next) {
-    try {
-      const { voucherId } = req.body;
-      const customer = await this.service.addVoucherToCustomer(req.params.id, voucherId);
-      res.json(customer);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getCustomers(req, res, next) {
-    try {
-      const customers = await this.service.getCustomers();
-      res.status(200).json(customers);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getCustomerById(req, res, next) {
-    try {
-      const customer = await this.service.getCustomerById(req.params.id);
-      if (!customer) {
-        return res.status(404).json({ message: 'Cliente não encontrado.' });
-      }
-      res.status(200).json(customer);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async deleteCustomer(req, res, next) {
-    try {
-      const { id } = req.params;
-      await this.service.deleteCustomer(id);
-      res.status(204).json({ message: 'Cliente excluído com sucesso' });
-    } catch (error) {
-      next(error);
-    }
   }
 }
 

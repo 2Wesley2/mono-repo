@@ -1,27 +1,53 @@
-class SaleRepository {
+import config from '../../../config/index.js';
+
+class SalesRepository {
   constructor(model) {
     this.model = model;
   }
 
-  create(data) {
-    return this.model.create(data);
+  async create(data) {
+    try {
+      const result = await this.model.create(data);
+      config.logger.info('Repositório: Venda criada', { data: result });
+      return result;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao criar venda', { error });
+      throw error;
+    }
   }
 
-  findById(id) {
-    return this.model.findById(id).populate('voucherUsed');
+  async findById(id) {
+    try {
+      const sale = await this.model.findById(id);
+      config.logger.info('Repositório: Venda encontrada', { id });
+      return sale;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao buscar venda por ID', { id, error });
+      throw error;
+    }
   }
 
-  findAll(filters = {}, options = {}) {
-    return this.model.findAll(filters, options).populate('voucherUsed');
+  async update(id, data) {
+    try {
+      const result = await this.model.update(id, data);
+      config.logger.info('Repositório: Venda atualizada', { id, data: result });
+      return result;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao atualizar venda', { id, error });
+      throw error;
+    }
   }
 
-  update(id, data) {
-    return this.model.update(id, data).populate('voucherUsed');
-  }
-
-  delete(id) {
-    return this.model.delete(id);
+  async delete(id) {
+    try {
+      await this.model.delete(id);
+      config.logger.info('Repositório: Venda deletada', { id });
+      return true;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao deletar venda', { id, error });
+      throw error;
+    }
   }
 }
 
-export default SaleRepository;
+export default SalesRepository;

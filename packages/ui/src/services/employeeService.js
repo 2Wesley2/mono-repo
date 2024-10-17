@@ -1,8 +1,8 @@
-const API_URL = "http://localhost:3001/api/employee";
+import { ENDPOINT } from "./endpoint";
 
 export const getEmployees = async () => {
   try {
-    const response = await fetch(`${API_URL}`, {
+    const response = await fetch(`${ENDPOINT}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export const getEmployees = async () => {
 
 export const addEmployee = async (employeeData) => {
   try {
-    const response = await fetch(`${API_URL}`, {
+    const response = await fetch(`${ENDPOINT}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export const addEmployee = async (employeeData) => {
 
 export const editEmployee = async (id, employeeData) => {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${ENDPOINT}/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const editEmployee = async (id, employeeData) => {
 
 export const deleteEmployee = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${ENDPOINT}/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -1,51 +1,32 @@
-import { validateObjectId } from '../../../helpers/validationHelper.js';
-
+import config from '../../../config/index.js';
 class CustomerService {
-  constructor(customerRepository, cashbackRepository, voucherRepository) {
-    this.customerRepository = customerRepository;
-    this.cashbackRepository = cashbackRepository;
-    this.voucherRepository = voucherRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
-  async createCustomer(data) {
-    return this.customerRepository.create(data);
-  }
-
-  async updateCustomer(id, data) {
-    return this.customerRepository.update(id, data);
-  }
-
-  async deleteCustomer(id) {
-    validateObjectId(id);
-    return this.customerRepository.delete(id);
-  }
-
-  async addVoucherToCustomer(customerId, voucherId) {
-    validateObjectId(customerId);
-    validateObjectId(voucherId);
-    const customer = await this.customerRepository.findById(customerId);
-    if (!customer) {
-      throw new Error('Cliente não encontrado.');
+  async create(data) {
+    try {
+      const result = await this.repository.create(data);
+      config.logger.info('Serviço: Cliente criado com sucesso', { data: result });
+      return result;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao criar cliente', { error });
+      throw error;
     }
+  }
 
-    const voucher = await this.voucherRepository.findById(voucherId);
-    if (!voucher) {
-      throw new Error('Voucher não encontrado.');
+  async findByCPF(cpf) {
+    try {
+      const customer = await this.repository.findByCPF(cpf);
+      if (!customer) {
+        throw new Error('Cliente não encontrado');
+      }
+      config.logger.info('Serviço: Cliente encontrado', { cpf });
+      return customer;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao buscar cliente por CPF', { cpf, error });
+      throw error;
     }
-
-    customer.vouchers.push(voucher._id);
-    await customer.save();
-
-    return customer;
-  }
-
-  async getCustomers() {
-    return this.customerRepository.findAll();
-  }
-
-  async getCustomerById(id) {
-    validateObjectId(id);
-    return this.customerRepository.findById(id);
   }
 }
 

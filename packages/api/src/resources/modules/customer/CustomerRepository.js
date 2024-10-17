@@ -1,34 +1,29 @@
+import config from '../../../config/index.js';
 class CustomerRepository {
   constructor(model) {
     this.model = model;
   }
 
-  create(data) {
-    return this.model.create(data);
-  }
-
-  findById(id) {
-    return this.model.findById(id).populate('vouchers');
-  }
-
-  findAll(filters = {}, options = {}) {
-    return this.model.findAll(filters, options).populate('vouchers');
-  }
-
-  update(id, data) {
-    return this.model.update(id, data).populate('vouchers');
-  }
-
-  async delete(id) {
-    const result = await this.model.delete(id);
-    if (!result) {
-      throw new Error(`Cliente com id ${id} não encontrado.`);
+  async create(data) {
+    try {
+      const result = await this.model.create(data);
+      config.logger.info('Repositório: Cliente criado', { data: result });
+      return result;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao criar cliente', { error });
+      throw error;
     }
-    return result;
   }
 
-  count(filters) {
-    return this.model.countDocuments(filters);
+  async findByCPF(cpf) {
+    try {
+      const customer = await this.model.findByCPF(cpf);
+      config.logger.info('Repositório: Cliente encontrado', { cpf });
+      return customer;
+    } catch (error) {
+      config.logger.error('Repositório: Erro ao buscar cliente por CPF', { cpf, error });
+      throw error;
+    }
   }
 }
 

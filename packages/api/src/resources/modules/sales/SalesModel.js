@@ -1,85 +1,82 @@
 import Database from '../../../database/index.js';
+import config from '../../../config/index.js';
 
-const Sale = Database.registerModel({
-  schema: {
-    customerId: {
-      type: Database.ObjectId,
-      ref: 'Customer',
-      required: [true, 'O ID do cliente é obrigatório'],
-    },
-    fuelType: {
-      type: String,
-      enum: ['gasolina', 'alcool'],
-      required: [true, 'O tipo de combustível é obrigatório'],
-    },
-    amount: {
-      type: Number,
-      required: [true, 'O valor da venda é obrigatório'],
-    },
-    finalAmount: {
-      type: Number,
-      required: true,
-    },
-    cashbackUsed: {
-      type: Number,
-      default: 0,
-    },
-    voucherUsed: {
-      type: Database.ObjectId,
-      ref: 'Voucher',
-      required: false,
-    },
-    voucherDiscount: {
-      type: Number,
-      default: 0,
-    },
-    paymentMethod: {
-      type: String,
-      required: false,
-    },
-  },
-  modelName: 'Sale',
-  options: {
-    timestamps: true,
-  },
+const salesSchema = {
+  clientCPF: { type: String, required: true },
+  totalAmount: { type: Number, required: true },
+  ticketApplied: { type: Boolean, default: false },
+  discount: { type: Number, default: 0 },
+  finalAmount: { type: Number, required: true },
+  saleDate: { type: Date, default: Date.now },
+};
+
+const SalesSchema = Database.registerModel({
+  schema: salesSchema,
+  modelName: 'Sales',
 });
 
-class SaleModel {
-  async create(saleData) {
+class SalesModel {
+  constructor() {
+    this.model = SalesSchema;
+  }
+
+  async create(data) {
     try {
-      const sale = new Sale(saleData);
-      return await sale.save();
+      const newSale = this.model(data);
+      const result = await newSale.save();
+      config.logger.info('Venda registrada com sucesso', { data: result });
+      return result;
     } catch (error) {
-      throw new Error('Erro ao registrar a venda: ' + error.message);
+      config.logger.error('Erro ao registrar venda', { error });
+      throw error;
     }
   }
 
-  findById(id) {
-    return Sale.findById(id);
-  }
-
-  findAll(filters = {}, options = {}) {
-    return Sale.find(filters, null, options);
-  }
-
-  async update(id, saleData) {
+  async findById(id) {
     try {
-      return await Sale.findByIdAndUpdate(id, saleData, {
-        new: true,
-        runValidators: true,
-      }).populate('voucherUsed');
+      if (!Database.isValidObjectId(id)) {
+        throw new Error('ID inválido');
+      }
+      const sale = await this.model.findById(id);
+      if (sale) {
+        config.logger.info('Venda encontrada', { id });
+      } else {
+        config.logger.warn('Venda não encontrada', { id });
+      }
+      return sale;
     } catch (error) {
-      throw new Error('Erro ao atualizar a venda: ' + error.message);
+      config.logger.error('Erro ao buscar venda por ID', { id, error });
+      throw error;
+    }
+  }
+
+  async update(id, data) {
+    try {
+      if (!Database.isValidObjectId(id)) {
+        throw new Error('ID inválido');
+      }
+      const updatedSale = await this.model.findByIdAndUpdate(id, data, { new: true });
+      config.logger.info('Venda atualizada', { id, data: updatedSale });
+      return updatedSale;
+    } catch (error) {
+      config.logger.error('Erro ao atualizar venda', { id, error });
+      throw error;
     }
   }
 
   async delete(id) {
     try {
-      return await Sale.findByIdAndDelete(id);
+      if (!Database.isValidObjectId(id)) {
+        throw new Error('ID inválido');
+      }
+      await this.model.findByIdAndDelete(id);
+      config.logger.info('Venda deletada', { id });
+      return true;
     } catch (error) {
-      throw new Error('Erro ao deletar a venda: ' + error.message);
+      config.logger.error('Erro ao deletar venda', { id, error });
+      throw error;
     }
   }
 }
 
-export default SaleModel;
+export default SalesModel;

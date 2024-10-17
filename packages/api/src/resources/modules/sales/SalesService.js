@@ -1,75 +1,105 @@
-import AppError from '../../../errors/AppError.js';
-import { validateObjectId } from '../../../helpers/validationHelper.js';
+import config from '../../../config/index.js';
 
-class SaleService {
-  constructor(saleRepository, cashbackService, customerService, voucherService) {
-    this.saleRepository = saleRepository;
-    this.cashbackService = cashbackService;
-    this.customerService = customerService;
-    this.voucherService = voucherService;
+class SalesService {
+  constructor(repository, ticketService) {
+    this.repository = repository;
+    this.ticketService = ticketService;
   }
 
-  async createSale(saleData) {
-    const { customerId, amount, voucherId } = saleData;
+  async applyDiscountIfTicketProvided({ ticketId, clientCPF, totalAmount }) {
+    if (ticketId) {
+      await this.ticketService.applyTicket(ticketId, clientCPF);
+      const ticket = await this.ticketService.findById(ticketId);
+      const discount = ticket.discount;
+      const finalAmount = totalAmount - totalAmount * (discount / 100);
+      return { discount, finalAmount, ticketApplied: true };
+    }
+    return { discount: 0, finalAmount: totalAmount, ticketApplied: false };
+  }
 
-    // Validar o ID do cliente
-    validateObjectId(customerId);
-
-    // Verificar se o cliente existe
-    const customer = await this.customerService.customerRepository.findById(customerId);
-    if (!customer) {
-      throw new AppError(404, 'Cliente não encontrado.');
+  async generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied }) {
+    if (ticketApplied) {
+      return;
+    }
+    let discountPercentage = 0;
+    if (totalAmount >= 50 && totalAmount <= 100) {
+      discountPercentage = 5;
+    } else if (totalAmount > 100 && totalAmount <= 150) {
+      discountPercentage = 10;
+    } else if (totalAmount > 150) {
+      discountPercentage = 15;
     }
 
-    let finalAmount = amount;
-    let voucherUsed = null;
-    let voucherDiscount = 0;
+    if (discountPercentage > 0) {
+      const ticketData = {
+        clientCPF,
+        discount: discountPercentage,
+      };
 
-    // Verificar se um voucherId foi fornecido e aplicar o voucher, caso o cliente opte por usá-lo
-    if (voucherId) {
-      const voucher = await this.voucherService.applyVoucherToSale(customerId, amount, voucherId);
-      finalAmount = voucher.finalAmount; // Desconto aplicado
-      voucherUsed = voucherId;
-      voucherDiscount = voucher.discountApplied; // Armazenar o valor do desconto aplicado
+      await this.ticketService.create(ticketData);
+      config.logger.info(`Serviço: Ticket de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
     }
-
-    // Registra a venda com ou sem o desconto do voucher
-    const sale = await this.saleRepository.create({
-      ...saleData,
-      finalAmount,
-      voucherId: voucherUsed, // Pode ser null se o cliente não utilizar o voucher
-      voucherDiscount, // Pode ser 0 se o voucher não for aplicado
-    });
-
-    // Gera um novo voucher baseado no valor da compra, se aplicável
-    const newVoucher = await this.cashbackService.generateVoucherBasedOnAmount(customerId, finalAmount);
-
-    return {
-      sale,
-      voucherUsed,
-      newVoucher,
-      finalAmount,
-    };
   }
 
-  async getAllSales(query) {
-    return this.saleRepository.findAll(query);
+  async create(data) {
+    try {
+      const { clientCPF, totalAmount, ticketId } = data;
+      const { discount, finalAmount, ticketApplied } = await this.applyDiscountIfTicketProvided({
+        ticketId,
+        clientCPF,
+        totalAmount,
+      });
+
+      const saleData = {
+        clientCPF,
+        totalAmount,
+        discount,
+        finalAmount,
+        ticketApplied,
+      };
+
+      const result = await this.repository.create(saleData);
+      config.logger.info('Serviço: Venda criada com sucesso', { data: result });
+      await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
+      return result;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao criar venda', { error });
+      throw error;
+    }
   }
 
-  async getSaleById(saleId) {
-    validateObjectId(saleId);
-    return this.saleRepository.findById(saleId);
+  async findById(id) {
+    try {
+      const sale = await this.repository.findById(id);
+      config.logger.info('Serviço: Venda encontrada', { id });
+      return sale;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao buscar venda por ID', { id, error });
+      throw error;
+    }
   }
 
-  async updateSale(saleId, saleData) {
-    validateObjectId(saleId);
-    return this.saleRepository.update(saleId, saleData);
+  async update(id, data) {
+    try {
+      const result = await this.repository.update(id, data);
+      config.logger.info('Serviço: Venda atualizada', { id, data: result });
+      return result;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao atualizar venda', { id, error });
+      throw error;
+    }
   }
 
-  async deleteSale(saleId) {
-    validateObjectId(saleId);
-    return this.saleRepository.delete(saleId);
+  async delete(id) {
+    try {
+      await this.repository.delete(id);
+      config.logger.info('Serviço: Venda deletada', { id });
+      return true;
+    } catch (error) {
+      config.logger.error('Serviço: Erro ao deletar venda', { id, error });
+      throw error;
+    }
   }
 }
 
-export default SaleService;
+export default SalesService;

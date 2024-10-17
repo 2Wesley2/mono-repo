@@ -35,7 +35,7 @@ const Layout = ({ children, routes }) => {
                   textDecoration: 'none',
                   fontWeight: isActive ? 'bold' : 'normal',
                   color: isActive ? 'blue' : 'inherit',
-                  display: 'block', // Certifique-se de que ocupa todo o espaço do ListItem
+                  display: 'block',
                   width: '100%',
                 })}
               >
