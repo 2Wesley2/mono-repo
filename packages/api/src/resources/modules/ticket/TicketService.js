@@ -1,3 +1,4 @@
+import Service from '../../core/Service.js';
 import config from '../../../config/index.js';
 
 function validateTicket(ticket, clientCPF) {
@@ -17,9 +18,9 @@ function validateTicket(ticket, clientCPF) {
   }
 }
 
-class TicketService {
+class TicketService extends Service {
   constructor(repository) {
-    this.repository = repository;
+    super(repository);
   }
 
   async create(clientCPF, discount) {
@@ -32,20 +33,6 @@ class TicketService {
       return result;
     } catch (error) {
       config.logger.error('Serviço: Erro ao criar ticket', { error });
-      throw error;
-    }
-  }
-
-  async findById(ticketId) {
-    try {
-      const ticket = await this.repository.findById(ticketId);
-      if (!ticket) {
-        throw new Error('Ticket não encontrado');
-      }
-      config.logger.info('Serviço: Ticket encontrado', { ticketId });
-      return ticket;
-    } catch (error) {
-      config.logger.error('Serviço: Erro ao buscar ticket', { ticketId, error });
       throw error;
     }
   }
