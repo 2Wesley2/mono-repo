@@ -1,5 +1,6 @@
 import Model from '../../core/Model.js';
 import config from '../../../config/index.js';
+import { TICKET } from '../../constants/index.js';
 
 const ticketSchema = {
   clientCPF: { type: String, required: true },
@@ -11,7 +12,8 @@ const ticketSchema = {
 
 class TicketModel extends Model {
   constructor() {
-    super(ticketSchema, 'Ticket');
+    console.log('TICKET:', TICKET);
+    super(ticketSchema, TICKET);
   }
 
   async expireTickets() {

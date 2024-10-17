@@ -1,9 +1,9 @@
 import Controller from '../../core/Controller.js';
 import config from '../../../config/index.js';
-
+import { CUSTOMER } from '../../constants/index.js';
 class CustomerController extends Controller {
   constructor(service) {
-    super(service);
+    super(service, CUSTOMER);
     this.initializeCustomRoutes();
   }
 

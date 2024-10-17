@@ -1,26 +1,28 @@
 import Service from '../../core/Service.js';
 import config from '../../../config/index.js';
+import AppError from '../../../errors/AppError.js';
+import { TICKET } from '../../constants/index.js';
 
 function validateTicket(ticket, clientCPF) {
   if (!ticket) {
     config.logger.error('Ticket não encontrado');
-    throw new Error('Ticket não encontrado.');
+    throw new AppError(404, 'Ticket não encontrado.');
   }
 
   if (ticket.clientCPF !== clientCPF) {
     config.logger.error('O ticket não pertence ao cliente informado.', { ticketCPF: ticket.clientCPF, clientCPF });
-    throw new Error('O ticket não pertence ao cliente informado.');
+    throw new AppError(404, 'Ticket não encontrado.');
   }
 
   if (ticket.status !== 'available') {
     config.logger.error('O ticket não está disponível para uso.', { ticketId: ticket._id, status: ticket.status });
-    throw new Error('O ticket não está disponível para uso.');
+    throw new AppError(404, 'Ticket não encontrado.');
   }
 }
 
 class TicketService extends Service {
   constructor(repository) {
-    super(repository);
+    super(repository, TICKET);
   }
 
   async create(clientCPF, discount) {

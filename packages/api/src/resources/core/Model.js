@@ -4,16 +4,17 @@ import config from '../../config/index.js';
 class Model {
   constructor(schema, modelName) {
     this.model = Database.registerModel({ schema, modelName });
+    this.modelName = modelName;
   }
 
   async create(data) {
     try {
       const newDocument = new this.model(data);
       const result = await newDocument.save();
-      config.logger.info(`${modelName}: Documento criado com sucesso`, { data: result });
+      config.logger.info(`${this.modelName}: Documento criado com sucesso`, { data: result });
       return result;
     } catch (error) {
-      config.logger.error(`${modelName}: Erro ao criar documento`, { error });
+      config.logger.error(`${this.modelName}: Erro ao criar documento`, { error });
       throw error;
     }
   }
@@ -25,13 +26,13 @@ class Model {
       }
       const document = await this.model.findById(id);
       if (document) {
-        config.logger.info(`${modelName}: Documento encontrado`, { id });
+        config.logger.info(`${this.modelName}: Documento encontrado`, { id });
       } else {
-        config.logger.warn(`${modelName}: Documento não encontrado`, { id });
+        config.logger.warn(`${this.modelName}: Documento não encontrado`, { id });
       }
       return document;
     } catch (error) {
-      config.logger.error(`${modelName}: Erro ao buscar documento por ID`, { id, error });
+      config.logger.error(`${this.modelName}: Erro ao buscar documento por ID`, { id, error });
       throw error;
     }
   }
@@ -42,10 +43,10 @@ class Model {
         throw new Error('ID inválido');
       }
       const updatedDocument = await this.model.findByIdAndUpdate(id, data, { new: true });
-      config.logger.info(`${modelName}: Documento atualizado`, { id, data: updatedDocument });
+      config.logger.info(`${this.modelName}: Documento atualizado`, { id, data: updatedDocument });
       return updatedDocument;
     } catch (error) {
-      config.logger.error(`${modelName}: Erro ao atualizar documento`, { id, error });
+      config.logger.error(`${this.modelName}: Erro ao atualizar documento`, { id, error });
       throw error;
     }
   }
@@ -56,10 +57,10 @@ class Model {
         throw new Error('ID inválido');
       }
       await this.model.findByIdAndDelete(id);
-      config.logger.info(`${modelName}: Documento deletado`, { id });
+      config.logger.info(`${this.modelName}: Documento deletado`, { id });
       return true;
     } catch (error) {
-      config.logger.error(`${modelName}: Erro ao deletar documento`, { id, error });
+      config.logger.error(`${this.modelName}: Erro ao deletar documento`, { id, error });
       throw error;
     }
   }

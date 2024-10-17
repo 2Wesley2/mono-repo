@@ -28,7 +28,7 @@ const customerController = new CustomerController(customerService);
 
 const salesModel = new SalesModel();
 const salesRepository = new SalesRepository(salesModel);
-const salesService = new SalesService(salesRepository, ticketService);
+const salesService = new SalesService(salesRepository, ticketService, customerRepository);
 const salesController = new SalesController(salesService);
 
 const employeeModel = new EmployeeModel();

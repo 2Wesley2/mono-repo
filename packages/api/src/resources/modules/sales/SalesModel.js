@@ -1,4 +1,5 @@
 import Model from '../../core/Model.js';
+import { SALES } from '../../constants/index.js';
 
 const salesSchema = {
   clientCPF: { type: String, required: true },
@@ -11,7 +12,7 @@ const salesSchema = {
 
 class SalesModel extends Model {
   constructor() {
-    super(salesSchema, 'Sales');
+    super(salesSchema, SALES);
   }
 }
 

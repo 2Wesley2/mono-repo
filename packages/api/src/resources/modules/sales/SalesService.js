@@ -1,15 +1,22 @@
 import Service from '../../core/Service.js';
 import config from '../../../config/index.js';
+import { SALES } from '../../constants/index.js';
+import AppError from '../../../errors/AppError.js';
 
 class SalesService extends Service {
-  constructor(repository, ticketService) {
-    super(repository);
+  constructor(repository, ticketService, customerRepository) {
+    super(repository, SALES);
     this.ticketService = ticketService;
+    this.customerRepository = customerRepository;
   }
 
   async applyDiscountIfTicketProvided({ ticketId, clientCPF, totalAmount }) {
     if (ticketId) {
-      await this.ticketService.applyTicket(ticketId, clientCPF);
+      try {
+        await this.ticketService.applyTicket(ticketId, clientCPF);
+      } catch (error) {
+        throw new AppError(400, 'Falha ao aplicar o ticket. Verifique se o ticket é válido.');
+      }
       const ticket = await this.ticketService.findById(ticketId);
       const discount = ticket.discount;
       const finalAmount = totalAmount - totalAmount * (discount / 100);
@@ -32,12 +39,7 @@ class SalesService extends Service {
     }
 
     if (discountPercentage > 0) {
-      const ticketData = {
-        clientCPF,
-        discount: discountPercentage,
-      };
-
-      await this.ticketService.create(ticketData);
+      await this.ticketService.create(clientCPF, discountPercentage);
       config.logger.info(`Serviço: Ticket de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
     }
   }
@@ -60,11 +62,17 @@ class SalesService extends Service {
       };
 
       const result = await this.repository.create(saleData);
-      config.logger.info('Serviço: Venda criada com sucesso', { data: result });
-      await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
+      config.logger.info(`Serviço: ${SALES} criada com sucesso`, { data: result });
+
+      const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
+
+      if (newTicket) {
+        await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);
+      }
+
       return result;
     } catch (error) {
-      config.logger.error('Serviço: Erro ao criar venda', { error });
+      config.logger.error(`Serviço: Erro ao criar ${SALES}`, { error });
       throw error;
     }
   }

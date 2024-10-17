@@ -1,9 +1,9 @@
 import Repository from '../../core/Repository.js';
 import config from '../../../config/index.js';
-
+import { TICKET } from '../../constants/index.js';
 class TicketRepository extends Repository {
   constructor(model) {
-    super(model);
+    super(model, TICKET);
   }
 
   async expireTickets() {

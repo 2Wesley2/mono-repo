@@ -1,6 +1,7 @@
 import Model from '../../core/Model.js';
 import Database from '../../../database/index.js';
 import config from '../../../config/index.js';
+import { CUSTOMER, TICKET } from '../../constants/index.js';
 
 const customerSchema = {
   name: { type: String, required: true },
@@ -10,14 +11,14 @@ const customerSchema = {
   tickets: [
     {
       type: Database.ObjectId,
-      ref: 'Ticket',
+      ref: TICKET,
     },
   ],
 };
 
 class CustomerModel extends Model {
   constructor() {
-    super(customerSchema, 'Customer');
+    super(customerSchema, CUSTOMER);
   }
 
   async findByCPF(cpf) {
@@ -31,6 +32,23 @@ class CustomerModel extends Model {
       return customer;
     } catch (error) {
       config.logger.error('Erro ao buscar cliente por CPF', { cpf, error });
+      throw error;
+    }
+  }
+  async addTicket(cpf, ticketId) {
+    try {
+      const customer = await this.findByCPF(cpf);
+      if (!customer) {
+        throw new Error('Cliente não encontrado');
+      }
+
+      customer.tickets.push(ticketId);
+      const updatedCustomer = await customer.save();
+
+      config.logger.info('Ticket adicionado ao cliente', { cpf, ticketId });
+      return updatedCustomer;
+    } catch (error) {
+      config.logger.error('Erro ao adicionar ticket ao cliente', { cpf, ticketId, error });
       throw error;
     }
   }
