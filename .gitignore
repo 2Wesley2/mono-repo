@@ -10,3 +10,4 @@ dist
 .nx/cache
 .nx/
 .vscode/
+logs/
