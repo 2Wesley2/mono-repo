@@ -12,7 +12,6 @@ const ticketSchema = {
 
 class TicketModel extends Model {
   constructor() {
-    console.log('TICKET:', TICKET);
     super(ticketSchema, TICKET);
   }
 
