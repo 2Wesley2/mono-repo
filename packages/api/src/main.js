@@ -1,13 +1,17 @@
-import config from './config/index.js';
+import App from './resources/app.js';
 import Server from './resources/server.js';
+import debug from './debug/index.js';
 
 const startServer = async () => {
   try {
-    const server = new Server();
+    const app = new App();
+    const server = new Server(app);
+
     await server.init();
-    config.logger.info('Servidor iniciado com sucesso.');
+    await server.start();
+    debug.logger.info('main.js: Servidor iniciado com sucesso.');
   } catch (error) {
-    config.logger.error('Erro ao iniciar o servidor:', error);
+    debug.logger.error('main.js: Erro ao iniciar o servidor:', error);
     process.exit(1);
   }
 };

@@ -1,83 +1,59 @@
-// server.js
-import express from 'express';
-import cors from 'cors';
-import config from '../config/index.js';
 import loaders from '../loaders/index.js';
 import { listServerEndpoints } from '../helpers/listEndpointsHelper.js';
-import errorHandler from '../middlewares/errorHandler.js';
-import { salesController, customerController, employeeController } from '../resources/modules/index.js';
+import debug from '../debug/index.js';
 
 export default class Server {
-  constructor() {
-    config.logger.info('Instância do servidor criada.');
-    this.app = express();
-    this.server = null;
+  constructor(app) {
+    this.app = app;
+    this.appInstance = app.getInstance();
   }
 
   async init() {
-    this.configureMiddlewares();
-    this.setRoutes();
-    this.configureLogging();
-    this.handleErrors();
-    await loaders.mongoose.init();
-    listServerEndpoints(this.app);
-    config.logger.info('Endpoints do servidor listados.');
-    this.startServer();
+    await this.app.configureApp();
+    this.logEndpoints();
+    debug.logger.info('server.js: Endpoints do servidor listados.');
   }
 
-  configureMiddlewares() {
-    this.app.set('port', config.apiPort);
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cors());
-    config.logger.info('Middlewares de parsing e CORS configurados.');
-  }
+  start() {
+    return new Promise((resolve, reject) => {
+      const port = this.appInstance.get('port');
+      this.server = this.appInstance.listen(port, () => {
+        debug.logger.info(`server.js: Servidor rodando na porta: ${port}`);
+        resolve();
+      });
 
-  setRoutes() {
-    this.app.get('/', (_, res) => res.json('Welcome to the SmartShop API'));
-    config.logger.info('Definindo rotas para os controladores...');
-    this.app.use('/api/customer', customerController.getRouter());
-    this.app.use('/api/sale', salesController.getRouter());
-    this.app.use('/api/employee', employeeController.getRouter());
-  }
+      this.server.on('error', (error) => {
+        reject(error);
+      });
 
-  configureLogging() {
-    this.app.use((req, res, next) => {
-      const { method, url } = req;
-      const timestamp = new Date().toISOString();
-      config.logger.info(`[${timestamp}] ${method} ${url}`);
-      next();
+      this.setupGracefulShutdown();
     });
-    config.logger.info('Middleware de logging de requisições configurado.');
   }
 
-  handleErrors() {
-    this.app.use(errorHandler);
-    config.logger.info('Middleware de tratamento de erros registrado.');
+  logEndpoints() {
+    listServerEndpoints(this.appInstance);
+    debug.logger.info('server.js: Endpoints do servidor listados.');
   }
 
-  startServer() {
-    const port = this.app.get('port');
-    this.server = this.app.listen(port, () => {
-      config.logger.info(`Servidor rodando na porta: ${port}`);
-    });
-    this.setupGracefulShutdown();
+  async disconnectDB() {
+    await loaders.mongoose.disconnect();
   }
 
   setupGracefulShutdown() {
     const gracefulShutdown = async (signal) => {
-      config.logger.warn(`Recebido sinal ${signal}, desligando graciosamente...`);
-      this.server.close(async () => {
-        await loaders.mongoose.disconnect();
-        config.logger.info('Todas as conexões foram encerradas.');
+      debug.logger.warn(`server.js: Recebido sinal ${signal}, desligando graciosamente...`);
+      await this.disconnectDB();
+      this.server.close(() => {
+        debug.logger.info('server.js: Todas as conexões foram encerradas.');
         process.exit(0);
       });
 
       setTimeout(() => {
-        config.logger.error('Forçando encerramento após 10 segundos.');
+        debug.logger.error('server.js: Forçando encerramento após 10 segundos.');
         process.exit(1);
       }, 10000);
     };
+
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
     process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'));

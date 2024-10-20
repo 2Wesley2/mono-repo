@@ -1,6 +1,6 @@
 import winston from 'winston';
 import path from 'path';
-import config from './env.js';
+import config from '../config/index.js';
 
 const devFormat = winston.format.combine(
   winston.format.colorize(),

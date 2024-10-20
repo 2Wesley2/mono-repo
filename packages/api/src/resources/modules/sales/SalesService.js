@@ -1,5 +1,5 @@
 import Service from '../../core/Service.js';
-import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 import { SALES } from '../../constants/index.js';
 import AppError from '../../../errors/AppError.js';
 
@@ -40,7 +40,7 @@ class SalesService extends Service {
 
     if (discountPercentage > 0) {
       await this.ticketService.create(clientCPF, discountPercentage);
-      config.logger.info(`Serviço: Ticket de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
+      debug.logger.info(`Serviço: Ticket de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
     }
   }
 
@@ -62,7 +62,7 @@ class SalesService extends Service {
       };
 
       const result = await this.repository.create(saleData);
-      config.logger.info(`Serviço: ${SALES} criada com sucesso`, { data: result });
+      debug.logger.info(`Serviço: ${SALES} criada com sucesso`, { data: result });
 
       const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
 
@@ -72,7 +72,7 @@ class SalesService extends Service {
 
       return result;
     } catch (error) {
-      config.logger.error(`Serviço: Erro ao criar ${SALES}`, { error });
+      debug.logger.error(`Serviço: Erro ao criar ${SALES}`, { error });
       throw error;
     }
   }

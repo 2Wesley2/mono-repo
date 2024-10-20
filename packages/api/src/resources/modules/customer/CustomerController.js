@@ -1,5 +1,5 @@
 import Controller from '../../core/Controller.js';
-import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 import { CUSTOMER } from '../../constants/index.js';
 class CustomerController extends Controller {
   constructor(service) {
@@ -15,10 +15,10 @@ class CustomerController extends Controller {
     try {
       const { cpf } = req.params;
       const customer = await this.service.findByCPF(cpf);
-      config.logger.info('Controlador: Cliente encontrado', { cpf });
+      debug.logger.info('Controlador: Cliente encontrado', { cpf });
       res.status(200).json(customer);
     } catch (error) {
-      config.logger.error('Controlador: Erro ao buscar cliente', { cpf, error });
+      debug.logger.error('Controlador: Erro ao buscar cliente', { cpf, error });
       next(error);
     }
   }

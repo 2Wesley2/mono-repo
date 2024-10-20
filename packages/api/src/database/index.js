@@ -59,31 +59,33 @@ export default class Database {
     try {
       if (config.dbAtlas) {
         dbUri = `mongodb+srv://${encodeURIComponent(config.dbUser)}:${encodeURIComponent(config.dbPassword)}@${config.dbHost}/${dbName}?retryWrites=true&w=majority`;
-        message = `Server is connected to ${dbName} on Atlas!`;
+        message = `Database class:Mongo is connected to ${dbName} on Atlas!`;
       } else if (config.dbHost && config.dbPort) {
         dbUri = `mongodb://${config.dbHost}:${config.dbPort}/${dbName}`;
-        message = `Server is connected to ${dbName} on port ${config.dbPort}!`;
+        message = `Database class: Mongo is connected to ${dbName} on port ${config.dbPort}!`;
       } else {
-        throw new Error('Configuração do banco de dados inválida. Verifique dbAtlas ou dbHost e dbPort.');
+        throw new Error(
+          'Database class: Configuração do banco de dados inválida. Verifique dbAtlas ou dbHost e dbPort.',
+        );
       }
 
       await mongoose.connect(dbUri, options);
       console.log(message);
 
       mongoose.connection.on('connected', () => {
-        console.log('Mongoose connected to ' + dbUri);
+        console.log('Database class: Mongoose connected to ' + dbUri);
       });
 
       mongoose.connection.on('error', (err) => {
-        console.error('Mongoose connection error:', err);
+        console.error('Database class: Mongoose connection error:', err);
       });
 
       mongoose.connection.on('disconnected', () => {
-        console.warn('Mongoose disconnected. Tentando reconectar...');
+        console.warn('Database class: Mongoose disconnected. Tentando reconectar...');
       });
     } catch (error) {
       console.error(`
-Fail to connect to ${dbName} database!
+Database class: Fail to connect to ${dbName} database!
 ${error.message}`);
       throw error;
     }
@@ -95,9 +97,9 @@ ${error.message}`);
   static async disconnect() {
     try {
       await mongoose.connection.close();
-      console.log('Database connection closed.');
+      console.log('Database class: Database connection closed.');
     } catch (error) {
-      console.error('Error closing database connection:', error);
+      console.error('Database class: Error closing database connection:', error);
     }
   }
 

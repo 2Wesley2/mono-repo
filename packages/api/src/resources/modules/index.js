@@ -1,3 +1,8 @@
+/*import UserModel from './user/UserModel.js';
+import UserRepository from './user/UserRepository.js';
+import UserService from './user/UserService.js';
+import UserController from './user/UserController.js';*/
+
 import CustomerModel from './customer/CustomerModel.js';
 import CustomerRepository from './customer/CustomerRepository.js';
 import CustomerService from './customer/CustomerService.js';
@@ -17,23 +22,34 @@ import TicketModel from './ticket/TicketModel.js';
 import TicketRepository from './ticket/TicketRepository.js';
 import TicketService from './ticket/TicketService.js';
 
+// Instanciar o ticketService antes de utilizá-lo no salesService
 const ticketModel = new TicketModel();
 const ticketRepository = new TicketRepository(ticketModel);
 const ticketService = new TicketService(ticketRepository);
+
+/*const userModel = new UserModel();
+const userRepository = new UserRepository(userModel);
+const userService = new UserService(userRepository);
+const userController = new UserController(userService);*/
 
 const customerModel = new CustomerModel();
 const customerRepository = new CustomerRepository(customerModel);
 const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
-const salesModel = new SalesModel();
-const salesRepository = new SalesRepository(salesModel);
-const salesService = new SalesService(salesRepository, ticketService, customerRepository);
-const salesController = new SalesController(salesService);
-
 const employeeModel = new EmployeeModel();
 const employeeRepository = new EmployeeRepository(employeeModel);
 const employeeService = new EmployeeService(employeeRepository);
 const employeeController = new EmployeeController(employeeService);
 
-export { customerController, salesController, employeeController };
+const salesModel = new SalesModel();
+const salesRepository = new SalesRepository(salesModel);
+const salesService = new SalesService(salesRepository, ticketService, customerRepository);
+const salesController = new SalesController(salesService);
+
+export {
+  //userController,
+  customerController,
+  employeeController,
+  salesController,
+};

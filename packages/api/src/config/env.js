@@ -9,7 +9,7 @@ const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
   : path.resolve(process.cwd(), '.env');
 
 if (!fs.existsSync(envPath)) {
-  throw new Error(`Arquivo de configuração de ambiente não encontrado: ${envPath}`);
+  throw new Error(`env.js: Arquivo de configuração de ambiente não encontrado: ${envPath}`);
 }
 
 dotenv.config({ path: envPath });
@@ -17,7 +17,7 @@ dotenv.config({ path: envPath });
 const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET', 'MERCADO_PAGO_ACCESS_TOKEN'];
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
-    throw new Error(`A variável de ambiente ${envVar} é necessária.`);
+    throw new Error(`env.js: A variável de ambiente ${envVar} é necessária.`);
   }
 });
 

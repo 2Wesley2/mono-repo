@@ -1,6 +1,6 @@
 import Model from '../../core/Model.js';
 import Database from '../../../database/index.js';
-import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 import { CUSTOMER, TICKET } from '../../constants/index.js';
 
 const customerSchema = {
@@ -25,13 +25,13 @@ class CustomerModel extends Model {
     try {
       const customer = await this.model.findOne({ cpf });
       if (!customer) {
-        config.logger.warn('Cliente não encontrado', { cpf });
+        debug.logger.warn('Cliente não encontrado', { cpf });
         return null;
       }
-      config.logger.info('Cliente encontrado', { cpf });
+      debug.logger.info('Cliente encontrado', { cpf });
       return customer;
     } catch (error) {
-      config.logger.error('Erro ao buscar cliente por CPF', { cpf, error });
+      debug.logger.error('Erro ao buscar cliente por CPF', { cpf, error });
       throw error;
     }
   }
@@ -45,10 +45,10 @@ class CustomerModel extends Model {
       customer.tickets.push(ticketId);
       const updatedCustomer = await customer.save();
 
-      config.logger.info('Ticket adicionado ao cliente', { cpf, ticketId });
+      debug.logger.info('Ticket adicionado ao cliente', { cpf, ticketId });
       return updatedCustomer;
     } catch (error) {
-      config.logger.error('Erro ao adicionar ticket ao cliente', { cpf, ticketId, error });
+      debug.logger.error('Erro ao adicionar ticket ao cliente', { cpf, ticketId, error });
       throw error;
     }
   }

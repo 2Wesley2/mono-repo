@@ -1,21 +1,21 @@
 import Service from '../../core/Service.js';
-import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 import AppError from '../../../errors/AppError.js';
 import { TICKET } from '../../constants/index.js';
 
 function validateTicket(ticket, clientCPF) {
   if (!ticket) {
-    config.logger.error('Ticket não encontrado');
+    debug.logger.error('Ticket não encontrado');
     throw new AppError(404, 'Ticket não encontrado.');
   }
 
   if (ticket.clientCPF !== clientCPF) {
-    config.logger.error('O ticket não pertence ao cliente informado.', { ticketCPF: ticket.clientCPF, clientCPF });
+    debug.logger.error('O ticket não pertence ao cliente informado.', { ticketCPF: ticket.clientCPF, clientCPF });
     throw new AppError(404, 'Ticket não encontrado.');
   }
 
   if (ticket.status !== 'available') {
-    config.logger.error('O ticket não está disponível para uso.', { ticketId: ticket._id, status: ticket.status });
+    debug.logger.error('O ticket não está disponível para uso.', { ticketId: ticket._id, status: ticket.status });
     throw new AppError(404, 'Ticket não encontrado.');
   }
 }
@@ -31,10 +31,10 @@ class TicketService extends Service {
       expiryDate.setMonth(expiryDate.getMonth() + 1);
       const data = { clientCPF, discount, expiryDate };
       const result = await this.repository.create(data);
-      config.logger.info('Serviço: Ticket criado com sucesso', { data: result });
+      debug.logger.info('Serviço: Ticket criado com sucesso', { data: result });
       return result;
     } catch (error) {
-      config.logger.error('Serviço: Erro ao criar ticket', { error });
+      debug.logger.error('Serviço: Erro ao criar ticket', { error });
       throw error;
     }
   }
@@ -44,10 +44,10 @@ class TicketService extends Service {
       const ticket = await this.repository.findById(ticketId);
       validateTicket(ticket, clientCPF);
       const updatedTicket = await this.repository.update(ticketId, { status: 'used' });
-      config.logger.info('Serviço: Ticket aplicado', { ticketId });
+      debug.logger.info('Serviço: Ticket aplicado', { ticketId });
       return updatedTicket;
     } catch (error) {
-      config.logger.error('Serviço: Erro ao aplicar ticket', { ticketId, error });
+      debug.logger.error('Serviço: Erro ao aplicar ticket', { ticketId, error });
       throw error;
     }
   }
@@ -55,10 +55,10 @@ class TicketService extends Service {
   async expireTickets() {
     try {
       const result = await this.repository.expireTickets();
-      config.logger.info('Serviço: Tickets expirados', { count: result.modifiedCount });
+      debug.logger.info('Serviço: Tickets expirados', { count: result.modifiedCount });
       return result;
     } catch (error) {
-      config.logger.error('Serviço: Erro ao expirar tickets', { error });
+      debug.logger.error('Serviço: Erro ao expirar tickets', { error });
       throw error;
     }
   }

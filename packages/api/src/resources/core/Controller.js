@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import config from '../../config/index.js';
+import debug from '../../debug/index.js';
 
 class Controller {
   constructor(service, documentName) {
@@ -19,10 +19,10 @@ class Controller {
   async create(req, res, next) {
     try {
       const document = await this.service.create(req.body);
-      config.logger.info(`Controlador: ${this.documentName} criado com sucesso`, { data: document });
+      debug.logger.info(`Controlador: ${this.documentName} criado com sucesso`, { data: document });
       res.status(201).json(document);
     } catch (error) {
-      config.logger.error(`Controlador: Erro ao criar ${this.documentName}`, { error });
+      debug.logger.error(`Controlador: Erro ao criar ${this.documentName}`, { error });
       next(error);
     }
   }
@@ -31,10 +31,10 @@ class Controller {
     try {
       const { id } = req.params;
       const document = await this.service.findById(id);
-      config.logger.info(`Controlador: ${this.documentName} encontrado`, { id });
+      debug.logger.info(`Controlador: ${this.documentName} encontrado`, { id });
       res.status(200).json(document);
     } catch (error) {
-      config.logger.error(`Controlador: Erro ao buscar ${this.documentName} por ID`, { id, error });
+      debug.logger.error(`Controlador: Erro ao buscar ${this.documentName} por ID`, { id, error });
       next(error);
     }
   }
@@ -44,10 +44,10 @@ class Controller {
       const { id } = req.params;
       const updatedData = req.body;
       const updatedDocument = await this.service.update(id, updatedData);
-      config.logger.info(`Controlador: ${this.documentName} atualizado`, { id, data: updatedDocument });
+      debug.logger.info(`Controlador: ${this.documentName} atualizado`, { id, data: updatedDocument });
       res.status(200).json(updatedDocument);
     } catch (error) {
-      config.logger.error(`Controlador: Erro ao atualizar ${this.documentName}`, { id, error });
+      debug.logger.error(`Controlador: Erro ao atualizar ${this.documentName}`, { id, error });
       next(error);
     }
   }
@@ -56,10 +56,10 @@ class Controller {
     try {
       const { id } = req.params;
       await this.service.delete(id);
-      config.logger.info(`Controlador:${this.documentName} deletado`, { id });
+      debug.logger.info(`Controlador:${this.documentName} deletado`, { id });
       res.status(204).json({ message: '' });
     } catch (error) {
-      config.logger.error(`Controlador: Erro ao deletar ${this.documentName}`, { id, error });
+      debug.logger.error(`Controlador: Erro ao deletar ${this.documentName}`, { id, error });
       next(error);
     }
   }

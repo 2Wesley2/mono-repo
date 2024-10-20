@@ -1,5 +1,5 @@
 import Model from '../../core/Model.js';
-import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 import { TICKET } from '../../constants/index.js';
 
 const ticketSchema = {
@@ -22,10 +22,10 @@ class TicketModel extends Model {
         { expiryDate: { $lt: now }, status: 'available' },
         { status: 'expired' },
       );
-      config.logger.info('Tickets expirados', { count: expiredTickets.modifiedCount });
+      debug.logger.info('Tickets expirados', { count: expiredTickets.modifiedCount });
       return expiredTickets;
     } catch (error) {
-      config.logger.error('Erro ao expirar tickets', { error });
+      debug.logger.error('Erro ao expirar tickets', { error });
       throw error;
     }
   }
