@@ -11,7 +11,6 @@ export default class Server {
   async init() {
     await this.app.configureApp();
     this.logEndpoints();
-    debug.logger.info('server.js: Endpoints do servidor listados.');
   }
 
   start() {

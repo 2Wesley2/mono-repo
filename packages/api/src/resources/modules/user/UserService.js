@@ -1,54 +1,28 @@
 import Service from '../../core/Service.js';
+import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import { USER } from '../../constants/index.js';
-
+import config from '../../../config/index.js';
+import debug from '../../../debug/index.js';
 class UserService extends Service {
   constructor(repository) {
     super(repository, USER);
-    this.secretKey = '';
-  }
-
-  generateToken(user) {
-    return jwt.sign({ id: user._id, role: user.role }, this.secretKey, { expiresIn: '1h' });
+    this.secretKey = config.jwtSecret;
   }
 
   async login(username, password) {
-    const user = await UserModel.findOne({ username });
-    if (!user || !(await user.comparePassword(password))) {
-      throw new Error('Credenciais inválidas');
-    }
-    const token = this.generateToken(user);
-    return { user, token };
-  }
-
-  verifyToken(token) {
     try {
-      return jwt.verify(token, this.secretKey);
-    } catch (error) {
-      throw new Error('Token inválido');
-    }
-  }
-
-  authenticate(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Acesso negado' });
-
-    try {
-      const decoded = this.verifyToken(token);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      return res.status(403).json({ error: 'Token inválido' });
-    }
-  }
-
-  authorize(roles) {
-    return (req, res, next) => {
-      if (!roles.includes(req.user.role)) {
-        return res.status(403).json({ error: 'Acesso proibido' });
+      const user = await this.repository.login(username, password);
+      if (!user) {
+        debug.logger.warn(`UserService.js: Login failed for user: ${username}`);
+        throw new Error('UserService.js: Usuário ou senha inválidos');
       }
-      next();
-    };
+      const token = AuthMiddleware.generateToken(user);
+      debug.logger.info(`UserService.js: ${username} logado com sucesso`);
+      return { user, token };
+    } catch (error) {
+      debug.logger.error(`UserService.js: Erro ao tentar logar ${username}: ${error.message}`);
+      throw error;
+    }
   }
 }
-
 export default UserService;

@@ -4,7 +4,7 @@ import debug from '../debug/index.js';
 import config from '../config/index.js';
 import loaders from '../loaders/index.js';
 import errorHandler from '../middlewares/errorHandler.js';
-import { customerController, employeeController, salesController } from '../resources/modules/index.js';
+import { customerController, employeeController, salesController, userController } from '../resources/modules/index.js';
 
 export default class App {
   constructor() {
@@ -45,6 +45,7 @@ export default class App {
       this.app.use('/api/customer', customerController.getRouter());
       this.app.use('/api/employee', employeeController.getRouter());
       this.app.use('/api/sale', salesController.getRouter());
+      this.app.use('/api/user', userController.getRouter());
     } catch (error) {
       debug.logger.error('app.js: Erro ao definir rotas para os controladores:', error);
       throw error;

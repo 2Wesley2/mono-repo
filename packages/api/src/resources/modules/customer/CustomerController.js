@@ -1,6 +1,9 @@
 import Controller from '../../core/Controller.js';
 import debug from '../../../debug/index.js';
 import { CUSTOMER } from '../../constants/index.js';
+import AuthMiddleware from '../../../middlewares/authMiddleware.js';
+import AuthorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';
+
 class CustomerController extends Controller {
   constructor(service) {
     super(service, CUSTOMER);
@@ -9,6 +12,12 @@ class CustomerController extends Controller {
 
   initializeCustomRoutes() {
     this.router.get('/:cpf', this.findByCPF.bind(this));
+    this.router.post(
+      '/',
+      AuthMiddleware.authenticate,
+      AuthorizationMiddleware.authorize(['admin']),
+      this.create.bind(this),
+    );
   }
 
   async findByCPF(req, res, next) {
