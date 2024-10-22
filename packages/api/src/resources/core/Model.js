@@ -3,7 +3,7 @@ import debug from '../../debug/index.js';
 
 class Model {
   constructor(schema, modelName) {
-    this.model = loaders.mongoose.registerModel({ schema, modelName });
+    this.model = loaders.mongoose.registerModel(schema, modelName);
     this.modelName = modelName;
   }
 

@@ -1,4 +1,5 @@
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import debug from '../debug/index.js';
 import config from '../config/index.js';
@@ -35,6 +36,7 @@ export default class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cors());
+    this.app.use(cookieParser());
     debug.logger.info('app.js: Middlewares de parsing e CORS configurados.');
   }
 

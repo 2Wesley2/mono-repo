@@ -11,7 +11,9 @@
   },
   "workspaces": [
     "packages/api",
-    "packages/ui"
+    "packages/ui",
+    "packages/backend-for-frontend"
+    
   ],
   "dependencies": {},
   "devDependencies": {

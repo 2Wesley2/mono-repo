@@ -1,17 +1,16 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/index.js';
+import debug from '../debug/index.js';
 
 class AuthMiddleware {
-  constructor() {
-    this.secretKey = config.jwtSecret;
-  }
+  static secretKey = config.jwtSecret;
 
-  generateToken(user) {
+  static generateToken(user) {
     const payload = { id: user._id, role: user.role };
     return jwt.sign(payload, this.secretKey, { expiresIn: '1h' });
   }
 
-  verifyToken(token) {
+  static verifyToken(token) {
     try {
       return jwt.verify(token, this.secretKey);
     } catch (error) {
@@ -19,8 +18,8 @@ class AuthMiddleware {
     }
   }
 
-  authenticate(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
+  static authenticate(req, res, next) {
+    const token = req.cookies?.token;
     if (!token) return res.status(401).json({ message: 'Autenticação necessária' });
 
     try {
@@ -32,19 +31,34 @@ class AuthMiddleware {
     }
   }
 
-  blockIfAuthenticated(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (token) {
-      try {
-        this.verifyToken(token);
-        return res.status(400).json({ message: 'Você já está logado' }); // Block the login attempt
-      } catch (error) {
-        next();
-      }
-    } else {
-      next();
+  static blockIfAuthenticated(req, res, next) {
+    const token = req.cookies.token;
+
+    // Verifica se o token está presente nos cookies
+    if (!token) {
+      debug.logger.info('blockIfAuthenticated: Nenhum token encontrado. Permitir login.');
+      return next(); // Permite login se não houver token
     }
+
+    try {
+      // Verifica se o token é válido
+      const decoded = this.verifyToken(token);
+
+      // Se o token for válido, bloqueia a requisição de login
+      if (decoded) {
+        debug.logger.info('blockIfAuthenticated: Token válido encontrado. Bloqueando login.');
+        return res.status(403).json({ message: 'Você já está autenticado' });
+      }
+    } catch (error) {
+      // Se o token for inválido ou expirado, permite que o fluxo continue
+      debug.logger.warn(`blockIfAuthenticated: Token inválido ou expirado. Erro: ${error.message}`);
+      return next();
+    }
+  }
+
+  static logout(req, res) {
+    res.clearCookie('token');
   }
 }
 
-export default new AuthMiddleware();
+export default AuthMiddleware;
