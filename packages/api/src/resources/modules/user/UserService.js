@@ -1,11 +1,9 @@
-import Service from '../../core/Service.js';
 import AuthMiddleware from '../../../middlewares/authMiddleware.js';
-import { USER } from '../../constants/index.js';
 import config from '../../../config/index.js';
 import debug from '../../../debug/index.js';
-class UserService extends Service {
+class UserService {
   constructor(repository) {
-    super(repository, USER);
+    this.repository = repository;
     this.secretKey = config.jwtSecret;
   }
 
@@ -15,29 +13,28 @@ class UserService extends Service {
         throw new Error('Username e password são obrigatórios');
       }
 
-      debug.logger.info('UserService.js: criando usuário');
       const user = await this.repository.create(data);
-      debug.logger.info(`UserService.js: Usuário ${data.username} criado com sucesso`);
       return user;
     } catch (error) {
-      debug.logger.error(`UserService.js: Erro ao criar usuário ${data.username}: ${error.message}`);
       throw error;
     }
   }
 
   async login(username, password) {
     try {
-      debug.logger.info(`UserService: Iniciando login para ${username}`);
+      debug.logger.info(`UserService: Delegando login para camada de e esperando a resposta`);
       const user = await this.repository.login(username, password);
-      if (!user) {
-        debug.logger.warn(`UserService: Login falhou para ${username}. Usuário ou senha inválidos.`);
-        throw new Error('UserService.js: Usuário ou senha inválidos');
-      }
+      debug.logger.info(`UserService: O ${username} pode fazer o login!`);
+      debug.logger.info(`UserService: iniciando processo de geração de token`);
+
       const token = AuthMiddleware.generateToken(user);
-      debug.logger.info(`UserService: Login bem-sucedido para ${username}. Token gerado.`);
+      debug.logger.info(`UserService: ${token} gerado para ${user}`);
       return { user, token };
     } catch (error) {
-      debug.logger.error(`UserService: Erro ao tentar logar ${username}. Erro: ${error.message}`);
+      debug.logger.warn(`UserService: ocorreu um erro no login na camada de serviço`);
+      if (error.status === 401) {
+        throw { status: 401, message: error.message };
+      }
       throw error;
     }
   }

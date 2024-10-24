@@ -6,7 +6,10 @@ class AuthMiddleware {
   static secretKey = config.jwtSecret;
 
   static generateToken(user) {
+    debug.logger.info(`AuthMiddleware.js: construindo payload para o ${user} dentro do método generate token`);
     const payload = { id: user._id, role: user.role };
+    debug.logger.info(`AuthMiddleware.js: payload construindo: ${payload} `);
+    debug.logger.info(`AuthMiddleware.js: construindo o token com o payload`);
     return jwt.sign(payload, this.secretKey, { expiresIn: '1h' });
   }
 
@@ -19,7 +22,7 @@ class AuthMiddleware {
   }
 
   static authenticate(req, res, next) {
-    const token = req.cookies?.token;
+    const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Autenticação necessária' });
 
     try {
@@ -34,10 +37,9 @@ class AuthMiddleware {
   static blockIfAuthenticated(req, res, next) {
     const token = req.cookies.token;
 
-    // Verifica se o token está presente nos cookies
     if (!token) {
       debug.logger.info('blockIfAuthenticated: Nenhum token encontrado. Permitir login.');
-      return next(); // Permite login se não houver token
+      return next();
     }
 
     try {

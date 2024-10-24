@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import debug from '../../../debug/index.js';
 import Model from '../../core/Model.js';
 import { USER } from '../../constants/index.js';
+import debug from '../../../debug/index.js';
 
 const userSchema = {
   username: { type: String, required: true, unique: true },
@@ -17,12 +17,9 @@ class UserModel extends Model {
     try {
       const { username, password, role } = data;
       const hashedPassword = await bcrypt.hash(password, 12);
-      debug.logger.info('UserModel.js: criando usuário');
       const user = await this.model.create({ username, password: hashedPassword, role });
-      debug.logger.info(`UserModel.js: Usuário ${username} criado!`);
       return user;
     } catch (error) {
-      debug.logger.error(`UserModel.js: ${error.message}`);
       throw error;
     }
   }
@@ -33,17 +30,24 @@ class UserModel extends Model {
 
   async login(username, password) {
     try {
-      debug.logger.info(`UserModel: Buscando usuário ${username} no banco de dados`);
+      debug.logger.info(`UserModel: inciando método de login`);
+      debug.logger.info(`UserModel: inciando procura pelo ${username} no MongoDB`);
       const user = await this.model.findOne({ username });
-      const isMatch = await this.comparePassword(password, user.password);
-      if (!isMatch || !user) {
-        debug.logger.warn(`UserModel: Senha inválida para usuário ${username}`);
-        throw new Error('Senha ou usuário inválido');
+      if (!user) {
+        debug.logger.warn(`UserModel: ${username} não encontrado`);
+        throw { status: 401, message: 'Usuário ou senha inválidos' };
       }
-      debug.logger.info(`UserModel: Login realizado com sucesso para ${username}`);
+      debug.logger.info(`UserModel: ${username} encontrado!`);
+      debug.logger.info(`UserModel: iniciando validação da senha fornecida`);
+
+      const isMatch = await this.comparePassword(password, user.password);
+      if (!isMatch) {
+        debug.logger.warn(`UserModel: ${password} inválida`);
+        throw { status: 401, message: 'Usuário ou senha inválidos' };
+      }
+
       return user;
     } catch (error) {
-      debug.logger.error(`UserModel: Erro ao realizar login para ${username}. Erro: ${error.message}`);
       throw error;
     }
   }

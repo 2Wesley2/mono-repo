@@ -1,7 +1,7 @@
-//Client Component
+// Client Component
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -12,79 +12,77 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import ForgotPassword from './ForgotPassword';
 import { useRouter } from 'next/navigation';
-import { login } from '../../../../services/fetch';
+import { login } from '../../../../../fetch';
 
 export default function SignInForm() {
-  console.log(`SignInForm: Client-side render at ${new Date().toISOString()}`);
-
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [formErrors, setFormErrors] = useState({
+    username: { error: false, message: '' },
+    password: { error: false, message: '' },
+  });
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const handleClickOpen = useCallback(() => setOpen(true), []);
+  const handleClose = useCallback(() => setOpen(false), []);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const validateInputs = useCallback((username, password) => {
+    let valid = true;
+    const newErrors = { username: { error: false, message: '' }, password: { error: false, message: '' } };
 
-  const handleSubmit = async (event) => {
+    if (!username || !/\S+@\S+\.\S+/.test(username)) {
+      newErrors.username.error = true;
+      newErrors.username.message = 'Por favor, insira um nome de usuário válido.';
+      valid = false;
+    }
+    if (!password || password.length < 6) {
+      newErrors.password.error = true;
+      newErrors.password.message = 'A senha deve ter pelo menos 6 caracteres.';
+      valid = false;
+    }
+
+    setFormErrors(newErrors);
+    return valid;
+  }, []);
+
+  const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
-    if (validateInputs()) {
-      const data = new FormData(event.currentTarget);
-      const email = data.get('email');
-      const password = data.get('password');
-      try {
-        const response = await login(email, password);
-        if (response) {
-          router.push('/');
-        }
-      } catch (error) {
-        console.error('Login error:', error.message);
+    
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get('username');
+    const password = formData.get('password');
+
+    if (!validateInputs(username, password)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await login(username, password);
+      if (response) {
+        router.push('/');
       }
+    } catch (error) {
+      setFormErrors((prev) => ({
+        ...prev,
+        password: { error: true, message: 'Falha no login. Verifique suas credenciais.' },
+      }));
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
-  };
+  }, [validateInputs, router]);
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <FormControl>
-        <FormLabel htmlFor="email">Email</FormLabel>
+        <FormLabel htmlFor="username">Nome de Usuário</FormLabel> {/* Alterado de 'email' para 'username' */}
         <TextField
-          error={emailError}
-          helperText={emailErrorMessage}
-          id="email"
-          type="email"
-          name="email"
+          error={formErrors.username.error}
+          helperText={formErrors.username.message}
+          id="username"
+          type="text"
+          name="username"
           placeholder="seuemail@email.com"
           required
           fullWidth
@@ -96,8 +94,8 @@ export default function SignInForm() {
           <Link component="button" onClick={handleClickOpen} variant="body2">Esqueceu sua senha?</Link>
         </Box>
         <TextField
-          error={passwordError}
-          helperText={passwordErrorMessage}
+          error={formErrors.password.error}
+          helperText={formErrors.password.message}
           name="password"
           placeholder="••••••"
           type="password"
@@ -108,7 +106,9 @@ export default function SignInForm() {
       </FormControl>
       <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Lembrar senha" />
       <ForgotPassword open={open} handleClose={handleClose} />
-      <Button type="submit" fullWidth variant="contained">Entre</Button>
+      <Button type="submit" fullWidth variant="contained" disabled={isSubmitting}>
+        {isSubmitting ? 'Carregando...' : 'Entrar'}
+      </Button>
     </Box>
   );
 }

@@ -1,12 +1,11 @@
 import Controller from '../../core/Controller.js';
-import { USER } from '../../constants/index.js';
 import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import debug from '../../../debug/index.js';
-
 class UserController extends Controller {
   constructor(service) {
-    super(service, USER);
+    super();
     this.initializeCustomRoutes();
+    this.service = service;
   }
 
   initializeCustomRoutes() {
@@ -22,34 +21,40 @@ class UserController extends Controller {
         return res.status(400).json({ message: 'Username e password são obrigatórios' });
       }
 
-      debug.logger.info('UserController.js: criando usuário');
       const user = await this.service.create({ username, password, role });
-      debug.logger.info(`UserController.js: Usuário ${username} criado`);
       res.status(201).json(user);
     } catch (error) {
-      debug.logger.error(`UserController.js: Erro ao criar usuário: ${error.message}`);
       next(error);
     }
   }
 
   async login(req, res, next) {
     try {
+      debug.logger.info('UserController: iniciando método de login na camada de UserController.');
+      debug.logger.info('UserController: extraindo username e password do body da requisição');
       const { username, password } = req.body;
-      debug.logger.info(`UserController: Iniciando login para ${username}`);
-
+      debug.logger.info(`UserController: ${username} e ${password} extraídos do body`);
+      debug.logger.info(
+        `UserController: delegando login para camada de service passando o username e password extraídos do body`,
+      );
       const { user, token } = await this.service.login(username, password);
+      debug.logger.info(`UserController: ${user} e ${token} obtidos da camada de serviço`);
+      debug.logger.info(`UserController: passando o token para o cookie na resposta ao usuário`);
 
-      res.cookie('token', token, {
+      res.cookie('wfSystem', token, {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',
         maxAge: 3600000,
       });
-
-      debug.logger.info(`UserController: Login realizado com sucesso para ${username}`);
-      res.status(200).json({ user });
+      debug.logger.info(`UserController: cookie enviado`);
+      res.status(200).json({ id: user._id, username: user.username });
+      debug.logger.info(`UserController: finalizado`);
     } catch (error) {
-      debug.logger.error(`UserController: Erro ao logar ${req.body.username}. Erro: ${error.message}`);
+      debug.logger.warn(`UserController: problema de login na camada de controller`);
+      if (error.status === 401) {
+        return res.status(401).json({ message: 'Usuário ou senha inválidos' });
+      }
       next(error);
     }
   }
@@ -57,10 +62,8 @@ class UserController extends Controller {
   async logout(req, res, next) {
     try {
       AuthMiddleware.logout(req, res);
-      debug.logger.info('UserController.js: logout realizado com sucesso');
       res.status(200).json({ message: 'Logout realizado com sucesso' });
     } catch (error) {
-      debug.logger.error('UserController.js: erro ao realizar logout');
       next(error);
     }
   }

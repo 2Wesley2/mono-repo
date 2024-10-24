@@ -1,15 +1,12 @@
-import Repository from '../../core/Repository.js';
-import { USER } from '../../constants/index.js';
 import debug from '../../../debug/index.js';
 
-class UserRepository extends Repository {
+class UserRepository {
   constructor(model) {
-    super(model, USER);
+    this.model = model;
   }
 
   async create(data) {
     try {
-      debug.logger.info('UserRepository.js: criando usuário');
       return await this.model.create(data);
     } catch (error) {
       throw new Error(`UserRepository.js: Erro ao criar usuário: ${error.message}`);
@@ -18,10 +15,14 @@ class UserRepository extends Repository {
 
   async login(username, password) {
     try {
-      debug.logger.info(`UserRepository: Tentando logar usuário ${username}`);
-      return this.model.login(username, password);
+      debug.logger.info(`UserRepository: Entrando no método de login do UserRepository.js`);
+      debug.logger.info(`UserRepository: Delegando login para camada de modelo`);
+      return await this.model.login(username, password);
     } catch (error) {
-      debug.logger.error(`UserRepository: Erro ao logar usuário ${username}. Erro: ${error.message}`);
+      debug.logger.warn(`UserRepository: Falha ao delegar login para a camada de modelo `);
+      if (error.status === 401) {
+        throw { status: 401, message: error.message };
+      }
       throw error;
     }
   }
