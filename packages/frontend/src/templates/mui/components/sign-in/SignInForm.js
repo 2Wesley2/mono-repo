@@ -47,7 +47,7 @@ export default function SignInForm() {
 
   const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
-    
+
     const formData = new FormData(event.currentTarget);
     const username = formData.get('username');
     const password = formData.get('password');
@@ -61,7 +61,9 @@ export default function SignInForm() {
     try {
       const response = await login(username, password);
       if (response) {
-        router.push('/');
+        // Configurar o cookie JWT no login (depende de como o JWT é tratado no backend)
+        // Certifique-se de que o login retorne e configure o token no lado do cliente
+        router.push('/');  // Redireciona o usuário para a página inicial após o login bem-sucedido
       }
     } catch (error) {
       setFormErrors((prev) => ({
@@ -73,10 +75,11 @@ export default function SignInForm() {
     }
   }, [validateInputs, router]);
 
+
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <FormControl>
-        <FormLabel htmlFor="username">Nome de Usuário</FormLabel> {/* Alterado de 'email' para 'username' */}
+        <FormLabel htmlFor="username">Nome de Usuário</FormLabel>
         <TextField
           error={formErrors.username.error}
           helperText={formErrors.username.message}
