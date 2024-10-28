@@ -1,5 +1,6 @@
-import { CUSTOMER } from '../../constants/index.js';
+import { EMPLOYEE } from '../../constants/index.js';
 import Model from '../../core/Model.js';
+import debug from '../../../debug/index.js';
 
 const employeeSchema = {
   name: {
@@ -15,13 +16,13 @@ const employeeSchema = {
 
 class EmployeeModel extends Model {
   constructor() {
-    super(employeeSchema, CUSTOMER);
+    super(employeeSchema, EMPLOYEE);
   }
 
   async create(data) {
     try {
-      const employee = this.model.create(data);
-      return await employee.save();
+      const employee = await this.model.create(data);
+      return employee;
     } catch (error) {
       throw new Error('Erro ao criar o funcionário: ' + error.message);
     }

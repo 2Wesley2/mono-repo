@@ -126,9 +126,6 @@ ${error.message}`);
    * @returns {mongoose.Model} - O modelo registrado.
    */
   static registerModel({ schema, modelName, options = {} }) {
-    if (mongoose.modelNames().includes(modelName)) {
-      return mongoose.model(modelName);
-    }
     const newSchema = this.configSchema({ schema, options });
     return mongoose.model(modelName, newSchema);
   }
