@@ -12,7 +12,7 @@ import {
 import { Search as SearchIcon } from '@mui/icons-material';
 import EmployeeTable from '../components/EmployeeTable';
 import EmployeeDialog from '../components/EmployeeDialog';
-import useDebounce from '../hooks/useDebounce';
+import useDebounce from '../src/hooks/useDebounce';
 import { getEmployees, addEmployee, editEmployee, deleteEmployee } from '../services/employeeService';
 
 const EmployeeManagement = () => {
