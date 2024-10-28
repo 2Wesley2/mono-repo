@@ -1,5 +1,3 @@
-// src/app/gerenciar-funcionarios/layout.js
-
 import React from 'react';
 import { Typography, Box } from '@mui/material';
 import { getEmployees } from '../../service/fetch';

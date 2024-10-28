@@ -1,6 +1,19 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/fetch';
+import {
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  TextField,
+  Button,
+  Box,
+} from '@mui/material';
+import { getCustomer, addCustomer, editCustomer, deleteCustomer } from '../../service/fetch';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -9,8 +22,8 @@ const CustomerManagement = () => {
 
   const loadCustomers = async () => {
     try {
-      const customerList = await getCustomers();
-      console.log('Clientes recebidos do backend:', customerList); 
+      const customerList = await getCustomer();
+      console.log('Clientes recebidos do backend:', customerList);
       setCustomers(customerList);
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
@@ -62,15 +75,17 @@ const CustomerManagement = () => {
       console.error('Erro ao excluir cliente:', error);
     }
   };
-  
+
 
   return (
-    <div>
-      <h1>Gerenciamento de Clientes</h1>
+    <Container>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Gerenciamento de Clientes
+      </Typography>
       {customers.length === 0 ? (
-        <p>Não há clientes cadastrados.</p>
+        <Typography variant="body1">Não há clientes cadastrados.</Typography>
       ) : (
-        <ul>
+        <List>
           {customers.map((customer) => {
             if (!customer._id) {
               console.error('Cliente sem _id encontrado:', customer);
@@ -78,33 +93,45 @@ const CustomerManagement = () => {
             }
 
             return (
-              <li key={customer._id}>
-                {customer.name} - {customer.email}
-                <button onClick={() => handleEditCustomer(customer._id)}>Editar</button>
-                <button onClick={() => handleDeleteCustomer(customer._id)}>Excluir</button>
-              </li>
+              <ListItem key={customer._id} secondaryAction={
+                <Box>
+                  <IconButton edge="end" aria-label="editar" onClick={() => handleEditCustomer(customer._id)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="excluir" onClick={() => handleDeleteCustomer(customer._id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              }>
+                <ListItemText primary={customer.name} secondary={customer.email} />
+              </ListItem>
             );
           })}
-        </ul>
+        </List>
       )}
 
-      <h2>{editingCustomerId ? 'Editar Cliente' : 'Registrar Cliente'}</h2>
-      <input
-        type="text"
-        placeholder="Nome"
-        value={newCustomer.name}
-        onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={newCustomer.email}
-        onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-      />
-      <button onClick={handleAddCustomer}>
-        {editingCustomerId ? 'Salvar Alterações' : 'Registrar Cliente'}
-      </button>
-    </div>
+      <Typography variant="h5" component="h2" gutterBottom>
+        {editingCustomerId ? 'Editar Cliente' : 'Registrar Cliente'}
+      </Typography>
+      <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
+        <TextField
+          label="Nome"
+          value={newCustomer.name}
+          onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+          fullWidth
+        />
+        <TextField
+          label="Email"
+          type="email"
+          value={newCustomer.email}
+          onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+          fullWidth
+        />
+        <Button variant="contained" color="primary" onClick={handleAddCustomer}>
+          {editingCustomerId ? 'Salvar Alterações' : 'Registrar Cliente'}
+        </Button>
+      </Box>
+    </Container>
   );
 };
 
