@@ -21,6 +21,18 @@ class CustomerModel extends Model {
     super(customerSchema, CUSTOMER);
   }
 
+  async create(customerData) {
+    try {
+      const newCustomer = this.model.create(customerData);
+      await newCustomer.save();
+      debug.logger.info('Novo cliente criado', { customerData });
+      return newCustomer;
+    } catch (error) {
+      debug.logger.error('Erro ao criar novo cliente', { customerData, error });
+      throw error;
+    }
+  }
+
   async findByCPF(cpf) {
     try {
       const customer = await this.model.findOne({ cpf });
@@ -35,15 +47,18 @@ class CustomerModel extends Model {
       throw error;
     }
   }
+
   async addTicket(cpf, ticketId) {
     try {
-      const customer = await this.findByCPF(cpf);
-      if (!customer) {
+      const updatedCustomer = await this.model.findOneAndUpdate(
+        { cpf },
+        { $push: { tickets: ticketId } },
+        { new: true },
+      );
+
+      if (!updatedCustomer) {
         throw new Error('Cliente não encontrado');
       }
-
-      customer.tickets.push(ticketId);
-      const updatedCustomer = await customer.save();
 
       debug.logger.info('Ticket adicionado ao cliente', { cpf, ticketId });
       return updatedCustomer;

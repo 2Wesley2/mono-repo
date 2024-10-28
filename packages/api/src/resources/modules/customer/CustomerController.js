@@ -1,12 +1,12 @@
 import Controller from '../../core/Controller.js';
 import debug from '../../../debug/index.js';
-import { CUSTOMER } from '../../constants/index.js';
 import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import AuthorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';
 
 class CustomerController extends Controller {
   constructor(service) {
-    super(service, CUSTOMER);
+    super();
+    this.service = service;
     this.initializeCustomRoutes();
   }
 
@@ -18,6 +18,18 @@ class CustomerController extends Controller {
       AuthorizationMiddleware.authorize(['admin']),
       this.create.bind(this),
     );
+  }
+
+  async create(req, res, next) {
+    try {
+      const customerData = req.body;
+      const newCustomer = await this.service.createCustomer(customerData);
+      debug.logger.info('Controlador: Cliente criado com sucesso', { customerData });
+      res.status(201).json(newCustomer);
+    } catch (error) {
+      debug.logger.error('Controlador: Erro ao criar cliente', { error });
+      next(error);
+    }
   }
 
   async findByCPF(req, res, next) {

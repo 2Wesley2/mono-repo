@@ -1,7 +1,5 @@
-import Service from '../../core/Service.js';
 import debug from '../../../debug/index.js';
 import AppError from '../../../errors/AppError.js';
-import { TICKET } from '../../constants/index.js';
 
 function validateTicket(ticket, clientCPF) {
   if (!ticket) {
@@ -20,9 +18,9 @@ function validateTicket(ticket, clientCPF) {
   }
 }
 
-class TicketService extends Service {
+class TicketService {
   constructor(repository) {
-    super(repository, TICKET);
+    this.repository = repository;
   }
 
   async create(clientCPF, discount) {

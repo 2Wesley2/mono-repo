@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import Controller from '../../core/Controller.js';
 
-class EmployeeController {
+class EmployeeController extends Controller {
   constructor(service) {
+    super();
     this.service = service;
-    this.router = Router();
     this.initializeRoutes();
   }
 
@@ -13,10 +13,6 @@ class EmployeeController {
     this.router.get('/:id', this.getEmployeeById.bind(this));
     this.router.put('/:id', this.updateEmployee.bind(this));
     this.router.delete('/:id', this.deleteEmployee.bind(this));
-  }
-
-  getRouter() {
-    return this.router;
   }
 
   async getAllEmployees(req, res, next) {

@@ -1,10 +1,20 @@
-import Repository from '../../core/Repository.js';
 import debug from '../../../debug/index.js';
 import { CUSTOMER } from '../../constants/index.js';
 
-class CustomerRepository extends Repository {
+class CustomerRepository {
   constructor(model) {
-    super(model, CUSTOMER);
+    this.model = model;
+  }
+
+  async createCustomer(customerData) {
+    try {
+      const newCustomer = await this.model.create(customerData);
+      debug.logger.info(`Repositório: Novo ${CUSTOMER} criado`, { customerData });
+      return newCustomer;
+    } catch (error) {
+      debug.logger.error(`Repositório: Erro ao criar ${CUSTOMER}`, { customerData, error });
+      throw error;
+    }
   }
 
   async findByCPF(cpf) {
@@ -20,9 +30,9 @@ class CustomerRepository extends Repository {
 
   async addTicketToCustomer(cpf, ticketId) {
     try {
-      const result = await this.model.findOneAndUpdate({ cpf }, { $push: { tickets: ticketId } }, { new: true });
+      const updatedCustomer = await this.model.addTicket(cpf, ticketId);
       debug.logger.info(`Repositório: Ticket adicionado ao cliente ${CUSTOMER}`, { cpf, ticketId });
-      return result;
+      return updatedCustomer;
     } catch (error) {
       debug.logger.error(`Repositório: Erro ao adicionar ticket ao ${CUSTOMER}`, { cpf, ticketId, error });
       throw error;

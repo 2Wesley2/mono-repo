@@ -1,4 +1,5 @@
-import Database from '../../../database/index.js';
+import { CUSTOMER } from '../../constants/index.js';
+import Model from '../../core/Model.js';
 
 const employeeSchema = {
   name: {
@@ -12,18 +13,14 @@ const employeeSchema = {
   },
 };
 
-const Employee = Database.registerModel({
-  schema: employeeSchema,
-  modelName: 'Employee',
-});
-
-class EmployeeModel {
+class EmployeeModel extends Model {
   constructor() {
-    this.employeeModel = Employee;
+    super(employeeSchema, CUSTOMER);
   }
+
   async create(data) {
     try {
-      const employee = this.employeeModel(data);
+      const employee = this.model.create(data);
       return await employee.save();
     } catch (error) {
       throw new Error('Erro ao criar o funcionário: ' + error.message);
@@ -32,7 +29,7 @@ class EmployeeModel {
 
   async findById(id) {
     try {
-      return await this.employeeModel.findById(id);
+      return await this.model.findById(id);
     } catch (error) {
       throw new Error('Erro ao buscar o funcionário: ' + error.message);
     }
@@ -40,7 +37,7 @@ class EmployeeModel {
 
   async findAll(filters = {}, options = {}) {
     try {
-      return await this.employeeModel.find(filters, null, options);
+      return await this.model.find(filters, null, options);
     } catch (error) {
       throw new Error('Erro ao buscar funcionários: ' + error.message);
     }
@@ -48,7 +45,7 @@ class EmployeeModel {
 
   async update(id, data) {
     try {
-      return await this.employeeModel.findByIdAndUpdate(id, data, {
+      return await this.model.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
       });
@@ -59,7 +56,7 @@ class EmployeeModel {
 
   async delete(id) {
     try {
-      return await this.employeeModel.findByIdAndDelete(id);
+      return await this.model.findByIdAndDelete(id);
     } catch (error) {
       throw new Error('Erro ao deletar o funcionário: ' + error.message);
     }

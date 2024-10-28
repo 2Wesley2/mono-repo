@@ -1,11 +1,9 @@
-import Service from '../../core/Service.js';
 import debug from '../../../debug/index.js';
-import { SALES } from '../../constants/index.js';
 import AppError from '../../../errors/AppError.js';
 
-class SalesService extends Service {
+class SalesService {
   constructor(repository, ticketService, customerRepository) {
-    super(repository, SALES);
+    this.repository = repository;
     this.ticketService = ticketService;
     this.customerRepository = customerRepository;
   }

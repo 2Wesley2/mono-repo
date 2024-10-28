@@ -46,13 +46,10 @@ class EmployeeService {
 
   async deleteEmployee(id) {
     this.validateObjectId(id);
-
     const deletedEmployee = await this.repository.delete(id);
-
     if (!deletedEmployee) {
       throw new AppError(404, 'Funcionário não encontrado para remoção.');
     }
-
     return;
   }
 }

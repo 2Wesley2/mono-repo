@@ -1,9 +1,7 @@
-import Repository from '../../core/Repository.js';
 import debug from '../../../debug/index.js';
-import { TICKET } from '../../constants/index.js';
-class TicketRepository extends Repository {
+class TicketRepository {
   constructor(model) {
-    super(model, TICKET);
+    this.model = model;
   }
 
   async expireTickets() {
