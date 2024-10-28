@@ -43,4 +43,6 @@ const EmployeeTable = React.memo(({ employees, onEdit, onDelete }) => (
   </TableContainer>
 ));
 
+EmployeeTable.displayName = 'EmployeeTable';
+
 export default EmployeeTable;

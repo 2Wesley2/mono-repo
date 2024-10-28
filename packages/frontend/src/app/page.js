@@ -15,7 +15,6 @@ const Home = ({ children }) => {
     { path: '/gerenciar-funcionarios', name: 'Gerenciar Funcionários' },
     { path: '/gerenciar-clientes', name: 'Gerenciar Clientes' },
     { path: '/escolher-cliente', name: 'Escolher Cliente' },
-    { path: '/checkout', name: 'Checkout' },
   ];
 
   const toggleDrawer = (open) => {

@@ -12,7 +12,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import ForgotPassword from './ForgotPassword';
 import { useRouter } from 'next/navigation';
-import { login } from '../../../../../fetch';
+import { login } from '../../../../service/fetch';
 
 export default function SignInForm() {
   const [formErrors, setFormErrors] = useState({
