@@ -8,9 +8,9 @@ export default function RootLayout({ children }) {
   console.log(`renderizando no servidor`)
   return (
     <html lang="pt-br">
-      <body>
+      <body id="LAYOUTJS">
         {children}
       </body>
     </html>
   );
-}
+};

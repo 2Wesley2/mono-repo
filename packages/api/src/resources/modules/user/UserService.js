@@ -27,7 +27,7 @@ class UserService {
       debug.logger.info(`UserService: O ${username} pode fazer o login!`);
       debug.logger.info(`UserService: iniciando processo de geração de token`);
 
-      const token = AuthMiddleware.generateToken(user);
+      const token = await AuthMiddleware.generateToken(user);
       debug.logger.info(`UserService: ${token} gerado para ${user}`);
       return { user, token };
     } catch (error) {

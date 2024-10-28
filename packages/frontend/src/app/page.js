@@ -1,14 +1,8 @@
-
-
-export default function Home() {
-  console.log("renderizando no client")
+export default function HomePage() {
   return (
     <div>
-
-
-
-      <p>AAAAAAAAAAAA</p>
+      <h1>Bem-vindo ao WFSystem</h1>
+      <p>Esta é a página inicial da aplicação.</p>
     </div>
-
   );
 }

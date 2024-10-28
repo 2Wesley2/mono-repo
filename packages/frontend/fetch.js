@@ -1,4 +1,4 @@
-import env from './env/index'
+import env from './src/env/index'
 
 const apiBaseUrl = env.apiBaseUrl;
 console.log("API Base URL (fetch.js):", apiBaseUrl);
