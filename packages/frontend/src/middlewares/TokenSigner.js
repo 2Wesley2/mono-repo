@@ -8,8 +8,8 @@ class TokenSigner {
   async sign(payload) {
     const secret = this.tokenValidator.getSecret();
     if (!secret) {
-      console.log('Chave de criptografia não encontrada.', 'ERROR');
-      throw new Error('Erro ao obter chave de criptografia.');
+      console.log('TokenSigner.js: Chave de criptografia não encontrada.', 'ERROR');
+      throw new Error('TokenSigner.js: Erro ao obter chave de criptografia.');
     }
     try {
       const token = await new SignJWT(payload)
@@ -17,10 +17,10 @@ class TokenSigner {
         .setIssuedAt()
         .setExpirationTime('2h')
         .sign(secret);
-      console.log('Payload assinado com sucesso.');
+      console.log('TokenSigner.js: Payload assinado com sucesso.');
       return token;
     } catch (error) {
-      console.log('Erro ao assinar o payload.', 'ERROR', { error: error.message });
+      console.log('TokenSigner.js: Erro ao assinar o payload.', 'ERROR', { error: error.message });
       throw error;
     }
   }

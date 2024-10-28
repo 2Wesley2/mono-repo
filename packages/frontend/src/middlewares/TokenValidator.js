@@ -7,14 +7,14 @@ class TokenValidator {
 
   async isValid(token) {
     if (!token) {
-      console.log('Token ausente ou indefinido.', 'WARN');
+      console.log('TokenValidator.js: Token ausente ou indefinido.', 'WARN');
       return false;
     }
     try {
       await jwtVerify(token, this.secret, { algorithms: ['HS256'] });
       return true;
     } catch (error) {
-      console.log('Erro na verificação do token.', 'ERROR', { error: error.message });
+      console.log('TokenValidator.js: Erro na verificação do token.', 'ERROR', { error: error.message });
       return false;
     }
   }
@@ -23,10 +23,10 @@ class TokenValidator {
     if (!token) return null;
     try {
       const { payload } = await jwtVerify(token, this.secret);
-      console.log('Token verificado com sucesso.');
+      console.log('TokenValidator.js: Token verificado com sucesso.');
       return payload;
     } catch (error) {
-      console.log('Falha na verificação do token.', 'WARN', { error: error.message });
+      console.log('TokenValidator.js: Falha na verificação do token.', 'WARN', { error: error.message });
       return null;
     }
   }

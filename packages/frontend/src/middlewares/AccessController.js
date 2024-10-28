@@ -9,7 +9,7 @@ class AccessController {
   }
 
   async handleRequest(req) {
-    console.log('Iniciando middleware de autenticação...');
+    console.log('AccessController.js: Iniciando middleware de autenticação...');
     const wfSystemToken = req.cookies.get('wfSystem')?.value;
     const cookieRole = req.cookies.get('cookieRole')?.value;
     const { pathname } = req.nextUrl;
@@ -22,7 +22,7 @@ class AccessController {
     }
 
     if (cookieRoleValid && wfSystemTokenValid) {
-      console.log('cookieRole e wfSystem autêntico detectado, prosseguindo com a requisição.');
+      console.log('AccessController.js: cookieRole e wfSystem autêntico detectado, prosseguindo com a requisição.');
       return NextResponse.next();
     }
 
@@ -30,20 +30,20 @@ class AccessController {
       const roleFromWfSystem = await this.roleExtractor.extractRole(wfSystemToken);
       if (roleFromWfSystem) {
         const encryptRole = await this.tokenSigner.sign({ role: roleFromWfSystem });
-        console.log('wfSystemToken válido, configurando cookieRole.');
+        console.log('AccessController.js: wfSystemToken válido, configurando cookieRole.');
         const response = NextResponse.next();
         response.cookies.set('cookieRole', encryptRole, { httpOnly: true });
-        console.log('cookieRole configurado com sucesso.');
+        console.log('AccessController.js: cookieRole configurado com sucesso.');
         return response;
       }
     }
 
-    console.log('Nenhum token válido detectado, redirecionando para login.', 'WARN');
+    console.log('AccessController.js: Nenhum token válido detectado, redirecionando para login.', 'WARN');
     return this.redirectToLoginWithCookieCleanup(req);
   }
 
   redirectToLoginWithCookieCleanup(req) {
-    console.log('Redirecionando para login e limpando cookies inválidos...');
+    console.log('AccessController.js: Redirecionando para login e limpando cookies inválidos...');
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.cookies.delete('wfSystem');
     response.cookies.delete('cookieRole');
