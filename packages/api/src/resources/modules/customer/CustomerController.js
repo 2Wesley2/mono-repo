@@ -11,18 +11,19 @@ class CustomerController extends Controller {
   }
 
   initializeCustomRoutes() {
+    this.router.post('/register', this.create.bind(this));
+    this.router.get('/all', this.getAllCustomers.bind(this));
     this.router.get('/:cpf', this.findByCPF.bind(this));
-    this.router.post(
-      '/',
-      AuthMiddleware.authenticate,
-      AuthorizationMiddleware.authorize(['admin']),
-      this.create.bind(this),
-    );
+    this.router.get('/:cpf/tickets', this.getTicketsByCustomer.bind(this));
   }
 
   async create(req, res, next) {
     try {
       const customerData = req.body;
+      if (!customerData.name || !customerData.cpf) {
+        return res.status(400).json({ message: 'Nome e CPF são obrigatórios para criar o cliente' });
+      }
+
       const newCustomer = await this.service.createCustomer(customerData);
       debug.logger.info('Controlador: Cliente criado com sucesso', { customerData });
       res.status(201).json(newCustomer);
@@ -35,11 +36,43 @@ class CustomerController extends Controller {
   async findByCPF(req, res, next) {
     try {
       const { cpf } = req.params;
+      if (!cpf) {
+        debug.logger.warn('CPF não fornecido');
+        return res.status(400).json({ message: 'CPF é obrigatório' });
+      }
       const customer = await this.service.findByCPF(cpf);
       debug.logger.info('Controlador: Cliente encontrado', { cpf });
       res.status(200).json(customer);
     } catch (error) {
       debug.logger.error('Controlador: Erro ao buscar cliente', { cpf, error });
+      next(error);
+    }
+  }
+
+  async getAllCustomers(req, res, next) {
+    try {
+      const employees = await this.service.getAllCustomers(req.query);
+      res.json(employees);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTicketsByCustomer(req, res, next) {
+    const { cpf } = req.params;
+    try {
+      debug.logger.info('Controlador: Iniciando busca de tickets', { endpoint: '/:cpf/tickets' });
+      debug.logger.info('Controlador: Parâmetro CPF recebido', { cpf });
+
+      const tickets = (await this.service.getTicketsByCustomer(cpf)) || [];
+      debug.logger.info('Controlador: Tickets do cliente recuperados com sucesso', {
+        cpf,
+        ticketsCount: tickets.length,
+      });
+
+      res.status(200).json(tickets);
+    } catch (error) {
+      debug.logger.error('Controlador: Erro ao buscar tickets do cliente', { cpf, error: error.message });
       next(error);
     }
   }

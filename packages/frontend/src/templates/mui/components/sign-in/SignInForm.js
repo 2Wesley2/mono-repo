@@ -61,9 +61,7 @@ export default function SignInForm() {
     try {
       const response = await login(username, password);
       if (response) {
-        // Configurar o cookie JWT no login (depende de como o JWT é tratado no backend)
-        // Certifique-se de que o login retorne e configure o token no lado do cliente
-        router.push('/');  // Redireciona o usuário para a página inicial após o login bem-sucedido
+        router.push('/');
       }
     } catch (error) {
       setFormErrors((prev) => ({

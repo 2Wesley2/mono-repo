@@ -1,3 +1,5 @@
+import './index.css'; 
+import DrawerNavigation from "../../src/components/DrawerNavigation";
 
 export const metadata = {
   title: "WFSystem",
@@ -9,6 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
       <body id="LAYOUTJS">
+        <DrawerNavigation />
         {children}
       </body>
     </html>

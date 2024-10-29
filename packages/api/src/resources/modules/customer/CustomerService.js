@@ -19,6 +19,9 @@ class CustomerService {
 
   async findByCPF(cpf) {
     try {
+      if (!cpf) {
+        throw new Error('CPF não pode ser nulo');
+      }
       const customer = await this.repository.findByCPF(cpf);
       if (!customer) {
         throw new Error(`${CUSTOMER} não encontrado`);
@@ -31,6 +34,10 @@ class CustomerService {
     }
   }
 
+  async getAllCustomers(filters = {}, options = {}) {
+    return await this.repository.findAll(filters, options);
+  }
+
   async addTicketToCustomer(cpf, ticketId) {
     try {
       const updatedCustomer = await this.repository.addTicketToCustomer(cpf, ticketId);
@@ -38,6 +45,19 @@ class CustomerService {
       return updatedCustomer;
     } catch (error) {
       debug.logger.error(`Serviço: Erro ao adicionar ticket ao cliente ${CUSTOMER}`, { cpf, ticketId, error });
+      throw error;
+    }
+  }
+
+  async getTicketsByCustomer(cpf) {
+    try {
+      debug.logger.info('Serviço: Iniciando recuperação de tickets', { cpf });
+      const tickets = (await this.repository.getTicketsByCustomer(cpf)) || [];
+      debug.logger.info('Serviço: Tickets recuperados com sucesso', { cpf, ticketsCount: tickets.length });
+
+      return tickets;
+    } catch (error) {
+      debug.logger.error('Serviço: Erro ao recuperar tickets para o cliente', { cpf, error: error.message });
       throw error;
     }
   }

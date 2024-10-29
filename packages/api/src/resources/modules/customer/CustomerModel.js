@@ -23,13 +23,21 @@ class CustomerModel extends Model {
 
   async create(customerData) {
     try {
-      const newCustomer = this.model.create(customerData);
+      const newCustomer = await this.model.create(customerData);
       await newCustomer.save();
       debug.logger.info('Novo cliente criado', { customerData });
       return newCustomer;
     } catch (error) {
       debug.logger.error('Erro ao criar novo cliente', { customerData, error });
       throw error;
+    }
+  }
+
+  async findAll(filters = {}, options = {}) {
+    try {
+      return await this.model.find(filters, null, options);
+    } catch (error) {
+      throw new Error('Erro ao buscar clientes: ' + error.message);
     }
   }
 
@@ -64,6 +72,27 @@ class CustomerModel extends Model {
       return updatedCustomer;
     } catch (error) {
       debug.logger.error('Erro ao adicionar ticket ao cliente', { cpf, ticketId, error });
+      throw error;
+    }
+  }
+
+  async getTicketsByCustomer(cpf) {
+    try {
+      debug.logger.info('Model: Iniciando busca de cliente por CPF no banco de dados', { cpf });
+
+      const customer = await this.model.findOne({ cpf }).populate('tickets');
+      if (!customer) {
+        debug.logger.warn('Model: Cliente não encontrado no banco de dados', { cpf });
+        return [];
+      }
+
+      debug.logger.info('Model: Tickets do cliente recuperados com sucesso', {
+        cpf,
+        ticketsCount: customer.tickets.length,
+      });
+      return customer.tickets || [];
+    } catch (error) {
+      debug.logger.error('Model: Erro ao buscar tickets do cliente no banco de dados', { cpf, error });
       throw error;
     }
   }

@@ -11,18 +11,18 @@ import {
   Button,
   Box,
 } from '@mui/material';
-import { getCustomer, addCustomer, editCustomer, deleteCustomer } from '../../service/fetch';
+import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
-  const [newCustomer, setNewCustomer] = useState({ name: '', email: '' });
+  const [newCustomer, setNewCustomer] = useState({ name: '', cpf: '' });
   const [editingCustomerId, setEditingCustomerId] = useState(null);
 
   const loadCustomers = async () => {
     try {
-      const customerList = await getCustomer();
+      const customerList = await getAllCustomers();
       console.log('Clientes recebidos do backend:', customerList);
       setCustomers(customerList);
     } catch (error) {
@@ -36,8 +36,8 @@ const CustomerManagement = () => {
 
   const handleAddCustomer = async () => {
     try {
-      if (!newCustomer.name || !newCustomer.email) {
-        console.error('Nome e email são obrigatórios');
+      if (!newCustomer.name || !newCustomer.cpf) {
+        console.error('Nome e cpf são obrigatórios');
         return;
       }
 
@@ -52,7 +52,7 @@ const CustomerManagement = () => {
         setCustomers([...customers, addedCustomer]);
       }
 
-      setNewCustomer({ name: '', email: '' });
+      setNewCustomer({ name: '', cpf: '' });
     } catch (error) {
       console.error('Erro ao registrar cliente:', error);
     }
@@ -61,7 +61,7 @@ const CustomerManagement = () => {
   const handleEditCustomer = (id) => {
     const customerToEdit = customers.find((cust) => cust._id === id);
     if (customerToEdit) {
-      setNewCustomer({ name: customerToEdit.name, email: customerToEdit.email });
+      setNewCustomer({ name: customerToEdit.name, cpf: customerToEdit.cpf });
       setEditingCustomerId(id);
     }
   };
@@ -103,7 +103,7 @@ const CustomerManagement = () => {
                   </IconButton>
                 </Box>
               }>
-                <ListItemText primary={customer.name} secondary={customer.email} />
+                <ListItemText primary={customer.name} secondary={customer.cpf} />
               </ListItem>
             );
           })}
@@ -121,10 +121,10 @@ const CustomerManagement = () => {
           fullWidth
         />
         <TextField
-          label="Email"
-          type="email"
-          value={newCustomer.email}
-          onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+          label="cpf"
+          type="cpf"
+          value={newCustomer.cpf}
+          onChange={(e) => setNewCustomer({ ...newCustomer, cpf: e.target.value })}
           fullWidth
         />
         <Button variant="contained" color="primary" onClick={handleAddCustomer}>
