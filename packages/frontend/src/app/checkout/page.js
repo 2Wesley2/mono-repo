@@ -1,3 +1,5 @@
+// src/app/checkout/page.js
+
 'use client';
 import { useState } from 'react';
 import CustomerList from '../../components/CustomerList';
@@ -17,9 +19,9 @@ const CheckoutPage = () => {
           onSelectTicket={(ticket) => setSelectedTicket(ticket)}
         />
       )}
-      {selectedTicket && (
-        <SaleForm
-          cpf={selectedCustomer.cpf}
+      {selectedCustomer && (
+        <SaleForm 
+          cpf={selectedCustomer.cpf} 
           ticket={selectedTicket}
         />
       )}

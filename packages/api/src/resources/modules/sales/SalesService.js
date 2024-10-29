@@ -60,7 +60,7 @@ class SalesService {
       };
 
       const result = await this.repository.create(saleData);
-      debug.logger.info(`Serviço: ${SALES} criada com sucesso`, { data: result });
+      debug.logger.info(`Serviço: Venda criada com sucesso`, { data: result });
 
       const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
 
@@ -70,7 +70,7 @@ class SalesService {
 
       return result;
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao criar ${SALES}`, { error });
+      debug.logger.error(`Serviço: Erro ao criar Venda`, { error });
       throw error;
     }
   }
