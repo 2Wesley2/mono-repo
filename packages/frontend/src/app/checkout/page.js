@@ -1,28 +1,46 @@
-// src/app/checkout/page.js
-
 'use client';
 import { useState } from 'react';
-import CustomerList from '../../components/CustomerList';
-import TicketList from '../../components/TicketList';
+import CustomerSelection from '../../components/CustomerSelection';
+import TicketSelection from '../../components/TicketSelection';
 import SaleForm from '../../components/SaleForm';
 
 const CheckoutPage = () => {
+  const [step, setStep] = useState(1);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
+  const handleNextStep = () => setStep((prev) => prev + 1);
+  const handlePreviousStep = () => setStep((prev) => prev - 1);
+
   return (
     <div>
-      <CustomerList onSelectCustomer={(customer) => setSelectedCustomer(customer)} />
-      {selectedCustomer && (
-        <TicketList
-          cpf={selectedCustomer.cpf}
-          onSelectTicket={(ticket) => setSelectedTicket(ticket)}
+      {step === 1 && (
+        <CustomerSelection
+          onSelectCustomer={(customer) => {
+            setSelectedCustomer(customer);
+            handleNextStep();
+          }}
         />
       )}
-      {selectedCustomer && (
-        <SaleForm 
-          cpf={selectedCustomer.cpf} 
+      {step === 2 && selectedCustomer && (
+        <TicketSelection
+          customer={selectedCustomer}
+          onSelectTicket={(ticket) => {
+            setSelectedTicket(ticket);
+            handleNextStep();
+          }}
+          onBack={handlePreviousStep}
+          onNextWithoutTicket={() => {
+            setSelectedTicket(null);
+            handleNextStep();
+          }}
+        />
+      )}
+      {step === 3 && selectedCustomer && (
+        <SaleForm
+          cpf={selectedCustomer.cpf}
           ticket={selectedTicket}
+          onBack={handlePreviousStep}
         />
       )}
     </div>

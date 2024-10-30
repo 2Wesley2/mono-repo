@@ -1,15 +1,17 @@
+// src/components/SaleForm.js
+
 import { useState, useEffect } from 'react';
+import { TextField, Button, Typography } from '@mui/material';
 import { createSale } from '../service/index';
 
-const SaleForm = ({ cpf, ticket }) => {
+const SaleForm = ({ cpf, ticket, onBack }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const discount = ticket ? ticket.discount : 0;
-    const discountedAmount = totalAmount * (1 - discount / 100);
-    setFinalAmount(discountedAmount);
+    setFinalAmount(totalAmount * (1 - discount / 100));
   }, [totalAmount, ticket]);
 
   const handleSaleSubmit = async (e) => {
@@ -34,23 +36,24 @@ const SaleForm = ({ cpf, ticket }) => {
 
   return (
     <form onSubmit={handleSaleSubmit}>
-      <h2>Finalizar Venda</h2>
-      <label>
-        Valor Total:
-        <input
-          type="number"
-          value={totalAmount}
-          onChange={(e) => setTotalAmount(Number(e.target.value))}
-          required
-        />
-      </label>
-
-      {ticket && <p>Desconto aplicado: {ticket.discount}%</p>}
-      <p>Valor Final: {finalAmount.toFixed(2)}</p>
-
-      <button type="submit" disabled={loading}>
+      <Button onClick={onBack} variant="contained" color="secondary">
+        Voltar
+      </Button>
+      <Typography variant="h6">Finalizar Venda</Typography>
+      <TextField
+        label="Valor Total"
+        type="number"
+        value={totalAmount}
+        onChange={(e) => setTotalAmount(Number(e.target.value))}
+        required
+        fullWidth
+        margin="normal"
+      />
+      {ticket && <Typography>Desconto aplicado: {ticket.discount}%</Typography>}
+      <Typography>Valor Final: {finalAmount.toFixed(2)}</Typography>
+      <Button type="submit" variant="contained" color="primary" disabled={loading}>
         {loading ? 'Processando...' : 'Finalizar Venda'}
-      </button>
+      </Button>
     </form>
   );
 };
