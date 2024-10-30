@@ -51,13 +51,18 @@ class CustomerService {
 
   async getTicketsByCustomer(cpf) {
     try {
-      debug.logger.info('Serviço: Iniciando recuperação de tickets', { cpf });
-      const tickets = (await this.repository.getTicketsByCustomer(cpf)) || [];
-      debug.logger.info('Serviço: Tickets recuperados com sucesso', { cpf, ticketsCount: tickets.length });
+      debug.logger.info(`CustomerService.js: Iniciando recuperação de tickets para o ${cpf}`);
+      const tickets = await this.repository.getTicketsByCustomer(cpf);
+
+      debug.logger.info(`CustomerService.js: ${tickets} recuperados com sucesso`, {
+        cpf,
+        ticketsCount: tickets.length,
+        tickets,
+      });
 
       return tickets;
     } catch (error) {
-      debug.logger.error('Serviço: Erro ao recuperar tickets para o cliente', { cpf, error: error.message });
+      debug.logger.error(`CustomerService.js: Erro ao recuperar tickets para o ${cpf}`, { error: error.message });
       throw error;
     }
   }

@@ -37,9 +37,11 @@ class SalesService {
     }
 
     if (discountPercentage > 0) {
-      await this.ticketService.create(clientCPF, discountPercentage);
-      debug.logger.info(`Serviço: Ticket de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
+      const newTicket = await this.ticketService.create(clientCPF, discountPercentage);
+      debug.logger.info(`Serviço: ${newTicket} de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
+      return newTicket;
     }
+    return null;
   }
 
   async create(data) {
@@ -66,6 +68,9 @@ class SalesService {
 
       if (newTicket) {
         await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);
+        debug.logger.info(`Serviço: Ticket ${newTicket} associado ao cliente ${clientCPF}`, {
+          ticketId: newTicket._id,
+        });
       }
 
       return result;

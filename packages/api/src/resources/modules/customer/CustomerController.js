@@ -61,18 +61,18 @@ class CustomerController extends Controller {
   async getTicketsByCustomer(req, res, next) {
     const { cpf } = req.params;
     try {
-      debug.logger.info('Controlador: Iniciando busca de tickets', { endpoint: '/:cpf/tickets' });
-      debug.logger.info('Controlador: Parâmetro CPF recebido', { cpf });
+      debug.logger.info(`CustomerController.js: Iniciando busca de tickets para o ${cpf}`);
+      const tickets = await this.service.getTicketsByCustomer(cpf);
 
-      const tickets = (await this.service.getTicketsByCustomer(cpf)) || [];
-      debug.logger.info('Controlador: Tickets do cliente recuperados com sucesso', {
+      debug.logger.info(`CustomerController.js: Retornando ${tickets} do ${cpf}`, {
         cpf,
         ticketsCount: tickets.length,
+        tickets,
       });
 
       res.status(200).json(tickets);
     } catch (error) {
-      debug.logger.error('Controlador: Erro ao buscar tickets do cliente', { cpf, error: error.message });
+      debug.logger.error(`CustomerController.js: Erro ao buscar tickets do ${cpf}`, { error: error.message });
       next(error);
     }
   }

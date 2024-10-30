@@ -1,5 +1,3 @@
-// TicketRepository.js
-
 import debug from '../../../debug/index.js';
 
 class TicketRepository {

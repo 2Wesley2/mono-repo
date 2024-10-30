@@ -78,21 +78,23 @@ class CustomerModel extends Model {
 
   async getTicketsByCustomer(cpf) {
     try {
-      debug.logger.info('Model: Iniciando busca de cliente por CPF no banco de dados', { cpf });
+      debug.logger.info(`CustomerModel: Iniciando busca de cliente por ${cpf} no banco de dados`);
 
       const customer = await this.model.findOne({ cpf }).populate('tickets');
       if (!customer) {
-        debug.logger.warn('Model: Cliente não encontrado no banco de dados', { cpf });
+        debug.logger.warn(`CustomerModel: ${customer} não encontrado no banco de dados`);
         return [];
       }
 
-      debug.logger.info('Model: Tickets do cliente recuperados com sucesso', {
+      debug.logger.info(`CustomerModel: ${customer} do cliente encontrados`, {
         cpf,
         ticketsCount: customer.tickets.length,
+        tickets: customer.tickets,
       });
+
       return customer.tickets || [];
     } catch (error) {
-      debug.logger.error('Model: Erro ao buscar tickets do cliente no banco de dados', { cpf, error });
+      debug.logger.error('CustomerModel: Erro ao buscar tickets do cliente no banco de dados', { cpf, error });
       throw error;
     }
   }

@@ -1,4 +1,4 @@
-import accessController from "./src/middlewares/";
+import accessController from "./middlewares/index";
 
 export async function middleware(req) {
   console.log('Middleware executado para:', req.nextUrl.pathname);

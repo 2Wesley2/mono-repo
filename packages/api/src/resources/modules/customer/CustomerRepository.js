@@ -9,10 +9,10 @@ class CustomerRepository {
   async createCustomer(customerData) {
     try {
       const newCustomer = await this.model.create(customerData);
-      debug.logger.info(`Repositório: Novo ${CUSTOMER} criado`, { customerData });
+      debug.logger.info(`CustomerRepository.js: Novo Customer criado`, { customerData });
       return newCustomer;
     } catch (error) {
-      debug.logger.error(`Repositório: Erro ao criar ${CUSTOMER}`, { customerData, error });
+      debug.logger.error(`CustomerRepository.js: Erro ao criar Customer`, { customerData, error });
       throw error;
     }
   }
@@ -20,10 +20,10 @@ class CustomerRepository {
   async findByCPF(cpf) {
     try {
       const customer = await this.model.findByCPF(cpf);
-      debug.logger.info(`Repositório: ${CUSTOMER} encontrado`, { cpf });
+      debug.logger.info(`CustomerRepository.js: Customer encontrado`, { cpf });
       return customer;
     } catch (error) {
-      debug.logger.error(`Repositório: Erro ao buscar ${CUSTOMER} por CPF`, { cpf, error });
+      debug.logger.error(`CustomerRepository.js: Erro ao buscar Customer por CPF`, { cpf, error });
       throw error;
     }
   }
@@ -31,41 +31,42 @@ class CustomerRepository {
   async findAll(filters = {}, options = {}) {
     try {
       const documents = await this.model.findAll(filters, options);
-      debug.logger.info('Repositório: Documentos encontrados', { filters });
+      debug.logger.info('CustomerRepository.js: Documentos encontrados', { filters });
       return documents;
     } catch (error) {
-      debug.logger.error('Repositório: Erro ao buscar documentos', {
+      debug.logger.error('CustomerRepository.js: Erro ao buscar documentos', {
         filters,
         error: error && error.message ? error.message : 'Erro desconhecido',
       });
-      throw new Error('Erro ao buscar documentos no repositório.');
+      throw new Error('Erro ao buscar documentos no CustomerRepository.js.');
     }
   }
 
   async addTicketToCustomer(cpf, ticketId) {
     try {
       const updatedCustomer = await this.model.addTicket(cpf, ticketId);
-      debug.logger.info(`Repositório: Ticket adicionado ao cliente ${CUSTOMER}`, { cpf, ticketId });
+      debug.logger.info(`CustomerRepository.js: Ticket adicionado ao cliente Customer`, { cpf, ticketId });
       return updatedCustomer;
     } catch (error) {
-      debug.logger.error(`Repositório: Erro ao adicionar ticket ao ${CUSTOMER}`, { cpf, ticketId, error });
+      debug.logger.error(`CustomerRepository.js: Erro ao adicionar ticket ao Customer`, { cpf, ticketId, error });
       throw error;
     }
   }
 
   async getTicketsByCustomer(cpf) {
     try {
-      debug.logger.info('Repositório: Iniciando consulta de tickets no banco de dados', { cpf });
+      debug.logger.info(`CustomerRepository.js: Iniciando busca de tickets para o ${cpf}`);
+      const tickets = await this.model.getTicketsByCustomer(cpf);
 
-      const customer = await this.model.getTicketsByCustomer(cpf);
-      debug.logger.info('Repositório: Tickets encontrados para o cliente', {
+      debug.logger.info('CustomerRepository.js: Tickets do cliente recuperados', {
         cpf,
-        ticketsCount: customer ? (customer.tickets || []).length : 0,
+        ticketsCount: tickets.length,
+        tickets,
       });
 
-      return (customer ? customer.tickets : []) || [];
+      return tickets;
     } catch (error) {
-      debug.logger.error('Repositório: Erro ao recuperar tickets do cliente', { cpf, error: error.message });
+      debug.logger.error('CustomerRepository.js: Erro ao recuperar tickets do cliente', { cpf, error });
       throw error;
     }
   }

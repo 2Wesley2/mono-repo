@@ -37,6 +37,21 @@ class TicketService {
     }
   }
 
+  async findById(ticketId) {
+    try {
+      const ticket = await this.repository.findById(ticketId);
+      if (!ticket) {
+        debug.logger.warn('Serviço: Ticket não encontrado', { ticketId });
+      } else {
+        debug.logger.info('Serviço: Ticket encontrado', { ticket });
+      }
+      return ticket;
+    } catch (error) {
+      debug.logger.error('Serviço: Erro ao buscar ticket por ID', { ticketId, error });
+      throw error;
+    }
+  }
+
   async applyTicket(ticketId, clientCPF) {
     try {
       const ticket = await this.repository.findById(ticketId);
