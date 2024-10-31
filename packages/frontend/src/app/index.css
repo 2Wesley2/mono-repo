@@ -12,6 +12,39 @@ body {
 
 body {
   margin: auto;
+  font-family: Roboto, Arial, sans-serif;
+  background-color: #FFFFFF;
+}
+
+.background {
+  background-color: #FFFFFF;
+}
+
+.layout {
+  max-width: 90vw;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin: 'auto';
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  justify-self: center;
+  justify-items: center;
+  text-justify: auto;
+
+}
+
+.layout .child {
+  flex: 1;
+  margin: 'auto';
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  justify-self: center;
+  justify-items: center;
+  text-justify: auto;
+
 }
 
 .active {

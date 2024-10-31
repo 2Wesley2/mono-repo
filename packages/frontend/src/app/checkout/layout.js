@@ -5,8 +5,7 @@ export const metadata = {
 
 const CheckoutLayout = ({ children }) => {
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Processo de Venda</h1>
+    <div className='layout' style={{ margin: '0 auto' }}>
       {children}
     </div>
   );

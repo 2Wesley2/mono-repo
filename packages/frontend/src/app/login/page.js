@@ -4,9 +4,9 @@ import SignInLayout from '../../templates/mui/components/sign-in/SignInLayout';
 
 export default function LoginPage() {
   return (
-    <SignInLayout>
-      <SignInForm />
-    </SignInLayout>
+      <SignInLayout>
+        <SignInForm />
+      </SignInLayout>
   );
 }
 

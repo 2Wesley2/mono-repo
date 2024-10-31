@@ -11,6 +11,10 @@ class SalesService {
   async applyDiscountIfTicketProvided({ ticketId, clientCPF, totalAmount }) {
     if (ticketId) {
       try {
+        const ticket = await this.ticketService.findById(ticketId);
+        if (ticket.status !== 'available') {
+          throw new AppError(400, 'Ticket inválido. Status do ticket não permite aplicação de desconto.');
+        }
         await this.ticketService.applyTicket(ticketId, clientCPF);
       } catch (error) {
         throw new AppError(400, 'Falha ao aplicar o ticket. Verifique se o ticket é válido.');
@@ -61,10 +65,10 @@ class SalesService {
         ticketApplied,
       };
 
+      const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
+
       const result = await this.repository.create(saleData);
       debug.logger.info(`Serviço: Venda criada com sucesso`, { data: result });
-
-      const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
 
       if (newTicket) {
         await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);

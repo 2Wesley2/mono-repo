@@ -1,7 +1,6 @@
-// src/components/SaleForm.js
-
 import { useState, useEffect } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, Box, CircularProgress, Paper } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { createSale } from '../service/index';
 
 const SaleForm = ({ cpf, ticket, onBack }) => {
@@ -35,26 +34,56 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
   };
 
   return (
-    <form onSubmit={handleSaleSubmit}>
-      <Button onClick={onBack} variant="contained" color="secondary">
-        Voltar
-      </Button>
-      <Typography variant="h6">Finalizar Venda</Typography>
-      <TextField
-        label="Valor Total"
-        type="number"
-        value={totalAmount}
-        onChange={(e) => setTotalAmount(Number(e.target.value))}
-        required
-        fullWidth
-        margin="normal"
-      />
-      {ticket && <Typography>Desconto aplicado: {ticket.discount}%</Typography>}
-      <Typography>Valor Final: {finalAmount.toFixed(2)}</Typography>
-      <Button type="submit" variant="contained" color="primary" disabled={loading}>
-        {loading ? 'Processando...' : 'Finalizar Venda'}
-      </Button>
-    </form>
+    <Paper elevation={3} sx={{ p: 4, borderRadius: 2, maxWidth: 400, mx: 'auto', mt: 6 }}>
+      <form onSubmit={handleSaleSubmit}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Button
+             onClick={onBack}
+            sx={{ color: 'grey.700', textTransform: 'none', '&:hover': { bgcolor: 'grey.200' } }}
+            aria-label="Voltar para a página anterior"
+            startIcon={<ArrowBackIosNewIcon />}
+          >
+            Voltar
+          </Button>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+            Finalizar Venda
+          </Typography>
+        </Box>
+
+        <TextField
+          label="Valor Total"
+          type="number"
+          value={totalAmount}
+          onChange={(e) => setTotalAmount(Number(e.target.value))}
+          required
+          fullWidth
+          margin="normal"
+          inputProps={{ 'aria-label': 'Valor Total da Venda' }}
+        />
+
+        {ticket && (
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+            Desconto aplicado: {ticket.discount}%
+          </Typography>
+        )}
+
+        <Typography variant="body1" sx={{ mb: 2 }}>
+          Valor Final: R$ {finalAmount.toFixed(2)}
+        </Typography>
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading}
+          sx={{ textTransform: 'none' }}
+          aria-label="Finalizar Venda"
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Finalizar Venda'}
+        </Button>
+      </form>
+    </Paper>
   );
 };
 
