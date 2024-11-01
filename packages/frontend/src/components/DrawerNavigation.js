@@ -1,9 +1,16 @@
 'use client'
 import React, { useState } from 'react';
-import { AppBar, Drawer, IconButton, List, ListItem, ListItemText, Toolbar } from '@mui/material';
+import {
+  AppBar, Drawer, Toolbar,
+  Box,
+  List, ListItem, ListItemText,
+  Button,
+  IconButton,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+// import Logo from './Logo'
 
 const DrawerNavigation = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -16,41 +23,67 @@ const DrawerNavigation = () => {
     { path: '/checkout', name: 'Vender' },
   ];
 
+  const filteredRoutes = routes.filter(route => route.path !== pathname);
+
   const toggleDrawer = (open) => {
     setDrawerOpen(open);
   };
 
   return (
     <>
-      <AppBar position="sticky" sx={{ height: '15vh' }}>
+      <AppBar position="sticky" sx={{ height: '15vh', backgroundColor: '#E50914' }}>
         <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
             aria-label="menu"
             onClick={() => toggleDrawer(true)}
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+            {/* <Logo /> */}
+          </Box>
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={() => toggleDrawer(false)}>
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => toggleDrawer(false)}
+        PaperProps={{ sx: { backgroundColor: '#E50914' } }}
+      >
         <List>
-          {routes.map((route, index) => (
-            <ListItem button key={index} onClick={() => toggleDrawer(false)}>
+          {filteredRoutes.map((route, index) => (
+            <ListItem
+              button
+              key={index}
+              onClick={() => toggleDrawer(false)}
+            >
               <Link href={route.path} passHref legacyBehavior>
-                <a
-                  style={{
+                <Button
+                  fullWidth
+                  variant="text"
+                  size='large'
+                  disableElevation
+                  disableFocusRipple
+                  sx={{
                     textDecoration: 'none',
-                    fontWeight: pathname === route.path ? 'bold' : 'normal',
-                    color: pathname === route.path ? 'blue' : 'inherit',
-                    display: 'block',
-                    width: '100%',
+                    justifyContent: 'flex-start',
+                    paddingX: 2,
+                    textTransform: 'none',
                   }}
                 >
-                  <ListItemText primary={route.name} />
-                </a>
+                  <ListItemText
+                    primary={route.name}
+                    sx={{
+                      color: '#FFFFFF',
+                      fontWeight: 'bold',
+                      fontSize: 'large'
+                    }}
+                  />
+                </Button>
               </Link>
             </ListItem>
           ))}

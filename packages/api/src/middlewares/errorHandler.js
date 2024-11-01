@@ -7,11 +7,18 @@ export default (err, _req, res, _next) => {
 
   if (config.nodeEnv !== 'production') {
     console.error(err);
+    res.status(statusCode).json({
+      status: 'error',
+      statusCode,
+      message,
+      stack: err.stack,
+    });
   } else {
     console.error(err.message);
+    res.status(statusCode).json({
+      status: 'error',
+      statusCode,
+      message,
+    });
   }
-
-  res.status(statusCode).json({
-    message,
-  });
 };

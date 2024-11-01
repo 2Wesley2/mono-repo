@@ -28,8 +28,7 @@ export default function SignInLayout({ children }) {
             gap: 2,
             margin: 'auto',
             maxWidth: { sm: '450px' },
-          }}
-        >
+          }}>
           <Typography component="h1" variant="h4" sx={{ fontSize: '2.15rem' }}>
             Entre
           </Typography>

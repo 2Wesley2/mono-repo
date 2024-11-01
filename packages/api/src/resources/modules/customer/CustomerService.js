@@ -1,5 +1,4 @@
 import debug from '../../../debug/index.js';
-import { CUSTOMER } from '../../constants/index.js';
 
 class CustomerService {
   constructor(repository) {
@@ -9,10 +8,32 @@ class CustomerService {
   async createCustomer(customerData) {
     try {
       const newCustomer = await this.repository.createCustomer(customerData);
-      debug.logger.info(`Serviço: Novo ${CUSTOMER} criado`, { customerData });
+      debug.logger.info(`Serviço: Novo Cliente criado`, { customerData });
       return newCustomer;
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao criar ${CUSTOMER}`, { customerData, error });
+      debug.logger.error(`Serviço: Erro ao criar Cliente`, { customerData, error });
+      throw error;
+    }
+  }
+
+  async update(id, updateData) {
+    try {
+      const updatedCustomer = await this.repository.update(id, updateData);
+      debug.logger.info('Serviço: Cliente atualizado', { id, updateData });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('Serviço: Erro ao atualizar cliente', { id, error });
+      throw error;
+    }
+  }
+
+  async delete(id) {
+    try {
+      const deletedCustomer = await this.repository.delete(id);
+      debug.logger.info('Serviço: Cliente deletado', { id });
+      return deletedCustomer;
+    } catch (error) {
+      debug.logger.error('Serviço: Erro ao deletar cliente', { id, error });
       throw error;
     }
   }
@@ -24,12 +45,12 @@ class CustomerService {
       }
       const customer = await this.repository.findByCPF(cpf);
       if (!customer) {
-        throw new Error(`${CUSTOMER} não encontrado`);
+        throw new Error(`Cliente não encontrado`);
       }
-      debug.logger.info(`Serviço: ${CUSTOMER} encontrado`, { cpf });
+      debug.logger.info(`Serviço: Cliente encontrado`, { cpf });
       return customer;
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao buscar ${CUSTOMER} por CPF`, { cpf, error });
+      debug.logger.error(`Serviço: Erro ao buscar Cliente por CPF`, { cpf, error });
       throw error;
     }
   }
@@ -41,10 +62,10 @@ class CustomerService {
   async addTicketToCustomer(cpf, ticketId) {
     try {
       const updatedCustomer = await this.repository.addTicketToCustomer(cpf, ticketId);
-      debug.logger.info(`Serviço: Ticket adicionado ao cliente ${CUSTOMER}`, { cpf, ticketId });
+      debug.logger.info(`Serviço: Ticket adicionado ao cliente Cliente`, { cpf, ticketId });
       return updatedCustomer;
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao adicionar ticket ao cliente ${CUSTOMER}`, { cpf, ticketId, error });
+      debug.logger.error(`Serviço: Erro ao adicionar ticket ao cliente Cliente`, { cpf, ticketId, error });
       throw error;
     }
   }

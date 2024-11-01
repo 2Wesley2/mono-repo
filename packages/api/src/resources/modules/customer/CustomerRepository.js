@@ -17,6 +17,28 @@ class CustomerRepository {
     }
   }
 
+  async update(id, updateData) {
+    try {
+      const updatedCustomer = await this.model.update(id, updateData);
+      debug.logger.info('CustomerRepository.js: Cliente atualizado', { id, updateData });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('CustomerRepository.js: Erro ao atualizar cliente', { id, error });
+      throw error;
+    }
+  }
+
+  async delete(id) {
+    try {
+      const deletedCustomer = await this.model.delete(id);
+      debug.logger.info('CustomerRepository.js: Cliente deletado', { id });
+      return deletedCustomer;
+    } catch (error) {
+      debug.logger.error('CustomerRepository.js: Erro ao deletar cliente', { id, error });
+      throw error;
+    }
+  }
+
   async findByCPF(cpf) {
     try {
       const customer = await this.model.findByCPF(cpf);

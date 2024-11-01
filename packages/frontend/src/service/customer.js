@@ -59,9 +59,9 @@ export const addCustomer = async (customerData) => {
   }
 };
 
-export const editCustomer = async (cpf, customerData) => {
+export const editCustomer = async (id, customerData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/${cpf}`, {
+    const response = await fetch(`${apiBaseUrl}/api/customer/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -78,9 +78,9 @@ export const editCustomer = async (cpf, customerData) => {
   }
 };
 
-export const deleteCustomer = async (cpf) => {
+export const deleteCustomer = async (id) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/${cpf}`, {
+    const response = await fetch(`${apiBaseUrl}/api/customer/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

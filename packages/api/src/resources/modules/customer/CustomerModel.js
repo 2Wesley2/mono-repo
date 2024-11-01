@@ -6,8 +6,8 @@ import { CUSTOMER, TICKET } from '../../constants/index.js';
 const customerSchema = {
   name: { type: String, required: true },
   cpf: { type: String, unique: true, required: true },
-  email: { type: String },
-  phone: { type: String },
+  email: { type: String, unique: true },
+  phone: { type: String, unique: true, required: true },
   tickets: [
     {
       type: Database.ObjectId,
@@ -52,6 +52,30 @@ class CustomerModel extends Model {
       return customer;
     } catch (error) {
       debug.logger.error('Erro ao buscar cliente por CPF', { cpf, error });
+      throw error;
+    }
+  }
+
+  async update(id, updateData) {
+    try {
+      const updatedCustomer = await this.model.findByIdAndUpdate(id, updateData, { new: true });
+      if (!updatedCustomer) throw new Error('Cliente não encontrado');
+      debug.logger.info('Cliente atualizado', { id, updateData });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('Erro ao atualizar cliente', { id, error });
+      throw error;
+    }
+  }
+
+  async delete(id) {
+    try {
+      const deletedCustomer = await this.model.findByIdAndDelete(id);
+      if (!deletedCustomer) throw new Error('Cliente não encontrado');
+      debug.logger.info('Cliente deletado', { id });
+      return deletedCustomer;
+    } catch (error) {
+      debug.logger.error('Erro ao deletar cliente', { id, error });
       throw error;
     }
   }
