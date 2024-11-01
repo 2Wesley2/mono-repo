@@ -171,8 +171,14 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
                 borderRadius: 3,
                 bgcolor: 'grey.100'
               }}>
-              <Typography variant="body1" color="textSecondary">
-                Nenhum ticket disponível.
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                sx={{
+                  fontStyle: 'italic',
+                  textAlign: 'center',
+                }}>
+                Nenhum ticket disponível
               </Typography>
             </Paper>
           ) : (

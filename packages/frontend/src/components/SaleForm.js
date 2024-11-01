@@ -45,9 +45,6 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
           >
             Voltar
           </Button>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-            Finalizar Venda
-          </Typography>
         </Box>
 
         <TextField
@@ -74,10 +71,12 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
           fullWidth
           disabled={loading}
-          sx={{ textTransform: 'none' }}
+          sx={{
+            textTransform: 'none',
+            backgroundColor: '#E50914'
+           }}
           aria-label="Finalizar Venda"
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Finalizar Venda'}
