@@ -1,46 +1,104 @@
 'use client';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Box,
+  Button,
+  Typography,
+  Snackbar,
+  TextField,
+  Dialog, DialogTitle, DialogContent, Stack, Card, FormControl, DialogActions
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import EmployeeTable from '../../components/EmployeeTable';
-import EmployeeDialog from '../../components/EmployeeDialog';
+import DataTable from '../../components/DataTable';
 import useDebounce from '../../hooks/useDebounce';
 import { addEmployee, editEmployee, deleteEmployee } from '../../service/fetch';
 
-const EmployeeManagement = ({ serverEmployees = [] }) => {
-  console.log('renderizando employee no client')
-
-  const [employees, setEmployees] = useState(serverEmployees || []);
+const EmployeeManagement = () => {
+  const [employees, setEmployees] = useState([]);
+  const [newEmployee, setNewEmployee] = useState({ name: '', number: '' });
   const [dialogState, setDialogState] = useState({ type: null, employee: null });
   const [searchQuery, setSearchQuery] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   const debounceSearch = useDebounce(searchQuery, 300);
 
-  const handleAddEmployee = useCallback(async (newEmployee) => {
-    const addedEmployee = await addEmployee(newEmployee);
-    setEmployees((prev) => [...prev, addedEmployee]);
-    setDialogState({ type: null, employee: null });
+  const loadEmployees = async () => {
+    try {
+      const employeeList = await getAllEmployees();
+      setEmployees(employeeList);
+    } catch (error) {
+      console.error('Erro ao carregar funcionários:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadEmployees();
   }, []);
 
-  const handleEditEmployee = useCallback(async (editedEmployee) => {
-    const updatedEmployee = await editEmployee(editedEmployee._id, editedEmployee);
-    setEmployees((prev) => prev.map((emp) => (emp._id === updatedEmployee._id ? updatedEmployee : emp)));
+  const handleOpenDialog = (type, employee = null) => {
+    setDialogState({ type, employee });
+    setNewEmployee(employee || { name: '', number: '' });
+  };
+
+  const handleCloseDialog = () => {
     setDialogState({ type: null, employee: null });
-  }, []);
+    setFormErrors({});
+  };
+
+  const handleSnackbarOpen = () => setSnackbarOpen(true);
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbarOpen(false);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!newEmployee.name) errors.name = { error: true, message: 'Nome é obrigatório' };
+    if (!newEmployee.number) errors.number = { error: true, message: 'Número é obrigatório' };
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleAddEmployee = useCallback(async () => {
+    if (!validateForm()) return;
+
+    try {
+      const addedEmployee = await addEmployee(newEmployee);
+      setEmployees((prev) => [...prev, addedEmployee]);
+      handleCloseDialog();
+      handleSnackbarOpen();
+    } catch (error) {
+      console.error('Erro ao registrar funcionário:', error);
+    }
+  }, [newEmployee]);
+
+  const handleEditEmployee = useCallback(async () => {
+    if (!validateForm()) return;
+
+    try {
+      const updatedEmployee = await editEmployee(dialogState.employee._id, newEmployee);
+      setEmployees((prev) =>
+        prev.map((emp) => (emp._id === updatedEmployee._id ? updatedEmployee : emp))
+      );
+      handleCloseDialog();
+      handleSnackbarOpen();
+    } catch (error) {
+      console.error('Erro ao editar funcionário:', error);
+    }
+  }, [newEmployee, dialogState.employee]);
 
   const handleDeleteEmployee = useCallback(async (employeeToDelete) => {
-    await deleteEmployee(employeeToDelete._id);
-    setEmployees((prev) => prev.filter((emp) => emp._id !== employeeToDelete._id));
-    setDialogState({ type: null, employee: null });
+    try {
+      await deleteEmployee(employeeToDelete._id);
+      setEmployees((prev) => prev.filter((emp) => emp._id !== employeeToDelete._id));
+      handleSnackbarOpen();
+    } catch (error) {
+      console.error('Erro ao excluir funcionário:', error);
+    }
   }, []);
+
+  const handleSubmit = () => (dialogState.type === 'add' ? handleAddEmployee() : handleEditEmployee());
 
   const filteredEmployees = useMemo(() =>
     employees.filter((employee) =>
@@ -49,20 +107,29 @@ const EmployeeManagement = ({ serverEmployees = [] }) => {
   );
 
   return (
-    <>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          mb: 2,
-          gap: 3,
-        }}
-      >
+    <div>
+      <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
+        <Typography variant="h4" component="h1" fontWeight="bold">
+          Gerenciamento de Funcionários
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => handleOpenDialog('add')}
+          sx={{
+            backgroundColor: '#E50914',
+            color: '#FFFFF',
+            '&:hover': { backgroundColor: '#b71c1c' },
+            fontSize: 'large'
+          }}>
+          Registrar Funcionário
+        </Button>
+      </Box>
+
+      <Box display="flex" justifyContent="center" mb={3}>
         <TextField
           label="Pesquisar Funcionário"
           variant="outlined"
+          color='error'
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
             startAdornment: <SearchIcon />,
@@ -70,54 +137,104 @@ const EmployeeManagement = ({ serverEmployees = [] }) => {
           sx={{ width: '300px' }}
           aria-label="Campo de pesquisa de funcionários"
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          sx={{ borderRadius: '8px' }}
-          onClick={() => setDialogState({ type: 'register', employee: { name: '', number: '' } })}
-        >
-          Registrar Funcionário
-        </Button>
       </Box>
+
       {employees.length === 0 ? (
-        <p>Nenhum funcionário cadastrado ainda</p>
+        <Typography
+          variant="body1"
+          color="textSecondary"
+          sx={{
+            fontStyle: 'italic',
+            textAlign: 'center',
+          }}
+        >
+          Não há funcionários cadastrados.
+        </Typography>
       ) : (
-        <EmployeeTable
-          employees={filteredEmployees}
-          onEdit={(employee) => setDialogState({ type: 'edit', employee })}
-          onDelete={(employee) => setDialogState({ type: 'delete', employee })}
+        <DataTable
+          headers={['Nome', 'Número']}
+          dataKeys={['name', 'number']}
+          data={filteredEmployees}
+          handleEdit={(employee) => handleOpenDialog('edit', employee)}
+          handleDelete={handleDeleteEmployee}
         />
       )}
 
-      <EmployeeDialog
-        open={dialogState.type === 'register'}
-        onClose={() => setDialogState({ type: null, employee: null })}
-        onConfirm={handleAddEmployee}
-        title="Registrar Novo Funcionário"
-        initialData={dialogState.employee}
-      />
+      <Dialog open={dialogState.type !== null} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+            {dialogState.type === 'add' ? 'Registrar Funcionário' : 'Editar Funcionário'}
+          </Typography>
+        </DialogTitle>
 
-      <EmployeeDialog
-        open={dialogState.type === 'edit'}
-        onClose={() => setDialogState({ type: null, employee: null })}
-        onConfirm={handleEditEmployee}
-        title="Editar Funcionário"
-        initialData={dialogState.employee}
-      />
-
-      <Dialog open={dialogState.type === 'delete'} onClose={() => setDialogState({ type: null, employee: null })}>
-        <DialogTitle>Confirmação de Exclusão</DialogTitle>
         <DialogContent>
-          <p>Você tem certeza que deseja excluir o funcionário {dialogState.employee?.name || ''}?</p>
+          <Stack direction="column" spacing={2} justifyContent="center" alignItems="center">
+            <Card
+              variant="outlined"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                padding: 4,
+                gap: 3,
+                margin: 'auto',
+                maxWidth: '500px',
+                boxShadow: 3,
+              }}
+            >
+              <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <FormControl fullWidth>
+                  <TextField
+                    id="name"
+                    label="Nome"
+                    variant="outlined"
+                    value={newEmployee.name}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+                    error={formErrors.name?.error}
+                    helperText={formErrors.name?.message}
+                    fullWidth
+                    required
+                    color="error"
+                  />
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <TextField
+                    id="number"
+                    label="Número"
+                    variant="outlined"
+                    value={newEmployee.number}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, number: e.target.value })}
+                    error={formErrors.number?.error}
+                    helperText={formErrors.number?.message}
+                    fullWidth
+                    required
+                    color="error"
+                  />
+                </FormControl>
+              </Box>
+            </Card>
+          </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogState({ type: null, employee: null })}>Cancelar</Button>
-          <Button onClick={() => handleDeleteEmployee(dialogState.employee)} variant="contained" color="secondary">Sim, excluir</Button>
+
+        <DialogActions sx={{ justifyContent: 'space-around', padding: 2 }}>
+          <Button onClick={handleSubmit} color="success" variant="contained" size="large">
+            {dialogState.type === 'add' ? 'Registrar Funcionário' : 'Salvar Alterações'}
+          </Button>
+          <Button onClick={handleCloseDialog} color="error" variant="contained" size="large">
+            Cancelar
+          </Button>
         </DialogActions>
       </Dialog>
-    </>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Ação realizada com sucesso!"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
+    </div>
   );
 };
 

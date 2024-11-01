@@ -35,10 +35,18 @@ const DrawerNavigation = () => {
         position="sticky"
         sx={{
           height: '10vh',
+          display: 'flex',
           backgroundColor: '#E50914',
-          marginBottom: '1rem'
+          marginBottom: '1rem',
+          justifyContent: 'center',
+          alignContent: 'center'
         }}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center'
+          }}>
           <IconButton
             edge="start"
             color="inherit"
@@ -74,18 +82,17 @@ const DrawerNavigation = () => {
                   disableElevation
                   disableFocusRipple
                   sx={{
-                    textDecoration: 'none',
                     justifyContent: 'flex-start',
                     paddingX: 2,
-                    textTransform: 'none',
                   }}
                 >
                   <ListItemText
+                    fontWeight='bold'
                     primary={route.name}
                     sx={{
                       color: '#FFFFFF',
-                      fontWeight: 'bold',
-                      fontSize: 'large'
+                      fontSize: 'small',
+                      size: 'small'
                     }}
                   />
                 </Button>

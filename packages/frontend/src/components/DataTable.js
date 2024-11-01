@@ -2,39 +2,39 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const CustomerTable = ({ customers, handleOpenDialog, handleDeleteCustomer }) => (
+const DataTable = ({ headers, data, dataKeys, handleEdit, handleDelete }) => (
   <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-    <Table aria-label="Tabela de Clientes">
+    <Table aria-label="Tabela de Dados">
       <TableHead sx={{ backgroundColor: '#FAFAFA' }}>
         <TableRow>
-          <TableCell sx={{ fontWeight: 'bold' }}>Nome</TableCell>
-          <TableCell sx={{ fontWeight: 'bold' }}>CPF</TableCell>
-          <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-          <TableCell sx={{ fontWeight: 'bold' }}>Telefone</TableCell>
+          {headers.map((header, index) => (
+            <TableCell key={header} sx={{ fontWeight: 'bold' }}>
+              {header}
+            </TableCell>
+          ))}
           <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ações</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {customers.map((customer) => (
+        {data.map((item) => (
           <TableRow
-            key={customer._id}
+            key={item._id}
             sx={{
               '&:nth-of-type(odd)': { backgroundColor: 'action.hover' },
               '&:hover': { backgroundColor: 'action.selected' },
             }}
           >
-            <TableCell>{customer.name}</TableCell>
-            <TableCell>{customer.cpf}</TableCell>
-            <TableCell>{customer.email}</TableCell>
-            <TableCell>{customer.phone}</TableCell>
+            {dataKeys.map((key) => (
+              <TableCell key={key}>{item[key]}</TableCell>
+            ))}
             <TableCell align="center">
               <Tooltip title="Editar">
-                <IconButton onClick={() => handleOpenDialog('edit', customer)}>
+                <IconButton onClick={() => handleEdit(item)}>
                   <EditIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Excluir">
-                <IconButton onClick={() => handleDeleteCustomer(customer)}>
+                <IconButton onClick={() => handleDelete(item)}>
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
@@ -46,4 +46,4 @@ const CustomerTable = ({ customers, handleOpenDialog, handleDeleteCustomer }) =>
   </TableContainer>
 );
 
-export default CustomerTable;
+export default DataTable;

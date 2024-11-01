@@ -11,7 +11,7 @@ import {
   Snackbar
 } from '@mui/material';
 import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
-import CustomerTable from '../../components/CustomerTable';
+import DataTable from '../../components/DataTable';
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -134,7 +134,12 @@ const CustomerManagement = () => {
       </Box>
 
 
-      <Dialog open={dialogState.type !== null} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={dialogState.type !== null}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
             {dialogState.type === 'add' ? 'Registrar Cliente' : 'Editar Cliente'}
@@ -269,10 +274,12 @@ const CustomerManagement = () => {
         </Typography>
 
       ) : (
-        <CustomerTable
-          customers={customers}
-          handleOpenDialog={handleOpenDialog}
-          handleDeleteCustomer={handleDeleteCustomer}
+         <DataTable
+          headers={['Nome', 'CPF', 'Email', 'Telefone']}
+          dataKeys={['name', 'cpf', 'email', 'phone']}
+          data={customers}
+          handleEdit={(customer) => handleOpenDialog('edit', customer)}
+          handleDelete={handleDeleteCustomer}
         />
       )}
     </div>
