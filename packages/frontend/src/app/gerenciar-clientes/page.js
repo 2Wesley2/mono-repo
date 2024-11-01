@@ -1,18 +1,17 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container, Box,
-  Paper, Card, Stack,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Button, IconButton, Tooltip,
+  Box,
+  Card, Stack,
+  Button,
   Dialog, DialogActions, DialogContent, DialogTitle,
   TextField,
   FormControl,
   Typography,
+  Snackbar
 } from '@mui/material';
 import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import CustomerTable from '../../components/CustomerTable';
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -24,6 +23,7 @@ const CustomerManagement = () => {
   });
   const [dialogState, setDialogState] = useState({ type: null, customer: null });
   const [editingCustomerId, setEditingCustomerId] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
   const loadCustomers = async () => {
@@ -50,6 +50,15 @@ const CustomerManagement = () => {
     setFormErrors({});
   };
 
+  const handleSnackbarOpen = () => {
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbarOpen(false);
+  };
+
   const validateForm = () => {
     const errors = {};
     if (!newCustomer.name) errors.name = { error: true, message: 'Nome é obrigatório' };
@@ -69,6 +78,7 @@ const CustomerManagement = () => {
       const addedCustomer = await addCustomer(newCustomer);
       setCustomers((prev) => [...prev, addedCustomer]);
       handleCloseDialog();
+      handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao registrar cliente:', error);
     }
@@ -83,6 +93,7 @@ const CustomerManagement = () => {
         prev.map((cust) => (cust._id === updatedCustomer._id ? updatedCustomer : cust))
       );
       handleCloseDialog();
+      handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao editar cliente:', error);
     }
@@ -92,176 +103,178 @@ const CustomerManagement = () => {
     try {
       await deleteCustomer(customerToDelete._id);
       setCustomers((prev) => prev.filter((cust) => cust._id !== customerToDelete._id));
+      handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao excluir cliente:', error);
     }
   }, []);
 
-  const handleSubmit = () => {
-    if (dialogState.type === 'add') {
-      handleAddCustomer();
-    } else if (dialogState.type === 'edit') {
-      handleEditCustomer();
-    }
-  };
+  const handleSubmit = () => dialogState.type === 'add'
+    ? handleAddCustomer()
+    : handleEditCustomer();
 
   return (
-    <div className='layout'>
-      <Container>
-        <Typography variant="h4" component="h1" gutterBottom>
+    <div>
+      <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
+        <Typography variant="h4" component="h1" gutterBottom fontWeight='bold'>
           Gerenciamento de Clientes
         </Typography>
-
         <Button
           variant="contained"
           onClick={() => handleOpenDialog('add')}
           sx={{
             backgroundColor: '#E50914',
             color: '#FFFFF',
+            '&:hover': { backgroundColor: '#b71c1c' },
             fontSize: 'large'
           }}
         >
           Registrar novo cliente
         </Button>
+      </Box>
 
-        <Dialog open={dialogState.type !== null} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-          <DialogTitle>
+
+      <Dialog open={dialogState.type !== null} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
             {dialogState.type === 'add' ? 'Registrar Cliente' : 'Editar Cliente'}
-          </DialogTitle>
-          <DialogContent>
-            <Stack
-              direction="column"
-              justifyContent="space-between"
-              sx={{ padding: { xs: 2, sm: 4 } }}
+          </Typography>
+        </DialogTitle>
+
+        <DialogContent>
+          <Stack
+            direction="column"
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+            sx={{ padding: { xs: 2, sm: 4 } }}
+          >
+            <Card
+              variant="outlined"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                padding: 4,
+                gap: 3,
+                margin: 'auto',
+                maxWidth: { sm: '500px' },
+                boxShadow: 3,
+              }}
             >
-              <Card
-                variant="outlined"
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignSelf: 'center',
-                  width: '100%',
-                  padding: 4,
-                  gap: 2,
-                  margin: 'auto',
-                  maxWidth: { sm: '450px' },
-                }}
-              >
-                <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
-                  <FormControl>
-                    <TextField
-                      id="name"
-                      label="Nome"
-                      value={newCustomer.name}
-                      onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-                      error={formErrors.name?.error}
-                      helperText={formErrors.name?.message}
-                      fullWidth
-                      required
-                    />
-                  </FormControl>
+              <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <FormControl fullWidth>
+                  <TextField
+                    id="name"
+                    label="Nome"
+                    variant="outlined"
+                    value={newCustomer.name}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                    error={formErrors.name?.error}
+                    helperText={formErrors.name?.message}
+                    fullWidth
+                    required
+                    color='error'
+                  />
+                </FormControl>
 
-                  <FormControl>
-                    <TextField
-                      id="cpf"
-                      label="CPF"
-                      type="text"
-                      value={newCustomer.cpf}
-                      onChange={(e) => setNewCustomer({ ...newCustomer, cpf: e.target.value })}
-                      error={formErrors.cpf?.error}
-                      helperText={formErrors.cpf?.message}
-                      fullWidth
-                      required
-                    />
-                  </FormControl>
+                <FormControl fullWidth>
+                  <TextField
+                    id="cpf"
+                    label="CPF"
+                    variant="outlined"
+                    value={newCustomer.cpf}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, cpf: e.target.value })}
+                    error={formErrors.cpf?.error}
+                    helperText={formErrors.cpf?.message}
+                    fullWidth
+                    required
+                    color='error'
+                  />
+                </FormControl>
 
-                  <FormControl>
-                    <TextField
-                      id="email"
-                      label="Email"
-                      type="email"
-                      value={newCustomer.email}
-                      onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-                      error={formErrors.email?.error}
-                      helperText={formErrors.email?.message}
-                      fullWidth
-                      required
-                    />
-                  </FormControl>
+                <FormControl fullWidth>
+                  <TextField
+                    id="email"
+                    label="Email"
+                    variant="outlined"
+                    type="email"
+                    value={newCustomer.email}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                    error={formErrors.email?.error}
+                    helperText={formErrors.email?.message}
+                    fullWidth
+                    color='error'
+                  />
+                </FormControl>
 
-                  <FormControl>
-                    <TextField
-                      id="phone"
-                      label="WhatsApp"
-                      type="tel"
-                      value={newCustomer.phone}
-                      onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
-                      error={formErrors.phone?.error}
-                      helperText={formErrors.phone?.message}
-                      fullWidth
-                      required
-                    />
-                  </FormControl>
-                </Box>
-              </Card>
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="secondary">
-              Cancelar
-            </Button>
-            <Button onClick={handleSubmit} color="primary">
-              {dialogState.type === 'add' ? 'Registrar Cliente' : 'Salvar Alterações'}
-            </Button>
-          </DialogActions>
-        </Dialog>
+                <FormControl fullWidth>
+                  <TextField
+                    id="phone"
+                    label="WhatsApp"
+                    variant="outlined"
+                    type="tel"
+                    value={newCustomer.phone}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                    error={formErrors.phone?.error}
+                    helperText={formErrors.phone?.message}
+                    fullWidth
+                    required
+                    color='error'
+                  />
+                </FormControl>
+              </Box>
+            </Card>
+          </Stack>
+        </DialogContent>
 
-        {customers.length === 0 ? (
-          <Typography variant="body1">Não há clientes cadastrados.</Typography>
-        ) : (
-          <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-            <Table aria-label="Tabela de Clientes">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Nome</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>CPF</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Telefone</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ações</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {customers.map((customer) => (
-                  <TableRow
-                    key={customer._id}
-                    sx={{
-                      '&:nth-of-type(odd)': { backgroundColor: 'action.hover' },
-                      '&:hover': { backgroundColor: 'action.selected' },
-                    }}
-                  >
-                    <TableCell>{customer.name}</TableCell>
-                    <TableCell>{customer.cpf}</TableCell>
-                    <TableCell>{customer.email}</TableCell>
-                    <TableCell>{customer.phone}</TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="Editar">
-                        <IconButton onClick={() => handleOpenDialog('edit', customer)}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Excluir">
-                        <IconButton onClick={() => handleDeleteCustomer(customer)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Container>
+        <DialogActions sx={{ justifyContent: 'space-around', padding: 2 }}>
+          <Button
+            onClick={handleSubmit}
+            color="success"
+
+            variant="contained"
+            size='large'>
+            {dialogState.type === 'add' ? 'Registrar Cliente' : 'Salvar Alterações'}
+          </Button>
+          <Button
+            onClick={handleCloseDialog}
+            color="error"
+            variant="contained"
+
+            size='large'>
+            Cancelar
+          </Button>
+        </DialogActions>
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message="Ação realizada com sucesso!"
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        />
+      </Dialog>
+
+      {customers.length === 0 ? (
+        <Typography
+          variant="body1"
+          color="textSecondary"
+          sx={{
+            fontStyle: 'italic',
+            textAlign: 'center',
+
+          }}>
+          Não há clientes cadastrados.
+        </Typography>
+
+      ) : (
+        <CustomerTable
+          customers={customers}
+          handleOpenDialog={handleOpenDialog}
+          handleDeleteCustomer={handleDeleteCustomer}
+        />
+      )}
     </div>
   );
 };

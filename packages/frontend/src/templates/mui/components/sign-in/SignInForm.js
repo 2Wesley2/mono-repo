@@ -86,12 +86,13 @@ export default function SignInForm() {
           placeholder="seuemail@email.com"
           required
           fullWidth
+          color="error"
         />
       </FormControl>
       <FormControl>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <FormLabel htmlFor="password">Senha</FormLabel>
-          <Link component="button" onClick={handleClickOpen} variant="body2">Esqueceu sua senha?</Link>
+          <Link component="button" color="error" onClick={handleClickOpen} variant="body2">Esqueceu sua senha?</Link>
         </Box>
         <TextField
           error={formErrors.password.error}
@@ -102,11 +103,12 @@ export default function SignInForm() {
           id="password"
           required
           fullWidth
+          color="error"
         />
       </FormControl>
-      <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Lembrar senha" />
+      <FormControlLabel control={<Checkbox value="remember" color="error" />} label="Lembrar senha" />
       <ForgotPassword open={open} handleClose={handleClose} />
-      <Button type="submit" fullWidth variant="contained" disabled={isSubmitting}>
+      <Button type="submit" fullWidth variant="contained" disabled={isSubmitting} color="error">
         {isSubmitting ? 'Carregando...' : 'Entrar'}
       </Button>
     </Box>

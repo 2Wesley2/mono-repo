@@ -13,7 +13,7 @@ body {
 body {
   margin: auto;
   font-family: Roboto, Arial, sans-serif;
-  background-color: #FFFFFF;
+  background-color: #DCDEE2;
 }
 
 .background {
@@ -24,7 +24,6 @@ body {
   max-width: 90vw;
   width: 100%;
   display: flex;
-  gap: 10px;
   margin: 'auto';
   flex-direction: column;
   justify-content: center;

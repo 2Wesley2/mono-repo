@@ -31,7 +31,13 @@ const DrawerNavigation = () => {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ height: '15vh', backgroundColor: '#E50914' }}>
+      <AppBar
+        position="sticky"
+        sx={{
+          height: '10vh',
+          backgroundColor: '#E50914',
+          marginBottom: '1rem'
+        }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -43,7 +49,6 @@ const DrawerNavigation = () => {
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-            {/* <Logo /> */}
           </Box>
         </Toolbar>
       </AppBar>

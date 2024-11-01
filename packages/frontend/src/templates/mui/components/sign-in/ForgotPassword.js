@@ -39,6 +39,7 @@ function ForgotPassword({ open, handleClose }) {
           placeholder="Email address"
           type="email"
           fullWidth
+          color="error"
         />
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }}>
