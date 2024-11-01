@@ -148,12 +148,11 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
             Prosseguir venda sem ticket
           </Button>
         </Box>
-
-        <Typography variant="h5"
-          component="h2"
-          color="primary"
+        <Typography variant="h4"
+          component="h1"
+          gutterBottom
+          fontWeight='bold'
           sx={{
-            fontWeight: 'bold',
             textAlign: 'center',
             mb: 3
           }}>
@@ -214,7 +213,7 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
                           mb: 1,
                           width: '100%'
                         }}>
-                        <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+                        <Avatar sx={{ bgcolor: '#E50914', mr: 2 }}>
                           <ConfirmationNumberIcon />
                         </Avatar>
                         <ListItemText
