@@ -38,7 +38,7 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
       <form onSubmit={handleSaleSubmit}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Button
-             onClick={onBack}
+            onClick={onBack}
             sx={{ color: 'grey.700', textTransform: 'none', '&:hover': { bgcolor: 'grey.200' } }}
             aria-label="Voltar para a página anterior"
             startIcon={<ArrowBackIosNewIcon />}
@@ -50,6 +50,7 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
         <TextField
           label="Valor Total"
           type="number"
+          color="error"
           value={totalAmount}
           onChange={(e) => setTotalAmount(Number(e.target.value))}
           required
@@ -76,7 +77,7 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
           sx={{
             textTransform: 'none',
             backgroundColor: '#E50914'
-           }}
+          }}
           aria-label="Finalizar Venda"
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Finalizar Venda'}

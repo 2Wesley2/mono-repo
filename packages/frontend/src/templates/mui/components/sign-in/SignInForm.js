@@ -9,6 +9,8 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 import ForgotPassword from './ForgotPassword';
 import { useRouter } from 'next/navigation';
 import { login } from '../../../../service/fetch';
@@ -21,7 +23,6 @@ export default function SignInForm() {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
   const handleClickOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
@@ -56,7 +57,6 @@ export default function SignInForm() {
     }
 
     setIsSubmitting(true);
-
     try {
       const response = await login(username, password);
       if (response) {
@@ -72,9 +72,12 @@ export default function SignInForm() {
     }
   }, [validateInputs, router]);
 
-
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Backdrop open={isSubmitting} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <FormControl>
         <FormLabel htmlFor="username">Nome de Usuário</FormLabel>
         <TextField
@@ -87,6 +90,7 @@ export default function SignInForm() {
           required
           fullWidth
           color="error"
+          aria-describedby={formErrors.username.error ? 'username-error' : undefined}
         />
       </FormControl>
       <FormControl>
@@ -104,13 +108,15 @@ export default function SignInForm() {
           required
           fullWidth
           color="error"
+          aria-describedby={formErrors.password.error ? 'password-error' : undefined}
         />
       </FormControl>
       <FormControlLabel control={<Checkbox value="remember" color="error" />} label="Lembrar senha" />
       <ForgotPassword open={open} handleClose={handleClose} />
       <Button type="submit" fullWidth variant="contained" disabled={isSubmitting} color="error">
-        {isSubmitting ? 'Carregando...' : 'Entrar'}
+        {isSubmitting ? <><CircularProgress size={20} sx={{ mr: 1 }} /> Carregando...</> : 'Entrar'}
       </Button>
+      
     </Box>
   );
 }

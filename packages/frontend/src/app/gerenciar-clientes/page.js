@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Card, Stack,
@@ -10,24 +10,24 @@ import {
   Typography,
   Snackbar
 } from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
 import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
 import DataTable from '../../components/DataTable';
 import Title from '../../components/Title';
 
+// Defina objetos constantes fora do componente
+const EMPTY_CUSTOMER = { name: '', cpf: '', phone: '', email: '' };
+
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
-  const [newCustomer, setNewCustomer] = useState({
-    name: '',
-    cpf: '',
-    phone: '',
-    email: ''
-  });
+  const [newCustomer, setNewCustomer] = useState(EMPTY_CUSTOMER);
   const [dialogState, setDialogState] = useState({ type: null, customer: null });
-  const [editingCustomerId, setEditingCustomerId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
-  const loadCustomers = async () => {
+  // useCallback para carregar clientes, depende apenas de `setCustomers`
+  const loadCustomers = useCallback(async () => {
     try {
       const customerList = await getAllCustomers();
       console.log('Clientes recebidos do backend:', customerList);
@@ -35,32 +35,35 @@ const CustomerManagement = () => {
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadCustomers();
-  }, []);
+  }, [loadCustomers]);
 
+  // Função de abertura de diálogo
   const handleOpenDialog = (type, customer = null) => {
     setDialogState({ type, customer });
-    setNewCustomer(customer || { name: '', cpf: '', phone: '', email: '' });
+    setNewCustomer(type === 'add' ? EMPTY_CUSTOMER : customer || EMPTY_CUSTOMER);
   };
 
-  const handleCloseDialog = () => {
+  // Fechamento de diálogo
+  const handleCloseDialog = useCallback(() => {
     setDialogState({ type: null, customer: null });
     setFormErrors({});
-  };
+  }, []);
 
-  const handleSnackbarOpen = () => {
-    setSnackbarOpen(true);
-  };
+  // Função de abertura do Snackbar
+  const handleSnackbarOpen = () => setSnackbarOpen(true);
 
+  // Função de fechamento do Snackbar
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') return;
     setSnackbarOpen(false);
   };
 
-  const validateForm = () => {
+  // Validação do formulário
+  const validateForm = useCallback(() => {
     const errors = {};
     if (!newCustomer.name) errors.name = { error: true, message: 'Nome é obrigatório' };
     if (!newCustomer.cpf) errors.cpf = { error: true, message: 'CPF é obrigatório' };
@@ -70,8 +73,9 @@ const CustomerManagement = () => {
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
-  };
+  }, [newCustomer]);
 
+  // Adiciona um novo cliente
   const handleAddCustomer = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -83,8 +87,9 @@ const CustomerManagement = () => {
     } catch (error) {
       console.error('Erro ao registrar cliente:', error);
     }
-  }, [newCustomer]);
+  }, [newCustomer, validateForm]);
 
+  // Edita um cliente existente
   const handleEditCustomer = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -98,9 +103,10 @@ const CustomerManagement = () => {
     } catch (error) {
       console.error('Erro ao editar cliente:', error);
     }
-  }, [newCustomer, dialogState.customer]);
+  }, [newCustomer, dialogState.customer, validateForm]);
 
-  const handleDeleteCustomer = useCallback(async (customerToDelete) => {
+  // Exclui um cliente
+  const handleDeleteCustomer = async (customerToDelete) => {
     try {
       await deleteCustomer(customerToDelete._id);
       setCustomers((prev) => prev.filter((cust) => cust._id !== customerToDelete._id));
@@ -108,16 +114,28 @@ const CustomerManagement = () => {
     } catch (error) {
       console.error('Erro ao excluir cliente:', error);
     }
-  }, []);
+  };
 
-  const handleSubmit = () => dialogState.type === 'add'
-    ? handleAddCustomer()
-    : handleEditCustomer();
+  // Manipulação de envio com verificação de tipo de diálogo
+  const handleSubmit = useCallback(() => {
+    if (dialogState.type === 'add') {
+      handleAddCustomer();
+    } else {
+      handleEditCustomer();
+    }
+  }, [dialogState.type, handleAddCustomer, handleEditCustomer]);
 
+  // Lista de clientes filtrados com `useMemo`
+  const filteredCustomers = useMemo(
+    () => customers.filter((customer) =>
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+    [customers, searchQuery]
+  );
   return (
     <div>
       <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
-        <Title >
+        <Title>
           Gerenciamento de Clientes
         </Title>
         <Button
@@ -134,6 +152,20 @@ const CustomerManagement = () => {
         </Button>
       </Box>
 
+      {/* Campo de pesquisa */}
+      <Box display="flex" justifyContent="center" mb={3}>
+        <TextField
+          label="Pesquisar Cliente"
+          variant="outlined"
+          color='error'
+          onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: <SearchIcon />,
+          }}
+          sx={{ width: '300px' }}
+          aria-label="Campo de pesquisa de clientes"
+        />
+      </Box>
 
       <Dialog
         open={dialogState.type !== null}
@@ -238,7 +270,6 @@ const CustomerManagement = () => {
           <Button
             onClick={handleSubmit}
             color="success"
-
             variant="contained"
             size='large'>
             {dialogState.type === 'add' ? 'Registrar Cliente' : 'Salvar Alterações'}
@@ -247,38 +278,37 @@ const CustomerManagement = () => {
             onClick={handleCloseDialog}
             color="error"
             variant="contained"
-
             size='large'>
             Cancelar
           </Button>
         </DialogActions>
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-          message="Ação realizada com sucesso!"
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        />
       </Dialog>
 
-      {customers.length === 0 ? (
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Ação realizada com sucesso!"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
+
+      {/* Tabela de dados filtrada */}
+      {filteredCustomers.length === 0 ? (
         <Typography
           variant="body1"
           color="textSecondary"
           sx={{
             fontStyle: 'italic',
             textAlign: 'center',
-
-          }}>
+          }}
+        >
           Não há clientes cadastrados.
         </Typography>
-
       ) : (
         <DataTable
           headers={['Nome', 'CPF', 'Email', 'Telefone']}
           dataKeys={['name', 'cpf', 'email', 'phone']}
-          data={customers}
+          data={filteredCustomers}
           handleEdit={(customer) => handleOpenDialog('edit', customer)}
           handleDelete={handleDeleteCustomer}
         />

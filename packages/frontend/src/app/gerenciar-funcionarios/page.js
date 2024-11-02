@@ -11,12 +11,14 @@ import {
 import { Search as SearchIcon } from '@mui/icons-material';
 import DataTable from '../../components/DataTable';
 import useDebounce from '../../hooks/useDebounce';
-import { addEmployee, editEmployee, deleteEmployee } from '../../service/fetch';
+import { addEmployee, editEmployee, deleteEmployee, getEmployees } from '../../service/index';
 import Title from '../../components/Title';
+
+const EMPTY_EMPLOYEE = { name: '', number: '' };
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
-  const [newEmployee, setNewEmployee] = useState({ name: '', number: '' });
+  const [newEmployee, setNewEmployee] = useState(EMPTY_EMPLOYEE);
   const [dialogState, setDialogState] = useState({ type: null, employee: null });
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -24,43 +26,50 @@ const EmployeeManagement = () => {
 
   const debounceSearch = useDebounce(searchQuery, 300);
 
-  const loadEmployees = async () => {
+  // Carregar lista de empregados
+  const loadEmployees = useCallback(async () => {
     try {
-      const employeeList = await getAllEmployees();
+      const employeeList = await getEmployees();
       setEmployees(employeeList);
     } catch (error) {
       console.error('Erro ao carregar funcionários:', error);
     }
-  };
-
-  useEffect(() => {
-    loadEmployees();
   }, []);
 
+  // Carregar funcionários ao montar o componente
+  useEffect(() => {
+    loadEmployees();
+  }, [loadEmployees]);
+
+  // Função para abrir o diálogo
   const handleOpenDialog = (type, employee = null) => {
     setDialogState({ type, employee });
-    setNewEmployee(employee || { name: '', number: '' });
+    setNewEmployee(employee || EMPTY_EMPLOYEE);
   };
 
-  const handleCloseDialog = () => {
+  // Fechar o diálogo e limpar erros do formulário
+  const handleCloseDialog = useCallback(() => {
     setDialogState({ type: null, employee: null });
     setFormErrors({});
-  };
+  }, []);
 
+  // Funções de abertura e fechamento do Snackbar
   const handleSnackbarOpen = () => setSnackbarOpen(true);
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') return;
     setSnackbarOpen(false);
   };
 
-  const validateForm = () => {
+  // Função de validação do formulário
+  const validateForm = useCallback(() => {
     const errors = {};
     if (!newEmployee.name) errors.name = { error: true, message: 'Nome é obrigatório' };
     if (!newEmployee.number) errors.number = { error: true, message: 'Número é obrigatório' };
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
-  };
+  }, [newEmployee]);
 
+  // Adicionar funcionário
   const handleAddEmployee = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -72,8 +81,9 @@ const EmployeeManagement = () => {
     } catch (error) {
       console.error('Erro ao registrar funcionário:', error);
     }
-  }, [newEmployee]);
+  }, [newEmployee, validateForm]);
 
+  // Editar funcionário
   const handleEditEmployee = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -87,9 +97,10 @@ const EmployeeManagement = () => {
     } catch (error) {
       console.error('Erro ao editar funcionário:', error);
     }
-  }, [newEmployee, dialogState.employee]);
+  }, [newEmployee, dialogState.employee, validateForm]);
 
-  const handleDeleteEmployee = useCallback(async (employeeToDelete) => {
+  // Excluir funcionário
+  const handleDeleteEmployee = async (employeeToDelete) => {
     try {
       await deleteEmployee(employeeToDelete._id);
       setEmployees((prev) => prev.filter((emp) => emp._id !== employeeToDelete._id));
@@ -97,16 +108,24 @@ const EmployeeManagement = () => {
     } catch (error) {
       console.error('Erro ao excluir funcionário:', error);
     }
-  }, []);
+  };
 
-  const handleSubmit = () => (dialogState.type === 'add' ? handleAddEmployee() : handleEditEmployee());
+  // Submeter (adicionar ou editar) funcionário
+  const handleSubmit = useCallback(() => {
+    if (dialogState.type === 'add') {
+      handleAddEmployee();
+    } else {
+      handleEditEmployee();
+    }
+  }, [dialogState.type, handleAddEmployee, handleEditEmployee]);
 
-  const filteredEmployees = useMemo(() =>
-    employees.filter((employee) =>
+  // Lista filtrada de funcionários usando `useMemo` para evitar recalcular em cada renderização
+  const filteredEmployees = useMemo(
+    () => employees.filter((employee) =>
       employee.name.toLowerCase().includes(debounceSearch.toLowerCase())
-    ), [employees, debounceSearch]
+    ),
+    [employees, debounceSearch]
   );
-
   return (
     <div>
       <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
