@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
 import DataTable from '../../components/DataTable';
+import Title from '../../components/Title';
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -116,9 +117,9 @@ const CustomerManagement = () => {
   return (
     <div>
       <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
-        <Typography variant="h4" component="h1" gutterBottom fontWeight='bold'>
+        <Title >
           Gerenciamento de Clientes
-        </Typography>
+        </Title>
         <Button
           variant="contained"
           onClick={() => handleOpenDialog('add')}
@@ -274,7 +275,7 @@ const CustomerManagement = () => {
         </Typography>
 
       ) : (
-         <DataTable
+        <DataTable
           headers={['Nome', 'CPF', 'Email', 'Telefone']}
           dataKeys={['name', 'cpf', 'email', 'phone']}
           data={customers}

@@ -22,8 +22,9 @@ import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { getCustomerTickets } from '../service/index';
 import { format } from 'date-fns';
+import { getCustomerTickets } from '../service/index';
+import Title from '../components/Title';
 
 const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket }) => {
   const [tickets, setTickets] = useState([]);
@@ -148,16 +149,10 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
             Prosseguir venda sem ticket
           </Button>
         </Box>
-        <Typography variant="h4"
-          component="h1"
-          gutterBottom
-          fontWeight='bold'
-          sx={{
-            textAlign: 'center',
-            mb: 3
-          }}>
+        
+        <Title >
           Selecione um Ticket
-        </Typography>
+        </Title>
 
         {loading ? (
           <CircularProgress color="primary" />

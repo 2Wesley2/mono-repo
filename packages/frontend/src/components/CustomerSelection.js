@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import { getAllCustomers } from '../service/index';
+import Title from '../components/Title';
 
 const CustomerSelection = ({ onSelectCustomer, onBack }) => {
   const [customers, setCustomers] = useState([]);
@@ -36,15 +37,10 @@ const CustomerSelection = ({ onSelectCustomer, onBack }) => {
       mt: 6,
       display: 'flex', flexDirection: 'column', alignItems: 'center'
     }}>
-      <Typography
-        variant="h4" component="h1" gutterBottom fontWeight='bold'
-        sx={{
-          fontWeight: 'bold',
-          textAlign: 'center',
-          mb: 3
-        }}>
+      
+      <Title>
         Selecione um Cliente
-      </Typography>
+      </Title>
 
       {loading ? (
         <CircularProgress color="primary" />

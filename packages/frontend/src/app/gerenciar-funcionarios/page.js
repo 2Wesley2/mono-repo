@@ -12,6 +12,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import DataTable from '../../components/DataTable';
 import useDebounce from '../../hooks/useDebounce';
 import { addEmployee, editEmployee, deleteEmployee } from '../../service/fetch';
+import Title from '../../components/Title';
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
@@ -109,9 +110,10 @@ const EmployeeManagement = () => {
   return (
     <div>
       <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
-        <Typography variant="h4" component="h1" fontWeight="bold">
+
+        <Title>
           Gerenciamento de Funcionários
-        </Typography>
+        </Title>
         <Button
           variant="contained"
           onClick={() => handleOpenDialog('add')}
