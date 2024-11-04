@@ -88,9 +88,11 @@ class NotificationService {
     debug.logger.info('NotificationService.js: Iniciando envio para todos os canais');
 
     const resultados = {
-      whatsapp: cliente.whatsapp ? await this.sendWhatsApp(cliente.whatsapp, mensagem) : null,
-      sms: cliente.telefone ? await this.sendSMS(cliente.telefone, mensagem) : null,
-      email: cliente.email ? await this.sendEmail(cliente.email, 'Notificação de Ticket', mensagem) : null,
+      whatsapp: cliente.whatsapp ? await this.sendWhatsApp(cliente.whatsapp, mensagem) : 'whatsapp: não configurado',
+      sms: cliente.telefone ? await this.sendSMS(cliente.telefone, mensagem) : 'sms: não configurado',
+      email: cliente.email
+        ? await this.sendEmail(cliente.email, 'Notificação de Ticket', mensagem)
+        : 'email: não configurado',
     };
 
     debug.logger.info('Concluído o envio para todos os canais');

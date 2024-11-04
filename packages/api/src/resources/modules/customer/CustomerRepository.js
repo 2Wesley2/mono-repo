@@ -68,7 +68,14 @@ class CustomerRepository {
   async addTicketToCustomer(cpf, ticketId) {
     try {
       const updatedCustomer = await this.model.addTicket(cpf, ticketId);
-      debug.logger.info(`CustomerRepository.js: Ticket adicionado ao cliente Customer`, { cpf, ticketId });
+
+      if (!updatedCustomer?.cpf) {
+        debug.logger.warn('Cliente atualizado não contém clientCPF', { cpf });
+      } else {
+        debug.logger.info('Cliente atualizado com sucesso', { cpf: updatedCustomer.cpf });
+      }
+
+      debug.logger.info(`CustomerRepository.js: Ticket adicionado ao cliente`, { cpf, ticketId });
       return updatedCustomer;
     } catch (error) {
       debug.logger.error(`CustomerRepository.js: Erro ao adicionar ticket ao Customer`, { cpf, ticketId, error });

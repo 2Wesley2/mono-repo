@@ -109,9 +109,17 @@ class SalesService {
 
   async _handleNewTicketNotification(clientCPF, newTicket, newSale) {
     debug.logger.info('Serviço: Iniciando notificação de novo ticket', { clientCPF, newTicket });
+
+    // Adiciona o ticket ao cliente e verifica `clientCPF`
     const clienteAtualizado = await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);
-    debug.logger.info(`Serviço: Ticket ${newTicket._id} associado ao cliente ${clientCPF}`, {
+
+    if (!clienteAtualizado?.cpf) {
+      debug.logger.warn('Cliente atualizado não possui clientCPF; usando o CPF fornecido para logs', { clientCPF });
+    }
+
+    debug.logger.info(`Serviço: Ticket ${newTicket._id} associado ao cliente`, {
       ticketId: newTicket._id,
+      cpf: clienteAtualizado?.cpf || clientCPF,
     });
 
     const message = `Parabéns! Você ganhou um ticket de desconto. ID do Ticket: ${newTicket._id}`;
@@ -129,7 +137,8 @@ class SalesService {
 
   async _registerNotificationIfSent(canaisNotificacao, newTicket, clienteAtualizado, newSale, message) {
     debug.logger.info('Serviço: Registrando notificação se enviada com sucesso', { newTicket, clienteAtualizado });
-    const envioSucesso = Object.values(canaisNotificacao).some((status) => status.includes('enviado'));
+
+    const envioSucesso = Object.values(canaisNotificacao).some((status) => status && status.includes('enviado'));
 
     if (envioSucesso) {
       await this.notificationService.register({
@@ -139,7 +148,7 @@ class SalesService {
         mensagem: message,
         dataEnvio: new Date(),
       });
-      debug.logger.info(`Notificação registrada e enviada para o cliente ${clienteAtualizado.clientCPF}`, { message });
+      debug.logger.info(`Notificação registrada e enviada para o cliente ${clienteAtualizado.name}`, { message });
     } else {
       debug.logger.warn('Serviço: Nenhum canal disponível para registro de notificação', { clienteAtualizado });
     }

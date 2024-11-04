@@ -92,6 +92,13 @@ class SalesModel extends Model {
       throw error;
     }
   }
+  async updateAppliedVoucher(saleId, voucherId) {
+    return this.findByIdAndUpdate(saleId, { appliedVoucher: voucherId });
+  }
+
+  async updateEmployee(saleId, employeeId) {
+    return this.findByIdAndUpdate(saleId, { employee: employeeId });
+  }
 }
 
 export default SalesModel;

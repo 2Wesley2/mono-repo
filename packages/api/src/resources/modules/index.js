@@ -51,7 +51,7 @@ const employeeController = new EmployeeController(employeeService);
 
 const salesModel = new SalesModel();
 const salesRepository = new SalesRepository(salesModel);
-const salesService = new SalesService(salesRepository, ticketService, customerRepository);
+const salesService = new SalesService(salesRepository, ticketService, customerRepository, notificationService);
 const salesController = new SalesController(salesService);
 
 export { userController, customerController, employeeController, salesController, ticketService, notificationService };
