@@ -15,7 +15,6 @@ import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../.
 import DataTable from '../../components/DataTable';
 import Title from '../../components/Title';
 
-// Defina objetos constantes fora do componente
 const EMPTY_CUSTOMER = { name: '', cpf: '', phone: '', email: '' };
 
 const CustomerManagement = () => {

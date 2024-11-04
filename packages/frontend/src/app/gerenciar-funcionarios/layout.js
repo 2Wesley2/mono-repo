@@ -1,13 +1,15 @@
-import { Container, Paper } from '@mui/material';
+import Layout from "@/components/Layout";
+
+export const metadata = {
+  title: ' Gerenciamento de funcinários',
+  description: 'Página de gerenciar funcionários',
+};
 
 const EmployeesManagementLayout = ({ children }) => (
-  <div className='layout'>
-    <Paper sx={{ minHeight: '80vh' }}>
-      <Container>
-        {children}
-      </Container>
-    </Paper>
-  </div>
+  <Layout>
+    {children}
+  </Layout>
+
 );
 
 export default EmployeesManagementLayout;

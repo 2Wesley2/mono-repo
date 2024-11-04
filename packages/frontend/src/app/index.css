@@ -5,15 +5,9 @@ body,
   background-color: #FFFFFF;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   margin: auto;
-  font-family: Roboto, Arial, sans-serif;
-  background-color: #DCDEE2;
+  background-color: #F7F7F7;
 }
 
 .background {
@@ -21,17 +15,17 @@ body {
 }
 
 .layout {
-  max-width: 90vw;
+  max-width: 100vw;
   width: 100%;
   display: flex;
   margin: 'auto';
+  margin-bottom: 10%;
   flex-direction: column;
   justify-content: center;
   align-content: center;
   justify-self: center;
   justify-items: center;
   text-justify: auto;
-
 }
 
 .layout .child {

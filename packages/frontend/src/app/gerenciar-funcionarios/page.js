@@ -140,7 +140,7 @@ const EmployeeManagement = () => {
             backgroundColor: '#E50914',
             color: '#FFFFF',
             '&:hover': { backgroundColor: '#b71c1c' },
-            fontSize: 'large'
+            fontSize: 'ic-width'
           }}>
           Registrar Funcionário
         </Button>

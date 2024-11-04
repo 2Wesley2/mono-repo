@@ -1,4 +1,4 @@
-import { Container, Paper } from '@mui/material';
+import Layout from "@/components/Layout";
 
 export const metadata = {
   title: 'Checkout - Processo de Venda',
@@ -7,13 +7,9 @@ export const metadata = {
 
 const CheckoutLayout = ({ children }) => {
   return (
-  <div className='layout'>
-    <Paper sx={{ minHeight: '80vh' }}>
-      <Container>
-        {children}
-      </Container>
-    </Paper>
-  </div>
+    <Layout>
+      {children}
+    </Layout>
   );
 };
 

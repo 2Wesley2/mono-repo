@@ -1,20 +1,22 @@
 import './index.css';
 import DrawerNavigation from "../../src/components/DrawerNavigation";
-import { CssBaseline } from '@mui/material';
+import Footer from "../../src/components/Footer";
+
 export const metadata = {
-  title: "WFSystem",
-  description: "WFSystem App",
+  title: "Facilite Varejo",
+  description: "Facilite Varejo App",
 };
 
 export default function RootLayout({ children }) {
   console.log(`renderizando no servidor`)
   return (
     <html lang="pt-br">
-      <body id="LAYOUTJS">
+      <body>
         <DrawerNavigation />
         <div className='layout'>
           {children}
         </div>
+        <Footer />
       </body>
     </html>
   );
