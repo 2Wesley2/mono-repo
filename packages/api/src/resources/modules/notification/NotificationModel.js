@@ -7,10 +7,7 @@ const notificationSchema = {
   ticket: { type: Database.ObjectId, ref: TICKET, required: true },
   customer: { type: Database.ObjectId, ref: CUSTOMER, required: true },
   sale: { type: Database.ObjectId, ref: SALES, required: false },
-  dataExpiracao: { type: Date, required: true },
-  status: { type: String, enum: ['ativo', 'usado', 'expirado'], default: 'ativo' },
   dataEnvio: { type: Date },
-  canal: { type: String, enum: ['email', 'sms', 'whatsapp'], required: true },
   mensagem: { type: String, required: true },
 };
 
