@@ -1,5 +1,6 @@
 import debug from '../../../debug/index.js';
 import { CUSTOMER } from '../../constants/index.js';
+import Database from '../../../database/index.js';
 
 class CustomerRepository {
   constructor(model) {
@@ -89,6 +90,41 @@ class CustomerRepository {
       return tickets;
     } catch (error) {
       debug.logger.error('CustomerRepository.js: Erro ao recuperar tickets do cliente', { cpf, error });
+      throw error;
+    }
+  }
+
+  async addPurchaseToHistory(cpf, saleId) {
+    if (!Database.isValidObjectId(saleId)) {
+      debug.logger.error(`CustomerRepository.js: saleId inválido`, { cpf, saleId });
+      throw new Error('saleId inválido');
+    }
+    try {
+      const updatedCustomer = await this.model.addPurchaseToHistory(cpf, saleId);
+      debug.logger.info('CustomerRepository.js: Compra adicionada ao histórico do cliente', { cpf, saleId });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('CustomerRepository.js: Erro ao adicionar compra ao histórico do cliente', {
+        cpf,
+        saleId,
+        error,
+      });
+      throw error;
+    }
+  }
+
+  async updateLifetimeValue(cpf, amount) {
+    if (typeof amount !== 'number' || amount <= 0) {
+      debug.logger.error(`CustomerRepository.js: Valor amount inválido`, { cpf, amount });
+      throw new Error('Valor amount inválido');
+    }
+
+    try {
+      const updatedCustomer = await this.model.updateLifetimeValue(cpf, amount);
+      debug.logger.info('CustomerRepository.js: Valor vitalício atualizado para o cliente', { cpf, amount });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('CustomerRepository.js: Erro ao atualizar valor vitalício do cliente', { cpf, amount, error });
       throw error;
     }
   }

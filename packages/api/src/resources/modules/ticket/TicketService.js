@@ -75,6 +75,17 @@ class TicketService {
       throw error;
     }
   }
+
+  async findTicketsExpiringSoon(daysUntilExpiry = 7) {
+    try {
+      const tickets = await this.repository.findTicketsExpiringSoon(daysUntilExpiry);
+      debug.logger.info('Serviço: Tickets próximos de expirar obtidos com sucesso', { count: tickets.length });
+      return tickets;
+    } catch (error) {
+      debug.logger.error('Serviço: Erro ao buscar tickets próximos de expirar', { error });
+      throw error;
+    }
+  }
 }
 
 export default TicketService;

@@ -52,6 +52,17 @@ class TicketRepository {
       throw error;
     }
   }
+
+  async findTicketsExpiringSoon(daysUntilExpiry) {
+    try {
+      const tickets = await this.model.findTicketsExpiringSoon(daysUntilExpiry);
+      debug.logger.info('Repositório: Tickets próximos de expirar recuperados', { count: tickets.length });
+      return tickets;
+    } catch (error) {
+      debug.logger.error('Repositório: Erro ao buscar tickets próximos de expirar', { error });
+      throw error;
+    }
+  }
 }
 
 export default TicketRepository;

@@ -1,6 +1,7 @@
 import Model from '../../core/Model.js';
 import debug from '../../../debug/index.js';
-import { SALES } from '../../constants/index.js';
+import { SALES, TICKET, EMPLOYEE } from '../../constants/index.js';
+import Database from '../../../database/index.js';
 
 const salesSchema = {
   clientCPF: { type: String, required: true },
@@ -9,8 +10,17 @@ const salesSchema = {
   discount: { type: Number, default: 0 },
   finalAmount: { type: Number, required: true },
   saleDate: { type: Date, default: Date.now },
+  appliedVoucher: {
+    type: Database.ObjectId,
+    ref: TICKET,
+  },
+  employee: {
+    type: Database.ObjectId,
+    ref: EMPLOYEE,
+  },
 };
 
+//CRIAR MÉTODOS QUE ATUALIZA appliedVoucher E employee
 class SalesModel extends Model {
   constructor() {
     super(salesSchema, SALES);

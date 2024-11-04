@@ -67,8 +67,11 @@ class SalesService {
 
       const newTicket = await this.generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied });
 
-      const result = await this.repository.create(saleData);
-      debug.logger.info(`Serviço: Venda criada com sucesso`, { data: result });
+      const newSale = await this.repository.create(saleData);
+      debug.logger.info(`Serviço: Venda criada com sucesso`, { data: newSale });
+
+      await this.customerRepository.addPurchaseToHistory(clientCPF, newSale._id);
+      await this.customerRepository.updateLifetimeValue(clientCPF, finalAmount);
 
       if (newTicket) {
         await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);
@@ -77,7 +80,7 @@ class SalesService {
         });
       }
 
-      return result;
+      return newSale;
     } catch (error) {
       debug.logger.error(`Serviço: Erro ao criar Venda`, { error });
       throw error;

@@ -1,19 +1,27 @@
 import Model from '../../core/Model.js';
 import Database from '../../../database/index.js';
 import debug from '../../../debug/index.js';
-import { CUSTOMER, TICKET } from '../../constants/index.js';
+import { CUSTOMER, TICKET, SALES } from '../../constants/index.js';
 
 const customerSchema = {
   name: { type: String, required: true },
   cpf: { type: String, unique: true, required: true },
   email: { type: String, unique: true },
   phone: { type: String, unique: true, required: true },
+  purchaseHistory: [
+    {
+      type: Database.ObjectId,
+      ref: SALES,
+    },
+  ],
+
   tickets: [
     {
       type: Database.ObjectId,
       ref: TICKET,
     },
   ],
+  lifetimeValue: { type: Number, default: 0 },
 };
 
 class CustomerModel extends Model {
@@ -119,6 +127,46 @@ class CustomerModel extends Model {
       return customer.tickets || [];
     } catch (error) {
       debug.logger.error('CustomerModel: Erro ao buscar tickets do cliente no banco de dados', { cpf, error });
+      throw error;
+    }
+  }
+
+  async addPurchaseToHistory(cpf, saleId) {
+    try {
+      const updatedCustomer = await this.model.findOneAndUpdate(
+        { cpf },
+        { $push: { purchaseHistory: saleId } },
+        { new: true },
+      );
+
+      if (!updatedCustomer) {
+        throw new Error('Cliente não encontrado');
+      }
+
+      debug.logger.info('Compra adicionada ao histórico do cliente', { cpf, saleId });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('Erro ao adicionar compra ao histórico do cliente', { cpf, saleId, error });
+      throw error;
+    }
+  }
+
+  async updateLifetimeValue(cpf, amount) {
+    try {
+      const updatedCustomer = await this.model.findOneAndUpdate(
+        { cpf },
+        { $inc: { lifetimeValue: amount } },
+        { new: true },
+      );
+
+      if (!updatedCustomer) {
+        throw new Error('Cliente não encontrado');
+      }
+
+      debug.logger.info('Valor vitalício atualizado para o cliente', { cpf, amount });
+      return updatedCustomer;
+    } catch (error) {
+      debug.logger.error('Erro ao atualizar valor vitalício do cliente', { cpf, amount, error });
       throw error;
     }
   }

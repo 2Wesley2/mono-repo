@@ -32,6 +32,13 @@ const {
   JWT_SECRET,
   NODE_ENV,
   MERCADO_PAGO_ACCESS_TOKEN,
+  TWILIO_ACCOUNT_SID,
+  TWILIO_AUTH_TOKEN,
+  TWILIO_PHONE_NUMBER,
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASSWORD,
 } = process.env;
 
 export default {
@@ -94,4 +101,19 @@ export default {
    * @type {string}
    */
   mercadoPagoAccessToken: MERCADO_PAGO_ACCESS_TOKEN,
+
+  /**
+   * Configuração do Twilio
+   */
+  twilioAccountSid: TWILIO_ACCOUNT_SID,
+  twilioAuthToken: TWILIO_AUTH_TOKEN,
+  twilioPhoneNumber: TWILIO_PHONE_NUMBER,
+
+  /**
+   * Configuração do Nodemailer
+   */
+  emailHost: EMAIL_HOST,
+  emailPort: Number(EMAIL_PORT),
+  emailUser: EMAIL_USER,
+  emailPassword: EMAIL_PASSWORD,
 };

@@ -5,7 +5,13 @@ import debug from '../debug/index.js';
 import config from '../config/index.js';
 import loaders from '../loaders/index.js';
 import errorHandler from '../middlewares/errorHandler.js';
-import { customerController, employeeController, salesController, userController } from '../resources/modules/index.js';
+import {
+  customerController,
+  employeeController,
+  salesController,
+  userController,
+  ticketService,
+} from '../resources/modules/index.js';
 
 export default class App {
   constructor() {
@@ -18,6 +24,7 @@ export default class App {
     this.configureMiddlewares();
     this.setRoutes();
     this.configureLogging();
+    this.scheduleDailyTicketCheck();
     this.handleErrors();
   }
 
@@ -67,6 +74,45 @@ export default class App {
       next();
     });
     debug.logger.info('app.js: Middleware de logging de requisições configurado.');
+  }
+
+  scheduleDailyTicketCheck() {
+    const checkTicketsExpiringSoon = async () => {
+      try {
+        const daysUntilExpiry = 7;
+        const expiringTickets = await ticketService.findTicketsExpiringSoon(daysUntilExpiry);
+
+        for (const ticket of expiringTickets) {
+          const cliente = await customerController.findClienteByCPF(ticket.clientCPF);
+
+          if (cliente) {
+            const mensagem = `
+            Olá! Seu ticket está próximo de expirar em 
+            ${ticket.expiryDate.toLocaleDateString()}. 
+            Use-o antes dessa data para aproveitar o desconto.
+            `;
+            await notificationService.sendToAllChannels(cliente, mensagem);
+
+            debug.logger.info('Notificação enviada para cliente com ticket próximo de expirar.', {
+              clientCPF: ticket.clientCPF,
+              expiryDate: ticket.expiryDate,
+            });
+          } else {
+            debug.logger.warn('Cliente não encontrado para notificação de ticket expiring soon', {
+              clientCPF: ticket.clientCPF,
+            });
+          }
+        }
+
+        debug.logger.info('App.js: Verificação diária de tickets próximos de expirar concluída.', {
+          count: expiringTickets.length,
+        });
+      } catch (error) {
+        debug.logger.error('App.js: Erro na verificação diária de tickets:', error);
+      }
+    };
+
+    loaders.cron.scheduleJob('checkTicketsExpiringSoon', '0 0 * * *', checkTicketsExpiringSoon);
   }
 
   handleErrors() {

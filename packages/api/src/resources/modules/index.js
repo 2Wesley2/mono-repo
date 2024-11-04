@@ -22,6 +22,10 @@ import TicketModel from './ticket/TicketModel.js';
 import TicketRepository from './ticket/TicketRepository.js';
 import TicketService from './ticket/TicketService.js';
 
+import NoficationModel from './notification/NotificationModel.js';
+import NoficationRepository from './notification/NotificationRepository.js';
+import NotificationService from './notification/NotificationService.js';
+
 const userModel = new UserModel();
 const userRepository = new UserRepository(userModel);
 const userService = new UserService(userRepository);
@@ -36,6 +40,10 @@ const customerRepository = new CustomerRepository(customerModel);
 const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
+const notificationModel = new NoficationModel();
+const notificationRepository = new NoficationRepository(notificationModel);
+const notificationService = new NotificationService(notificationRepository);
+
 const employeeModel = new EmployeeModel();
 const employeeRepository = new EmployeeRepository(employeeModel);
 const employeeService = new EmployeeService(employeeRepository);
@@ -46,4 +54,4 @@ const salesRepository = new SalesRepository(salesModel);
 const salesService = new SalesService(salesRepository, ticketService, customerRepository);
 const salesController = new SalesController(salesService);
 
-export { userController, customerController, employeeController, salesController };
+export { userController, customerController, employeeController, salesController, ticketService, notificationService };

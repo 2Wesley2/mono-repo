@@ -1,6 +1,7 @@
 import Model from '../../core/Model.js';
 import debug from '../../../debug/index.js';
-import { TICKET } from '../../constants/index.js';
+import { TICKET, SALES } from '../../constants/index.js';
+import Database from '../../../database/index.js';
 
 const ticketSchema = {
   clientCPF: { type: String, required: true },
@@ -8,8 +9,14 @@ const ticketSchema = {
   status: { type: String, enum: ['available', 'used', 'expired'], default: 'available' },
   expiryDate: { type: Date, required: true },
   generatedDate: { type: Date, default: Date.now },
+  usedDate: { type: Date },
+  appliedToSale: {
+    type: Database.ObjectId,
+    ref: SALES,
+  },
 };
 
+//CRIAR MÉTOD QUE ATUALIZA APPLIEDTOSALE
 class TicketModel extends Model {
   constructor() {
     super(ticketSchema, TICKET);
@@ -61,6 +68,25 @@ class TicketModel extends Model {
       return expiredTickets;
     } catch (error) {
       debug.logger.error('Erro ao expirar tickets', { error });
+      throw error;
+    }
+  }
+
+  async findTicketsExpiringSoon(daysUntilExpiry = 7) {
+    try {
+      const today = new Date();
+      const expiryThreshold = new Date();
+      expiryThreshold.setDate(today.getDate() + daysUntilExpiry);
+
+      const expiringTickets = await this.model.find({
+        expiryDate: { $gte: today, $lte: expiryThreshold },
+        status: 'available',
+      });
+
+      debug.logger.info('Modelo: Tickets próximos de expirar encontrados', { count: expiringTickets.length });
+      return expiringTickets;
+    } catch (error) {
+      debug.logger.error('Modelo: Erro ao buscar tickets próximos de expirar', { error });
       throw error;
     }
   }
