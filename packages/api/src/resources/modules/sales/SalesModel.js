@@ -20,7 +20,6 @@ const salesSchema = {
   },
 };
 
-//CRIAR MÉTODOS QUE ATUALIZA appliedVoucher E employee
 class SalesModel extends Model {
   constructor() {
     super(salesSchema, SALES);
