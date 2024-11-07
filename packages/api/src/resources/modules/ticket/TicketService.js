@@ -23,11 +23,11 @@ class TicketService {
     this.repository = repository;
   }
 
-  async create(clientCPF, discount) {
+  async create(clientCPF, discount, discountType) {
     try {
       const expiryDate = new Date();
       expiryDate.setMonth(expiryDate.getMonth() + 1);
-      const data = { clientCPF, discount, expiryDate };
+      const data = { clientCPF, discountType, discount, expiryDate };
       const result = await this.repository.create(data);
       debug.logger.info('Serviço: Ticket criado com sucesso', { data: result });
       return result;

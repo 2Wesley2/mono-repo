@@ -2,11 +2,12 @@ import debug from '../../../debug/index.js';
 import AppError from '../../../errors/AppError.js';
 
 class SalesService {
-  constructor(repository, ticketService, customerRepository, notificationService) {
+  constructor(repository, ticketService, customerRepository, notificationService, cashbackService) {
     this.repository = repository;
     this.ticketService = ticketService;
     this.customerRepository = customerRepository;
     this.notificationService = notificationService;
+    this.cashbackService = cashbackService;
   }
 
   async create(data) {
@@ -29,6 +30,8 @@ class SalesService {
 
       if (newTicket) {
         await this._handleNewTicketNotification(saleData.clientCPF, newTicket, newSale);
+      } else {
+        debug.logger.info('Serviço: Nenhum ticket gerado para essa venda', { clientCPF: saleData.clientCPF });
       }
 
       return newSale;
@@ -70,19 +73,27 @@ class SalesService {
 
   async generateTicketIfEligible({ clientCPF, totalAmount, ticketApplied }) {
     debug.logger.info('Serviço: Verificando elegibilidade para geração de novo ticket', { clientCPF, totalAmount });
+
     if (ticketApplied) {
       debug.logger.info('Serviço: Ticket já aplicado, não é elegível para novo ticket', { clientCPF });
       return;
     }
 
-    const discountPercentage = this._determineDiscountPercentage(totalAmount);
-    debug.logger.info('Serviço: Percentual de desconto determinado', { discountPercentage });
+    const discountData = await this._determineDiscountPercentage(totalAmount);
+    debug.logger.info(`Serviço: Dados do desconto determinados: ${JSON.stringify(discountData)}`);
 
-    if (discountPercentage > 0) {
-      const newTicket = await this.ticketService.create(clientCPF, discountPercentage);
-      debug.logger.info(`Serviço: ${newTicket} de ${discountPercentage}% gerado para o cliente ${clientCPF}`);
+    if (discountData.discountType) {
+      const newTicket = await this.ticketService.create(
+        clientCPF,
+        discountData.discountValue,
+        discountData.discountType,
+      );
+      debug.logger.info(
+        `Serviço: Ticket de ${discountData.discountValue}${discountData.discountType === 'percentage' ? '%' : ''} gerado para o cliente ${clientCPF}`,
+      );
       return newTicket;
     }
+
     debug.logger.info('Serviço: Cliente não elegível para geração de ticket', { clientCPF });
     return null;
   }
@@ -110,7 +121,6 @@ class SalesService {
   async _handleNewTicketNotification(clientCPF, newTicket, newSale) {
     debug.logger.info('Serviço: Iniciando notificação de novo ticket', { clientCPF, newTicket });
 
-    // Adiciona o ticket ao cliente e verifica `clientCPF`
     const clienteAtualizado = await this.customerRepository.addTicketToCustomer(clientCPF, newTicket._id);
 
     if (!clienteAtualizado?.cpf) {
@@ -154,12 +164,33 @@ class SalesService {
     }
   }
 
-  _determineDiscountPercentage(totalAmount) {
-    debug.logger.info('Serviço: Determinando percentual de desconto', { totalAmount });
-    if (totalAmount >= 50 && totalAmount <= 100) return 5;
-    if (totalAmount > 100 && totalAmount <= 150) return 10;
-    if (totalAmount > 150) return 15;
-    return 0;
+  async _determineDiscountPercentage(totalAmount) {
+    const activeCashback = await this.cashbackService.findActiveCashback();
+    debug.logger.info('Serviço: Determinando desconto aplicável com base no totalAmount', { totalAmount });
+
+    // Ordena os tiers em ordem decrescente de `minPurchaseAmount`
+    const sortedTiers = activeCashback.ruleDiscont.sort((a, b) => b.minPurchaseAmount - a.minPurchaseAmount);
+
+    for (const tier of sortedTiers) {
+      if (totalAmount >= tier.minPurchaseAmount && totalAmount <= tier.maxPurchaseAmount) {
+        if (tier.discountType === 'percentage') {
+          debug.logger.info(`Desconto percentual aplicável encontrado: ${tier.discountPercentage}%`);
+          return {
+            discountType: 'percentage',
+            discountValue: tier.discountPercentage,
+          };
+        } else if (tier.discountType === 'fixed') {
+          debug.logger.info(`Desconto fixo aplicável encontrado: ${tier.discountFixedValue}`);
+          return {
+            discountType: 'fixed',
+            discountValue: tier.discountFixedValue,
+          };
+        }
+      }
+    }
+
+    debug.logger.info('Nenhum desconto aplicável para o valor total informado', { totalAmount });
+    return { discountType: null, discountValue: 0 };
   }
 }
 

@@ -6,6 +6,7 @@ import Database from '../../../database/index.js';
 const ticketSchema = {
   clientCPF: { type: String, required: true },
   discount: { type: Number, required: true },
+  discountType: { type: String, enum: ['percentage', 'fixed'], required: true },
   status: { type: String, enum: ['available', 'used', 'expired'], default: 'available' },
   expiryDate: { type: Date, required: true },
   generatedDate: { type: Date, default: Date.now },

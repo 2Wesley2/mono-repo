@@ -22,6 +22,15 @@ import TicketModel from './ticket/TicketModel.js';
 import TicketRepository from './ticket/TicketRepository.js';
 import TicketService from './ticket/TicketService.js';
 
+import TierModel from './tier/TierModel.js';
+import TierRepository from './tier/TierRepository.js';
+import TierService from './tier/TierService.js';
+
+import CashbackModel from './cashback/CashbackModel.js';
+import CashbackRepository from './cashback/CashbackRepository.js';
+import CashbackService from './cashback/CashbackService.js';
+import CashbackController from './cashback/CashbackController.js';
+
 import NoficationModel from './notification/NotificationModel.js';
 import NoficationRepository from './notification/NotificationRepository.js';
 import NotificationService from './notification/NotificationService.js';
@@ -49,9 +58,32 @@ const employeeRepository = new EmployeeRepository(employeeModel);
 const employeeService = new EmployeeService(employeeRepository);
 const employeeController = new EmployeeController(employeeService);
 
+const tierModel = new TierModel();
+const tierRepository = new TierRepository(tierModel);
+const tierService = new TierService(tierRepository);
+
+const cashbackModel = new CashbackModel();
+const cashbackRepository = new CashbackRepository(cashbackModel);
+const cashbackService = new CashbackService(cashbackRepository, tierService);
+const cashbackController = new CashbackController(cashbackService);
+
 const salesModel = new SalesModel();
 const salesRepository = new SalesRepository(salesModel);
-const salesService = new SalesService(salesRepository, ticketService, customerRepository, notificationService);
+const salesService = new SalesService(
+  salesRepository,
+  ticketService,
+  customerRepository,
+  notificationService,
+  cashbackService,
+);
 const salesController = new SalesController(salesService);
 
-export { userController, customerController, employeeController, salesController, ticketService, notificationService };
+export {
+  userController,
+  customerController,
+  employeeController,
+  salesController,
+  ticketService,
+  notificationService,
+  cashbackController,
+};
