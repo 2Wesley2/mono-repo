@@ -20,6 +20,7 @@ const DrawerNavigation = () => {
     { path: '/gerenciar-funcionarios', name: 'Gerenciar Funcionários' },
     { path: '/gerenciar-clientes', name: 'Gerenciar Clientes' },
     { path: '/checkout', name: 'Vender' },
+    { path: '/configuration', name: 'Config' },
   ];
 
   const filteredRoutes = routes.filter(route => route.path !== pathname);

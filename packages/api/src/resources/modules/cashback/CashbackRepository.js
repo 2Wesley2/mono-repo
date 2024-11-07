@@ -37,6 +37,16 @@ class CashbackRepository {
       throw new AppError(500, 'Erro no repositório ao buscar cashback ativo');
     }
   }
+
+  async findAllCashbacks() {
+    try {
+      debug.logger.info('CashbackRepository: buscando todos os cashbacks');
+      return await this.model.findAllWithTiers();
+    } catch (error) {
+      debug.logger.error('CashbackRepository: Erro ao buscar cashbacks', error);
+      throw new AppError(500, 'Erro ao buscar cashbacks no repositório');
+    }
+  }
 }
 
 export default CashbackRepository;

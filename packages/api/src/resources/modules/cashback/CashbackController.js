@@ -13,6 +13,7 @@ class CashbackController extends Controller {
     this.router.post('/create', this.create.bind(this));
     this.router.post('/:id/activate', this.activateCashback.bind(this));
     this.router.get('/active', this.getActiveCashback.bind(this));
+    this.router.get('/cashbacks', this.listAllCashbacks.bind(this));
   }
 
   async create(req, res, next) {
@@ -54,6 +55,16 @@ class CashbackController extends Controller {
       res.status(200).json(activeCashback);
     } catch (error) {
       debug.logger.error('CashbackController: Erro ao buscar cashback ativo', { error });
+      next(error);
+    }
+  }
+
+  async listAllCashbacks(req, res, next) {
+    try {
+      const cashbacks = await this.service.listAllCashbacks();
+      res.status(200).json(cashbacks);
+    } catch (error) {
+      debug.logger.error('CashbackController: Erro ao listar cashbacks', { error });
       next(error);
     }
   }

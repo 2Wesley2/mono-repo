@@ -124,6 +124,15 @@ class CashbackService {
       throw new AppError(500, 'Erro no serviço ao buscar cashback ativo');
     }
   }
+  async listAllCashbacks() {
+    try {
+      debug.logger.info('CashbackService: listando todos os cashbacks');
+      return await this.repository.findAllCashbacks();
+    } catch (error) {
+      debug.logger.error('CashbackService: Erro ao listar cashbacks', error);
+      throw new AppError(500, 'Erro ao listar cashbacks');
+    }
+  }
 }
 
 export default CashbackService;

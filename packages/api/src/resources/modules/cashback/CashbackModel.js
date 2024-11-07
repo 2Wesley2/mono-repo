@@ -28,7 +28,6 @@ class CashbackModel extends Model {
       throw new AppError(500, 'Erro ao criar documento de cashback');
     }
   }
-
   async activateCashback(cashbackId) {
     try {
       debug.logger.info('Desativando todos os cashbacks ativos');
@@ -68,6 +67,27 @@ class CashbackModel extends Model {
     } catch (error) {
       debug.logger.error('Erro ao buscar cashback ativo:', error);
       throw new AppError(500, 'Erro interno ao buscar cashback ativo');
+    }
+  }
+
+  async findAllWithTiers() {
+    try {
+      debug.logger.info('CashbackModel: buscando todos os cashbacks com tiers');
+      const cashbacks = await this.model.find().populate('ruleDiscont');
+      return cashbacks;
+    } catch (error) {
+      debug.logger.error('Erro ao buscar todos os cashbacks com tiers:', error);
+      throw new AppError(500, 'Erro ao buscar cashbacks');
+    }
+  }
+
+  async findAllCashbacks() {
+    try {
+      debug.logger.info('CashbackRepository: buscando todos os cashbacks');
+      return await this.model.findAllWithTiers();
+    } catch (error) {
+      debug.logger.error('CashbackRepository: Erro ao buscar cashbacks', error);
+      throw new AppError(500, 'Erro ao buscar cashbacks no repositório');
     }
   }
 }
