@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import Layout from '@/components/Layout';
 
 export const metadata = {
   title: 'Checkout - Processo de Venda',
@@ -6,11 +6,7 @@ export const metadata = {
 };
 
 const CheckoutLayout = ({ children }) => {
-  return (
-    <Layout>
-      {children}
-    </Layout>
-  );
+  return <Layout>{children}</Layout>;
 };
 
 export default CheckoutLayout;

@@ -7,7 +7,7 @@ class User {
 
   changeEmail(newEmail) {
     if (!this.validateEmail(newEmail)) {
-      throw new Error("Email inválido");
+      throw new Error('Email inválido');
     }
     this.email = newEmail;
   }

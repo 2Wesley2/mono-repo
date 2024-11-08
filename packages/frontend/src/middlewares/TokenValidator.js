@@ -2,7 +2,7 @@ import { jwtVerify } from 'jose';
 
 class TokenValidator {
   constructor(secret) {
-    this.secret = secret
+    this.secret = secret;
   }
 
   async isValid(token) {
@@ -14,7 +14,9 @@ class TokenValidator {
       await jwtVerify(token, this.secret, { algorithms: ['HS256'] });
       return true;
     } catch (error) {
-      console.log('TokenValidator.js: Erro na verificação do token.', 'ERROR', { error: error.message });
+      console.log('TokenValidator.js: Erro na verificação do token.', 'ERROR', {
+        error: error.message,
+      });
       return false;
     }
   }
@@ -26,7 +28,9 @@ class TokenValidator {
       console.log('TokenValidator.js: Token verificado com sucesso.');
       return payload;
     } catch (error) {
-      console.log('TokenValidator.js: Falha na verificação do token.', 'WARN', { error: error.message });
+      console.log('TokenValidator.js: Falha na verificação do token.', 'WARN', {
+        error: error.message,
+      });
       return null;
     }
   }
@@ -36,4 +40,4 @@ class TokenValidator {
   }
 }
 
-export default TokenValidator
+export default TokenValidator;

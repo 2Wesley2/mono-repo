@@ -24,8 +24,17 @@ const CashbackConfiguration = () => {
     loadCashback();
   }, [loadCashback]);
 
-  const handleNextStep = () => setStep((prev) => prev + 1);
-  const handlePreviousStep = () => setStep((prev) => prev - 1);
+  const handleNextStep = () => {
+    setStep((prev) => {
+      return prev + 1;
+    });
+  };
+
+  const handlePreviousStep = () => {
+    setStep((prev) => {
+      return prev - 1;
+    });
+  };
 
   const handleSelectCashback = (cashback) => {
     setSelectedCashback(cashback);
@@ -34,14 +43,20 @@ const CashbackConfiguration = () => {
   };
 
   const handleCreateCashback = () => {
+    setSelectedCashback(null);
     setStep2Mode('form');
-    handleNextStep();
+    setStep(2);
+  };
+
+  const handleEditCashback = () => {
+    setStep2Mode('form');
+    setStep(3);
   };
 
   return (
     <div>
       {step === 1 && (
-       <CashbackList
+        <CashbackList
           cashbacks={cashbacks}
           onSelectCashback={handleSelectCashback}
           onCreateCashback={handleCreateCashback}
@@ -51,12 +66,25 @@ const CashbackConfiguration = () => {
         <CashbackDetails
           cashback={selectedCashback}
           onBack={handlePreviousStep}
+          onEdit={handleEditCashback}
         />
       )}
-
       {step === 2 && step2Mode === 'form' && (
         <CashbackForm
-          onBack={handlePreviousStep}
+          cashback={selectedCashback}
+          onBack={() => {
+            setStep(1);
+            setSelectedCashback(null);
+          }}
+        />
+      )}
+      {step === 3 && step2Mode === 'form' && (
+        <CashbackForm
+          cashback={selectedCashback}
+          onBack={() => {
+            setStep(2);
+            setStep2Mode('details');
+          }}
         />
       )}
     </div>

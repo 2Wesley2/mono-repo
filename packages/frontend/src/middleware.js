@@ -1,4 +1,4 @@
-import accessController from "./middlewares/index";
+import accessController from './middlewares/index';
 
 export async function middleware(req) {
   console.log('Middleware executado para:', req.nextUrl.pathname);
@@ -6,7 +6,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/|favicon.ico).*)'
-  ],
+  matcher: ['/((?!api|_next/|favicon.ico).*)'],
 };

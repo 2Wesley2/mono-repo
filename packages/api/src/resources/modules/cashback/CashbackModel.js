@@ -90,5 +90,26 @@ class CashbackModel extends Model {
       throw new AppError(500, 'Erro ao buscar cashbacks no repositório');
     }
   }
+
+  async updateCashbackById(cashbackId, cashbackData) {
+    try {
+      debug.logger.info(`CashbackModel: Atualizando o cashback com ID: ${cashbackId}`);
+      const updatedCashback = await this.model.findOneAndUpdate(
+        { _id: cashbackId },
+        { $set: cashbackData },
+        { new: true },
+      );
+
+      if (!updatedCashback) {
+        throw new AppError(404, 'Cashback não encontrado');
+      }
+
+      debug.logger.info(`CashbackModel: Cashback atualizado com sucesso: ${JSON.stringify(updatedCashback)}`);
+      return updatedCashback;
+    } catch (error) {
+      debug.logger.error('Erro ao atualizar cashback no banco de dados', error);
+      throw new AppError(500, 'Erro ao atualizar cashback no banco de dados');
+    }
+  }
 }
 export default CashbackModel;

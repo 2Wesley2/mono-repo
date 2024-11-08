@@ -1,13 +1,26 @@
 import React from 'react';
-import { Box, Typography, Paper, Button, List, ListItem, ListItemText, Divider, Container } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Container,
+} from '@mui/material';
 
-const CashbackDetails = ({ cashback, onBack }) => {
+const CashbackDetails = ({ cashback, onBack, onEdit }) => {
   if (!cashback) {
     return null;
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Container
+      maxWidth="sm"
+      sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
+    >
       <Typography variant="h4" component="h1" gutterBottom>
         Detalhes do Cashback
       </Typography>
@@ -47,14 +60,27 @@ const CashbackDetails = ({ cashback, onBack }) => {
         )}
       </Box>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={onBack}
-        sx={{ alignSelf: 'center', mt: 3 }}
-      >
-        Voltar
-      </Button>
+      <Box display="flex" justifyContent="center" mt={3}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            onBack();
+          }}
+          sx={{ mr: 2 }}
+        >
+          Voltar
+        </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => {
+            onEdit();
+          }}
+        >
+          Editar
+        </Button>
+      </Box>
     </Container>
   );
 };

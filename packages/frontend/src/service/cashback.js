@@ -42,3 +42,24 @@ export const createCashback = async (cashbackData) => {
     throw error;
   }
 };
+
+export const updateCashback = async (cashbackId, cashbackData) => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/cashback/${cashbackId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cashbackData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar cashback');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

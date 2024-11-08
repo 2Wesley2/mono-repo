@@ -1,23 +1,21 @@
 import './index.css';
-import DrawerNavigation from "../../src/components/DrawerNavigation";
-import Footer from "../../src/components/Footer";
+import DrawerNavigation from '../../src/components/DrawerNavigation';
+import Footer from '../../src/components/Footer';
 
 export const metadata = {
-  title: "Facilite Varejo",
-  description: "Facilite Varejo App",
+  title: 'Facilite Varejo',
+  description: 'Facilite Varejo App',
 };
 
 export default function RootLayout({ children }) {
-  console.log(`renderizando no servidor`)
+  console.log(`renderizando no servidor`);
   return (
     <html lang="pt-br">
       <body>
         <DrawerNavigation />
-        <div className='layout'>
-          {children}
-        </div>
+        <div className="layout">{children}</div>
         <Footer />
       </body>
     </html>
   );
-};
+}

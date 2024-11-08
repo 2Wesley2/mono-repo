@@ -33,14 +33,16 @@ const CustomerSelection = ({ onSelectCustomer, onBack }) => {
   }, []);
 
   return (
-    <Container maxWidth="sm" sx={{
-      mt: 6,
-      display: 'flex', flexDirection: 'column', alignItems: 'center'
-    }}>
-      
-      <Title>
-        Selecione um Cliente
-      </Title>
+    <Container
+      maxWidth="sm"
+      sx={{
+        mt: 6,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Title>Selecione um Cliente</Title>
 
       {loading ? (
         <CircularProgress color="primary" />
@@ -48,12 +50,14 @@ const CustomerSelection = ({ onSelectCustomer, onBack }) => {
         <Fade in={!loading}>
           <Box sx={{ width: '100%' }}>
             {customers.length === 0 ? (
-              <Paper sx={{
-                p: 3,
-                textAlign: 'center',
-                borderRadius: 3,
-                bgcolor: 'grey.100'
-              }}>
+              <Paper
+                sx={{
+                  p: 3,
+                  textAlign: 'center',
+                  borderRadius: 3,
+                  bgcolor: 'grey.100',
+                }}
+              >
                 <Typography variant="body1" color="textSecondary">
                   Nenhum cliente encontrado.
                 </Typography>
@@ -81,7 +85,10 @@ const CustomerSelection = ({ onSelectCustomer, onBack }) => {
                           display: 'flex',
                           alignItems: 'center',
                           p: 1,
-                          '&:focus': { outline: '2px solid', outlineColor: 'primary.main' },
+                          '&:focus': {
+                            outline: '2px solid',
+                            outlineColor: 'primary.main',
+                          },
                         }}
                         aria-label={`Selecionar cliente ${customer.name} com CPF ${customer.cpf}`}
                       >
@@ -89,7 +96,10 @@ const CustomerSelection = ({ onSelectCustomer, onBack }) => {
                         <ListItemText
                           primary={`${customer.name}`}
                           secondary={`CPF: ${customer.cpf}`}
-                          primaryTypographyProps={{ fontWeight: 'bold', color: 'textPrimary' }}
+                          primaryTypographyProps={{
+                            fontWeight: 'bold',
+                            color: 'textPrimary',
+                          }}
                           secondaryTypographyProps={{ color: 'textSecondary' }}
                         />
                       </ListItem>

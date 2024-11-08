@@ -5,7 +5,9 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 
 export default function SignInLayout({ children }) {
-  console.log(`SignInLayout: Server-side render at ${new Date().toISOString()}`);
+  console.log(
+    `SignInLayout: Server-side render at ${new Date().toISOString()}`,
+  );
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -28,7 +30,8 @@ export default function SignInLayout({ children }) {
             gap: 2,
             margin: 'auto',
             maxWidth: { sm: '450px' },
-          }}>
+          }}
+        >
           <Typography component="h1" variant="h4" sx={{ fontSize: '2.15rem' }}>
             Entre
           </Typography>

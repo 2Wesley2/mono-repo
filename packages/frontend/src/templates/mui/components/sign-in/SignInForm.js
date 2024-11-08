@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
@@ -28,11 +28,15 @@ export default function SignInForm() {
 
   const validateInputs = useCallback((username, password) => {
     let valid = true;
-    const newErrors = { username: { error: false, message: '' }, password: { error: false, message: '' } };
+    const newErrors = {
+      username: { error: false, message: '' },
+      password: { error: false, message: '' },
+    };
 
     if (!username || !/\S+@\S+\.\S+/.test(username)) {
       newErrors.username.error = true;
-      newErrors.username.message = 'Por favor, insira um nome de usuário válido.';
+      newErrors.username.message =
+        'Por favor, insira um nome de usuário válido.';
       valid = false;
     }
     if (!password || password.length < 6) {
@@ -45,36 +49,50 @@ export default function SignInForm() {
     return valid;
   }, []);
 
-  const handleSubmit = useCallback(async (event) => {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    const username = formData.get('username');
-    const password = formData.get('password');
+      const formData = new FormData(event.currentTarget);
+      const username = formData.get('username');
+      const password = formData.get('password');
 
-    if (!validateInputs(username, password)) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const response = await login(username, password);
-      if (response) {
-        router.push('/');
+      if (!validateInputs(username, password)) {
+        return;
       }
-    } catch (error) {
-      setFormErrors((prev) => ({
-        ...prev,
-        password: { error: true, message: 'Falha no login. Verifique suas credenciais.' },
-      }));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [validateInputs, router]);
+
+      setIsSubmitting(true);
+      try {
+        const response = await login(username, password);
+        if (response) {
+          router.push('/');
+        }
+      } catch (error) {
+        setFormErrors((prev) => ({
+          ...prev,
+          password: {
+            error: true,
+            message: 'Falha no login. Verifique suas credenciais.',
+          },
+        }));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [validateInputs, router],
+  );
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Backdrop open={isSubmitting} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      noValidate
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+    >
+      <Backdrop
+        open={isSubmitting}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
 
@@ -90,13 +108,22 @@ export default function SignInForm() {
           required
           fullWidth
           color="error"
-          aria-describedby={formErrors.username.error ? 'username-error' : undefined}
+          aria-describedby={
+            formErrors.username.error ? 'username-error' : undefined
+          }
         />
       </FormControl>
       <FormControl>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <FormLabel htmlFor="password">Senha</FormLabel>
-          <Link component="button" color="error" onClick={handleClickOpen} variant="body2">Esqueceu sua senha?</Link>
+          <Link
+            component="button"
+            color="error"
+            onClick={handleClickOpen}
+            variant="body2"
+          >
+            Esqueceu sua senha?
+          </Link>
         </Box>
         <TextField
           error={formErrors.password.error}
@@ -108,15 +135,31 @@ export default function SignInForm() {
           required
           fullWidth
           color="error"
-          aria-describedby={formErrors.password.error ? 'password-error' : undefined}
+          aria-describedby={
+            formErrors.password.error ? 'password-error' : undefined
+          }
         />
       </FormControl>
-      <FormControlLabel control={<Checkbox value="remember" color="error" />} label="Lembrar senha" />
+      <FormControlLabel
+        control={<Checkbox value="remember" color="error" />}
+        label="Lembrar senha"
+      />
       <ForgotPassword open={open} handleClose={handleClose} />
-      <Button type="submit" fullWidth variant="contained" disabled={isSubmitting} color="error">
-        {isSubmitting ? <><CircularProgress size={20} sx={{ mr: 1 }} /> Carregando...</> : 'Entrar'}
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        disabled={isSubmitting}
+        color="error"
+      >
+        {isSubmitting ? (
+          <>
+            <CircularProgress size={20} sx={{ mr: 1 }} /> Carregando...
+          </>
+        ) : (
+          'Entrar'
+        )}
       </Button>
-      
     </Box>
   );
 }

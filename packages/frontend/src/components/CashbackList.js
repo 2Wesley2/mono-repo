@@ -39,13 +39,23 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
   }, []);
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        mt: 6,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <Title>Selecione um Cashback</Title>
 
       <Button
         variant="contained"
-        color="primary"
-        onClick={onCreateCashback}
+        color="error"
+        onClick={() => {
+          onCreateCashback();
+        }}
         sx={{ mb: 3 }}
       >
         Criar Novo Cashback
@@ -71,21 +81,26 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
               >
                 <ListItem
                   button
-                  onClick={() => onSelectCashback(activeCashback)}
+                  onClick={() => {
+                    onSelectCashback(activeCashback);
+                  }}
                   sx={{
                     backgroundColor: '#FAFAFA',
                     display: 'flex',
                     alignItems: 'center',
                     p: 1,
-                    '&:focus': { outline: '2px solid', outlineColor: 'primary.main' },
+                    '&:focus': { outline: '2px solid' },
                   }}
                   aria-label={`Selecionar cashback ${activeCashback.name}`}
                 >
-                  <LocalOfferIcon sx={{ color: '#1976D2', mr: 2 }} />
+                  <LocalOfferIcon sx={{ color: '#E50914', mr: 2 }} />
                   <ListItemText
                     primary={`${activeCashback.name}`}
                     secondary="Status: Ativo"
-                    primaryTypographyProps={{ fontWeight: 'bold', color: 'textPrimary' }}
+                    primaryTypographyProps={{
+                      fontWeight: 'bold',
+                      color: 'textPrimary',
+                    }}
                     secondaryTypographyProps={{ color: 'textSecondary' }}
                   />
                 </ListItem>
@@ -98,15 +113,32 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
               <Typography variant="h6" color="textPrimary" gutterBottom>
                 Cashbacks Inativos
               </Typography>
-              <Box sx={{
-                display: 'flex',
-                overflowX: 'auto',
-                pb: 2,
-                '& > *': { flex: '0 0 auto', width: 150, mr: 2 },
-              }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  pb: 2,
+                  '& > *': { flex: '0 0 auto', width: 150, mr: 2 },
+                  '&::-webkit-scrollbar': {
+                    height: '6px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#B0BEC5',
+                    borderRadius: '10px',
+                  },
+                  '&::-webkit-scrollbar-thumb:hover': {
+                    backgroundColor: '#90A4AE',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    backgroundColor: '#ECEFF1',
+                    borderRadius: '10px',
+                  },
+                }}
+              >
                 {inactiveCashbacks.map((cashback) => (
                   <Fade in key={cashback.id} timeout={400}>
                     <Paper
+                      component="button"
                       elevation={3}
                       sx={{
                         backgroundColor: '#FAFAFA',
@@ -118,14 +150,22 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        border: 'none',
+                        outline: 'none',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        onSelectCashback(cashback);
                       }}
                     >
-                      <LocalOfferIcon sx={{ color: '#1976D2', mb: 1 }} />
-                      <Typography variant="body1" fontWeight="bold" color="textPrimary" textAlign="center">
+                      <LocalOfferIcon sx={{ color: '#E50914', mb: 1 }} />
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        color="textPrimary"
+                        textAlign="center"
+                      >
                         {cashback.name}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" textAlign="center">
-                        Status: Inativo
                       </Typography>
                     </Paper>
                   </Fade>

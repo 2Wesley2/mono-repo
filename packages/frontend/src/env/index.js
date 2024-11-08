@@ -1,4 +1,4 @@
-import environmentVariable from "./env";
+import environmentVariable from './env';
 
 const env = { ...environmentVariable };
 

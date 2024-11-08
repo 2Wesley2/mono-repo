@@ -10,7 +10,7 @@ requiredEnvVars.forEach((envVar) => {
   }
 });*/
 
-const environmentVariable =  {
+const environmentVariable = {
   /**
    * URL base da API para o front-end
    * @type {string}

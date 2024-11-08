@@ -34,6 +34,23 @@ class TierRepository {
       throw new AppError(500, 'Erro no repositório ao buscar faixas de desconto');
     }
   }
+
+  async updateTiersByCashbackId(cashbackId, tiersData) {
+    try {
+      debug.logger.info('TierRepository: Atualizando faixas de desconto para o cashback', { cashbackId });
+      const updatedTiers = await this.model.updateTiersByCashbackId(cashbackId, tiersData);
+
+      if (!updatedTiers) {
+        debug.logger.warn('Nenhum tier encontrado para o cashback durante a atualização', { cashbackId });
+        throw new AppError(404, 'Nenhuma faixa de desconto encontrada para o cashback');
+      }
+
+      return updatedTiers;
+    } catch (error) {
+      debug.logger.error('Erro no repositório ao atualizar faixas de desconto', { cashbackId, error });
+      throw new AppError(500, 'Erro no repositório ao atualizar faixas de desconto');
+    }
+  }
 }
 
 export default TierRepository;

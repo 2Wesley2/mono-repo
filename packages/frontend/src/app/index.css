@@ -2,16 +2,16 @@ html,
 body,
 #root {
   box-sizing: border-box;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 body {
   margin: auto;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 
 .background {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .layout {
@@ -37,7 +37,6 @@ body {
   justify-self: center;
   justify-items: center;
   text-justify: auto;
-
 }
 
 .active {

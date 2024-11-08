@@ -1,9 +1,13 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import {
-  AppBar, Drawer, Toolbar,
+  AppBar,
+  Drawer,
+  Toolbar,
   Box,
-  List, ListItem, ListItemText,
+  List,
+  ListItem,
+  ListItemText,
   Button,
   IconButton,
 } from '@mui/material';
@@ -23,7 +27,7 @@ const DrawerNavigation = () => {
     { path: '/configuration', name: 'Config' },
   ];
 
-  const filteredRoutes = routes.filter(route => route.path !== pathname);
+  const filteredRoutes = routes.filter((route) => route.path !== pathname);
 
   const toggleDrawer = (open) => {
     setDrawerOpen(open);
@@ -41,14 +45,16 @@ const DrawerNavigation = () => {
           backgroundColor: '#E50914',
           marginBottom: '1rem',
           justifyContent: 'center',
-          alignContent: 'center'
-        }}>
+          alignContent: 'center',
+        }}
+      >
         <Toolbar
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            alignContent: 'center'
-          }}>
+            alignContent: 'center',
+          }}
+        >
           {!isLoginPage && (
             <IconButton
               edge="start"
@@ -56,37 +62,34 @@ const DrawerNavigation = () => {
               onClick={() => toggleDrawer(true)}
               sx={{
                 color: '#FFFFFF',
-                mr: 2
+                mr: 2,
               }}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          </Box>
+          <Box
+            sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}
+          ></Box>
         </Toolbar>
       </AppBar>
 
       {!isLoginPage && (
         <Drawer
           anchor="left"
-          variant='temporary'
+          variant="temporary"
           open={drawerOpen}
           onClose={() => toggleDrawer(false)}
           PaperProps={{ sx: { backgroundColor: '#E50914' } }}
         >
           <List>
             {filteredRoutes.map((route, index) => (
-              <ListItem
-                button
-                key={index}
-                onClick={() => toggleDrawer(false)}
-              >
+              <ListItem button key={index} onClick={() => toggleDrawer(false)}>
                 <Link href={route.path} passHref legacyBehavior>
                   <Button
                     fullWidth
                     variant="text"
-                    size='small'
+                    size="small"
                     sx={{
                       justifyContent: 'flex-start',
                     }}

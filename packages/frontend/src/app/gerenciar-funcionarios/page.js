@@ -6,12 +6,23 @@ import {
   Typography,
   Snackbar,
   TextField,
-  Dialog, DialogTitle, DialogContent, Stack, Card, FormControl, DialogActions
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Stack,
+  Card,
+  FormControl,
+  DialogActions,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import DataTable from '../../components/DataTable';
 import useDebounce from '../../hooks/useDebounce';
-import { addEmployee, editEmployee, deleteEmployee, getEmployees } from '../../service/index';
+import {
+  addEmployee,
+  editEmployee,
+  deleteEmployee,
+  getEmployees,
+} from '../../service/index';
 import Title from '../../components/Title';
 
 const EMPTY_EMPLOYEE = { name: '', number: '' };
@@ -19,7 +30,10 @@ const EMPTY_EMPLOYEE = { name: '', number: '' };
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
   const [newEmployee, setNewEmployee] = useState(EMPTY_EMPLOYEE);
-  const [dialogState, setDialogState] = useState({ type: null, employee: null });
+  const [dialogState, setDialogState] = useState({
+    type: null,
+    employee: null,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -63,8 +77,10 @@ const EmployeeManagement = () => {
   // Função de validação do formulário
   const validateForm = useCallback(() => {
     const errors = {};
-    if (!newEmployee.name) errors.name = { error: true, message: 'Nome é obrigatório' };
-    if (!newEmployee.number) errors.number = { error: true, message: 'Número é obrigatório' };
+    if (!newEmployee.name)
+      errors.name = { error: true, message: 'Nome é obrigatório' };
+    if (!newEmployee.number)
+      errors.number = { error: true, message: 'Número é obrigatório' };
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }, [newEmployee]);
@@ -88,9 +104,14 @@ const EmployeeManagement = () => {
     if (!validateForm()) return;
 
     try {
-      const updatedEmployee = await editEmployee(dialogState.employee._id, newEmployee);
+      const updatedEmployee = await editEmployee(
+        dialogState.employee._id,
+        newEmployee,
+      );
       setEmployees((prev) =>
-        prev.map((emp) => (emp._id === updatedEmployee._id ? updatedEmployee : emp))
+        prev.map((emp) =>
+          emp._id === updatedEmployee._id ? updatedEmployee : emp,
+        ),
       );
       handleCloseDialog();
       handleSnackbarOpen();
@@ -103,7 +124,9 @@ const EmployeeManagement = () => {
   const handleDeleteEmployee = async (employeeToDelete) => {
     try {
       await deleteEmployee(employeeToDelete._id);
-      setEmployees((prev) => prev.filter((emp) => emp._id !== employeeToDelete._id));
+      setEmployees((prev) =>
+        prev.filter((emp) => emp._id !== employeeToDelete._id),
+      );
       handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao excluir funcionário:', error);
@@ -121,18 +144,21 @@ const EmployeeManagement = () => {
 
   // Lista filtrada de funcionários usando `useMemo` para evitar recalcular em cada renderização
   const filteredEmployees = useMemo(
-    () => employees.filter((employee) =>
-      employee.name.toLowerCase().includes(debounceSearch.toLowerCase())
-    ),
-    [employees, debounceSearch]
+    () =>
+      employees.filter((employee) =>
+        employee.name.toLowerCase().includes(debounceSearch.toLowerCase()),
+      ),
+    [employees, debounceSearch],
   );
   return (
     <div>
-      <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
-
-        <Title>
-          Gerenciamento de Funcionários
-        </Title>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        my={3}
+      >
+        <Title>Gerenciamento de Funcionários</Title>
         <Button
           variant="contained"
           onClick={() => handleOpenDialog('add')}
@@ -140,8 +166,9 @@ const EmployeeManagement = () => {
             backgroundColor: '#E50914',
             color: '#FFFFF',
             '&:hover': { backgroundColor: '#b71c1c' },
-            fontSize: 'ic-width'
-          }}>
+            fontSize: 'ic-width',
+          }}
+        >
           Registrar Funcionário
         </Button>
       </Box>
@@ -150,7 +177,7 @@ const EmployeeManagement = () => {
         <TextField
           label="Pesquisar Funcionário"
           variant="outlined"
-          color='error'
+          color="error"
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
             startAdornment: <SearchIcon />,
@@ -181,15 +208,31 @@ const EmployeeManagement = () => {
         />
       )}
 
-      <Dialog open={dialogState.type !== null} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={dialogState.type !== null}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-            {dialogState.type === 'add' ? 'Registrar Funcionário' : 'Editar Funcionário'}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: 'bold', textAlign: 'center' }}
+          >
+            {dialogState.type === 'add'
+              ? 'Registrar Funcionário'
+              : 'Editar Funcionário'}
           </Typography>
         </DialogTitle>
 
         <DialogContent>
-          <Stack direction="column" spacing={2} justifyContent="center" alignItems="center">
+          <Stack
+            direction="column"
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
             <Card
               variant="outlined"
               sx={{
@@ -203,14 +246,20 @@ const EmployeeManagement = () => {
                 boxShadow: 3,
               }}
             >
-              <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box
+                component="form"
+                onSubmit={(e) => e.preventDefault()}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+              >
                 <FormControl fullWidth>
                   <TextField
                     id="name"
                     label="Nome"
                     variant="outlined"
                     value={newEmployee.name}
-                    onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+                    onChange={(e) =>
+                      setNewEmployee({ ...newEmployee, name: e.target.value })
+                    }
                     error={formErrors.name?.error}
                     helperText={formErrors.name?.message}
                     fullWidth
@@ -225,7 +274,9 @@ const EmployeeManagement = () => {
                     label="Número"
                     variant="outlined"
                     value={newEmployee.number}
-                    onChange={(e) => setNewEmployee({ ...newEmployee, number: e.target.value })}
+                    onChange={(e) =>
+                      setNewEmployee({ ...newEmployee, number: e.target.value })
+                    }
                     error={formErrors.number?.error}
                     helperText={formErrors.number?.message}
                     fullWidth
@@ -239,10 +290,22 @@ const EmployeeManagement = () => {
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: 'space-around', padding: 2 }}>
-          <Button onClick={handleSubmit} color="success" variant="contained" size="large">
-            {dialogState.type === 'add' ? 'Registrar Funcionário' : 'Salvar Alterações'}
+          <Button
+            onClick={handleSubmit}
+            color="success"
+            variant="contained"
+            size="large"
+          >
+            {dialogState.type === 'add'
+              ? 'Registrar Funcionário'
+              : 'Salvar Alterações'}
           </Button>
-          <Button onClick={handleCloseDialog} color="error" variant="contained" size="large">
+          <Button
+            onClick={handleCloseDialog}
+            color="error"
+            variant="contained"
+            size="large"
+          >
             Cancelar
           </Button>
         </DialogActions>

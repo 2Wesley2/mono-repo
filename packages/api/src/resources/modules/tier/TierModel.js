@@ -60,6 +60,24 @@ class TierModel extends Model {
       throw new AppError(500, 'Erro ao acessar o banco de dados para buscar faixas de desconto');
     }
   }
+
+  async updateTiersByCashbackId(cashbackId, tiersData) {
+    try {
+      debug.logger.info(`TierModel: Atualizando faixas de desconto para cashbackId:${cashbackId}`);
+      const updatedTiers = await this.model.updateMany({ cashbackId }, tiersData, { new: true });
+
+      if (!updatedTiers || updatedTiers.matchedCount === 0) {
+        debug.logger.warn('Nenhum tier encontrado para o cashback durante a atualização', { cashbackId });
+        throw new AppError(404, 'Nenhuma faixa de desconto encontrada para este cashback');
+      }
+
+      debug.logger.info(`TierModel: Atualização bem-sucedida para cashbackId:${cashbackId}`);
+      return updatedTiers;
+    } catch (error) {
+      debug.logger.error('TierModel: Erro ao atualizar faixas de desconto', { cashbackId, error });
+      throw new AppError(500, 'Erro ao acessar o banco de dados para atualizar faixas de desconto');
+    }
+  }
 }
 
 export default TierModel;

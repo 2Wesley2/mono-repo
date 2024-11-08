@@ -14,6 +14,7 @@ class CashbackController extends Controller {
     this.router.post('/:id/activate', this.activateCashback.bind(this));
     this.router.get('/active', this.getActiveCashback.bind(this));
     this.router.get('/cashbacks', this.listAllCashbacks.bind(this));
+    this.router.put('/:id', this.updateCashbackAndTiers.bind(this));
   }
 
   async create(req, res, next) {
@@ -65,6 +66,24 @@ class CashbackController extends Controller {
       res.status(200).json(cashbacks);
     } catch (error) {
       debug.logger.error('CashbackController: Erro ao listar cashbacks', { error });
+      next(error);
+    }
+  }
+
+  async updateCashbackAndTiers(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { name, tiers } = req.body;
+
+      if (!id) {
+        return res.status(400).json({ message: 'ID é obrigatório para atualizar o cashback' });
+      }
+
+      const updatedCashback = await this.service.updateCashbackAndTiers(id, { name, tiers });
+      debug.logger.info('CashbackController: Cashback e tiers atualizados com sucesso', { id });
+      res.status(200).json(updatedCashback);
+    } catch (error) {
+      debug.logger.error('CashbackController: Erro ao atualizar cashback e tiers', { error });
       next(error);
     }
   }

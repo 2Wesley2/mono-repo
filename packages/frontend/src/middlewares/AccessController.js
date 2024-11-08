@@ -18,19 +18,31 @@ class AccessController {
     const cookieRoleValid = await this.tokenValidator.isValid(cookieRole);
 
     if (pathname === '/login') {
-      return LoginHandler.handle({ pathname, wfSystemTokenValid, cookieRoleValid, req });
+      return LoginHandler.handle({
+        pathname,
+        wfSystemTokenValid,
+        cookieRoleValid,
+        req,
+      });
     }
 
     if (cookieRoleValid && wfSystemTokenValid) {
-      console.log('AccessController.js: cookieRole e wfSystem autêntico detectado, prosseguindo com a requisição.');
+      console.log(
+        'AccessController.js: cookieRole e wfSystem autêntico detectado, prosseguindo com a requisição.',
+      );
       return NextResponse.next();
     }
 
     if (wfSystemTokenValid && (!cookieRole || !cookieRoleValid)) {
-      const roleFromWfSystem = await this.roleExtractor.extractRole(wfSystemToken);
+      const roleFromWfSystem =
+        await this.roleExtractor.extractRole(wfSystemToken);
       if (roleFromWfSystem) {
-        const encryptRole = await this.tokenSigner.sign({ role: roleFromWfSystem });
-        console.log('AccessController.js: wfSystemToken válido, configurando cookieRole.');
+        const encryptRole = await this.tokenSigner.sign({
+          role: roleFromWfSystem,
+        });
+        console.log(
+          'AccessController.js: wfSystemToken válido, configurando cookieRole.',
+        );
         const response = NextResponse.next();
         response.cookies.set('cookieRole', encryptRole, { httpOnly: true });
         console.log('AccessController.js: cookieRole configurado com sucesso.');
@@ -38,12 +50,17 @@ class AccessController {
       }
     }
 
-    console.log('AccessController.js: Nenhum token válido detectado, redirecionando para login.', 'WARN');
+    console.log(
+      'AccessController.js: Nenhum token válido detectado, redirecionando para login.',
+      'WARN',
+    );
     return this.redirectToLoginWithCookieCleanup(req);
   }
 
   redirectToLoginWithCookieCleanup(req) {
-    console.log('AccessController.js: Redirecionando para login e limpando cookies inválidos...');
+    console.log(
+      'AccessController.js: Redirecionando para login e limpando cookies inválidos...',
+    );
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.cookies.delete('wfSystem');
     response.cookies.delete('cookieRole');

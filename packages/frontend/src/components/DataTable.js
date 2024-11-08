@@ -1,4 +1,14 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -12,7 +22,9 @@ const DataTable = ({ headers, data, dataKeys, handleEdit, handleDelete }) => (
               {header}
             </TableCell>
           ))}
-          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ações</TableCell>
+          <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+            Ações
+          </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

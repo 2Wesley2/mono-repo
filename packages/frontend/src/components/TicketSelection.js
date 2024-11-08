@@ -26,7 +26,12 @@ import { format } from 'date-fns';
 import { getCustomerTickets } from '../service/index';
 import Title from '../components/Title';
 
-const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket }) => {
+const TicketSelection = ({
+  customer,
+  onSelectTicket,
+  onBack,
+  onNextWithoutTicket,
+}) => {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,8 +56,8 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
 
   const filterTickets = (ticketsData, status) => {
     const sortedTickets = ticketsData
-      .filter(ticket => status === 'all' ? true : ticket.status === status)
-      .sort(ticket => ticket.status === 'available' ? -1 : 1);
+      .filter((ticket) => (status === 'all' ? true : ticket.status === status))
+      .sort((ticket) => (ticket.status === 'available' ? -1 : 1));
     setFilteredTickets(sortedTickets);
   };
 
@@ -65,29 +70,38 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
   const getStatusChip = (status) => {
     switch (status) {
       case 'available':
-        return <Chip
-          label="Disponível"
-          sx={{
-            bgcolor: '#4CAF50',
-            color: '#FFFFFF'
-          }}
-          icon={<CheckCircleIcon sx={{ color: '#FFFFFF' }} />} />;
+        return (
+          <Chip
+            label="Disponível"
+            sx={{
+              bgcolor: '#4CAF50',
+              color: '#FFFFFF',
+            }}
+            icon={<CheckCircleIcon sx={{ color: '#FFFFFF' }} />}
+          />
+        );
       case 'used':
-        return <Chip
-          label="Usado"
-          sx={{
-            bgcolor: '#000000',
-            color: '#FFEB3B'
-          }}
-          icon={<ErrorIcon sx={{ color: '#FFEB3B' }} />} />;
+        return (
+          <Chip
+            label="Usado"
+            sx={{
+              bgcolor: '#000000',
+              color: '#FFEB3B',
+            }}
+            icon={<ErrorIcon sx={{ color: '#FFEB3B' }} />}
+          />
+        );
       case 'expired':
-        return <Chip
-          label="Expirado"
-          sx={{
-            bgcolor: '#FFFFFF',
-            color: '#F44336'
-          }}
-          icon={<AccessTimeIcon sx={{ color: '#FFFFFF' }} />} />;
+        return (
+          <Chip
+            label="Expirado"
+            sx={{
+              bgcolor: '#FFFFFF',
+              color: '#F44336',
+            }}
+            icon={<AccessTimeIcon sx={{ color: '#FFFFFF' }} />}
+          />
+        );
       default:
         return null;
     }
@@ -95,13 +109,15 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
 
   return (
     <Fade in={!loading}>
-      <Container maxWidth="sm"
+      <Container
+        maxWidth="sm"
         sx={{
           mt: 6,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
-        }}>
+          alignItems: 'center',
+        }}
+      >
         <Box
           sx={{
             width: '100%',
@@ -109,13 +125,15 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
             justifyContent: 'space-between',
             alignItems: 'center',
             mb: 3,
-            gap: 2
-          }}>
+            gap: 2,
+          }}
+        >
           <Button
             onClick={onBack}
             sx={{
               color: 'grey.700',
-              textTransform: 'none', '&:hover': { bgcolor: 'grey.200' }
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'grey.200' },
             }}
             aria-label="Voltar para a página anterior"
             startIcon={<ArrowBackIosNewIcon />}
@@ -141,7 +159,8 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
             onClick={onNextWithoutTicket}
             sx={{
               color: 'grey.700',
-              textTransform: 'none', '&:hover': { bgcolor: 'grey.200' }
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'grey.200' },
             }}
             aria-label="Prosseguir sem selecionar ticket"
             endIcon={<ArrowForwardIosIcon />}
@@ -149,111 +168,112 @@ const TicketSelection = ({ customer, onSelectTicket, onBack, onNextWithoutTicket
             Prosseguir venda sem ticket
           </Button>
         </Box>
-        
-        <Title >
-          Selecione um Ticket
-        </Title>
+
+        <Title>Selecione um Ticket</Title>
 
         {loading ? (
           <CircularProgress color="primary" />
-        ) : (
-          filteredTickets.length === 0 ? (
-            <Paper
+        ) : filteredTickets.length === 0 ? (
+          <Paper
+            sx={{
+              p: 3,
+              width: '100%',
+              textAlign: 'center',
+              borderRadius: 3,
+              bgcolor: 'grey.100',
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="textSecondary"
               sx={{
-                p: 3,
-                width: '100%',
+                fontStyle: 'italic',
                 textAlign: 'center',
-                borderRadius: 3,
-                bgcolor: 'grey.100'
-              }}>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                sx={{
-                  fontStyle: 'italic',
-                  textAlign: 'center',
-                }}>
-                Nenhum ticket disponível
-              </Typography>
-            </Paper>
-          ) : (
-            <List sx={{ width: '100%', mt: 2 }}>
-              {filteredTickets.map(ticket => (
-                <Fade in key={ticket._id} timeout={600}>
-                  <Paper
-                    elevation={3}
+              }}
+            >
+              Nenhum ticket disponível
+            </Typography>
+          </Paper>
+        ) : (
+          <List sx={{ width: '100%', mt: 2 }}>
+            {filteredTickets.map((ticket) => (
+              <Fade in key={ticket._id} timeout={600}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.02)',
+                      boxShadow: 6,
+                      bgcolor: 'grey.100',
+                    },
+                    borderRadius: 2,
+                  }}
+                >
+                  <ListItem
+                    button
+                    onClick={() => onSelectTicket(ticket)}
                     sx={{
-                      mb: 2,
-                      p: 2,
                       display: 'flex',
                       flexDirection: 'column',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                      '&:hover': {
-                        transform: 'scale(1.02)',
-                        boxShadow: 6,
-                        bgcolor: 'grey.100'
-                      },
-                      borderRadius: 2,
+                      alignItems: 'flex-start',
+                      p: 2,
                     }}
+                    aria-label={`Selecionar ticket ${ticket._id}`}
                   >
-                    <ListItem
-                      button
-                      onClick={() => onSelectTicket(ticket)}
+                    <Box
                       sx={{
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        p: 2,
+                        alignItems: 'center',
+                        mb: 1,
+                        width: '100%',
                       }}
-                      aria-label={`Selecionar ticket ${ticket._id}`}
                     >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          mb: 1,
-                          width: '100%'
-                        }}>
-                        <Avatar sx={{ bgcolor: '#E50914', mr: 2 }}>
-                          <ConfirmationNumberIcon />
-                        </Avatar>
-                        <ListItemText
-                          primary={`Cliente: ${customer.name}`}
-                          secondary={`Desconto: ${ticket.discount}%`}
-                          primaryTypographyProps={{
-                            variant: 'subtitle1',
-                            color: 'textPrimary',
-                            fontWeight: 'bold'
-                          }}
-                          secondaryTypographyProps={{
-                            variant: 'body2',
-                            color: 'textSecondary'
-                          }}
-                        />
-                        {getStatusChip(ticket.status)}
-                      </Box>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          width: '100%',
-                          mt: 1
-                        }}>
-                        <Typography variant="body2" color="textSecondary">
-                          Data de Expiração: {format(new Date(ticket.expiryDate), 'dd/MM/yyyy')}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          Gerado em: {format(new Date(ticket.generatedDate), 'dd/MM/yyyy')}
-                        </Typography>
-                      </Box>
-                    </ListItem>
-                  </Paper>
-                </Fade>
-              ))}
-              <Divider
-                sx={{ mt: 3 }} />
-            </List>
-          )
+                      <Avatar sx={{ bgcolor: '#E50914', mr: 2 }}>
+                        <ConfirmationNumberIcon />
+                      </Avatar>
+                      <ListItemText
+                        primary={`Cliente: ${customer.name}`}
+                        secondary={`Desconto: ${ticket.discount}%`}
+                        primaryTypographyProps={{
+                          variant: 'subtitle1',
+                          color: 'textPrimary',
+                          fontWeight: 'bold',
+                        }}
+                        secondaryTypographyProps={{
+                          variant: 'body2',
+                          color: 'textSecondary',
+                        }}
+                      />
+                      {getStatusChip(ticket.status)}
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        mt: 1,
+                      }}
+                    >
+                      <Typography variant="body2" color="textSecondary">
+                        Data de Expiração:{' '}
+                        {format(new Date(ticket.expiryDate), 'dd/MM/yyyy')}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Gerado em:{' '}
+                        {format(new Date(ticket.generatedDate), 'dd/MM/yyyy')}
+                      </Typography>
+                    </Box>
+                  </ListItem>
+                </Paper>
+              </Fade>
+            ))}
+            <Divider sx={{ mt: 3 }} />
+          </List>
         )}
       </Container>
     </Fade>

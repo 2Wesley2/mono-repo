@@ -14,7 +14,7 @@ export const getAllCustomers = async () => {
     if (!response.ok) {
       throw new Error('Erro ao buscar clientes');
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error(error);

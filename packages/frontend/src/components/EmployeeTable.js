@@ -29,10 +29,16 @@ const EmployeeTable = React.memo(({ employees, onEdit, onDelete }) => (
             <TableCell>{number}</TableCell>
             <TableCell>{new Date(createdAt).toLocaleDateString()}</TableCell>
             <TableCell>
-              <IconButton color="primary" onClick={() => onEdit({ _id, name, number })}>
+              <IconButton
+                color="primary"
+                onClick={() => onEdit({ _id, name, number })}
+              >
                 <EditIcon />
               </IconButton>
-              <IconButton color="secondary" onClick={() => onDelete({ _id, name })}>
+              <IconButton
+                color="secondary"
+                onClick={() => onDelete({ _id, name })}
+              >
                 <DeleteIcon />
               </IconButton>
             </TableCell>

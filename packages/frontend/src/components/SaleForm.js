@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, CircularProgress, Paper } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+  Paper,
+} from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { createSale } from '../service/index';
 
@@ -34,12 +41,26 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 2, maxWidth: 400, mx: 'auto', mt: 6 }}>
+    <Paper
+      elevation={3}
+      sx={{ p: 4, borderRadius: 2, maxWidth: 400, mx: 'auto', mt: 6 }}
+    >
       <form onSubmit={handleSaleSubmit}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+          }}
+        >
           <Button
             onClick={onBack}
-            sx={{ color: 'grey.700', textTransform: 'none', '&:hover': { bgcolor: 'grey.200' } }}
+            sx={{
+              color: 'grey.700',
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'grey.200' },
+            }}
             aria-label="Voltar para a página anterior"
             startIcon={<ArrowBackIosNewIcon />}
           >
@@ -76,11 +97,15 @@ const SaleForm = ({ cpf, ticket, onBack }) => {
           disabled={loading}
           sx={{
             textTransform: 'none',
-            backgroundColor: '#E50914'
+            backgroundColor: '#E50914',
           }}
           aria-label="Finalizar Venda"
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Finalizar Venda'}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            'Finalizar Venda'
+          )}
         </Button>
       </form>
     </Paper>

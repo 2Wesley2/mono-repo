@@ -9,7 +9,9 @@ import {
 } from '@mui/material';
 
 const EmployeeDialog = ({ open, onClose, onConfirm, title, initialData }) => {
-  const [formData, setFormData] = useState(initialData || { name: '', number: '' });
+  const [formData, setFormData] = useState(
+    initialData || { name: '', number: '' },
+  );
 
   useEffect(() => {
     setFormData(initialData || { name: '', number: '' });
@@ -25,7 +27,9 @@ const EmployeeDialog = ({ open, onClose, onConfirm, title, initialData }) => {
           margin="dense"
           variant="outlined"
           value={formData.name}
-          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, name: e.target.value }))
+          }
         />
         <TextField
           label="ID do Funcionário"
@@ -33,12 +37,20 @@ const EmployeeDialog = ({ open, onClose, onConfirm, title, initialData }) => {
           margin="dense"
           variant="outlined"
           value={formData.number}
-          onChange={(e) => setFormData((prev) => ({ ...prev, number: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, number: e.target.value }))
+          }
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancelar</Button>
-        <Button onClick={() => onConfirm(formData)} variant="contained" color="primary">Salvar</Button>
+        <Button
+          onClick={() => onConfirm(formData)}
+          variant="contained"
+          color="primary"
+        >
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   );

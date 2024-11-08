@@ -1,6 +1,6 @@
-import { Paper, Container } from '@mui/material'
+import { Paper, Container } from '@mui/material';
 
-const Layout = ({ children, }) => (
+const Layout = ({ children }) => (
   <Paper
     square={false}
     sx={{
@@ -11,9 +11,9 @@ const Layout = ({ children, }) => (
     }}
   >
     <Container
-      maxWidth='md'
+      maxWidth="md"
       sx={{
-        paddingBottom:'10%'
+        paddingBottom: '10%',
       }}
     >
       {children}

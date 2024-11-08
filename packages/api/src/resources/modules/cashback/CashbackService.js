@@ -133,6 +133,31 @@ class CashbackService {
       throw new AppError(500, 'Erro ao listar cashbacks');
     }
   }
+  async updateCashbackAndTiers(cashbackId, { name, tiers }) {
+    try {
+      debug.logger.info('CashbackService: Atualizando cashback e tiers associados');
+
+      if (name) {
+        if (typeof name !== 'string') {
+          throw new AppError(400, 'O campo "name" deve ser uma string');
+        }
+      }
+
+      const formattedTiers = this._formatTierData(tiers, cashbackId);
+      debug.logger.info(`CashbackService: tiers formatados para atualização ${JSON.stringify(formattedTiers)}`);
+
+      if (formattedTiers && formattedTiers.length > 0) {
+        await this.tierService.updateTiersByCashbackId(cashbackId, formattedTiers);
+      }
+      const updatedCashback = await this.repository.updateCashback(cashbackId, { name });
+      debug.logger.info('CashbackService: Cashback atualizado com sucesso');
+
+      return updatedCashback;
+    } catch (error) {
+      debug.logger.error('CashbackService: Erro ao atualizar cashback e tiers', { cashbackId, error });
+      throw new AppError(500, 'Erro ao atualizar cashback e tiers');
+    }
+  }
 }
 
 export default CashbackService;

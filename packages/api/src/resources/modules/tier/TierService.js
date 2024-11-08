@@ -24,6 +24,16 @@ class TierService {
       throw new AppError(500, 'Erro no serviço ao buscar faixas de desconto');
     }
   }
+
+  async updateTiersByCashbackId(cashbackId, tiersData) {
+    try {
+      debug.logger.info('TierService: Atualizando faixas de desconto para o cashback');
+      return await this.repository.updateTiersByCashbackId(cashbackId, tiersData);
+    } catch (error) {
+      debug.logger.error('Erro no serviço ao atualizar faixas de desconto', { cashbackId, error });
+      throw new AppError(500, 'Erro ao atualizar faixas de desconto');
+    }
+  }
 }
 
 export default TierService;

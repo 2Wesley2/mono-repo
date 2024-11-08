@@ -17,23 +17,29 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { createCashback } from '../service/cashback';
+import { createCashback, updateCashback } from '../service/cashback';
 
-const CashbackForm = ({ onBack }) => {
+const CashbackForm = ({ cashback: initialCashback, onBack }) => {
+  const isEditMode = Boolean(initialCashback);
+
   const [cashback, setCashback] = useState({
-    name: '',
-    isActive: false,
+    name: initialCashback ? initialCashback.name : '',
+    isActive: initialCashback ? initialCashback.isActive : false,
   });
 
-  const [rules, setRules] = useState([
-    {
-      discountType: 'percentage',
-      minPurchaseAmount: '',
-      maxPurchaseAmount: '',
-      discountPercentage: '',
-      discountFixedValue: '',
-    },
-  ]);
+  const [rules, setRules] = useState(
+    initialCashback
+      ? initialCashback.ruleDiscont
+      : [
+          {
+            discountType: 'percentage',
+            minPurchaseAmount: '',
+            maxPurchaseAmount: '',
+            discountPercentage: '',
+            discountFixedValue: '',
+          },
+        ],
+  );
 
   const handleCashbackChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -68,7 +74,7 @@ const CashbackForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const cashbackData = {
       name: cashback.name,
       isActive: cashback.isActive,
@@ -76,24 +82,39 @@ const CashbackForm = ({ onBack }) => {
         discountType: rule.discountType,
         minPurchaseAmount: Number(rule.minPurchaseAmount),
         maxPurchaseAmount: Number(rule.maxPurchaseAmount),
-        discountPercentage: rule.discountType === 'percentage' ? Number(rule.discountPercentage) : undefined,
-        discountFixedValue: rule.discountType === 'fixed' ? Number(rule.discountFixedValue) : undefined,
+        discountPercentage:
+          rule.discountType === 'percentage'
+            ? Number(rule.discountPercentage)
+            : undefined,
+        discountFixedValue:
+          rule.discountType === 'fixed'
+            ? Number(rule.discountFixedValue)
+            : undefined,
       })),
     };
 
     try {
-      await createCashback(cashbackData);
-      alert('Cashback criado com sucesso!');
-      onBack(); // Volta à lista de cashbacks após criar
+      if (isEditMode) {
+        await updateCashback(initialCashback._id, cashbackData);
+        alert('Cashback atualizado com sucesso!');
+      } else {
+        await createCashback(cashbackData);
+        alert('Cashback criado com sucesso!');
+      }
+      onBack();
     } catch (error) {
       console.error(error);
-      alert('Erro ao criar cashback');
+      alert(
+        isEditMode ? 'Erro ao atualizar cashback' : 'Erro ao criar cashback',
+      );
     }
   };
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
-      <Typography variant="h5" mb={2}>Criar Cashback</Typography>
+      <Typography variant="h5" mb={2}>
+        {isEditMode ? 'Editar Cashback' : 'Criar Cashback'}
+      </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Nome do Cashback"
@@ -104,9 +125,15 @@ const CashbackForm = ({ onBack }) => {
           required
           sx={{ mb: 2 }}
         />
-        
+
         <FormControlLabel
-          control={<Checkbox checked={cashback.isActive} onChange={handleCashbackChange} name="isActive" />}
+          control={
+            <Checkbox
+              checked={cashback.isActive}
+              onChange={handleCashbackChange}
+              name="isActive"
+            />
+          }
           label="Ativo"
         />
 
@@ -126,7 +153,9 @@ const CashbackForm = ({ onBack }) => {
                 <InputLabel>Tipo de Desconto</InputLabel>
                 <Select
                   value={rule.discountType}
-                  onChange={(e) => handleRuleChange(index, 'discountType', e.target.value)}
+                  onChange={(e) =>
+                    handleRuleChange(index, 'discountType', e.target.value)
+                  }
                 >
                   <MenuItem value="percentage">Percentual</MenuItem>
                   <MenuItem value="fixed">Valor Fixo</MenuItem>
@@ -137,17 +166,21 @@ const CashbackForm = ({ onBack }) => {
                 label="Valor Mínimo de Compra"
                 type="number"
                 value={rule.minPurchaseAmount}
-                onChange={(e) => handleRuleChange(index, 'minPurchaseAmount', e.target.value)}
+                onChange={(e) =>
+                  handleRuleChange(index, 'minPurchaseAmount', e.target.value)
+                }
                 fullWidth
                 required
                 sx={{ mt: 2 }}
               />
-              
+
               <TextField
                 label="Valor Máximo de Compra"
                 type="number"
                 value={rule.maxPurchaseAmount}
-                onChange={(e) => handleRuleChange(index, 'maxPurchaseAmount', e.target.value)}
+                onChange={(e) =>
+                  handleRuleChange(index, 'maxPurchaseAmount', e.target.value)
+                }
                 fullWidth
                 required
                 sx={{ mt: 2 }}
@@ -158,19 +191,31 @@ const CashbackForm = ({ onBack }) => {
                   label="Percentual de Desconto"
                   type="number"
                   value={rule.discountPercentage}
-                  onChange={(e) => handleRuleChange(index, 'discountPercentage', e.target.value)}
+                  onChange={(e) =>
+                    handleRuleChange(
+                      index,
+                      'discountPercentage',
+                      e.target.value,
+                    )
+                  }
                   fullWidth
                   required
                   sx={{ mt: 2 }}
                 />
               )}
-              
+
               {rule.discountType === 'fixed' && (
                 <TextField
                   label="Valor de Desconto Fixo"
                   type="number"
                   value={rule.discountFixedValue}
-                  onChange={(e) => handleRuleChange(index, 'discountFixedValue', e.target.value)}
+                  onChange={(e) =>
+                    handleRuleChange(
+                      index,
+                      'discountFixedValue',
+                      e.target.value,
+                    )
+                  }
                   fullWidth
                   required
                   sx={{ mt: 2 }}
@@ -183,8 +228,13 @@ const CashbackForm = ({ onBack }) => {
           </Button>
         </Box>
 
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 4 }}>
-          Salvar Cashback
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 4 }}
+        >
+          {isEditMode ? 'Salvar Edição' : 'Salvar Cashback'}
         </Button>
       </form>
     </Paper>

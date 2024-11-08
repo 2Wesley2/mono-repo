@@ -1,17 +1,26 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
-  Card, Stack,
+  Card,
+  Stack,
   Button,
-  Dialog, DialogActions, DialogContent, DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   TextField,
   FormControl,
   Typography,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { getAllCustomers, addCustomer, editCustomer, deleteCustomer } from '../../service/index';
+import {
+  getAllCustomers,
+  addCustomer,
+  editCustomer,
+  deleteCustomer,
+} from '../../service/index';
 import DataTable from '../../components/DataTable';
 import Title from '../../components/Title';
 
@@ -20,7 +29,10 @@ const EMPTY_CUSTOMER = { name: '', cpf: '', phone: '', email: '' };
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
   const [newCustomer, setNewCustomer] = useState(EMPTY_CUSTOMER);
-  const [dialogState, setDialogState] = useState({ type: null, customer: null });
+  const [dialogState, setDialogState] = useState({
+    type: null,
+    customer: null,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -43,7 +55,9 @@ const CustomerManagement = () => {
   // Função de abertura de diálogo
   const handleOpenDialog = (type, customer = null) => {
     setDialogState({ type, customer });
-    setNewCustomer(type === 'add' ? EMPTY_CUSTOMER : customer || EMPTY_CUSTOMER);
+    setNewCustomer(
+      type === 'add' ? EMPTY_CUSTOMER : customer || EMPTY_CUSTOMER,
+    );
   };
 
   // Fechamento de diálogo
@@ -64,9 +78,12 @@ const CustomerManagement = () => {
   // Validação do formulário
   const validateForm = useCallback(() => {
     const errors = {};
-    if (!newCustomer.name) errors.name = { error: true, message: 'Nome é obrigatório' };
-    if (!newCustomer.cpf) errors.cpf = { error: true, message: 'CPF é obrigatório' };
-    if (!newCustomer.phone) errors.phone = { error: true, message: 'WhatsApp é obrigatório' };
+    if (!newCustomer.name)
+      errors.name = { error: true, message: 'Nome é obrigatório' };
+    if (!newCustomer.cpf)
+      errors.cpf = { error: true, message: 'CPF é obrigatório' };
+    if (!newCustomer.phone)
+      errors.phone = { error: true, message: 'WhatsApp é obrigatório' };
     if (newCustomer.email && !/\S+@\S+\.\S+/.test(newCustomer.email)) {
       errors.email = { error: true, message: 'Email inválido' };
     }
@@ -93,9 +110,14 @@ const CustomerManagement = () => {
     if (!validateForm()) return;
 
     try {
-      const updatedCustomer = await editCustomer(dialogState.customer._id, newCustomer);
+      const updatedCustomer = await editCustomer(
+        dialogState.customer._id,
+        newCustomer,
+      );
       setCustomers((prev) =>
-        prev.map((cust) => (cust._id === updatedCustomer._id ? updatedCustomer : cust))
+        prev.map((cust) =>
+          cust._id === updatedCustomer._id ? updatedCustomer : cust,
+        ),
       );
       handleCloseDialog();
       handleSnackbarOpen();
@@ -108,7 +130,9 @@ const CustomerManagement = () => {
   const handleDeleteCustomer = async (customerToDelete) => {
     try {
       await deleteCustomer(customerToDelete._id);
-      setCustomers((prev) => prev.filter((cust) => cust._id !== customerToDelete._id));
+      setCustomers((prev) =>
+        prev.filter((cust) => cust._id !== customerToDelete._id),
+      );
       handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao excluir cliente:', error);
@@ -126,17 +150,21 @@ const CustomerManagement = () => {
 
   // Lista de clientes filtrados com `useMemo`
   const filteredCustomers = useMemo(
-    () => customers.filter((customer) =>
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
-    [customers, searchQuery]
+    () =>
+      customers.filter((customer) =>
+        customer.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    [customers, searchQuery],
   );
   return (
     <div>
-      <Box display="flex" alignItems="center" justifyContent="space-between" my={3}>
-        <Title>
-          Gerenciamento de Clientes
-        </Title>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        my={3}
+      >
+        <Title>Gerenciamento de Clientes</Title>
         <Button
           variant="contained"
           onClick={() => handleOpenDialog('add')}
@@ -144,7 +172,7 @@ const CustomerManagement = () => {
             backgroundColor: '#E50914',
             color: '#FFFFF',
             '&:hover': { backgroundColor: '#b71c1c' },
-            fontSize: 'large'
+            fontSize: 'large',
           }}
         >
           Registrar novo cliente
@@ -156,7 +184,7 @@ const CustomerManagement = () => {
         <TextField
           label="Pesquisar Cliente"
           variant="outlined"
-          color='error'
+          color="error"
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
             startAdornment: <SearchIcon />,
@@ -173,8 +201,14 @@ const CustomerManagement = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-            {dialogState.type === 'add' ? 'Registrar Cliente' : 'Editar Cliente'}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: 'bold', textAlign: 'center' }}
+          >
+            {dialogState.type === 'add'
+              ? 'Registrar Cliente'
+              : 'Editar Cliente'}
           </Typography>
         </DialogTitle>
 
@@ -199,19 +233,25 @@ const CustomerManagement = () => {
                 boxShadow: 3,
               }}
             >
-              <Box component="form" onSubmit={(e) => e.preventDefault()} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box
+                component="form"
+                onSubmit={(e) => e.preventDefault()}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+              >
                 <FormControl fullWidth>
                   <TextField
                     id="name"
                     label="Nome"
                     variant="outlined"
                     value={newCustomer.name}
-                    onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                    onChange={(e) =>
+                      setNewCustomer({ ...newCustomer, name: e.target.value })
+                    }
                     error={formErrors.name?.error}
                     helperText={formErrors.name?.message}
                     fullWidth
                     required
-                    color='error'
+                    color="error"
                   />
                 </FormControl>
 
@@ -221,12 +261,14 @@ const CustomerManagement = () => {
                     label="CPF"
                     variant="outlined"
                     value={newCustomer.cpf}
-                    onChange={(e) => setNewCustomer({ ...newCustomer, cpf: e.target.value })}
+                    onChange={(e) =>
+                      setNewCustomer({ ...newCustomer, cpf: e.target.value })
+                    }
                     error={formErrors.cpf?.error}
                     helperText={formErrors.cpf?.message}
                     fullWidth
                     required
-                    color='error'
+                    color="error"
                   />
                 </FormControl>
 
@@ -237,11 +279,13 @@ const CustomerManagement = () => {
                     variant="outlined"
                     type="email"
                     value={newCustomer.email}
-                    onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                    onChange={(e) =>
+                      setNewCustomer({ ...newCustomer, email: e.target.value })
+                    }
                     error={formErrors.email?.error}
                     helperText={formErrors.email?.message}
                     fullWidth
-                    color='error'
+                    color="error"
                   />
                 </FormControl>
 
@@ -252,12 +296,14 @@ const CustomerManagement = () => {
                     variant="outlined"
                     type="tel"
                     value={newCustomer.phone}
-                    onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                    onChange={(e) =>
+                      setNewCustomer({ ...newCustomer, phone: e.target.value })
+                    }
                     error={formErrors.phone?.error}
                     helperText={formErrors.phone?.message}
                     fullWidth
                     required
-                    color='error'
+                    color="error"
                   />
                 </FormControl>
               </Box>
@@ -270,14 +316,18 @@ const CustomerManagement = () => {
             onClick={handleSubmit}
             color="success"
             variant="contained"
-            size='large'>
-            {dialogState.type === 'add' ? 'Registrar Cliente' : 'Salvar Alterações'}
+            size="large"
+          >
+            {dialogState.type === 'add'
+              ? 'Registrar Cliente'
+              : 'Salvar Alterações'}
           </Button>
           <Button
             onClick={handleCloseDialog}
             color="error"
             variant="contained"
-            size='large'>
+            size="large"
+          >
             Cancelar
           </Button>
         </DialogActions>
