@@ -1,5 +1,7 @@
 const eslintPluginPrettier = require('eslint-plugin-prettier');
-const eslintPluginNext = require(require.resolve('eslint-plugin-next', { paths: [__dirname] }));
+const eslintPluginNext = require(
+  require.resolve('eslint-plugin-next', { paths: [__dirname] }),
+);
 
 module.exports = [
   {
@@ -12,14 +14,11 @@ module.exports = [
     },
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: 'module'
+      sourceType: 'module',
     },
     rules: {
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
     },
-    extends: [
-      'plugin:prettier/recommended',
-      'next/core-web-vitals',
-    ]
-  }
+    extends: ['plugin:prettier/recommended', 'next/core-web-vitals'],
+  },
 ];

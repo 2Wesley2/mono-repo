@@ -37,7 +37,6 @@ const CustomerManagement = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
-  // useCallback para carregar clientes, depende apenas de `setCustomers`
   const loadCustomers = useCallback(async () => {
     try {
       const customerList = await getAllCustomers();
@@ -52,7 +51,6 @@ const CustomerManagement = () => {
     loadCustomers();
   }, [loadCustomers]);
 
-  // Função de abertura de diálogo
   const handleOpenDialog = (type, customer = null) => {
     setDialogState({ type, customer });
     setNewCustomer(
@@ -60,22 +58,18 @@ const CustomerManagement = () => {
     );
   };
 
-  // Fechamento de diálogo
   const handleCloseDialog = useCallback(() => {
     setDialogState({ type: null, customer: null });
     setFormErrors({});
   }, []);
 
-  // Função de abertura do Snackbar
   const handleSnackbarOpen = () => setSnackbarOpen(true);
 
-  // Função de fechamento do Snackbar
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') return;
     setSnackbarOpen(false);
   };
 
-  // Validação do formulário
   const validateForm = useCallback(() => {
     const errors = {};
     if (!newCustomer.name)
@@ -91,7 +85,6 @@ const CustomerManagement = () => {
     return Object.keys(errors).length === 0;
   }, [newCustomer]);
 
-  // Adiciona um novo cliente
   const handleAddCustomer = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -105,7 +98,6 @@ const CustomerManagement = () => {
     }
   }, [newCustomer, validateForm]);
 
-  // Edita um cliente existente
   const handleEditCustomer = useCallback(async () => {
     if (!validateForm()) return;
 
@@ -126,7 +118,6 @@ const CustomerManagement = () => {
     }
   }, [newCustomer, dialogState.customer, validateForm]);
 
-  // Exclui um cliente
   const handleDeleteCustomer = async (customerToDelete) => {
     try {
       await deleteCustomer(customerToDelete._id);
@@ -139,7 +130,6 @@ const CustomerManagement = () => {
     }
   };
 
-  // Manipulação de envio com verificação de tipo de diálogo
   const handleSubmit = useCallback(() => {
     if (dialogState.type === 'add') {
       handleAddCustomer();
@@ -148,7 +138,6 @@ const CustomerManagement = () => {
     }
   }, [dialogState.type, handleAddCustomer, handleEditCustomer]);
 
-  // Lista de clientes filtrados com `useMemo`
   const filteredCustomers = useMemo(
     () =>
       customers.filter((customer) =>
@@ -179,7 +168,6 @@ const CustomerManagement = () => {
         </Button>
       </Box>
 
-      {/* Campo de pesquisa */}
       <Box display="flex" justifyContent="center" mb={3}>
         <TextField
           label="Pesquisar Cliente"
@@ -341,7 +329,6 @@ const CustomerManagement = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       />
 
-      {/* Tabela de dados filtrada */}
       {filteredCustomers.length === 0 ? (
         <Typography
           variant="body1"

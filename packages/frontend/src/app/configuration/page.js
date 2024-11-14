@@ -18,43 +18,52 @@ const CashbackConfiguration = () => {
     } catch (error) {
       console.error('Erro ao carregar cashbacks:', error);
     }
-  }, []);
+  }, [cashbacks]);
 
   useEffect(() => {
     loadCashback();
   }, [loadCashback]);
 
-  const handleNextStep = () => {
-    setStep((prev) => {
-      return prev + 1;
-    });
-  };
+  const handleNextStep = useCallback(() => {
+    setStep((prev) => prev + 1);
+  }, []);
 
-  const handlePreviousStep = () => {
-    setStep((prev) => {
-      return prev - 1;
-    });
-  };
+  const handlePreviousStep = useCallback(() => {
+    setStep((prev) => prev - 1);
+  }, []);
 
-  const handleSelectCashback = (cashback) => {
-    setSelectedCashback(cashback);
-    setStep2Mode('details');
-    handleNextStep();
-  };
+  const handleSelectCashback = useCallback(
+    (cashback) => {
+      setSelectedCashback(cashback);
+      setStep2Mode('details');
+      handleNextStep();
+    },
+    [handleNextStep],
+  );
 
-  const handleCreateCashback = () => {
+  const handleCreateCashback = useCallback(() => {
     setSelectedCashback(null);
     setStep2Mode('form');
     setStep(2);
-  };
+  }, []);
 
-  const handleEditCashback = () => {
+  const handleEditCashback = useCallback(() => {
     setStep2Mode('form');
     setStep(3);
-  };
+  }, []);
+
+  const handleBackToStep1 = useCallback(() => {
+    setStep(1);
+    setSelectedCashback(null);
+  }, []);
+
+  const handleBackToDetails = useCallback(() => {
+    setStep(2);
+    setStep2Mode('details');
+  }, []);
 
   return (
-    <div>
+    <>
       {step === 1 && (
         <CashbackList
           cashbacks={cashbacks}
@@ -70,24 +79,15 @@ const CashbackConfiguration = () => {
         />
       )}
       {step === 2 && step2Mode === 'form' && (
-        <CashbackForm
-          cashback={selectedCashback}
-          onBack={() => {
-            setStep(1);
-            setSelectedCashback(null);
-          }}
-        />
+        <CashbackForm cashback={selectedCashback} onBack={handleBackToStep1} />
       )}
       {step === 3 && step2Mode === 'form' && (
         <CashbackForm
           cashback={selectedCashback}
-          onBack={() => {
-            setStep(2);
-            setStep2Mode('details');
-          }}
+          onBack={handleBackToDetails}
         />
       )}
-    </div>
+    </>
   );
 };
 

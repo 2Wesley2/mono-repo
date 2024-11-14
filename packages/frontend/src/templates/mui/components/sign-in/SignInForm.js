@@ -3,11 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
@@ -23,7 +19,6 @@ export default function SignInForm() {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const handleClickOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
   const validateInputs = useCallback((username, password) => {
@@ -33,7 +28,9 @@ export default function SignInForm() {
       password: { error: false, message: '' },
     };
 
-    if (!username || !/\S+@\S+\.\S+/.test(username)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!username || !emailRegex.test(username)) {
       newErrors.username.error = true;
       newErrors.username.message =
         'Por favor, insira um nome de usuário válido.';
@@ -87,7 +84,7 @@ export default function SignInForm() {
       component="form"
       onSubmit={handleSubmit}
       noValidate
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
     >
       <Backdrop
         open={isSubmitting}
@@ -97,53 +94,57 @@ export default function SignInForm() {
       </Backdrop>
 
       <FormControl>
-        <FormLabel htmlFor="username">Nome de Usuário</FormLabel>
         <TextField
           error={formErrors.username.error}
           helperText={formErrors.username.message}
           id="username"
-          type="text"
           name="username"
-          placeholder="seuemail@email.com"
+          type="text"
+          placeholder="Email"
           required
           fullWidth
-          color="error"
           aria-describedby={
             formErrors.username.error ? 'username-error' : undefined
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: '#d32f2f',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#d32f2f',
+              },
+            },
+          }}
         />
       </FormControl>
       <FormControl>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <FormLabel htmlFor="password">Senha</FormLabel>
-          <Link
-            component="button"
-            color="error"
-            onClick={handleClickOpen}
-            variant="body2"
-          >
-            Esqueceu sua senha?
-          </Link>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         </Box>
         <TextField
           error={formErrors.password.error}
           helperText={formErrors.password.message}
           name="password"
-          placeholder="••••••"
+          placeholder="Senha"
           type="password"
           id="password"
           required
           fullWidth
-          color="error"
           aria-describedby={
             formErrors.password.error ? 'password-error' : undefined
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: '#d32f2f',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#d32f2f',
+              },
+            },
+          }}
         />
       </FormControl>
-      <FormControlLabel
-        control={<Checkbox value="remember" color="error" />}
-        label="Lembrar senha"
-      />
       <ForgotPassword open={open} handleClose={handleClose} />
       <Button
         type="submit"

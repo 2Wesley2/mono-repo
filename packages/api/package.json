@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cielo-sdk": "^2.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -23,6 +24,7 @@
     "mongoose": "^8.5.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
+    "pagseguro": "^0.1.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "twilio": "^5.3.5",

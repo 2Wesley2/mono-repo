@@ -35,6 +35,8 @@ const DrawerNavigation = () => {
 
   const isLoginPage = pathname === '/login';
 
+  if (isLoginPage) return null;
+
   return (
     <>
       <AppBar
@@ -42,7 +44,7 @@ const DrawerNavigation = () => {
         sx={{
           height: '10vh',
           display: 'flex',
-          backgroundColor: '#E50914',
+          backgroundColor: '#d32f2f',
           marginBottom: '1rem',
           justifyContent: 'center',
           alignContent: 'center',
@@ -55,59 +57,55 @@ const DrawerNavigation = () => {
             alignContent: 'center',
           }}
         >
-          {!isLoginPage && (
-            <IconButton
-              edge="start"
-              aria-label="menu"
-              onClick={() => toggleDrawer(true)}
-              sx={{
-                color: '#FFFFFF',
-                mr: 2,
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
+          <IconButton
+            edge="start"
+            aria-label="menu"
+            onClick={() => toggleDrawer(true)}
+            sx={{
+              color: '#FFFFFF',
+              mr: 2,
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
           <Box
             sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}
           ></Box>
         </Toolbar>
       </AppBar>
 
-      {!isLoginPage && (
-        <Drawer
-          anchor="left"
-          variant="temporary"
-          open={drawerOpen}
-          onClose={() => toggleDrawer(false)}
-          PaperProps={{ sx: { backgroundColor: '#E50914' } }}
-        >
-          <List>
-            {filteredRoutes.map((route, index) => (
-              <ListItem button key={index} onClick={() => toggleDrawer(false)}>
-                <Link href={route.path} passHref legacyBehavior>
-                  <Button
-                    fullWidth
-                    variant="text"
-                    size="small"
+      <Drawer
+        anchor="left"
+        variant="temporary"
+        open={drawerOpen}
+        onClose={() => toggleDrawer(false)}
+        PaperProps={{ sx: { backgroundColor: '#d32f2f' } }}
+      >
+        <List>
+          {filteredRoutes.map((route, index) => (
+            <ListItem button key={index} onClick={() => toggleDrawer(false)}>
+              <Link href={route.path} passHref legacyBehavior>
+                <Button
+                  fullWidth
+                  variant="text"
+                  size="small"
+                  sx={{
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <ListItemText
+                    primary={route.name}
                     sx={{
-                      justifyContent: 'flex-start',
+                      color: '#FFFFFF',
+                      fontSize: 'small',
                     }}
-                  >
-                    <ListItemText
-                      primary={route.name}
-                      sx={{
-                        color: '#FFFFFF',
-                        fontSize: 'small',
-                      }}
-                    />
-                  </Button>
-                </Link>
-              </ListItem>
-            ))}
-          </List>
-        </Drawer>
-      )}
+                  />
+                </Button>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
     </>
   );
 };

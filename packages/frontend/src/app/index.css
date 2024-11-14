@@ -19,13 +19,13 @@ body {
   width: 100%;
   display: flex;
   margin: 'auto';
-  margin-bottom: 10%;
   flex-direction: column;
   justify-content: center;
   align-content: center;
   justify-self: center;
   justify-items: center;
   text-justify: auto;
+  height: 100vh;
 }
 
 .layout .child {
@@ -41,5 +41,4 @@ body {
 
 .active {
   font-weight: bold;
-  color: blue;
 }

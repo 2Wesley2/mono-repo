@@ -3005,6 +3005,13 @@ axe-core@^4.10.0:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.10.2.tgz#85228e3e1d8b8532a27659b332e39b7fa0e022df"
   integrity sha512-RE3mdQ7P3FRSe7eqCWoeQ/Z9QXrtniSjp1wUjt5nRC3WIpz5rSCve6o3fsZ2aCpJtrZjSZgjwXAoTO5k4tEI0w==
 
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
+
 axios@^1.7.4:
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.7.tgz#2f554296f9892a72ac8d8e4c5b79c14a91d0a47f"
@@ -3362,6 +3369,13 @@ ci-info@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-4.0.0.tgz#65466f8b280fc019b9f50a5388115d17a63a44f2"
   integrity sha512-TdHqgGf9odd8SXNuxtUBVx8Nv+qZOejE6qyqiy5NtbYYQOeFa6zmHkxlPzmaLxWWHsU6nJmB7AETdVPi+2NBUg==
+
+cielo-sdk@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/cielo-sdk/-/cielo-sdk-2.0.3.tgz#ddfae479a50a31d660d86f47fab6f43d6f7b5e5d"
+  integrity sha512-mjF3dJTA84HX9eoxtAIyxWqRHMdW7E1KSv6yDoF4zjzUFPUJYH+434kxfjiSAUwNTwr9rgg3jahsLaTOxBSFDg==
+  dependencies:
+    axios "^0.19.2"
 
 cjs-module-lexer@^1.0.0:
   version "1.4.1"
@@ -3836,6 +3850,13 @@ debug@4, debug@4.x, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debu
   integrity sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==
   dependencies:
     ms "^2.1.3"
+
+debug@=3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
 
 debug@^3.2.7:
   version "3.2.7"
@@ -4847,6 +4868,13 @@ fn.name@1.x.x:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fn.name/-/fn.name-1.1.0.tgz#26cad8017967aea8731bc42961d04a3d5988accc"
   integrity sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
+
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
 
 follow-redirects@^1.15.6:
   version "1.15.9"
@@ -6364,6 +6392,11 @@ jsonwebtoken@^9.0.2:
     ms "^2.1.1"
     semver "^7.5.4"
 
+jstoxml@0.1.x:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/jstoxml/-/jstoxml-0.1.0.tgz#abf95d6d76cd9adbbfe4e37a09f68c4c0a43b20c"
+  integrity sha512-nCE0qAoZ8P7JX1ARPBbBCmYSoh/yI2L43VD3qXKS0sVeZlXwSOlCxFHZEhMBl00jFyHuDYjbTtnzCV1x8W5WEg==
+
 "jsx-ast-utils@^2.4.1 || ^3.0.0", jsx-ast-utils@^3.3.5:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-3.3.5.tgz#4766bd05a8e2a11af222becd19e15575e52a853a"
@@ -7680,6 +7713,14 @@ pacote@^18.0.0, pacote@^18.0.6:
     ssri "^10.0.0"
     tar "^6.1.11"
 
+pagseguro@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/pagseguro/-/pagseguro-0.1.0.tgz#51b56b9050491697019bbedb1767580869c544c5"
+  integrity sha512-rDTw29YKyFWM9abxavi7bf5NHQrpt+xmNcPnm1l7y3+VhZbwWrhcRD2nI+NwUKWSxv77cwg54V8aB+/8B5rtgQ==
+  dependencies:
+    jstoxml "0.1.x"
+    request "2.9.x"
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-1.0.1.tgz#691d2709e78c79fae3a156622452d00762caaaa2"
@@ -8202,6 +8243,11 @@ regjsparser@^0.11.0:
   integrity sha512-3OGZZ4HoLJkkAZx/48mTXJNlmqTGOzc0o9OWQPuWpkOlXXPbyN6OafCcoXUnBqE2D3f/T5L+pWc1kdEmnfnRsA==
   dependencies:
     jsesc "~3.0.2"
+
+request@2.9.x:
+  version "2.9.203"
+  resolved "https://registry.yarnpkg.com/request/-/request-2.9.203.tgz#6c1711a5407fb94a114219563e44145bcbf4723a"
+  integrity sha512-OWtna9w7yRI/gcfu3VaURgIwE1FHgbz5+fHGQ9GJTHcJ4+uvHnDjXd+N7mVDOv5+1fp1CRPzUSY2wcM345Z2Fw==
 
 require-directory@^2.1.1:
   version "2.1.1"

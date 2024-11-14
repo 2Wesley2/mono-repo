@@ -1,88 +1,126 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
-  Box,
-  Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
   Paper,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Container,
+  Typography,
+  Box,
+  Button,
+  FormControlLabel,
 } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import Title from './Title';
 
 const CashbackDetails = ({ cashback, onBack, onEdit }) => {
-  if (!cashback) {
-    return null;
-  }
+  if (!cashback) return null;
+
+  const handleBack = useCallback(() => {
+    onBack();
+  }, [onBack]);
+
+  const handleEdit = useCallback(() => {
+    onEdit();
+  }, [onEdit]);
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
-    >
-      <Typography variant="h4" component="h1" gutterBottom>
-        Detalhes do Cashback
-      </Typography>
-
-      <Paper sx={{ padding: 3, borderRadius: 3, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          {cashback.name}
-        </Typography>
-        <Typography variant="body1" color="textSecondary">
-          Status: {cashback.isActive ? 'Ativo' : 'Inativo'}
-        </Typography>
-      </Paper>
-
-      <Box>
-        <Typography variant="h6" gutterBottom>
-          Tiers de Desconto
-        </Typography>
-
-        {cashback.ruleDiscont && cashback.ruleDiscont.length > 0 ? (
-          <List>
-            {cashback.ruleDiscont.map((tier, index) => (
-              <React.Fragment key={index}>
-                <ListItem>
-                  <ListItemText
-                    primary={`Tipo de Desconto: ${tier.discountType === 'percentage' ? `${tier.discountPercentage}%` : `R$${tier.discountFixedValue}`}`}
-                    secondary={`Mínimo: R$${tier.minPurchaseAmount} - Máximo: R$${tier.maxPurchaseAmount}`}
-                  />
-                </ListItem>
-                {index < cashback.ruleDiscont.length - 1 && <Divider />}
-              </React.Fragment>
-            ))}
-          </List>
-        ) : (
-          <Typography variant="body2" color="textSecondary">
-            Nenhum tier de desconto associado.
-          </Typography>
-        )}
-      </Box>
-
-      <Box display="flex" justifyContent="center" mt={3}>
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          gap: 2,
+        }}
+      >
         <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onBack();
+          onClick={handleBack}
+          sx={{
+            color: 'grey.700',
+            textTransform: 'none',
+            '&:hover': { bgcolor: 'grey.200' },
           }}
-          sx={{ mr: 2 }}
+          aria-label="Voltar para a página anterior"
+          startIcon={<ArrowBackIosNewIcon />}
         >
           Voltar
         </Button>
         <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => {
-            onEdit();
+          variant="contained"
+          color="error"
+          onClick={handleEdit}
+          sx={{
+            mb: 3,
           }}
         >
           Editar
         </Button>
       </Box>
+      <Paper
+        elevation={0}
+        sx={{
+          padding: 3,
+          borderRadius: 3,
+          textAlign: 'center',
+          mb: 4,
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h3"
+          sx={{
+            fontWeight: 'bold',
+            color: '#000000',
+            marginBottom: 2,
+          }}
+        >
+          {cashback.name}
+        </Typography>
+
+        <Typography
+          variant="body1"
+          sx={{
+            fontSize: '1rem', // Ajuste de tamanho para diferenciar do título
+            fontWeight: cashback.isActive ? 'bold' : 'normal', // Destaca visualmente se estiver ativo
+            color: cashback.isActive ? 'success.main' : 'error.main', // Utiliza cores de sucesso/erro
+          }}
+        >
+          {cashback.isActive ? '✔️ Ativo' : '❌ Inativo'}
+        </Typography>
+      </Paper>
+
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">Valor Mínimo</TableCell>
+              <TableCell align="center">Valor Máximo</TableCell>
+              <TableCell align="center">Desconto</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cashback.ruleDiscont.map((tier, index) => (
+              <TableRow key={index}>
+                <TableCell align="center">R${tier.minPurchaseAmount}</TableCell>
+                <TableCell align="center">R${tier.maxPurchaseAmount}</TableCell>
+                <TableCell align="center">
+                  {tier.discountType === 'percentage'
+                    ? `${tier.discountPercentage}%`
+                    : `R$${tier.discountFixedValue}`}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };
 
-export default CashbackDetails;
+export default React.memo(CashbackDetails);

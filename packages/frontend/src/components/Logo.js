@@ -1,11 +1,27 @@
-import React from 'react';
+import Image from 'next/image';
 
-function Logo() {
+export default function Logo({
+  src = '/images/FaciliteVarejo.png',
+  alt = 'Sistema Logo',
+  width = 500,
+  height = 500,
+  priority = false,
+  lazyLoad = true,
+}) {
   return (
-    <div>
-      <img src="/21.png" alt="Logotipo Facilite" width="60" height="60" />
-    </div>
+    <Image
+      src={src}
+      width={width}
+      height={height}
+      alt={alt}
+      priority={priority}
+      loading={lazyLoad ? 'lazy' : 'eager'}
+      style={{
+        objectFit: 'contain',
+        maxWidth: '100%',
+        height: 'auto',
+        justifySelf: '',
+      }}
+    />
   );
 }
-
-export default Logo;

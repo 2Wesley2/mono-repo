@@ -31,8 +31,8 @@ import CashbackRepository from './cashback/CashbackRepository.js';
 import CashbackService from './cashback/CashbackService.js';
 import CashbackController from './cashback/CashbackController.js';
 
-import NoficationModel from './notification/NotificationModel.js';
-import NoficationRepository from './notification/NotificationRepository.js';
+import NotificationModel from './notification/NotificationModel.js';
+import NotificationRepository from './notification/NotificationRepository.js';
 import NotificationService from './notification/NotificationService.js';
 
 const userModel = new UserModel();
@@ -49,8 +49,8 @@ const customerRepository = new CustomerRepository(customerModel);
 const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
-const notificationModel = new NoficationModel();
-const notificationRepository = new NoficationRepository(notificationModel);
+const notificationModel = new NotificationModel();
+const notificationRepository = new NotificationRepository(notificationModel);
 const notificationService = new NotificationService(notificationRepository);
 
 const employeeModel = new EmployeeModel();

@@ -1,6 +1,6 @@
 // components/CashbackForm.jsx
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Box,
   TextField,
@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { createCashback, updateCashback } from '../service/cashback';
+import React from 'react';
 
 const CashbackForm = ({ cashback: initialCashback, onBack }) => {
   const isEditMode = Boolean(initialCashback);
@@ -41,21 +43,23 @@ const CashbackForm = ({ cashback: initialCashback, onBack }) => {
         ],
   );
 
-  const handleCashbackChange = (e) => {
+  const handleCashbackChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     setCashback((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
-  };
+  }, []);
 
-  const handleRuleChange = (index, field, value) => {
-    const updatedRules = [...rules];
-    updatedRules[index][field] = value;
-    setRules(updatedRules);
-  };
+  const handleRuleChange = useCallback((index, field, value) => {
+    setRules((prevRules) => {
+      const updatedRules = [...prevRules];
+      updatedRules[index][field] = value;
+      return updatedRules;
+    });
+  }, []);
 
-  const addRule = () => {
+  const addRule = useCallback(() => {
     setRules((prev) => [
       ...prev,
       {
@@ -66,55 +70,83 @@ const CashbackForm = ({ cashback: initialCashback, onBack }) => {
         discountFixedValue: '',
       },
     ]);
-  };
+  }, []);
 
-  const removeRule = (index) => {
+  const removeRule = useCallback((index) => {
     setRules((prev) => prev.filter((_, i) => i !== index));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    const cashbackData = {
-      name: cashback.name,
-      isActive: cashback.isActive,
-      tiers: rules.map((rule) => ({
-        discountType: rule.discountType,
-        minPurchaseAmount: Number(rule.minPurchaseAmount),
-        maxPurchaseAmount: Number(rule.maxPurchaseAmount),
-        discountPercentage:
-          rule.discountType === 'percentage'
-            ? Number(rule.discountPercentage)
-            : undefined,
-        discountFixedValue:
-          rule.discountType === 'fixed'
-            ? Number(rule.discountFixedValue)
-            : undefined,
-      })),
-    };
+      const cashbackData = {
+        name: cashback.name,
+        isActive: cashback.isActive,
+        tiers: rules.map((rule) => ({
+          discountType: rule.discountType,
+          minPurchaseAmount: Number(rule.minPurchaseAmount),
+          maxPurchaseAmount: Number(rule.maxPurchaseAmount),
+          discountPercentage:
+            rule.discountType === 'percentage'
+              ? Number(rule.discountPercentage)
+              : undefined,
+          discountFixedValue:
+            rule.discountType === 'fixed'
+              ? Number(rule.discountFixedValue)
+              : undefined,
+        })),
+      };
 
-    try {
-      if (isEditMode) {
-        await updateCashback(initialCashback._id, cashbackData);
-        alert('Cashback atualizado com sucesso!');
-      } else {
-        await createCashback(cashbackData);
-        alert('Cashback criado com sucesso!');
+      try {
+        if (isEditMode) {
+          await updateCashback(initialCashback._id, cashbackData);
+          alert('Cashback atualizado com sucesso!');
+        } else {
+          await createCashback(cashbackData);
+          alert('Cashback criado com sucesso!');
+        }
+        onBack();
+      } catch (error) {
+        console.error(error);
+        alert(
+          isEditMode ? 'Erro ao atualizar cashback' : 'Erro ao criar cashback',
+        );
       }
-      onBack();
-    } catch (error) {
-      console.error(error);
-      alert(
-        isEditMode ? 'Erro ao atualizar cashback' : 'Erro ao criar cashback',
-      );
-    }
-  };
+    },
+    [cashback, rules, isEditMode, initialCashback, onBack],
+  );
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          gap: 2,
+        }}
+      >
+        <Button
+          onClick={onBack}
+          sx={{
+            color: 'grey.700',
+            textTransform: 'none',
+            '&:hover': { bgcolor: 'grey.200' },
+          }}
+          aria-label="Voltar para a página anterior"
+          startIcon={<ArrowBackIosNewIcon />}
+        >
+          Voltar
+        </Button>
+      </Box>
+
       <Typography variant="h5" mb={2}>
         {isEditMode ? 'Editar Cashback' : 'Criar Cashback'}
       </Typography>
+
       <form onSubmit={handleSubmit}>
         <TextField
           label="Nome do Cashback"
@@ -241,4 +273,5 @@ const CashbackForm = ({ cashback: initialCashback, onBack }) => {
   );
 };
 
-export default CashbackForm;
+// Aplicação de React.memo
+export default React.memo(CashbackForm);

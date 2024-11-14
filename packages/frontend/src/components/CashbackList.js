@@ -1,111 +1,129 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
-  List,
   ListItem,
   ListItemText,
   CircularProgress,
   Typography,
   Paper,
-  Container,
   Fade,
   Button,
 } from '@mui/material';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import { getAllCashbacks } from '../service/index';
-import Title from './Title';
 
-const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
+const CashbackList = ({ cashbacks, onSelectCashback, onCreateCashback }) => {
   const [activeCashback, setActiveCashback] = useState(null);
   const [inactiveCashbacks, setInactiveCashbacks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCashbacks = async () => {
-      try {
-        const cashbackData = await getAllCashbacks();
-        const active = cashbackData.find((cashback) => cashback.isActive);
-        const inactive = cashbackData.filter((cashback) => !cashback.isActive);
+    if (cashbacks.length > 0) {
+      const active = cashbacks.find((cashback) => cashback.isActive);
+      const inactive = cashbacks.filter((cashback) => !cashback.isActive);
 
-        setActiveCashback(active);
-        setInactiveCashbacks(inactive);
-      } catch (error) {
-        console.error('Erro ao buscar cashbacks:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCashbacks();
-  }, []);
+      setActiveCashback(active);
+      setInactiveCashbacks(inactive);
+    }
+    setLoading(false);
+  }, [cashbacks]);
+
+  const handleSelectCashback = useCallback(
+    (cashback) => {
+      onSelectCashback(cashback);
+    },
+    [onSelectCashback],
+  );
+
+  const handleCreateCashback = useCallback(() => {
+    onCreateCashback();
+  }, [onCreateCashback]);
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        mt: 6,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Title>Selecione um Cashback</Title>
-
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => {
-          onCreateCashback();
+    <>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
         }}
-        sx={{ mb: 3 }}
+        my={3}
       >
-        Criar Novo Cashback
-      </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleCreateCashback}
+          sx={{
+            mb: 3,
+          }}
+        >
+          Criar Novo Cashback
+        </Button>
+      </Box>
 
       {loading ? (
         <CircularProgress color="primary" />
       ) : (
         <>
           {activeCashback && (
-            <Fade in>
-              <Paper
-                elevation={3}
-                sx={{
-                  backgroundColor: '#FAFAFA',
-                  mb: 2,
-                  p: 2,
-                  width: '100%',
-                  '&:hover': { boxShadow: 6, bgcolor: 'grey.100' },
-                  borderRadius: 2,
-                  transition: 'box-shadow 0.2s, background-color 0.2s',
-                }}
-              >
-                <ListItem
-                  button
-                  onClick={() => {
-                    onSelectCashback(activeCashback);
-                  }}
+            <Box
+              sx={{
+                display: 'flex',
+                width: '100%',
+                justifyContent: 'center',
+                alignContent: 'center',
+              }}
+            >
+              <Fade in easing={'enter'}>
+                <Paper
+                  elevation={3}
                   sx={{
-                    backgroundColor: '#FAFAFA',
+                    width: '50%',
+                    p: 2,
                     display: 'flex',
-                    alignItems: 'center',
-                    p: 1,
-                    '&:focus': { outline: '2px solid' },
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.02)',
+                      boxShadow: 6,
+                      bgcolor: 'grey.100',
+                    },
+                    borderRadius: 2,
                   }}
-                  aria-label={`Selecionar cashback ${activeCashback.name}`}
                 >
-                  <LocalOfferIcon sx={{ color: '#E50914', mr: 2 }} />
-                  <ListItemText
-                    primary={`${activeCashback.name}`}
-                    secondary="Status: Ativo"
-                    primaryTypographyProps={{
-                      fontWeight: 'bold',
-                      color: 'textPrimary',
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      mb: 1,
+                      width: '100%',
                     }}
-                    secondaryTypographyProps={{ color: 'textSecondary' }}
-                  />
-                </ListItem>
-              </Paper>
-            </Fade>
+                  >
+                    <ListItem
+                      button
+                      onClick={() => handleSelectCashback(activeCashback)}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        p: 2,
+                      }}
+                      aria-label={`Selecionar cashback ${activeCashback.name}`}
+                    >
+                      <LocalOfferIcon sx={{ color: '#E50914', mr: 2 }} />
+                      <ListItemText
+                        primary={`${activeCashback.name}`}
+                        secondary="Status: Ativo"
+                        primaryTypographyProps={{
+                          fontWeight: 'bold',
+                          color: 'textPrimary',
+                        }}
+                        secondaryTypographyProps={{ color: 'textSecondary' }}
+                      />
+                    </ListItem>
+                  </Box>
+                </Paper>
+              </Fade>
+            </Box>
           )}
 
           {inactiveCashbacks.length > 0 && (
@@ -154,9 +172,7 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
                         outline: 'none',
                         cursor: 'pointer',
                       }}
-                      onClick={() => {
-                        onSelectCashback(cashback);
-                      }}
+                      onClick={() => handleSelectCashback(cashback)}
                     >
                       <LocalOfferIcon sx={{ color: '#E50914', mb: 1 }} />
                       <Typography
@@ -175,8 +191,8 @@ const CashbackList = ({ onSelectCashback, onCreateCashback }) => {
           )}
         </>
       )}
-    </Container>
+    </>
   );
 };
 
-export default CashbackList;
+export default React.memo(CashbackList);
