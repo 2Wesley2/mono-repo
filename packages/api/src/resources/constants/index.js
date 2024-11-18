@@ -7,5 +7,7 @@ const NOTIFICATION = 'Notification';
 const CASHBACK = 'Cashback';
 const TIER = 'Tier';
 const PAYMENT = 'Payment';
+const ORDER = 'Order';
+const PRODUCT = 'Product';
 
-export { CUSTOMER, SALES, TICKET, EMPLOYEE, USER, NOTIFICATION, CASHBACK, TIER, PAYMENT };
+export { CUSTOMER, SALES, TICKET, EMPLOYEE, USER, NOTIFICATION, CASHBACK, TIER, PAYMENT, ORDER, PRODUCT };
