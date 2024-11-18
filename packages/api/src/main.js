@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import App from './resources/app.js';
 import Server from './resources/server.js';
 import debug from './debug/index.js';

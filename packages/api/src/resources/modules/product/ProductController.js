@@ -1,14 +1,14 @@
-import { Router } from 'express';
+import Controller from '../../../resources/core/Controller.js';
 import debug from '../../../debug/index.js';
 
-class ProductController {
+class ProductController extends Controller {
   constructor(service) {
+    super();
     this.service = service;
-    this.router = Router();
-    this.initializeRoutes();
+    this.initializeCustomRoutes();
   }
 
-  initializeRoutes() {
+  initializeCustomRoutes() {
     this.router.post('/', this.create.bind(this));
     this.router.get('/:id', this.findById.bind(this));
     this.router.put('/:id', this.update.bind(this));

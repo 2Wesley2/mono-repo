@@ -1,4 +1,4 @@
-import debug from '@/debug/index.js';
+import debug from '../../../debug/index.js';
 import {
   handleAddProductToOrder,
   updateOrderProducts,
@@ -7,7 +7,7 @@ import {
   shouldUpdateStock,
   validateOrderAndProductExistence,
   updateOrderStatus,
-} from '@/utils/order/index.js';
+} from '../../../utils/order/index.js';
 
 class OrderService {
   constructor({ repository, productService }) {
@@ -42,7 +42,6 @@ class OrderService {
         await this.productService.updateStock(product._id, productData.quantity);
       }
 
-      // Atualiza a comanda no banco
       const updatedOrder = await this.repository.update(orderId, {
         status: order.status,
         products: order.products,

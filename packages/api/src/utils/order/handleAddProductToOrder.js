@@ -1,4 +1,4 @@
-import AppError from '@/errors/AppError';
+import AppError from '../../errors/AppError.js';
 
 function handleAddProductToOrder({ product, productData }) {
   if (product.type === 'ready_to_sell' && product.quantity < productData.quantity) {

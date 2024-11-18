@@ -1,5 +1,5 @@
-import config from '@/config/index.js';
-import AppError from '@/errors/AppError.js';
+import config from '../config/index.js';
+import AppError from '../errors/AppError.js';
 
 export default (err, _req, res, _next) => {
   const statusCode = err instanceof AppError && err.statusCode ? err.statusCode : 500;

@@ -1,17 +1,17 @@
-import { Router } from 'express';
 import debug from '../../../debug/index.js';
+import Controller from '../../../resources/core/Controller.js';
 
-class OrderController {
+class OrderController extends Controller {
   constructor(service) {
+    super();
     this.service = service;
-    this.router = Router();
-    this.initializeRoutes();
+    this.initializeCustomRoutes();
   }
 
-  initializeRoutes() {
+  initializeCustomRoutes() {
     this.router.post('/', this.create.bind(this));
-    this.router.put('/:id/products', this.addProduct.bind(this));
-    this.router.delete('/:id/products/:productName', this.removeProduct.bind(this));
+    this.router.put('/:id/product', this.addProduct.bind(this));
+    this.router.delete('/:id/product/:productId', this.removeProduct.bind(this));
     this.router.get('/', this.listOrders.bind(this));
     this.router.delete('/:id', this.delete.bind(this));
   }
@@ -30,8 +30,8 @@ class OrderController {
   async addProduct(req, res, next) {
     try {
       const { id } = req.params;
-      const product = req.body;
-      const updatedOrder = await this.service.addProduct(id, product);
+      const productData = req.body;
+      const updatedOrder = await this.service.addProduct(id, productData);
       debug.logger.info('Controller: Product added to order', { orderId: id });
       res.status(200).json({ success: true, data: updatedOrder });
     } catch (error) {
@@ -42,9 +42,10 @@ class OrderController {
 
   async removeProduct(req, res, next) {
     try {
-      const { id, productName } = req.params;
-      const updatedOrder = await this.service.removeProduct(id, productName);
-      debug.logger.info('Controller: Product removed from order', { orderId: id, productName });
+      const { id, productId } = req.params;
+      const updatedOrder = await this.service.removeProduct(id, productId);
+
+      debug.logger.info('Controller: Product removed from order', { orderId: id, productId });
       res.status(200).json({ success: true, data: updatedOrder });
     } catch (error) {
       debug.logger.error('Controller: Error removing product from order', { error });

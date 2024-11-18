@@ -8,6 +8,16 @@ import CustomerRepository from './customer/CustomerRepository.js';
 import CustomerService from './customer/CustomerService.js';
 import CustomerController from './customer/CustomerController.js';
 
+import ProductModel from './product/ProductModel.js';
+import ProductRepository from './product/ProductRepository.js';
+import ProductService from './product/ProductService.js';
+import ProductController from './product/ProductController.js';
+
+import OrderModel from './order/OrderModel.js';
+import OrderRepository from './order/OrderRepository.js';
+import OrderService from './order/OrderService.js';
+import OrderController from './order/OrderController.js';
+
 import SalesModel from './sales/SalesModel.js';
 import SalesRepository from './sales/SalesRepository.js';
 import SalesService from './sales/SalesService.js';
@@ -49,6 +59,16 @@ const customerRepository = new CustomerRepository(customerModel);
 const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
+const productModel = new ProductModel();
+const productRepository = new ProductRepository(productModel);
+const productService = new ProductService(productRepository);
+const productController = new ProductController(productService);
+
+const orderModel = new OrderModel();
+const orderRepository = new OrderRepository(orderModel);
+const orderService = new OrderService(orderRepository, productService);
+const orderController = new OrderController(orderService);
+
 const notificationModel = new NotificationModel();
 const notificationRepository = new NotificationRepository(notificationModel);
 const notificationService = new NotificationService(notificationRepository);
@@ -86,4 +106,6 @@ export {
   ticketService,
   notificationService,
   cashbackController,
+  productController,
+  orderController,
 };

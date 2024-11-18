@@ -1,4 +1,4 @@
-import AppError from '@/errors/AppError.js';
+import AppError from '../../errors/AppError.js';
 
 /**
  * Valida a existência de uma comanda (order) e de um produto (product).

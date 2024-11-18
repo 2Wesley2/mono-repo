@@ -12,6 +12,8 @@ import {
   userController,
   ticketService,
   cashbackController,
+  productController,
+  orderController,
 } from '../resources/modules/index.js';
 
 export default class App {
@@ -62,6 +64,8 @@ export default class App {
       this.app.use('/api/sale', salesController.getRouter());
       this.app.use('/api/user', userController.getRouter());
       this.app.use('/api/cashback', cashbackController.getRouter());
+      this.app.use('/api/product', productController.getRouter());
+      this.app.use('/api/order', orderController.getRouter());
     } catch (error) {
       debug.logger.error('app.js: Erro ao definir rotas para os controladores:', error);
       throw error;
