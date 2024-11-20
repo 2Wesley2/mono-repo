@@ -10,6 +10,7 @@ class OrderController extends Controller {
 
   initializeCustomRoutes() {
     this.router.post('/', this.create.bind(this));
+    this.router.post('/bulk', this.bulkCreate.bind(this));
     this.router.put('/:id/product', this.addProduct.bind(this));
     this.router.delete('/:id/product/:productId', this.removeProduct.bind(this));
     this.router.get('/', this.listOrders.bind(this));
@@ -27,6 +28,17 @@ class OrderController extends Controller {
     }
   }
 
+  async bulkCreate(req, res, next) {
+    try {
+      const orders = req.body;
+      const createdOrders = await this.service.bulkCreate(orders);
+      debug.logger.info('Controller: Bulk orders created successfully', { data: createdOrders });
+      res.status(201).json({ success: true, data: createdOrders });
+    } catch (error) {
+      debug.logger.error('Controller: Error creating bulk orders', { error });
+      next(error);
+    }
+  }
   async addProduct(req, res, next) {
     try {
       const { id } = req.params;

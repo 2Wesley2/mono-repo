@@ -16,6 +16,17 @@ class ProductRepository {
     }
   }
 
+  async bulkCreate(productList) {
+    try {
+      const result = await this.model.bulkCreate(productList);
+      debug.logger.info('Repository: Products created in bulk successfully', { data: result });
+      return result;
+    } catch (error) {
+      debug.logger.error('Repository: Error creating products in bulk', { error });
+      throw error;
+    }
+  }
+
   async findById(id) {
     try {
       const product = await this.model.findById(id);
@@ -27,15 +38,13 @@ class ProductRepository {
     }
   }
 
-  async find(filter = {}) {
-    try {
-      const products = await this.model.find(filter);
-      debug.logger.info('Repository: Products found', { filter });
-      return products;
-    } catch (error) {
-      debug.logger.error('Repository: Error finding products', { filter, error });
-      throw error;
-    }
+  async findByCategory(category) {
+    debug.logger.debug('Repository: findByCategory called', { category });
+
+    const products = await this.model.findByCategory(category);
+
+    debug.logger.debug('Repository: findByCategory returned', { count: products.length });
+    return products;
   }
 
   async update(id, data) {

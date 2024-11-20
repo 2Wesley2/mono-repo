@@ -10,9 +10,10 @@ import {
 } from '../../../utils/order/index.js';
 
 class OrderService {
-  constructor({ repository, productService }) {
+  constructor(repository, productService) {
     this.repository = repository;
     this.productService = productService;
+    console.log('Service: this.repository.bulkCreate = ', this.repository.bulkCreate);
   }
 
   async create(orderData) {
@@ -22,6 +23,17 @@ class OrderService {
       return result;
     } catch (error) {
       debug.logger.error('Service: Error creating order', { error });
+      throw error;
+    }
+  }
+
+  async bulkCreate(orderList) {
+    try {
+      const createdOrders = await this.repository.bulkCreate(orderList);
+      debug.logger.info('Service: Bulk orders created successfully', { data: createdOrders });
+      return createdOrders;
+    } catch (error) {
+      debug.logger.error('Service: Error creating bulk orders', { error });
       throw error;
     }
   }

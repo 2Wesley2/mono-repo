@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="pt-br">
       <body>
         <DrawerNavigation />
-        <div className="layout">{children}</div>
+        {children}
         <Footer />
       </body>
     </html>

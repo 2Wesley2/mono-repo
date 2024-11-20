@@ -3,6 +3,7 @@ import debug from '../../../debug/index.js';
 class OrderRepository {
   constructor(model) {
     this.model = model;
+    console.log('Repository: this.model.bulkCreate = ', this.model.bulkCreate);
   }
 
   async create(data) {
@@ -12,6 +13,17 @@ class OrderRepository {
       return result;
     } catch (error) {
       debug.logger.error('Repository: Error creating order', { error });
+      throw error;
+    }
+  }
+
+  async bulkCreate(data) {
+    try {
+      const result = await this.model.bulkCreate(data);
+      debug.logger.info('Repository: Bulk orders created successfully', { data: result });
+      return result;
+    } catch (error) {
+      debug.logger.error('Repository: Error creating bulk orders', { error });
       throw error;
     }
   }

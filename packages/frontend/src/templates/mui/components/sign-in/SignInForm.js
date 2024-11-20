@@ -119,8 +119,7 @@ export default function SignInForm() {
         />
       </FormControl>
       <FormControl>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}></Box>
         <TextField
           error={formErrors.password.error}
           helperText={formErrors.password.message}

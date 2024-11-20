@@ -19,63 +19,86 @@ const productSchema = {
       message: 'Quantity cannot be negative for "ready_to_sell" products',
     },
   },
+  category: { type: String, required: false },
+  barcode: { type: String, unique: true, required: true },
 };
 
-class ProductClass extends Model {
+class ProductModel extends Model {
   constructor() {
     super(productSchema, PRODUCT);
   }
 
   async create(data) {
     try {
+      debug.logger.debug('Creating product with data:', { data });
       const newProduct = this.model.create(data);
       const result = await newProduct;
-      debug.logger.info('Product created successfully', { data: result });
+      debug.logger.info('Product created successfully', { result });
       return result;
     } catch (error) {
-      debug.logger.error('Error creating product', { error });
+      debug.logger.error('Error creating product', { error: error.message, stack: error.stack, data });
+      throw error;
+    }
+  }
+
+  async bulkCreate(productList) {
+    try {
+      const result = await this.model.insertMany(productList);
+      debug.logger.info('Model: Products created in bulk successfully', { data: result });
+      return result;
+    } catch (error) {
+      debug.logger.error('Model: Error creating products in bulk', { error });
       throw error;
     }
   }
 
   async findById(id) {
     try {
+      debug.logger.debug('Finding product by ID:', { id });
       if (!Database.isValidObjectId(id)) {
         throw new Error('Invalid ID');
       }
       const product = await this.model.findById(id);
+      debug.logger.info('Product found by ID:', { id, product });
       return product;
     } catch (error) {
+      debug.logger.error('Error finding product by ID', { error: error.message, id });
       throw error;
     }
   }
 
-  async find(filter = {}) {
-    try {
-      const products = await this.model.find(filter);
-      return products;
-    } catch (error) {
-      throw error;
-    }
+  async findByCategory(category) {
+    debug.logger.debug('Model: findByCategory called', { category });
+
+    const products = await this.model.find({ category });
+
+    debug.logger.debug('Model: findByCategory returned', { count: products.length });
+    return products;
   }
 
   async update(id, data) {
     try {
+      debug.logger.debug('Updating product', { id, data });
       const updatedProduct = await this.model.findByIdAndUpdate(id, data, { new: true });
+      debug.logger.info('Product updated successfully', { id, updatedProduct });
       return updatedProduct;
     } catch (error) {
+      debug.logger.error('Error updating product', { error: error.message, id, data });
       throw error;
     }
   }
 
   async delete(id) {
     try {
+      debug.logger.debug('Deleting product by ID', { id });
       await this.model.findByIdAndDelete(id);
+      debug.logger.info('Product deleted successfully', { id });
       return true;
     } catch (error) {
+      debug.logger.error('Error deleting product', { error: error.message, id });
       throw error;
     }
   }
 }
 
-export default ProductClass;
+export default ProductModel;

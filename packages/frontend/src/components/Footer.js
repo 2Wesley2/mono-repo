@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   Box,
@@ -9,12 +10,17 @@ import {
   Button,
 } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
+  const pathname = usePathname();
+  const isOrderPage = pathname === '/controle-de-comanda';
+
+  if (isOrderPage) return null;
   return (
     <Box
       component="footer"
-     sx={{
+      sx={{
         width: '100%',
         bottom: 0,
         bgcolor: '#d32f2f',

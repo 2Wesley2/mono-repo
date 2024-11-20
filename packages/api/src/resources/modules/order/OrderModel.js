@@ -34,9 +34,11 @@ const orderSchema = {
   },
 };
 
-class OrderClass extends Model {
+class OrderModel extends Model {
   constructor() {
     super(orderSchema, ORDER);
+    console.log('Model: this.model = ', this.model);
+    console.log('Model: this.model.bulkCreate = ', this.model.bulkCreate);
   }
   async create(data) {
     try {
@@ -46,6 +48,17 @@ class OrderClass extends Model {
       return result;
     } catch (error) {
       debug.logger.error('Error creating order', { error });
+      throw error;
+    }
+  }
+
+  async bulkCreate(data) {
+    try {
+      const result = await this.model.insertMany(data);
+      debug.logger.info('Model: Bulk orders created successfully', { data: result });
+      return result;
+    } catch (error) {
+      debug.logger.error('Model: Error creating bulk orders', { error });
       throw error;
     }
   }
@@ -90,4 +103,4 @@ class OrderClass extends Model {
   }
 }
 
-export default OrderClass;
+export default OrderModel;

@@ -10,10 +10,11 @@ class ProductController extends Controller {
 
   initializeCustomRoutes() {
     this.router.post('/', this.create.bind(this));
+    this.router.post('/bulk', this.bulkCreate.bind(this));
     this.router.get('/:id', this.findById.bind(this));
     this.router.put('/:id', this.update.bind(this));
     this.router.delete('/:id', this.delete.bind(this));
-    this.router.get('/', this.listProducts.bind(this));
+    this.router.get('/category/:category', this.findByCategory.bind(this));
   }
 
   async create(req, res, next) {
@@ -23,6 +24,17 @@ class ProductController extends Controller {
       res.status(201).json({ success: true, data: product });
     } catch (error) {
       debug.logger.error('Controller: Error creating product', { error });
+      next(error);
+    }
+  }
+
+  async bulkCreate(req, res, next) {
+    try {
+      const products = await this.service.bulkCreate(req.body);
+      debug.logger.info('Controller: Products created successfully', { data: products });
+      res.status(201).json({ success: true, data: products });
+    } catch (error) {
+      debug.logger.error('Controller: Error creating products in bulk', { error });
       next(error);
     }
   }
@@ -39,6 +51,19 @@ class ProductController extends Controller {
     }
   }
 
+  async findByCategory(req, res, next) {
+    try {
+      const { category } = req.params;
+
+      const products = await this.service.findByCategory(category);
+
+      debug.logger.info('Controller: Products by category found', { category, count: products.length });
+      res.status(200).json({ success: true, data: products });
+    } catch (error) {
+      debug.logger.error('Controller: Error finding products by category', { error });
+      next(error);
+    }
+  }
   async update(req, res, next) {
     try {
       const { id } = req.params;
@@ -59,18 +84,6 @@ class ProductController extends Controller {
       res.status(204).end();
     } catch (error) {
       debug.logger.error('Controller: Error deleting product', { id, error });
-      next(error);
-    }
-  }
-
-  async listProducts(req, res, next) {
-    try {
-      const filter = req.query;
-      const products = await this.service.find(filter);
-      debug.logger.info('Controller: Products listed', { filter });
-      res.status(200).json({ success: true, data: products });
-    } catch (error) {
-      debug.logger.error('Controller: Error listing products', { error });
       next(error);
     }
   }

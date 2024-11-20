@@ -25,6 +25,7 @@ const DrawerNavigation = () => {
     { path: '/gerenciar-clientes', name: 'Gerenciar Clientes' },
     { path: '/checkout', name: 'Vender' },
     { path: '/configuration', name: 'Config' },
+    { path: '/controle-de-comanda', name: 'Controle de Comanda' },
   ];
 
   const filteredRoutes = routes.filter((route) => route.path !== pathname);
@@ -33,9 +34,10 @@ const DrawerNavigation = () => {
     setDrawerOpen(open);
   };
 
-  const isLoginPage = pathname === '/login';
+  const isLoginPageOrOrderPage =
+    pathname === '/login' || pathname === '/controle-de-comanda';
 
-  if (isLoginPage) return null;
+  if (isLoginPageOrOrderPage) return null;
 
   return (
     <>

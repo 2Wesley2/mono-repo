@@ -59,6 +59,11 @@ export default class App {
     this.app.get('/', (_, res) => res.json('Hello World'));
     debug.logger.info('app.js: Definindo rotas para os controladores...');
     try {
+      this.app.use((req, res, next) => {
+        console.log(`[DEBUG] Incoming request: ${req.method} ${req.originalUrl}`);
+        console.log('Stack trace:', new Error().stack);
+        next();
+      });
       this.app.use('/api/customer', customerController.getRouter());
       this.app.use('/api/employee', employeeController.getRouter());
       this.app.use('/api/sale', salesController.getRouter());

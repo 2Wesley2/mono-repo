@@ -16,6 +16,17 @@ class ProductService {
     }
   }
 
+  async bulkCreate(productList) {
+    try {
+      const result = await this.repository.bulkCreate(productList);
+      debug.logger.info('Service: Products created in bulk successfully', { data: result });
+      return result;
+    } catch (error) {
+      debug.logger.error('Service: Error creating products in bulk', { error });
+      throw error;
+    }
+  }
+
   async findById(productId) {
     try {
       const product = await this.repository.findById(productId);
@@ -25,6 +36,15 @@ class ProductService {
       debug.logger.error('Service: Error finding product by ID', { productId, error });
       throw error;
     }
+  }
+
+  async findByCategory(category) {
+    debug.logger.debug('Service: findByCategory called', { category });
+
+    const products = await this.repository.findByCategory(category);
+
+    debug.logger.debug('Service: findByCategory returned', { count: products.length });
+    return products;
   }
 
   async update(productId, productData) {
@@ -45,17 +65,6 @@ class ProductService {
       return deleted;
     } catch (error) {
       debug.logger.error('Service: Error deleting product', { productId, error });
-      throw error;
-    }
-  }
-
-  async find(filter = {}) {
-    try {
-      const products = await this.repository.find(filter);
-      debug.logger.info('Service: Products found', { filter });
-      return products;
-    } catch (error) {
-      debug.logger.error('Service: Error finding products', { filter, error });
       throw error;
     }
   }

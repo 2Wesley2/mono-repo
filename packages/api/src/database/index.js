@@ -127,7 +127,9 @@ ${error.message}`);
    */
   static registerModel({ schema, modelName, options = {} }) {
     const newSchema = this.configSchema({ schema, options });
-    return mongoose.model(modelName, newSchema);
+    const model = mongoose.model(modelName, newSchema);
+    console.log('Registering model:', modelName, model);
+    return model;
   }
 
   static get Types() {
