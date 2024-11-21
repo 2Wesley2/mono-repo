@@ -22,7 +22,6 @@ import OrderService from '@/service/order';
 const categories = ['Refeições', 'Geral', 'Bebidas', 'Salgados', 'Lanches'];
 
 const OrderScreen = () => {
-  console.log('Renderizando OrderScreen...');
   const [activeTab, setActiveTab] = useState(0);
   const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(false);
@@ -32,36 +31,41 @@ const OrderScreen = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isWaitingForProduct, setIsWaitingForProduct] = useState(false);
 
-  // Carrega dados do localStorage apenas na montagem
   useEffect(() => {
-    const savedCommandNumber = localStorage.getItem('commandNumber');
-    const savedIsWaitingForProduct =
-      localStorage.getItem('isWaitingForProduct') === 'true';
+    try {
+      const savedCommandNumber = localStorage.getItem('commandNumber');
+      const savedIsWaitingForProduct =
+        localStorage.getItem('isWaitingForProduct') === 'true';
 
-    if (savedCommandNumber) {
-      console.log(`Recuperando número da comanda salvo: ${savedCommandNumber}`);
-      setActiveCommandNumber(savedCommandNumber);
-      setIsWaitingForProduct(savedIsWaitingForProduct);
-      console.log(
-        `Estado restaurado: aguardando produtos = ${savedIsWaitingForProduct}`,
-      );
-    } else {
-      console.log('Nenhum número de comanda salvo encontrado no localStorage.');
+      if (savedCommandNumber) {
+        console.log(`Recuperando número da comanda salvo: ${savedCommandNumber}`);
+        setActiveCommandNumber(savedCommandNumber);
+        setIsWaitingForProduct(savedIsWaitingForProduct);
+        console.log(
+          `Estado restaurado: aguardando produtos = ${savedIsWaitingForProduct}`
+        );
+      } else {
+        console.log('Nenhum número de comanda salvo encontrado no localStorage.');
+      }
+    } catch (error) {
+      console.error('Erro ao recuperar dados do localStorage:', error);
     }
   }, []);
 
-  // Salva no localStorage quando necessário
   useEffect(() => {
-    if (activeCommandNumber !== null) {
-      localStorage.setItem('commandNumber', activeCommandNumber);
-      localStorage.setItem('isWaitingForProduct', isWaitingForProduct);
-      console.log(
-        `Estado salvo no localStorage: comanda = ${activeCommandNumber}, aguardando produtos = ${isWaitingForProduct}`,
-      );
+    try {
+      if (activeCommandNumber !== null) {
+        localStorage.setItem('commandNumber', activeCommandNumber);
+        localStorage.setItem('isWaitingForProduct', isWaitingForProduct);
+        console.log(
+          `Estado salvo no localStorage: comanda = ${activeCommandNumber}, aguardando produtos = ${isWaitingForProduct}`
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao salvar estado no localStorage:', error);
     }
   }, [activeCommandNumber, isWaitingForProduct]);
 
-  // Função para buscar produtos
   const fetchCategoryProducts = useCallback(
     async (category) => {
       if (categoryProducts[category]) {
@@ -74,9 +78,7 @@ const OrderScreen = () => {
 
       try {
         const response = await getProductsByCategories(category);
-        console.log(
-          `Produtos carregados com sucesso para a categoria: ${category}`,
-        );
+        console.log(`Produtos carregados com sucesso para a categoria: ${category}`);
         setCategoryProducts((prevState) => ({
           ...prevState,
           [category]: response.data,
@@ -84,16 +86,16 @@ const OrderScreen = () => {
       } catch (error) {
         console.error(
           `Erro ao buscar produtos para a categoria "${category}":`,
-          error,
+          error
         );
         setErrorMessage(
-          `Erro ao carregar produtos para a categoria "${category}".`,
+          `Erro ao carregar produtos para a categoria "${category}".`
         );
       } finally {
         setLoading(false);
       }
     },
-    [categoryProducts],
+    [categoryProducts]
   );
 
   useEffect(() => {
@@ -114,7 +116,7 @@ const OrderScreen = () => {
       return 'VALID';
     }
 
-    console.warn(`Entrada inválida detectada: "${input}"`);
+    console.warn(`Entrada inválida detectada: ${input}`);
     return 'INVALID';
   };
 
@@ -128,7 +130,7 @@ const OrderScreen = () => {
       if (currentOrder.length > 0) {
         try {
           console.log(
-            `Finalizando comanda ${activeCommandNumber} com ${currentOrder.length} produtos.`,
+            `Finalizando comanda ${activeCommandNumber} com ${currentOrder.length} produtos.`
           );
           await OrderService.bulkCreate({
             commandNumber: activeCommandNumber,
@@ -149,6 +151,9 @@ const OrderScreen = () => {
       }
     } else if (validation === 'VALID') {
       if (isWaitingForProduct && currentOrder.length > 0) {
+        console.log(
+          `Criando pedido para a comanda ${activeCommandNumber} com ${currentOrder.length} produtos.`
+        );
         try {
           const orderData = {
             orderNumber: activeCommandNumber,
@@ -161,15 +166,16 @@ const OrderScreen = () => {
           await OrderService.create(orderData);
           console.log('Pedido criado com sucesso!');
           setErrorMessage('');
-          setCurrentOrder([]);
+          setCurrentOrder([]); // Limpa os produtos após criação
         } catch (error) {
           console.error('Erro ao criar o pedido:', error);
           setErrorMessage('Erro ao criar o pedido. Tente novamente.');
         }
       } else if (!isWaitingForProduct) {
+        console.log(`Ativando comanda ${commandNumber}`);
+        setErrorMessage('');
         setIsWaitingForProduct(true);
         setActiveCommandNumber(commandNumber);
-        console.log(`Ativando comanda ${commandNumber}`);
       } else {
         console.warn('Tentativa de criar pedido sem produtos.');
         setErrorMessage('Adicione produtos antes de continuar.');
@@ -177,10 +183,11 @@ const OrderScreen = () => {
     } else {
       console.warn('Entrada inválida recebida.');
       setErrorMessage(
-        'Insira um número de comanda válido ou "X" para finalizar.',
+        'Insira um número de comanda válido ou "X" para finalizar.'
       );
     }
 
+    console.log('Limpando campo de entrada.');
     setCommandNumber('');
   };
 
@@ -196,47 +203,52 @@ const OrderScreen = () => {
     console.log('Estado resetado com sucesso.');
   };
 
-  // Adicionar produto
-  const handleAddProduct = useCallback(
-    (product) => {
-      if (!activeCommandNumber) {
-        setErrorMessage(
-          'Defina um número de comanda antes de adicionar produtos.',
+const handleAddProduct = useCallback(
+  (product) => {
+    if (!activeCommandNumber) {
+      console.warn('Tentativa de adicionar produto sem comanda ativa.');
+      setErrorMessage(
+        'Defina um número de comanda antes de adicionar produtos.'
+      );
+      return;
+    }
+
+    setCurrentOrder((prevOrder) => {
+      const existingProduct = prevOrder.find(
+        (item) => item.product._id === product._id
+      );
+
+      let updatedOrder;
+      if (existingProduct) {
+        updatedOrder = prevOrder.map((item) =>
+          item.product._id === product._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
-        console.warn('Tentativa de adicionar produto sem comanda ativa.');
-        return;
+        console.log(
+          `Atualizando quantidade para o produto: ${product.name} (+1).`
+        );
+      } else {
+        updatedOrder = [...prevOrder, { product, quantity: 1 }];
+        console.log(`Adicionando novo produto: ${product.name}`);
       }
 
-      setCurrentOrder((prevOrder) => {
-        const existingProduct = prevOrder.find(
-          (item) => item.product._id === product._id,
-        );
+      console.log('Estado atualizado de pedidos:', updatedOrder);
+      return updatedOrder;
+    });
 
-        if (existingProduct) {
-          console.log(
-            `Atualizando quantidade para o produto: ${product.name} (+1).`,
-          );
-          return prevOrder.map((item) =>
-            item.product._id === product._id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item,
-          );
-        } else {
-          console.log(`Adicionando novo produto: ${product.name}`);
-          return [...prevOrder, { product, quantity: 1 }];
-        }
-      });
+    setErrorMessage('');
+  },
+  [activeCommandNumber]
+);
 
-      setErrorMessage('');
-    },
-    [activeCommandNumber],
-  );
 
   const currentCategory = categories[activeTab];
   const products = useMemo(
     () => categoryProducts[currentCategory] || [],
     [currentCategory, categoryProducts],
   );
+
   return (
     <Container
       disableGutters
