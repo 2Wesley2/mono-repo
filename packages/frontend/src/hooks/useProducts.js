@@ -29,14 +29,13 @@ export const useProducts = (categories, activeTab) => {
     },
     [categoryProducts],
   );
- 
+
   useEffect(() => {
     const currentCategory = categories[activeTab];
     console.log(`Categoria ativa selecionada: ${currentCategory}`);
     fetchCategoryProducts(currentCategory);
   }, [activeTab, fetchCategoryProducts]);
-  const products =
-    categoryProducts[categories[activeTab]] || [];
+  const products = categoryProducts[categories[activeTab]] || [];
 
   return {
     products,

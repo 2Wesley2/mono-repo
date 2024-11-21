@@ -9,7 +9,7 @@ const apiBaseUrl = env.apiBaseUrl;
  */
 async function getProductsByCategories(category) {
   try {
-    const encodedCategory = encodeURIComponent(category); // Codificar categoria
+    const encodedCategory = encodeURIComponent(category);
     const response = await fetch(
       `${apiBaseUrl}/api/product/category/${encodedCategory}`,
     );

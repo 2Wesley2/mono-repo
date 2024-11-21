@@ -1,10 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
-import { getProductsByCategories } from '../../service/product';
-import OrderService from '@/service/order';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  createContext,
+  useContext,
+} from 'react';
+import { getProductsByCategories } from '../service/product';
 
-export const categories = ['Refeições', 'Geral', 'Bebidas', 'Salgados', 'Lanches'];
+const categories = ['Refeições', 'Geral', 'Bebidas', 'Salgados', 'Lanches'];
 
-export const useOrderState = () => {
+const OrderStateContext = createContext(null);
+
+export const OrderStateProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(false);
@@ -14,10 +22,10 @@ export const useOrderState = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isWaitingForProduct, setIsWaitingForProduct] = useState(false);
 
-  // Recuperar estado salvo no localStorage na montagem
   useEffect(() => {
     const savedCommandNumber = localStorage.getItem('commandNumber');
-    const savedIsWaitingForProduct = localStorage.getItem('isWaitingForProduct') === 'true';
+    const savedIsWaitingForProduct =
+      localStorage.getItem('isWaitingForProduct') === 'true';
 
     if (savedCommandNumber) {
       setActiveCommandNumber(savedCommandNumber);
@@ -25,7 +33,6 @@ export const useOrderState = () => {
     }
   }, []);
 
-  // Salvar estado no localStorage quando necessário
   useEffect(() => {
     if (activeCommandNumber !== null) {
       localStorage.setItem('commandNumber', activeCommandNumber);
@@ -33,23 +40,37 @@ export const useOrderState = () => {
     }
   }, [activeCommandNumber, isWaitingForProduct]);
 
-  // Função para buscar produtos de uma categoria
-  const fetchCategoryProducts = useCallback(async (category) => {
-    if (categoryProducts[category]) return;
+  const fetchCategoryProducts = useCallback(
+    async (category) => {
+      if (categoryProducts[category]) return;
 
-    setLoading(true);
-    try {
-      const response = await getProductsByCategories(category);
-      setCategoryProducts((prevState) => ({
-        ...prevState,
-        [category]: response.data,
-      }));
-    } catch (error) {
-      setErrorMessage(`Erro ao carregar produtos para a categoria "${category}".`);
-    } finally {
-      setLoading(false);
-    }
-  }, [categoryProducts]);
+      setLoading(true);
+      try {
+        const response = await getProductsByCategories(category);
+        setCategoryProducts((prevState) => ({
+          ...prevState,
+          [category]: response.data,
+        }));
+      } catch (error) {
+        setErrorMessage(
+          `Erro ao carregar produtos para a categoria "${category}".`,
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [categoryProducts],
+  );
+
+  const currentCategory = categories[activeTab];
+  useEffect(() => {
+    fetchCategoryProducts(currentCategory);
+  }, [activeTab, fetchCategoryProducts]);
+
+  const products = useMemo(
+    () => categoryProducts[currentCategory] || [],
+    [currentCategory, categoryProducts],
+  );
 
   const resetCommandState = () => {
     setCommandNumber('');
@@ -61,42 +82,99 @@ export const useOrderState = () => {
     localStorage.removeItem('isWaitingForProduct');
   };
 
-  const handleAddProduct = useCallback((product) => {
-    if (!activeCommandNumber) {
-      setErrorMessage('Defina um número de comanda antes de adicionar produtos.');
-      return;
+  const handleAddProduct = useCallback(
+    (product) => {
+      console.log('activeCommandNumber:', activeCommandNumber);
+      console.log('Produto clicado:', product);
+      if (!activeCommandNumber) {
+        console.warn('Nenhuma comanda ativa.');
+        setErrorMessage(
+          'Defina um número de comanda antes de adicionar produtos.',
+        );
+        return;
+      }
+
+      setCurrentOrder((prevOrder) => {
+        const existingProduct = prevOrder.find(
+          (item) => item.product._id === product._id,
+        );
+        if (existingProduct) {
+          console.log('Produto já existente. Incrementando quantidade.');
+          return prevOrder.map((item) =>
+            item.product._id === product._id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item,
+          );
+        }
+        console.log('Novo produto adicionado.');
+        return [...prevOrder, { product, quantity: 1 }];
+      });
+
+      setErrorMessage('');
+    },
+    [activeCommandNumber],
+  );
+
+  const validateCommandInput = (input) => {
+    const trimmedInput = input.trim().toUpperCase();
+    if (trimmedInput === 'X') return 'FINALIZE';
+    if (/^\d+$/.test(trimmedInput)) return 'VALID';
+    return 'INVALID';
+  };
+
+  const handleCommandNumberEnter = async (event) => {
+    if (event.key !== 'Enter') return;
+
+    const validation = validateCommandInput(commandNumber);
+
+    if (validation === 'FINALIZE') {
+      console.log('Finalizando comanda...');
+      resetCommandState();
+    } else if (validation === 'VALID') {
+      setActiveCommandNumber(commandNumber);
+      setIsWaitingForProduct(true);
+      console.log(`Comanda ${commandNumber} ativada.`);
+    } else {
+      setErrorMessage('Entrada inválida. Insira um número válido ou "X".');
     }
 
-    setCurrentOrder((prevOrder) => {
-      const existingProduct = prevOrder.find((item) => item.product._id === product._id);
-      if (existingProduct) {
-        return prevOrder.map((item) =>
-          item.product._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prevOrder, { product, quantity: 1 }];
-    });
-
-    setErrorMessage('');
-  }, [activeCommandNumber]);
-
-  return {
-    activeTab,
-    setActiveTab,
-    categories,
-    fetchCategoryProducts,
-    categoryProducts,
-    loading,
-    commandNumber,
-    setCommandNumber,
-    activeCommandNumber,
-    isWaitingForProduct,
-    setIsWaitingForProduct,
-    currentOrder,
-    errorMessage,
-    resetCommandState,
-    handleAddProduct,
+    setCommandNumber('');
   };
+
+  return (
+    <OrderStateContext.Provider
+      value={{
+        activeTab,
+        setActiveTab,
+        categories,
+        fetchCategoryProducts,
+        categoryProducts,
+        loading,
+        commandNumber,
+        setCommandNumber,
+        activeCommandNumber,
+        isWaitingForProduct,
+        setIsWaitingForProduct,
+        currentOrder,
+        errorMessage,
+        resetCommandState,
+        handleAddProduct,
+        handleCommandNumberEnter,
+        products,
+        currentCategory,
+      }}
+    >
+      {children}
+    </OrderStateContext.Provider>
+  );
+};
+
+export const useOrderState = () => {
+  const context = useContext(OrderStateContext);
+  if (!context) {
+    throw new Error(
+      'useOrderState deve ser usado dentro de um OrderStateProvider',
+    );
+  }
+  return context;
 };
