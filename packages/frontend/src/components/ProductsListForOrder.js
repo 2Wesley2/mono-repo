@@ -1,4 +1,3 @@
-import React from 'react';
 import { Paper, Box, CircularProgress, Typography } from '@mui/material';
 import { useOrderState } from '../hooks/useOrderState';
 
