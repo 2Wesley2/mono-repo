@@ -6,10 +6,4 @@ import TabsOrder from './TabsOrder';
 import ProductListForOrder from './ProductsListForOrder';
 import ErrorOrder from './ErrorOrder';
 
-export {
-  CommandInput,
-  TableOrder,
-  TabsOrder,
-  ProductListForOrder,
-  ErrorOrder
-};
+export { CommandInput, TableOrder, TabsOrder, ProductListForOrder, ErrorOrder };

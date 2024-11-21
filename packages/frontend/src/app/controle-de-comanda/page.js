@@ -1,8 +1,14 @@
-'use client'
+'use client';
 import React from 'react';
 import { Box, Container } from '@mui/material';
 import { OrderStateProvider } from '../../hooks/useOrderState';
-import { CommandInput, TableOrder, TabsOrder, ProductListForOrder, ErrorOrder } from '../../components';
+import {
+  CommandInput,
+  TableOrder,
+  TabsOrder,
+  ProductListForOrder,
+  ErrorOrder,
+} from '../../components';
 
 const OrderScreen = () => {
   return (
