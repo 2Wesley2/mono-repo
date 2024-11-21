@@ -22,29 +22,73 @@ import OrderService from '@/service/order';
 const categories = ['Refeições', 'Geral', 'Bebidas', 'Salgados', 'Lanches'];
 
 const OrderScreen = () => {
+  console.log('Renderizando OrderScreen...');
   const [activeTab, setActiveTab] = useState(0);
   const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(false);
   const [commandNumber, setCommandNumber] = useState('');
+  const [activeCommandNumber, setActiveCommandNumber] = useState(null);
   const [currentOrder, setCurrentOrder] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isWaitingForProduct, setIsWaitingForProduct] = useState(false);
 
+  // Carrega dados do localStorage apenas na montagem
+  useEffect(() => {
+    const savedCommandNumber = localStorage.getItem('commandNumber');
+    const savedIsWaitingForProduct =
+      localStorage.getItem('isWaitingForProduct') === 'true';
+
+    if (savedCommandNumber) {
+      console.log(`Recuperando número da comanda salvo: ${savedCommandNumber}`);
+      setActiveCommandNumber(savedCommandNumber);
+      setIsWaitingForProduct(savedIsWaitingForProduct);
+      console.log(
+        `Estado restaurado: aguardando produtos = ${savedIsWaitingForProduct}`,
+      );
+    } else {
+      console.log('Nenhum número de comanda salvo encontrado no localStorage.');
+    }
+  }, []);
+
+  // Salva no localStorage quando necessário
+  useEffect(() => {
+    if (activeCommandNumber !== null) {
+      localStorage.setItem('commandNumber', activeCommandNumber);
+      localStorage.setItem('isWaitingForProduct', isWaitingForProduct);
+      console.log(
+        `Estado salvo no localStorage: comanda = ${activeCommandNumber}, aguardando produtos = ${isWaitingForProduct}`,
+      );
+    }
+  }, [activeCommandNumber, isWaitingForProduct]);
+
+  // Função para buscar produtos
   const fetchCategoryProducts = useCallback(
     async (category) => {
-      if (categoryProducts[category]) return;
+      if (categoryProducts[category]) {
+        console.log(`Produtos já carregados para a categoria: ${category}`);
+        return;
+      }
+
+      console.log(`Iniciando busca de produtos para a categoria: ${category}`);
       setLoading(true);
+
       try {
         const response = await getProductsByCategories(category);
+        console.log(
+          `Produtos carregados com sucesso para a categoria: ${category}`,
+        );
         setCategoryProducts((prevState) => ({
           ...prevState,
           [category]: response.data,
         }));
       } catch (error) {
         console.error(
-          `Erro ao buscar produtos para a categoria ${category}:`,
+          `Erro ao buscar produtos para a categoria "${category}":`,
           error,
         );
-        setErrorMessage('Erro ao carregar produtos. Tente novamente.');
+        setErrorMessage(
+          `Erro ao carregar produtos para a categoria "${category}".`,
+        );
       } finally {
         setLoading(false);
       }
@@ -54,83 +98,145 @@ const OrderScreen = () => {
 
   useEffect(() => {
     const currentCategory = categories[activeTab];
+    console.log(`Categoria ativa selecionada: ${currentCategory}`);
     fetchCategoryProducts(currentCategory);
   }, [activeTab, fetchCategoryProducts]);
 
   const validateCommandInput = (input) => {
-    if (input.trim().toUpperCase() === 'X') return 'FINALIZE';
-    if (/^\d+$/.test(input.trim())) return 'VALID';
+    const trimmedInput = input.trim().toUpperCase();
+
+    if (trimmedInput === 'X') {
+      console.log('Entrada "X" detectada: comando para finalizar.');
+      return 'FINALIZE';
+    }
+    if (/^\d+$/.test(trimmedInput)) {
+      console.log(`Entrada válida detectada: ${input}`);
+      return 'VALID';
+    }
+
+    console.warn(`Entrada inválida detectada: "${input}"`);
     return 'INVALID';
   };
 
-  const handleCommandNumberEnter = (event) => {
+  const handleCommandNumberEnter = async (event) => {
     if (event.key !== 'Enter') return;
 
     const validation = validateCommandInput(commandNumber);
 
     if (validation === 'FINALIZE') {
+      console.log('Finalizando comanda...');
       if (currentOrder.length > 0) {
-        OrderService.bulkCreate({
-          commandNumber,
-          items: currentOrder.map(({ product, quantity }) => ({
-            productId: product._id,
-            quantity,
-          })),
-        })
-          .then(() => {
-            setCommandNumber('');
-            setCurrentOrder([]);
-            setErrorMessage('');
-            console.log('Comanda finalizada com sucesso!');
-          })
-          .catch((error) => {
-            console.error('Erro ao finalizar comanda:', error);
-            setErrorMessage('Erro ao finalizar a comanda. Tente novamente.');
+        try {
+          console.log(
+            `Finalizando comanda ${activeCommandNumber} com ${currentOrder.length} produtos.`,
+          );
+          await OrderService.bulkCreate({
+            commandNumber: activeCommandNumber,
+            items: currentOrder.map(({ product, quantity }) => ({
+              productId: product._id,
+              quantity,
+            })),
           });
+          resetCommandState();
+          console.log('Comanda finalizada com sucesso!');
+        } catch (error) {
+          console.error('Erro ao finalizar comanda:', error);
+          setErrorMessage('Erro ao finalizar a comanda. Tente novamente.');
+        }
       } else {
-        setCommandNumber('');
-        setErrorMessage('');
+        console.log(`Finalizando comanda ${activeCommandNumber} sem produtos.`);
+        resetCommandState();
       }
     } else if (validation === 'VALID') {
-      setErrorMessage('');
+      if (isWaitingForProduct && currentOrder.length > 0) {
+        try {
+          const orderData = {
+            orderNumber: activeCommandNumber,
+            status: 'In Progress',
+            products: currentOrder.map(({ product, quantity }) => ({
+              product: product._id,
+              quantity,
+            })),
+          };
+          await OrderService.create(orderData);
+          console.log('Pedido criado com sucesso!');
+          setErrorMessage('');
+          setCurrentOrder([]);
+        } catch (error) {
+          console.error('Erro ao criar o pedido:', error);
+          setErrorMessage('Erro ao criar o pedido. Tente novamente.');
+        }
+      } else if (!isWaitingForProduct) {
+        setIsWaitingForProduct(true);
+        setActiveCommandNumber(commandNumber);
+        console.log(`Ativando comanda ${commandNumber}`);
+      } else {
+        console.warn('Tentativa de criar pedido sem produtos.');
+        setErrorMessage('Adicione produtos antes de continuar.');
+      }
     } else {
+      console.warn('Entrada inválida recebida.');
       setErrorMessage(
         'Insira um número de comanda válido ou "X" para finalizar.',
       );
     }
+
+    setCommandNumber('');
   };
 
-  const handleAddProduct = (product) => {
-    if (!commandNumber || validateCommandInput(commandNumber) === 'FINALIZE') {
-      setErrorMessage(
-        'Defina um número de comanda antes de adicionar produtos.',
-      );
-      return;
-    }
-
-    setCurrentOrder((prevOrder) => {
-      const existingProduct = prevOrder.find(
-        (item) => item.product._id === product._id,
-      );
-      if (existingProduct) {
-        return prevOrder.map((item) =>
-          item.product._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
-      } else {
-        return [...prevOrder, { product, quantity: 1 }];
-      }
-    });
+  const resetCommandState = () => {
+    console.log('Resetando estado da comanda...');
+    setCommandNumber('');
+    setActiveCommandNumber(null);
+    setCurrentOrder([]);
     setErrorMessage('');
+    setIsWaitingForProduct(false);
+    localStorage.removeItem('commandNumber');
+    localStorage.removeItem('isWaitingForProduct');
+    console.log('Estado resetado com sucesso.');
   };
+
+  // Adicionar produto
+  const handleAddProduct = useCallback(
+    (product) => {
+      if (!activeCommandNumber) {
+        setErrorMessage(
+          'Defina um número de comanda antes de adicionar produtos.',
+        );
+        console.warn('Tentativa de adicionar produto sem comanda ativa.');
+        return;
+      }
+
+      setCurrentOrder((prevOrder) => {
+        const existingProduct = prevOrder.find(
+          (item) => item.product._id === product._id,
+        );
+
+        if (existingProduct) {
+          console.log(
+            `Atualizando quantidade para o produto: ${product.name} (+1).`,
+          );
+          return prevOrder.map((item) =>
+            item.product._id === product._id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item,
+          );
+        } else {
+          console.log(`Adicionando novo produto: ${product.name}`);
+          return [...prevOrder, { product, quantity: 1 }];
+        }
+      });
+
+      setErrorMessage('');
+    },
+    [activeCommandNumber],
+  );
 
   const currentCategory = categories[activeTab];
   const products = useMemo(
     () => categoryProducts[currentCategory] || [],
     [currentCategory, categoryProducts],
   );
-
   return (
     <Container
       disableGutters
@@ -150,15 +256,45 @@ const OrderScreen = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 1,
+          padding: '1%',
         }}
       >
+        <Typography
+          gutterBottom
+          sx={{
+            fontFamily: 'Roboto, Arial, sans-serif',
+            display: 'flex',
+            alignSelf: 'flex-start',
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: activeCommandNumber ? '#E50914' : '#006400',
+          }}
+        >
+          {activeCommandNumber ? (
+            <>
+              Comanda&nbsp;
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: 'inherit',
+                  fontWeight: 'bold',
+                  color: '#000000',
+                }}
+              >
+                {activeCommandNumber}
+              </Typography>
+              &nbsp;aguardando produto{' '}
+            </>
+          ) : (
+            'Aguardando Comanda'
+          )}
+        </Typography>
+
         <TextField
           autoFocus
           value={commandNumber}
           onChange={(e) => setCommandNumber(e.target.value)}
           onKeyDown={handleCommandNumberEnter}
-          placeholder="Número da comanda ou 'X'"
           aria-label="Campo para inserir o número da comanda ou finalizar com X"
           sx={{
             color: '#FF0000',
@@ -184,21 +320,47 @@ const OrderScreen = () => {
             width: '50%',
           }}
         >
-          <TableContainer component={Paper} sx={{ marginBottom: 2 }}>
-            <Table>
+          <TableContainer
+            component={Paper}
+            sx={{
+              padding: '0.7%',
+              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+              '& .MuiTableHead-root': {
+                backgroundColor: '#f5f5f5',
+              },
+              '& .MuiTableHead-root .MuiTableCell-root': {
+                fontFamily: 'Roboto, Arial, sans-serif',
+                fontWeight: 'bold',
+                fontSize: '0.875rem',
+                color: '#333',
+              },
+              '& .MuiTableBody-root .MuiTableCell-root': {
+                fontFamily: 'Roboto, Arial, sans-serif',
+                fontSize: '0.875rem',
+                color: '#555',
+              },
+              '& .MuiTableRow-root:hover': {
+                backgroundColor: '#f9f9f9',
+                transition: 'background-color 0.3s ease',
+              },
+            }}
+          >
+            <Table padding="none">
               <TableHead>
                 <TableRow>
                   <TableCell>Nome do Produto</TableCell>
-                  <TableCell>Preço</TableCell>
-                  <TableCell>Quantidade</TableCell>
+                  <TableCell align="right">Preço</TableCell>
+                  <TableCell align="right">Quantidade</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {currentOrder.map(({ product, quantity }) => (
                   <TableRow key={product._id}>
                     <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.price.toFixed(2)}</TableCell>
-                    <TableCell>{quantity}</TableCell>
+                    <TableCell align="right">
+                      {product.price.toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">{quantity}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -220,22 +382,35 @@ const OrderScreen = () => {
           onChange={(event, newValue) => setActiveTab(newValue)}
           variant="fullWidth"
           sx={{
-            backgroundColor: '#FFFFFF',
+            marginInline: '1% 1%',
+            backgroundColor: '#F7F7F7',
+            borderRadius: '8px',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
             '& .MuiTab-root': {
               width: `${100 / categories.length}%`,
               textAlign: 'center',
-              fontSize: '1.5rem',
+              justifyContent: 'center',
+              fontSize: '1rem',
               color: '#000000',
               fontFamily: 'Roboto, Arial, sans-serif !important',
               fontWeight: 'normal',
+              textTransform: 'none',
+              transition: 'color 0.3s ease, background-color 0.3s ease',
+              borderBottom: '2px solid transparent',
+              '&:hover': {
+                backgroundColor: '#EFEFEF', // Cor de fundo ao passar o mouse
+                color: '#E50914', // Destaque de cor ao passar o mouse
+              },
             },
             '& .MuiTabs-indicator': {
               backgroundColor: '#E50914',
-              fontWeight: 'normal',
+              height: '4px',
+              borderRadius: '4px 4px 0 0',
             },
             '& .css-hmk518-MuiButtonBase-root-MuiTab-root.Mui-selected': {
-              color: '#E50914',
+              color: '#E50914', // Cor ao ser selecionado
               fontWeight: 'bold',
+              borderBottom: '2px solid #E50914',
             },
           }}
         >
@@ -251,7 +426,7 @@ const OrderScreen = () => {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
             gap: 2,
-            padding: 2,
+            padding: '1%',
           }}
         >
           {loading ? (
