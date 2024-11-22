@@ -1,5 +1,5 @@
 import { Paper, Box, CircularProgress, Typography } from '@mui/material';
-import { useOrderState } from '../hooks/useOrderState';
+import { useOrderState } from '../context/useOrderState';
 
 const ProductListForOrder = () => {
   const { loading, products, currentCategory, handleAddProduct } =
@@ -20,7 +20,7 @@ const ProductListForOrder = () => {
       ) : products.length > 0 ? (
         products.map((product) => (
           <Paper
-            key={product.barcode}
+            key={product._id}
             sx={{
               textAlign: 'center',
               display: 'flex',

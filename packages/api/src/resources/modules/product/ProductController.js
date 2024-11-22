@@ -11,7 +11,6 @@ class ProductController extends Controller {
   initializeCustomRoutes() {
     this.router.post('/', this.create.bind(this));
     this.router.post('/bulk', this.bulkCreate.bind(this));
-    this.router.get('/:id', this.findById.bind(this));
     this.router.put('/:id', this.update.bind(this));
     this.router.delete('/:id', this.delete.bind(this));
     this.router.get('/category/:category', this.findByCategory.bind(this));
@@ -38,26 +37,10 @@ class ProductController extends Controller {
       next(error);
     }
   }
-
-  async findById(req, res, next) {
-    try {
-      const { id } = req.params;
-      const product = await this.service.findById(id);
-      debug.logger.info('Controller: Product found', { id });
-      res.status(200).json({ success: true, data: product });
-    } catch (error) {
-      debug.logger.error('Controller: Error finding product by ID', { id, error });
-      next(error);
-    }
-  }
-
   async findByCategory(req, res, next) {
     try {
       const { category } = req.params;
-
       const products = await this.service.findByCategory(category);
-
-      debug.logger.info('Controller: Products by category found', { category, count: products.length });
       res.status(200).json({ success: true, data: products });
     } catch (error) {
       debug.logger.error('Controller: Error finding products by category', { error });

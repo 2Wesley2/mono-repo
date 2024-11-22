@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useEffect,
   useCallback,
@@ -7,6 +7,7 @@ import React, {
   useContext,
 } from 'react';
 import { getProductsByCategories } from '../service/product';
+import OrderService from '../service/order';
 
 const categories = ['Refeições', 'Geral', 'Bebidas', 'Salgados', 'Lanches'];
 
@@ -129,7 +130,33 @@ export const OrderStateProvider = ({ children }) => {
 
     if (validation === 'FINALIZE') {
       console.log('Finalizando comanda...');
-      resetCommandState();
+
+      if (currentOrder.length > 0) {
+        try {
+          const orderData = {
+            operation: 'add',
+            products: currentOrder.map((item) => ({
+              product: item.product._id,
+              quantity: item.quantity,
+            })),
+          };
+
+          await OrderService.modifyProduct(
+            activeCommandNumber,
+            'add',
+            orderData.products,
+          );
+          console.log('Pedido criado com sucesso:', orderData);
+
+          resetCommandState();
+        } catch (error) {
+          console.error('Erro ao criar pedido:', error.message);
+          setErrorMessage('Erro ao finalizar comanda. Tente novamente.');
+        }
+      } else {
+        console.warn('Não há produtos na comanda para finalizar.');
+        setErrorMessage('Adicione produtos antes de finalizar a comanda.');
+      }
     } else if (validation === 'VALID') {
       setActiveCommandNumber(commandNumber);
       setIsWaitingForProduct(true);

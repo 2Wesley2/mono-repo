@@ -26,24 +26,13 @@ class ProductService {
       throw error;
     }
   }
-
-  async findById(productId) {
-    try {
-      const product = await this.repository.findById(productId);
-      debug.logger.info('Service: Product found', { productId });
-      return product;
-    } catch (error) {
-      debug.logger.error('Service: Error finding product by ID', { productId, error });
-      throw error;
-    }
+  async findByIdInService(productId) {
+    const product = await this.repository.findByIdInRepository(productId);
+    return product;
   }
 
   async findByCategory(category) {
-    debug.logger.debug('Service: findByCategory called', { category });
-
     const products = await this.repository.findByCategory(category);
-
-    debug.logger.debug('Service: findByCategory returned', { count: products.length });
     return products;
   }
 

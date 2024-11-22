@@ -28,28 +28,26 @@ async function request(endpoint, method = 'GET', body = null) {
 
 const OrderService = {
   create: async (orderData) => {
-    return request('/', 'POST', orderData);
+    return request('/api/order', 'POST', orderData);
   },
 
   bulkCreate: async (ordersData) => {
-    return request('/bulk', 'POST', ordersData);
+    return request('/api/order/bulk', 'POST', ordersData);
   },
 
-  addProduct: async (orderId, productData) => {
-    return request(`/${orderId}/product`, 'PUT', productData);
-  },
-
-  removeProduct: async (orderId, productId) => {
-    return request(`/${orderId}/product/${productId}`, 'DELETE');
+  modifyProduct: async (orderId, operation, products) => {
+    const body = { operation, products };
+    console.log('JSON enviado para o backend em modifyProduct:', JSON.stringify(body, null, 2));
+    return request(`/api/order/${orderId}/product`, 'PUT', body);
   },
 
   listOrders: async (filter = {}) => {
     const query = new URLSearchParams(filter).toString();
-    return request(`/?${query}`, 'GET');
+    return request(`/api/order?${query}`, 'GET');
   },
 
   delete: async (orderId) => {
-    return request(`/${orderId}`, 'DELETE');
+    return request(`/api/order/${orderId}`, 'DELETE');
   },
 };
 

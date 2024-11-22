@@ -1,5 +1,5 @@
 import { Tabs, Tab } from '@mui/material';
-import { useOrderState } from '../hooks/useOrderState';
+import { useOrderState } from '../context/useOrderState';
 
 const TabsOrder = () => {
   const { activeTab, setActiveTab, categories } = useOrderState();

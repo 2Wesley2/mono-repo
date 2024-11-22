@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import debug from '../../../debug/index.js';
 import Controller from '../../../resources/core/Controller.js';
 
@@ -9,21 +10,46 @@ class OrderController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/', this.create.bind(this));
+    this.router.post('/', this.createOrder.bind(this));
     this.router.post('/bulk', this.bulkCreate.bind(this));
-    this.router.put('/:id/product', this.addProduct.bind(this));
-    this.router.delete('/:id/product/:productId', this.removeProduct.bind(this));
+    this.router.put('/:orderNumber/product', this.modifyProduct.bind(this));
     this.router.get('/', this.listOrders.bind(this));
-    this.router.delete('/:id', this.delete.bind(this));
+    this.router.delete('/:orderNumber', this.delete.bind(this));
   }
 
-  async create(req, res, next) {
+  async createOrder(req, res, next) {
+    const { body } = req;
+    debug.logger.debug('OrderController.createOrder: Received request', { body });
+
+    const validationSchema = Joi.object({
+      orderNumber: Joi.number().required(),
+      status: Joi.string().valid('Stand By', 'In Progress').required(),
+      products: Joi.array()
+        .items(
+          Joi.object({
+            product: Joi.string().required(),
+            quantity: Joi.number().greater(0).required(),
+          }),
+        )
+        .optional(),
+    });
+
+    const { error } = validationSchema.validate(body);
+    if (error) {
+      debug.logger.error('OrderController.createOrder: Validation error', { error: error.message });
+      return res.status(400).json({ success: false, message: error.message });
+    }
+
     try {
-      const order = await this.service.create(req.body);
-      debug.logger.info('Controller: Order created successfully', { data: order });
+      const order = await this.service.createOrder(body);
+      debug.logger.info('OrderController.createOrder: Order created successfully', { data: order });
       res.status(201).json({ success: true, data: order });
     } catch (error) {
-      debug.logger.error('Controller: Error creating order', { error });
+      debug.logger.error('OrderController.createOrder: Error creating order', {
+        body,
+        error: error.message,
+        stack: error.stack,
+      });
       next(error);
     }
   }
@@ -39,28 +65,39 @@ class OrderController extends Controller {
       next(error);
     }
   }
-  async addProduct(req, res, next) {
-    try {
-      const { id } = req.params;
-      const productData = req.body;
-      const updatedOrder = await this.service.addProduct(id, productData);
-      debug.logger.info('Controller: Product added to order', { orderId: id });
-      res.status(200).json({ success: true, data: updatedOrder });
-    } catch (error) {
-      debug.logger.error('Controller: Error adding product to order', { error });
-      next(error);
+  async modifyProduct(req, res, next) {
+    const { orderNumber } = req.params;
+    const { body } = req;
+
+    debug.logger.debug('OrderController.modifyProduct: Corpo recebido no backend', body);
+
+    const validationSchema = Joi.object({
+      operation: Joi.string().valid('add', 'remove').required(),
+      products: Joi.array()
+        .items(
+          Joi.object({
+            product: Joi.string().required(),
+            quantity: Joi.number().greater(0).when('operation', { is: 'add', then: Joi.required() }),
+          }),
+        )
+        .required(),
+    });
+
+    const { error, value } = validationSchema.validate(body);
+    if (error) {
+      debug.logger.error('OrderController.modifyProduct: Validation error', { error: error.message });
+      return res.status(400).json({ success: false, message: error.message });
     }
-  }
 
-  async removeProduct(req, res, next) {
     try {
-      const { id, productId } = req.params;
-      const updatedOrder = await this.service.removeProduct(id, productId);
-
-      debug.logger.info('Controller: Product removed from order', { orderId: id, productId });
+      const updatedOrder = await this.service.modifyProduct(orderNumber, value);
       res.status(200).json({ success: true, data: updatedOrder });
     } catch (error) {
-      debug.logger.error('Controller: Error removing product from order', { error });
+      debug.logger.error('OrderController.modifyProduct: Error modifying product in order', {
+        orderNumber,
+        body,
+        error,
+      });
       next(error);
     }
   }
@@ -79,13 +116,13 @@ class OrderController extends Controller {
   }
 
   async delete(req, res, next) {
+    const { orderNumber } = req.params;
     try {
-      const { id } = req.params;
-      await this.service.delete(id);
-      debug.logger.info('Controller: Order deleted', { orderId: id });
+      await this.service.delete(orderNumber);
+      debug.logger.info('OrderController.delete: Order deleted', { orderNumber });
       res.status(204).end();
     } catch (error) {
-      debug.logger.error('Controller: Error deleting order', { error });
+      debug.logger.error('OrderController.delete: Error deleting order', { error });
       next(error);
     }
   }

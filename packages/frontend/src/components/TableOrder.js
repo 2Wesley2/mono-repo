@@ -8,7 +8,7 @@ import {
   TableBody,
   TableCell,
 } from '@mui/material';
-import { useOrderState } from '../hooks/useOrderState';
+import { useOrderState } from '../context/useOrderState';
 
 const TableOrder = () => {
   const { currentOrder } = useOrderState();

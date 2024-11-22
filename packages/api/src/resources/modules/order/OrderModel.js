@@ -15,7 +15,8 @@ const orderSchema = {
           required: true,
           validate: {
             validator: function (v) {
-              return v > 0;
+              if (v <= 0) throw new Error('Product quantity must be greater than zero');
+              return true;
             },
             message: 'Product quantity must be greater than zero',
           },
@@ -25,11 +26,10 @@ const orderSchema = {
     validate: {
       validator: function (products) {
         if (this.status === 'Stand By' && products.length > 0) {
-          return false;
+          throw new Error('Orders with status "Stand By" cannot have products.');
         }
         return true;
       },
-      message: 'Orders with status "Stand By" cannot have products.',
     },
   },
 };
@@ -37,42 +37,24 @@ const orderSchema = {
 class OrderModel extends Model {
   constructor() {
     super(orderSchema, ORDER);
-    console.log('Model: this.model = ', this.model);
-    console.log('Model: this.model.bulkCreate = ', this.model.bulkCreate);
   }
-  async create(data) {
-    try {
-      const newOrder = this.model.create(data);
-      const result = await newOrder;
-      debug.logger.info('Order created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Error creating order', { error });
-      throw error;
-    }
+
+  async createOrder(data) {
+    const newOrder = await this.model.create(data);
+    return newOrder;
   }
 
   async bulkCreate(data) {
-    try {
-      const result = await this.model.insertMany(data);
-      debug.logger.info('Model: Bulk orders created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Model: Error creating bulk orders', { error });
-      throw error;
-    }
+    const result = await this.model.insertMany(data);
+    return result;
   }
 
-  async findById(id) {
-    try {
-      if (!Database.isValidObjectId(id)) {
-        throw new Error('Invalid ID');
-      }
-      const order = await this.model.findById(id);
-      return order;
-    } catch (error) {
-      throw error;
+  async findByIdInModel(id) {
+    if (!Database.isValidObjectId(id)) {
+      throw new Error('Invalid ID');
     }
+    const order = await this.model.findById(id);
+    return order;
   }
 
   async find(filter = {}) {
@@ -84,13 +66,24 @@ class OrderModel extends Model {
     }
   }
 
-  async update(id, data) {
-    try {
-      const updatedOrder = await this.model.findByIdAndUpdate(id, data, { new: true });
-      return updatedOrder;
-    } catch (error) {
-      throw error;
+  async findByOrderNumberModel(orderNumber) {
+    if (typeof orderNumber === 'object' && orderNumber.orderNumber) {
+      orderNumber = orderNumber.orderNumber;
     }
+    const parsedOrderNumber = Number(orderNumber);
+    if (isNaN(parsedOrderNumber)) {
+      throw new Error(`Invalid orderNumber: ${orderNumber}`);
+    }
+    const order = await this.model.findOne({ orderNumber });
+    return order;
+  }
+
+  async updateOrderModel(id, data) {
+    const updatedOrder = await this.model.findOneAndUpdate({ _id: id }, data, { new: true });
+    if (!updatedOrder) {
+      throw new Error(`Order with number ${orderNumber} not found`);
+    }
+    return updatedOrder;
   }
 
   async delete(id) {

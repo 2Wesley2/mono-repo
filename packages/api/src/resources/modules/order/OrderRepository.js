@@ -3,73 +3,40 @@ import debug from '../../../debug/index.js';
 class OrderRepository {
   constructor(model) {
     this.model = model;
-    console.log('Repository: this.model.bulkCreate = ', this.model.bulkCreate);
   }
 
-  async create(data) {
-    try {
-      const result = await this.model.create(data);
-      debug.logger.info('Repository: Order created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Repository: Error creating order', { error });
-      throw error;
-    }
+  async createOrder(data) {
+    const result = await this.model.createOrder(data);
+    return result;
   }
 
   async bulkCreate(data) {
-    try {
-      const result = await this.model.bulkCreate(data);
-      debug.logger.info('Repository: Bulk orders created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Repository: Error creating bulk orders', { error });
-      throw error;
-    }
+    const result = await this.model.bulkCreate(data);
+    return result;
   }
 
-  async findById(id) {
-    try {
-      const order = await this.model.findById(id);
-      debug.logger.info('Repository: Order found', { id });
-      return order;
-    } catch (error) {
-      debug.logger.error('Repository: Error finding order by ID', { id, error });
-      throw error;
-    }
+  async findByIdInRepository(id) {
+    const order = await this.model.findByIdInModel(id);
+    return order;
   }
 
   async find(filter = {}) {
-    try {
-      const orders = await this.model.find(filter);
-      debug.logger.info('Repository: Orders found', { filter });
-      return orders;
-    } catch (error) {
-      debug.logger.error('Repository: Error finding orders', { filter, error });
-      throw error;
-    }
+    const orders = await this.model.find(filter);
+    debug.logger.info('Repository: Orders found', { filter });
+    return orders;
   }
-
-  async update(id, data) {
-    try {
-      const updatedOrder = await this.model.update(id, data);
-      debug.logger.info('Repository: Order updated', { id, data: updatedOrder });
-      return updatedOrder;
-    } catch (error) {
-      debug.logger.error('Repository: Error updating order', { id, error });
-      throw error;
-    }
+  async findByOrderNumberRepository(orderNumber) {
+    const order = await this.model.findByOrderNumberModel({ orderNumber });
+    return order;
+  }
+  async updateOrderRepository(id, data) {
+    const updatedOrder = await this.model.updateOrderModel(id, data);
+    return updatedOrder;
   }
 
   async delete(id) {
-    try {
-      const deleted = await this.model.delete(id);
-      debug.logger.info('Repository: Order deleted', { id });
-      return deleted;
-    } catch (error) {
-      debug.logger.error('Repository: Error deleting order', { id, error });
-      throw error;
-    }
+    const deleted = await this.model.delete(id);
+    return deleted;
   }
 }
 

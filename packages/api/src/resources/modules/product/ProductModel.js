@@ -51,28 +51,13 @@ class ProductModel extends Model {
       throw error;
     }
   }
-
-  async findById(id) {
-    try {
-      debug.logger.debug('Finding product by ID:', { id });
-      if (!Database.isValidObjectId(id)) {
-        throw new Error('Invalid ID');
-      }
-      const product = await this.model.findById(id);
-      debug.logger.info('Product found by ID:', { id, product });
-      return product;
-    } catch (error) {
-      debug.logger.error('Error finding product by ID', { error: error.message, id });
-      throw error;
-    }
+  async findByIdInModel(id) {
+    const product = await this.model.findById(id);
+    return product;
   }
 
   async findByCategory(category) {
-    debug.logger.debug('Model: findByCategory called', { category });
-
     const products = await this.model.find({ category });
-
-    debug.logger.debug('Model: findByCategory returned', { count: products.length });
     return products;
   }
 

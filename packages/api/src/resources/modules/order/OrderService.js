@@ -1,136 +1,146 @@
 import debug from '../../../debug/index.js';
 import {
-  handleAddProductToOrder,
+  //handleAddProductToOrder,
   updateOrderProducts,
-  updateProductQuantityOrRemove,
+  //updateProductQuantityOrRemove,
   validateProductInOrder,
   shouldUpdateStock,
   validateOrderAndProductExistence,
   updateOrderStatus,
 } from '../../../utils/order/index.js';
-
+import AppError from '../../../errors/AppError.js';
 class OrderService {
   constructor(repository, productService) {
     this.repository = repository;
     this.productService = productService;
-    console.log('Service: this.repository.bulkCreate = ', this.repository.bulkCreate);
   }
 
-  async create(orderData) {
-    try {
-      const result = await this.repository.create(orderData);
-      debug.logger.info('Service: Order created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Service: Error creating order', { error });
-      throw error;
-    }
+  async createOrder(orderData) {
+    const result = await this.repository.createOrder(orderData);
+    return result;
   }
 
   async bulkCreate(orderList) {
-    try {
-      const createdOrders = await this.repository.bulkCreate(orderList);
-      debug.logger.info('Service: Bulk orders created successfully', { data: createdOrders });
-      return createdOrders;
-    } catch (error) {
-      debug.logger.error('Service: Error creating bulk orders', { error });
-      throw error;
+    const createdOrders = await this.repository.bulkCreate(orderList);
+    return createdOrders;
+  }
+  async modifyProduct(orderNumber, data) {
+    const order = await this.repository.findByOrderNumberRepository(orderNumber);
+    if (!order) {
+      throw new AppError(404, `Order with number ${orderNumber} not found.`);
     }
+    const updatedOrder =
+      data.operation === 'add'
+        ? await this.addProduct(order._id, data.products)
+        : await this.removeProducts(order._id, data.products);
+    return updatedOrder;
   }
 
-  async addProduct(orderId, productData) {
-    try {
-      const [order, product] = await Promise.all([
-        this.repository.findById(orderId),
-        this.productService.findById(productData.product),
-      ]);
+  async addProduct(orderId, productDataList) {
+    if (!Array.isArray(productDataList) || productDataList.length === 0) {
+      throw new AppError(400, 'Lista de produtos deve ser um array não vazio.');
+    }
+
+    const [order, products] = await Promise.all([
+      this.repository.findByIdInRepository(orderId),
+      Promise.all(
+        productDataList.map(async (data) => {
+          const product = await this.productService.findByIdInService(data.product);
+          if (!product) {
+            throw new AppError(404, `Produto com ID ${data.product} não encontrado.`);
+          }
+          return product;
+        }),
+      ),
+    ]);
+
+    productDataList.forEach((productData, index) => {
+      const product = products[index];
 
       validateOrderAndProductExistence({ order, product });
-      handleAddProductToOrder({ product, productData });
-      updateOrderProducts({ order, productData });
-      updateOrderStatus(order);
 
-      if (shouldUpdateStock(product)) {
-        await this.productService.updateStock(product._id, productData.quantity);
+      if (shouldUpdateStock(product) && product.quantity < productData.quantity) {
+        throw new AppError(
+          400,
+          `Insufficient stock for product "${product.name}". Available: ${product.quantity}, Required: ${productData.quantity}.`,
+        );
       }
 
-      const updatedOrder = await this.repository.update(orderId, {
-        status: order.status,
-        products: order.products,
-      });
+      updateOrderProducts({ order, productData });
 
-      return updatedOrder;
-    } catch (error) {
-      debug.logger.error('Service: Error adding product to order', { orderId, productData, error });
-      throw error;
-    }
+      if (shouldUpdateStock(product)) {
+        this.productService.updateStock(product._id, productData.quantity);
+      }
+    });
+
+    updateOrderStatus(order);
+
+    const updatedOrder = await this.repository.updateOrderRepository(orderId, {
+      status: order.status,
+      products: order.products,
+    });
+
+    return updatedOrder;
   }
 
-  async removeProduct(orderId, productId) {
-    try {
-      const [order, product] = await Promise.all([
-        this.repository.findById(orderId),
-        this.productService.findById(productId),
-      ]);
+  async removeProducts(orderId, productsToRemove) {
+    const order = await this.repository.findByIdInRepository(orderId);
 
+    if (!order) {
+      throw new AppError(404, 'Order does not exist.');
+    }
+
+    for (const { product: productId, quantity = 1 } of productsToRemove) {
+      const product = await this.productService.findById(productId);
       validateOrderAndProductExistence({ order, product });
 
-      // Encontra o índice do produto na lista do pedido
       const productIndex = order.products.findIndex((p) => p.product.toString() === productId);
-
-      // Valida se o produto está no pedido
       validateProductInOrder(productIndex);
 
-      // Atualiza a quantidade ou remove o produto
-      updateProductQuantityOrRemove(order, productIndex);
-
-      // Atualiza o estoque, se necessário
-      if (shouldUpdateStock(product)) {
-        await this.productService.updateStock(productId, -1);
+      const productData = order.products[productIndex];
+      if (productData.quantity > quantity) {
+        productData.quantity -= quantity;
+      } else {
+        order.products.splice(productIndex, 1);
       }
 
-      // Salva as alterações no banco
-      const updatedOrder = await this.repository.update(orderId, {
-        status: order.status,
-        products: order.products,
-      });
-
-      debug.logger.info('Service: Product quantity updated or removed from order', {
-        orderId,
-        productId,
-      });
-
-      return updatedOrder;
-    } catch (error) {
-      debug.logger.error('Service: Error removing product from order', {
-        orderId,
-        productId,
-        error,
-      });
-      throw error;
+      if (shouldUpdateStock(product)) {
+        await this.productService.updateStock(productId, -quantity);
+      }
     }
+
+    const updatedOrder = await this.repository.updateOrderRepository(orderId, {
+      status: order.status,
+      products: order.products,
+    });
+
+    debug.logger.info('Service: Products removed from order', {
+      orderId,
+      productsToRemove,
+    });
+
+    return updatedOrder;
   }
 
-  async delete(orderId) {
+  async delete(orderNumber) {
     try {
-      const order = await this.repository.findById(orderId);
+      const order = await this.repository.findByOrderNumberRepository(orderNumber);
       if (!order) {
-        throw new Error('Order does not exist.');
+        throw new AppError(404, 'Order does not exist.');
       }
 
       if (order.status !== 'Stand By') {
-        throw new Error('Only orders in Stand By status can be deleted.');
+        throw new AppError(400, 'Only orders in "Stand By" status can be deleted.');
       }
 
-      const deleted = await this.repository.delete(orderId);
-      debug.logger.info('Service: Order deleted', { orderId });
+      const deleted = await this.repository.deleteByOrderNumber(orderNumber);
+      debug.logger.info('OrderService.delete: Order deleted', { orderNumber });
       return deleted;
     } catch (error) {
-      debug.logger.error('Service: Error deleting order', { orderId, error });
+      debug.logger.error('OrderService.delete: Error deleting order', { orderNumber, error });
       throw error;
     }
   }
-
   async find(filter = {}) {
     try {
       const orders = await this.repository.find(filter);

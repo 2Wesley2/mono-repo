@@ -44,6 +44,10 @@ export default class App {
 
   configureMiddlewares() {
     this.app.use(express.json());
+    this.app.use((req, res, next) => {
+      console.log('[DEBUG] Body parseado pelo Express:', req.body);
+      next();
+    });
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(
       cors({
@@ -61,7 +65,6 @@ export default class App {
     try {
       this.app.use((req, res, next) => {
         console.log(`[DEBUG] Incoming request: ${req.method} ${req.originalUrl}`);
-        console.log('Stack trace:', new Error().stack);
         next();
       });
       this.app.use('/api/customer', customerController.getRouter());

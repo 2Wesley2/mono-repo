@@ -1,7 +1,7 @@
 import OrderScreen from '../../screens/OrderScreen';
 
-const OrderApp = () => {
+const OrderPage = () => {
   return <OrderScreen />;
 };
 
-export default OrderApp;
+export default OrderPage;

@@ -1,4 +1,5 @@
 import debug from '../../../debug/index.js';
+import Database from '../../../database/index.js';
 
 class ProductRepository {
   constructor(model) {
@@ -26,24 +27,13 @@ class ProductRepository {
       throw error;
     }
   }
-
-  async findById(id) {
-    try {
-      const product = await this.model.findById(id);
-      debug.logger.info('Repository: Product found', { id });
-      return product;
-    } catch (error) {
-      debug.logger.error('Repository: Error finding product by ID', { id, error });
-      throw error;
-    }
+  async findByIdInRepository(id) {
+    const product = await this.model.findByIdInModel(id);
+    return product;
   }
 
   async findByCategory(category) {
-    debug.logger.debug('Repository: findByCategory called', { category });
-
     const products = await this.model.findByCategory(category);
-
-    debug.logger.debug('Repository: findByCategory returned', { count: products.length });
     return products;
   }
 
