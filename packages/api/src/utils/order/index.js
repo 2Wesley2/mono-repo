@@ -6,6 +6,7 @@ import shouldUpdateStock from './shouldUpdateStock.js';
 import validateOrderAndProductExistence from './validateOrderAndProductExistence.js';
 import updateOrderStatus from './updateOrderStatus.js';
 import handleAddProductToOrder from './handleAddProductToOrder.js';
+import mergeDuplicateProducts from './mergeDuplicateProducts.js';
 
 export {
   validateAddProductToOrder,
@@ -16,4 +17,5 @@ export {
   validateOrderAndProductExistence,
   updateOrderStatus,
   handleAddProductToOrder,
+  mergeDuplicateProducts,
 };

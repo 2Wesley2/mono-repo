@@ -1,42 +1,29 @@
 import debug from '../../../debug/index.js';
-
+import OrderModel from './OrderModel.js';
+/**
+ * Classe responsável por interagir com o modelo de pedidos (OrderModel).
+ * Centraliza a lógica de repositório e facilita o gerenciamento de dados de pedidos.
+ * @class OrderRepository
+ */
 class OrderRepository {
-  constructor(model) {
-    this.model = model;
+  constructor(orderModel) {
+    this.orderModel = orderModel;
   }
 
   async createOrder(data) {
-    const result = await this.model.createOrder(data);
-    return result;
+    return await this.orderModel.create(data);
   }
 
   async bulkCreate(data) {
-    const result = await this.model.bulkCreate(data);
-    return result;
+    return await this.orderModel.bulkCreate(data);
   }
 
-  async findByIdInRepository(id) {
-    const order = await this.model.findByIdInModel(id);
-    return order;
+  async updateByOrderNumber(orderNumber, updateFields) {
+    return await this.orderModel.updateByOrderNumber(orderNumber, updateFields);
   }
 
-  async find(filter = {}) {
-    const orders = await this.model.find(filter);
-    debug.logger.info('Repository: Orders found', { filter });
-    return orders;
-  }
-  async findByOrderNumberRepository(orderNumber) {
-    const order = await this.model.findByOrderNumberModel({ orderNumber });
-    return order;
-  }
-  async updateOrderRepository(id, data) {
-    const updatedOrder = await this.model.updateOrderModel(id, data);
-    return updatedOrder;
-  }
-
-  async delete(id) {
-    const deleted = await this.model.delete(id);
-    return deleted;
+  async listProductsByOrder(orderNumber) {
+    return await this.orderModel.listProductsByOrder(orderNumber);
   }
 }
 

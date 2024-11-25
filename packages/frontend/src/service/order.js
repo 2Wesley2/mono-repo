@@ -35,10 +35,18 @@ const OrderService = {
     return request('/api/order/bulk', 'POST', ordersData);
   },
 
-  modifyProduct: async (orderId, operation, products) => {
+  modifyProduct: async (orderNumber, operation, products) => {
     const body = { operation, products };
-    console.log('JSON enviado para o backend em modifyProduct:', JSON.stringify(body, null, 2));
-    return request(`/api/order/${orderId}/product`, 'PUT', body);
+    console.log(
+      'JSON enviado para o backend em modifyProduct:',
+      JSON.stringify(body, null, 2),
+    );
+    return request(`/api/order/${orderNumber}/product`, 'PUT', body);
+  },
+
+  listProductsByOrder: async (orderNumber) => {
+    const response = await request(`/api/order/${orderNumber}/products`, 'GET');
+    return response?.data?.products || [];
   },
 
   listOrders: async (filter = {}) => {

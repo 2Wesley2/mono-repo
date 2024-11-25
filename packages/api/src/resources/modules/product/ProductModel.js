@@ -1,8 +1,7 @@
-import Database from '../../../database/index.js';
-import debug from '../../../debug/index.js';
 import Model from '../../core/Model.js';
+//import loaders from '../../../loaders/index.js';
+import debug from '../../../debug/index.js';
 import { PRODUCT } from '../../constants/index.js';
-
 const productSchema = {
   name: { type: String, required: true },
   price: { type: Number, required: true },
@@ -60,7 +59,9 @@ class ProductModel extends Model {
     const products = await this.model.find({ category });
     return products;
   }
-
+  async getProductsByIds(ids) {
+    return await this.model.find({ _id: { $in: ids } });
+  }
   async update(id, data) {
     try {
       debug.logger.debug('Updating product', { id, data });

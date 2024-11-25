@@ -1,14 +1,6 @@
 import debug from '../../../debug/index.js';
-import {
-  //handleAddProductToOrder,
-  updateOrderProducts,
-  //updateProductQuantityOrRemove,
-  validateProductInOrder,
-  shouldUpdateStock,
-  validateOrderAndProductExistence,
-  updateOrderStatus,
-} from '../../../utils/order/index.js';
 import AppError from '../../../errors/AppError.js';
+
 class OrderService {
   constructor(repository, productService) {
     this.repository = repository;
@@ -16,140 +8,117 @@ class OrderService {
   }
 
   async createOrder(orderData) {
-    const result = await this.repository.createOrder(orderData);
-    return result;
+    debug.logger.info('OrderService.createOrder: Creating order', { orderData });
+    return await this.repository.createOrder(orderData);
   }
 
   async bulkCreate(orderList) {
-    const createdOrders = await this.repository.bulkCreate(orderList);
-    return createdOrders;
+    debug.logger.info('OrderService.bulkCreate: Creating bulk orders', { orderList });
+    return await this.repository.bulkCreate(orderList);
   }
-  async modifyProduct(orderNumber, data) {
-    const order = await this.repository.findByOrderNumberRepository(orderNumber);
+
+  async updateOrderContent(orderNumber, updateFields) {
+    return await this.model.updateByOrderNumber(orderNumber, updateFields);
+  }
+
+  async listProductsByOrderService(orderNumber) {
+    return await this.repository.listProductsByOrderRepository(orderNumber);
+  }
+
+  /**
+   * Atualiza as quantidades de produtos em uma ordem.
+   * @param {number} orderNumber - Número da ordem.
+   * @param {Object[]} updateFields - Lista de produtos a serem atualizados no formato { product, quantity }.
+   * @throws {Error} Lança erro se a ordem ou algum produto não for encontrado.
+   */
+  async updateOrderContent(orderNumber, updateFields) {
+    const order = await this.repository.findByOrderNumber(orderNumber);
     if (!order) {
-      throw new AppError(404, `Order with number ${orderNumber} not found.`);
-    }
-    const updatedOrder =
-      data.operation === 'add'
-        ? await this.addProduct(order._id, data.products)
-        : await this.removeProducts(order._id, data.products);
-    return updatedOrder;
-  }
-
-  async addProduct(orderId, productDataList) {
-    if (!Array.isArray(productDataList) || productDataList.length === 0) {
-      throw new AppError(400, 'Lista de produtos deve ser um array não vazio.');
+      throw new AppError(`Ordem com número ${orderNumber} não encontrada`, 404);
     }
 
-    const [order, products] = await Promise.all([
-      this.repository.findByIdInRepository(orderId),
-      Promise.all(
-        productDataList.map(async (data) => {
-          const product = await this.productService.findByIdInService(data.product);
-          if (!product) {
-            throw new AppError(404, `Produto com ID ${data.product} não encontrado.`);
-          }
-          return product;
-        }),
-      ),
-    ]);
+    const existingProductsMap = this._mapExistingProducts(order.products);
+    const uniqueUpdates = this._aggregateUpdates(updateFields);
 
-    productDataList.forEach((productData, index) => {
-      const product = products[index];
+    const updatedProducts = this._updateProductQuantities(uniqueUpdates, existingProductsMap);
+    const totalAmount = this._calculateTotalAmount(updatedProducts);
 
-      validateOrderAndProductExistence({ order, product });
-
-      if (shouldUpdateStock(product) && product.quantity < productData.quantity) {
-        throw new AppError(
-          400,
-          `Insufficient stock for product "${product.name}". Available: ${product.quantity}, Required: ${productData.quantity}.`,
-        );
-      }
-
-      updateOrderProducts({ order, productData });
-
-      if (shouldUpdateStock(product)) {
-        this.productService.updateStock(product._id, productData.quantity);
-      }
+    await this.repository.updateByOrderNumber(orderNumber, {
+      products: Array.from(existingProductsMap.values()),
+      totalAmount,
     });
 
-    updateOrderStatus(order);
-
-    const updatedOrder = await this.repository.updateOrderRepository(orderId, {
-      status: order.status,
-      products: order.products,
-    });
-
-    return updatedOrder;
+    return {
+      success: true,
+      message: 'Ordem atualizada com sucesso',
+      updatedProducts,
+      totalAmount,
+    };
   }
 
-  async removeProducts(orderId, productsToRemove) {
-    const order = await this.repository.findByIdInRepository(orderId);
+  /**
+   * Cria um mapa de produtos existentes para consulta rápida.
+   * @param {Array} products - Produtos existentes na ordem.
+   * @returns {Map} Um mapa de ID do produto para dados do produto.
+   */
+  _mapExistingProducts(products) {
+    return new Map(products.map((p) => [p.product.toString(), p]));
+  }
 
-    if (!order) {
-      throw new AppError(404, 'Order does not exist.');
-    }
-
-    for (const { product: productId, quantity = 1 } of productsToRemove) {
-      const product = await this.productService.findById(productId);
-      validateOrderAndProductExistence({ order, product });
-
-      const productIndex = order.products.findIndex((p) => p.product.toString() === productId);
-      validateProductInOrder(productIndex);
-
-      const productData = order.products[productIndex];
-      if (productData.quantity > quantity) {
-        productData.quantity -= quantity;
+  /**
+   * Agrega as atualizações somando quantidades para entradas duplicadas de produtos.
+   * @param {Array} updateFields - Lista de atualizações no formato { product, quantity }.
+   * @returns {Map} Um mapa de ID do produto para dados de atualização agregados.
+   */
+  _aggregateUpdates(updateFields) {
+    const uniqueUpdates = new Map();
+    for (const { product, quantity } of updateFields) {
+      if (!uniqueUpdates.has(product)) {
+        uniqueUpdates.set(product, { product, quantity });
       } else {
-        order.products.splice(productIndex, 1);
-      }
-
-      if (shouldUpdateStock(product)) {
-        await this.productService.updateStock(productId, -quantity);
+        uniqueUpdates.get(product).quantity += quantity;
       }
     }
-
-    const updatedOrder = await this.repository.updateOrderRepository(orderId, {
-      status: order.status,
-      products: order.products,
-    });
-
-    debug.logger.info('Service: Products removed from order', {
-      orderId,
-      productsToRemove,
-    });
-
-    return updatedOrder;
+    return uniqueUpdates;
   }
 
-  async delete(orderNumber) {
-    try {
-      const order = await this.repository.findByOrderNumberRepository(orderNumber);
-      if (!order) {
-        throw new AppError(404, 'Order does not exist.');
+  /**
+   * Atualiza as quantidades dos produtos existentes na ordem.
+   * @param {Map} uniqueUpdates - Atualizações agregadas.
+   * @param {Map} existingProductsMap - Mapa de produtos existentes na ordem.
+   * @returns {Array} Lista de produtos atualizados.
+   * @throws {AppError} Se um produto não for encontrado na ordem.
+   */
+  _updateProductQuantities(uniqueUpdates, existingProductsMap) {
+    const updatedProducts = [];
+    for (const { product, quantity } of uniqueUpdates.values()) {
+      if (!existingProductsMap.has(product)) {
+        throw new AppError(`Produto com ID ${product} não encontrado na ordem`, 400);
       }
-
-      if (order.status !== 'Stand By') {
-        throw new AppError(400, 'Only orders in "Stand By" status can be deleted.');
-      }
-
-      const deleted = await this.repository.deleteByOrderNumber(orderNumber);
-      debug.logger.info('OrderService.delete: Order deleted', { orderNumber });
-      return deleted;
-    } catch (error) {
-      debug.logger.error('OrderService.delete: Error deleting order', { orderNumber, error });
-      throw error;
+      const currentProduct = existingProductsMap.get(product);
+      currentProduct.quantity = quantity;
+      updatedProducts.push(currentProduct);
     }
+    return updatedProducts;
   }
-  async find(filter = {}) {
-    try {
-      const orders = await this.repository.find(filter);
-      debug.logger.info('Service: Orders found', { filter });
-      return orders;
-    } catch (error) {
-      debug.logger.error('Service: Error finding orders', { filter, error });
-      throw error;
-    }
+
+  /**
+   * Calcula o valor total com base nos produtos atualizados.
+   * @param {Array} updatedProducts - Lista de produtos atualizados.
+   * @returns {number} Valor total.
+   * @throws {AppError} Se um produto não for encontrado no serviço de produtos.
+   */
+  async _calculateTotalAmount(updatedProducts) {
+    const productIds = updatedProducts.map((p) => p.product);
+    const productsInfo = await this.productService.getProductsByIds(productIds);
+
+    return updatedProducts.reduce((total, updatedProduct) => {
+      const productInfo = productsInfo.find((p) => p._id.toString() === updatedProduct.product.toString());
+      if (!productInfo) {
+        throw new AppError(`Produto com ID ${updatedProduct.product} não encontrado`, 400);
+      }
+      return total + updatedProduct.quantity * productInfo.price;
+    }, 0);
   }
 }
 

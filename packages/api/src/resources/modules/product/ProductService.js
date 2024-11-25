@@ -35,7 +35,20 @@ class ProductService {
     const products = await this.repository.findByCategory(category);
     return products;
   }
+  async getProductsByIds(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new Error('Invalid or empty IDs array.');
+    }
 
+    try {
+      const products = await this.repository.getProductsByIds();
+      debug.logger.info('Fetched products by IDs successfully', { ids, count: products.length });
+      return products;
+    } catch (error) {
+      debug.logger.error('Error fetching products by IDs', { error: error.message, ids });
+      throw error;
+    }
+  }
   async update(productId, productData) {
     try {
       const updatedProduct = await this.repository.update(productId, productData);

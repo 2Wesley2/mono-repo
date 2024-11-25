@@ -22,6 +22,7 @@ export const OrderStateProvider = ({ children }) => {
   const [currentOrder, setCurrentOrder] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [isWaitingForProduct, setIsWaitingForProduct] = useState(false);
+  const [getProductsByOrder, setGetProductsByOrder] = useState([]);
 
   useEffect(() => {
     const savedCommandNumber = localStorage.getItem('commandNumber');
@@ -40,6 +41,52 @@ export const OrderStateProvider = ({ children }) => {
       localStorage.setItem('isWaitingForProduct', isWaitingForProduct);
     }
   }, [activeCommandNumber, isWaitingForProduct]);
+
+  useEffect(() => {
+    if (activeCommandNumber) {
+      fetchProductsByOrder(activeCommandNumber).then((products) => {
+        setCurrentOrder(products);
+      });
+    } else {
+      setCurrentOrder([]);
+    }
+  }, [activeCommandNumber]);
+
+  const fetchProductsByOrder = useCallback(
+    async (activeCommandNumber) => {
+      try {
+        setLoading(true);
+
+        const productList =
+          await OrderService.listProductsByOrder(activeCommandNumber);
+
+        console.log('Produtos carregados da API:', productList);
+
+        if (!productList || productList.length === 0) {
+          console.warn(
+            `Nenhum produto encontrado para a comanda ${activeCommandNumber}`,
+          );
+          setErrorMessage(
+            `Nenhum produto encontrado para a comanda ${activeCommandNumber}.`,
+          );
+          setGetProductsByOrder([]);
+          return [];
+        }
+
+        setGetProductsByOrder(productList);
+        setErrorMessage('');
+        return productList; // Produtos formatados são retornados
+      } catch (error) {
+        console.error('Erro ao buscar produtos da comanda:', error.message);
+        setErrorMessage(`Erro ao buscar produtos da comanda: ${error.message}`);
+        setGetProductsByOrder([]);
+        return [];
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeCommandNumber],
+  );
 
   const fetchCategoryProducts = useCallback(
     async (category) => {
@@ -85,8 +132,8 @@ export const OrderStateProvider = ({ children }) => {
 
   const handleAddProduct = useCallback(
     (product) => {
-      console.log('activeCommandNumber:', activeCommandNumber);
-      console.log('Produto clicado:', product);
+      console.log('Tentando adicionar produto:', product);
+
       if (!activeCommandNumber) {
         console.warn('Nenhuma comanda ativa.');
         setErrorMessage(
@@ -99,16 +146,22 @@ export const OrderStateProvider = ({ children }) => {
         const existingProduct = prevOrder.find(
           (item) => item.product._id === product._id,
         );
+
         if (existingProduct) {
-          console.log('Produto já existente. Incrementando quantidade.');
-          return prevOrder.map((item) =>
+          console.log('Produto já existe. Incrementando quantidade.');
+          const updatedOrder = prevOrder.map((item) =>
             item.product._id === product._id
               ? { ...item, quantity: item.quantity + 1 }
               : item,
           );
+          console.log('Novo estado após incremento:', updatedOrder);
+          return updatedOrder;
         }
+
         console.log('Novo produto adicionado.');
-        return [...prevOrder, { product, quantity: 1 }];
+        const newOrder = [...prevOrder, { product, quantity: 1 }];
+        console.log('Novo estado após adição:', newOrder);
+        return newOrder;
       });
 
       setErrorMessage('');
@@ -133,34 +186,47 @@ export const OrderStateProvider = ({ children }) => {
 
       if (currentOrder.length > 0) {
         try {
-          const orderData = {
-            operation: 'add',
-            products: currentOrder.map((item) => ({
-              product: item.product._id,
-              quantity: item.quantity,
-            })),
-          };
+          const products = currentOrder.map((item) => ({
+            product: item.product._id,
+            quantity: item.quantity,
+          }));
 
+          console.log('Produtos enviados ao backend para finalizar:', products);
+
+          setLoading(true);
           await OrderService.modifyProduct(
             activeCommandNumber,
             'add',
-            orderData.products,
+            products,
           );
-          console.log('Pedido criado com sucesso:', orderData);
+
+          console.log('Pedido modificado com sucesso:', {
+            operation: 'add',
+            products,
+          });
 
           resetCommandState();
+          setErrorMessage('');
         } catch (error) {
-          console.error('Erro ao criar pedido:', error.message);
-          setErrorMessage('Erro ao finalizar comanda. Tente novamente.');
+          console.error('Erro ao modificar pedido:', error.message);
+          setErrorMessage(
+            error.message || 'Erro ao finalizar comanda. Tente novamente.',
+          );
+        } finally {
+          setLoading(false);
         }
       } else {
         console.warn('Não há produtos na comanda para finalizar.');
         setErrorMessage('Adicione produtos antes de finalizar a comanda.');
       }
     } else if (validation === 'VALID') {
+      console.log(`Comanda ${commandNumber} ativada.`);
       setActiveCommandNumber(commandNumber);
       setIsWaitingForProduct(true);
-      console.log(`Comanda ${commandNumber} ativada.`);
+
+      const products = await fetchProductsByOrder(commandNumber);
+      console.log('Produtos carregados ao reabrir comanda:', products);
+      setCurrentOrder(products); // Atualiza o estado com os produtos da comanda
     } else {
       setErrorMessage('Entrada inválida. Insira um número válido ou "X".');
     }
@@ -189,6 +255,8 @@ export const OrderStateProvider = ({ children }) => {
         handleCommandNumberEnter,
         products,
         currentCategory,
+        fetchProductsByOrder,
+        getProductsByOrder,
       }}
     >
       {children}

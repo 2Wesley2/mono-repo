@@ -37,6 +37,10 @@ class ProductRepository {
     return products;
   }
 
+  async getProductsByIds(ids) {
+    return await this.model.getProductsByIds(ids);
+  }
+
   async update(id, data) {
     try {
       const updatedProduct = await this.model.update(id, data);
