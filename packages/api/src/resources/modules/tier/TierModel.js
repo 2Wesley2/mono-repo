@@ -37,7 +37,7 @@ class TierModel extends Model {
     });
   }
 
-  async create(tiersData) {
+  async createTier(tiersData) {
     try {
       debug.logger.info(`TierModel: criando a faixa de desconto com ${JSON.stringify(tiersData)}`);
       const createdTiers = await this.model.insertMany(tiersData);

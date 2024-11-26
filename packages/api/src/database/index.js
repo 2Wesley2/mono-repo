@@ -89,6 +89,10 @@ export default class Database {
    * @returns {mongoose.Model} - Modelo registrado.
    */
   static registerModel({ schema, modelName, options = {}, validations = [] }) {
+    if (!schema || typeof schema !== 'object') {
+      throw new Error('Schema inválido ou não fornecido.');
+    }
+
     if (!modelName || typeof modelName !== 'string') {
       throw new Error(`O nome do modelo deve ser uma string válida. Recebido: ${modelName}`);
     }
@@ -112,6 +116,9 @@ export default class Database {
     return mongoose.Schema.Types.ObjectId;
   }
 
+  static get Types() {
+    return mongoose.Schema.Types;
+  }
   /**
    * Valida um ObjectId.
    * @param {string} id - O ID a ser validado.

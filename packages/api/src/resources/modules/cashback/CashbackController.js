@@ -10,14 +10,14 @@ class CashbackController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/create', this.create.bind(this));
+    this.router.post('/create', this.createCashback.bind(this));
     this.router.post('/:id/activate', this.activateCashback.bind(this));
     this.router.get('/active', this.getActiveCashback.bind(this));
     this.router.get('/cashbacks', this.listAllCashbacks.bind(this));
     this.router.put('/:id', this.updateCashbackAndTiers.bind(this));
   }
 
-  async create(req, res, next) {
+  async createCashback(req, res, next) {
     try {
       const { name, tiers } = req.body;
       const newCashback = await this.service.createCashbackWithTiers({ name, tiers });

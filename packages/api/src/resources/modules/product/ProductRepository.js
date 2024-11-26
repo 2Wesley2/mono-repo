@@ -6,9 +6,9 @@ class ProductRepository {
     this.model = model;
   }
 
-  async create(data) {
+  async createProduct(data) {
     try {
-      const result = await this.model.create(data);
+      const result = await this.model.createProduct(data);
       debug.logger.info('Repository: Product created successfully', { data: result });
       return result;
     } catch (error) {
@@ -41,9 +41,9 @@ class ProductRepository {
     return await this.model.getProductsByIds(ids);
   }
 
-  async update(id, data) {
+  async updateProduct(id, data) {
     try {
-      const updatedProduct = await this.model.update(id, data);
+      const updatedProduct = await this.model.updateProduct(id, data);
       debug.logger.info('Repository: Product updated', { id, data: updatedProduct });
       return updatedProduct;
     } catch (error) {
@@ -52,9 +52,9 @@ class ProductRepository {
     }
   }
 
-  async delete(id) {
+  async deleteProduct(id) {
     try {
-      const deleted = await this.model.delete(id);
+      const deleted = await this.model.deleteProduct(id);
       debug.logger.info('Repository: Product deleted', { id });
       return deleted;
     } catch (error) {

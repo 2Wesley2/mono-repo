@@ -1,6 +1,6 @@
 import debug from '../../../debug/index.js';
 import AppError from '../../../errors/AppError.js';
-
+import { shouldUpdateStock, updateOrderStatus } from '../../../utils/order/index.js';
 class OrderService {
   constructor(repository, productService) {
     this.repository = repository;
@@ -37,6 +37,7 @@ class OrderService {
       throw new AppError(`Ordem com número ${orderNumber} não encontrada`, 404);
     }
 
+    updateOrderStatus(order);
     const existingProductsMap = this._mapExistingProducts(order.products);
     const uniqueUpdates = this._aggregateUpdates(updateFields);
 
@@ -46,6 +47,7 @@ class OrderService {
     await this.repository.updateByOrderNumber(orderNumber, {
       products: Array.from(existingProductsMap.values()),
       totalAmount,
+      status: order.status,
     });
 
     return {

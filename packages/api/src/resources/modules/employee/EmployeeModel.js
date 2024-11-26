@@ -19,7 +19,7 @@ class EmployeeModel extends Model {
     super(employeeSchema, EMPLOYEE);
   }
 
-  async create(data) {
+  async createEmployee(data) {
     try {
       const employee = await this.model.create(data);
       return employee;
@@ -28,7 +28,7 @@ class EmployeeModel extends Model {
     }
   }
 
-  async findById(id) {
+  async findByIdEmployee(id) {
     try {
       return await this.model.findById(id);
     } catch (error) {
@@ -44,7 +44,7 @@ class EmployeeModel extends Model {
     }
   }
 
-  async update(id, data) {
+  async updateEmployee(id, data) {
     try {
       return await this.model.findByIdAndUpdate(id, data, {
         new: true,
@@ -55,7 +55,7 @@ class EmployeeModel extends Model {
     }
   }
 
-  async delete(id) {
+  async deleteEmployee(id) {
     try {
       return await this.model.findByIdAndDelete(id);
     } catch (error) {

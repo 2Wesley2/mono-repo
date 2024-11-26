@@ -23,7 +23,7 @@ class TicketModel extends Model {
     super(ticketSchema, TICKET);
   }
 
-  async create(data) {
+  async createTicket(data) {
     try {
       const ticket = await this.model.create(data);
       debug.logger.info('Modelo: Ticket criado com sucesso', { ticket });
@@ -34,7 +34,7 @@ class TicketModel extends Model {
     }
   }
 
-  async findById(ticketId) {
+  async findByIdTicket(ticketId) {
     try {
       const ticket = await this.model.findOne({ _id: ticketId });
       if (!ticket) {
@@ -47,7 +47,7 @@ class TicketModel extends Model {
     }
   }
 
-  async update(ticketId, updateData) {
+  async updateTicket(ticketId, updateData) {
     try {
       const updatedTicket = await this.model.updateOne({ _id: ticketId }, updateData);
       debug.logger.info('Modelo: Ticket atualizado com sucesso', { ticketId, updateData });

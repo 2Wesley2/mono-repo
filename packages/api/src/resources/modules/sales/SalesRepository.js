@@ -5,9 +5,9 @@ class SalesRepository {
     this.model = model;
   }
 
-  async create(data) {
+  async createSale(data) {
     try {
-      const sale = await this.model.create(data);
+      const sale = await this.model.createSale(data);
       debug.logger.info('Repositório: Venda criada com sucesso', { data: sale });
       return sale;
     } catch (error) {
@@ -16,9 +16,9 @@ class SalesRepository {
     }
   }
 
-  async findById(id) {
+  async findByIdSales(id) {
     try {
-      const sale = await this.model.findById(id);
+      const sale = await this.model.findByIdSales(id);
       if (!sale) {
         debug.logger.warn(`Repositório: Venda com ID ${id} não encontrada`);
       } else {
@@ -33,7 +33,7 @@ class SalesRepository {
 
   async findAll(filters = {}, options = {}) {
     try {
-      const sales = await this.model.find(filters, null, options);
+      const sales = await this.model.findSales(filters, null, options);
       debug.logger.info('Repositório: Vendas encontradas', { filters, options, count: sales.length });
       return sales;
     } catch (error) {
@@ -42,9 +42,9 @@ class SalesRepository {
     }
   }
 
-  async update(id, data) {
+  async updateSale(id, data) {
     try {
-      const updatedSale = await this.model.findByIdAndUpdate(id, data, {
+      const updatedSale = await this.model.findByIdAndUpdateSales(id, data, {
         new: true,
         runValidators: true,
       });
@@ -56,21 +56,6 @@ class SalesRepository {
       return updatedSale;
     } catch (error) {
       debug.logger.error('Repositório: Erro ao atualizar venda', { id, data, error });
-      throw error;
-    }
-  }
-
-  async delete(id) {
-    try {
-      const deletedSale = await this.model.findByIdAndDelete(id);
-      if (!deletedSale) {
-        debug.logger.warn(`Repositório: Venda com ID ${id} não encontrada para exclusão`);
-      } else {
-        debug.logger.info(`Repositório: Venda com ID ${id} excluída com sucesso`, { deletedSale });
-      }
-      return deletedSale;
-    } catch (error) {
-      debug.logger.error('Repositório: Erro ao excluir venda', { id, error });
       throw error;
     }
   }

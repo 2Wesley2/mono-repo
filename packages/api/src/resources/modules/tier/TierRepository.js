@@ -6,9 +6,9 @@ class TierRepository {
     this.model = model;
   }
 
-  async create(tiersData) {
+  async createTier(tiersData) {
     try {
-      const createdTiers = await this.model.create(tiersData);
+      const createdTiers = await this.model.createTier(tiersData);
       debug.logger.info('TierRepository: Delegando o TierData');
       return createdTiers;
     } catch (error) {

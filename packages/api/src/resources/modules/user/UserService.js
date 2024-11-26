@@ -7,13 +7,13 @@ class UserService {
     this.secretKey = config.jwtSecret;
   }
 
-  async create(data) {
+  async createUser(data) {
     try {
       if (!data.username || !data.password) {
         throw new Error('Username e password são obrigatórios');
       }
 
-      const user = await this.repository.create(data);
+      const user = await this.repository.createUser(data);
       return user;
     } catch (error) {
       throw error;

@@ -9,16 +9,16 @@ class ProductController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/', this.create.bind(this));
+    this.router.post('/', this.createProduct.bind(this));
     this.router.post('/bulk', this.bulkCreate.bind(this));
-    this.router.put('/:id', this.update.bind(this));
-    this.router.delete('/:id', this.delete.bind(this));
+    this.router.put('/:id', this.updateProduct.bind(this));
+    this.router.delete('/:id', this.deleteProduct.bind(this));
     this.router.get('/category/:category', this.findByCategory.bind(this));
   }
 
-  async create(req, res, next) {
+  async createProduct(req, res, next) {
     try {
-      const product = await this.service.create(req.body);
+      const product = await this.service.createProduct(req.body);
       debug.logger.info('Controller: Product created successfully', { data: product });
       res.status(201).json({ success: true, data: product });
     } catch (error) {
@@ -47,10 +47,10 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async update(req, res, next) {
+  async updateProduct(req, res, next) {
     try {
       const { id } = req.params;
-      const updatedProduct = await this.service.update(id, req.body);
+      const updatedProduct = await this.service.updateProduct(id, req.body);
       debug.logger.info('Controller: Product updated', { id });
       res.status(200).json({ success: true, data: updatedProduct });
     } catch (error) {
@@ -59,10 +59,10 @@ class ProductController extends Controller {
     }
   }
 
-  async delete(req, res, next) {
+  async deleteProduct(req, res, next) {
     try {
       const { id } = req.params;
-      await this.service.delete(id);
+      await this.service.deleteProduct(id);
       debug.logger.info('Controller: Product deleted', { id });
       res.status(204).end();
     } catch (error) {

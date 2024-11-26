@@ -9,7 +9,7 @@ class CustomerRepository {
 
   async createCustomer(customerData) {
     try {
-      const newCustomer = await this.model.create(customerData);
+      const newCustomer = await this.model.createCustomer(customerData);
       debug.logger.info(`CustomerRepository.js: Novo Customer criado`, { customerData });
       return newCustomer;
     } catch (error) {

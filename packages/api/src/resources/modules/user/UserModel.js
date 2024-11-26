@@ -13,7 +13,7 @@ class UserModel extends Model {
     super(userSchema, USER);
   }
 
-  async create(data) {
+  async createUser(data) {
     try {
       const { username, password, role } = data;
       const hashedPassword = await bcrypt.hash(password, 12);

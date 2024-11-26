@@ -6,10 +6,10 @@ class TierService {
     this.repository = repository;
   }
 
-  async create(tiersData) {
+  async createTier(tiersData) {
     try {
       debug.logger.info('TierService: Delegando tierData para o Repository');
-      const createdTiers = await this.repository.create(tiersData);
+      const createdTiers = await this.repository.createTier(tiersData);
       return createdTiers;
     } catch (error) {
       debug.logger.error('TierService: Erro ao delegar para repository', error);

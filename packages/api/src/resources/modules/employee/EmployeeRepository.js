@@ -5,9 +5,9 @@ class EmployeeRepository {
     this.model = model;
   }
 
-  async create(data) {
+  async createEmployee(data) {
     try {
-      const result = await this.model.create(data);
+      const result = await this.model.createEmployee(data);
       debug.logger.info('Repositório: Documento criado', { data: result });
       return result;
     } catch (error) {
@@ -16,9 +16,9 @@ class EmployeeRepository {
     }
   }
 
-  async findById(id) {
+  async findByIdEmployee(id) {
     try {
-      const document = await this.model.findById(id);
+      const document = await this.model.findByIdEmployee(id);
       debug.logger.info('Repositório: Documento encontrado', { id });
       return document;
     } catch (error) {
@@ -41,9 +41,9 @@ class EmployeeRepository {
     }
   }
 
-  async update(id, data) {
+  async updateEmployee(id, data) {
     try {
-      const result = await this.model.update(id, data);
+      const result = await this.model.updateEmployee(id, data);
       debug.logger.info('Repositório: Documento atualizado', { id, data: result });
       return result;
     } catch (error) {
@@ -52,9 +52,9 @@ class EmployeeRepository {
     }
   }
 
-  async delete(id) {
+  async deleteEmployee(id) {
     try {
-      await this.model.delete(id);
+      await this.model.deleteEmployee(id);
       debug.logger.info('Repositório: Documento deletado', { id });
       return true;
     } catch (error) {

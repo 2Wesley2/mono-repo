@@ -16,7 +16,7 @@ class SalesService {
       const saleData = await this._prepareSaleData(data);
       debug.logger.info('Serviço: Dados de venda preparados', { saleData });
 
-      const newSale = await this.repository.create(saleData);
+      const newSale = await this.repository.createSale(saleData);
       debug.logger.info(`Serviço: Venda criada com sucesso`, { data: newSale });
 
       await this._updateCustomerData(saleData.clientCPF, newSale._id, saleData.finalAmount);
@@ -45,7 +45,7 @@ class SalesService {
     debug.logger.info('Serviço: Iniciando aplicação de desconto', { ticketId, clientCPF, totalAmount });
     if (ticketId) {
       try {
-        const ticket = await this.ticketService.findById(ticketId);
+        const ticket = await this.ticketService.findByIdTicket(ticketId);
         debug.logger.info('Serviço: Ticket encontrado para aplicação de desconto', { ticketId });
 
         if (ticket.status !== 'available') {
@@ -60,7 +60,7 @@ class SalesService {
         throw new AppError(400, 'Falha ao aplicar o ticket. Verifique se o ticket é válido.');
       }
 
-      const ticket = await this.ticketService.findById(ticketId);
+      const ticket = await this.ticketService.findByIdTicket(ticketId);
       const discount = ticket.discount;
       const finalAmount = totalAmount - totalAmount * (discount / 100);
       debug.logger.info('Serviço: Desconto calculado', { discount, finalAmount });

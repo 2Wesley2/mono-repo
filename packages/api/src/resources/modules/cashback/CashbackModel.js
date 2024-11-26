@@ -17,7 +17,7 @@ class CashbackModel extends Model {
     super(CashbackSchema, CASHBACK);
   }
 
-  async create(cashbackData) {
+  async createCashback(cashbackData) {
     try {
       debug.logger.info(`CashbackModel: criando o modelo de cashback com o cashbackData: ${cashbackData}`);
       const createdCashback = await this.model.create(cashbackData);

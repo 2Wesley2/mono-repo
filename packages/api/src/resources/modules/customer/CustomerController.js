@@ -11,7 +11,7 @@ class CustomerController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/register', this.create.bind(this));
+    this.router.post('/register', this.createCustomer.bind(this));
     this.router.get('/all', this.getAllCustomers.bind(this));
     this.router.get('/:cpf', this.findByCPF.bind(this));
     this.router.get('/:cpf/tickets', this.getTicketsByCustomer.bind(this));
@@ -19,7 +19,7 @@ class CustomerController extends Controller {
     this.router.delete('/:id', this.deleteCustomer.bind(this));
   }
 
-  async create(req, res, next) {
+  async createCustomer(req, res, next) {
     try {
       const customerData = req.body;
       if (!customerData.name || !customerData.cpf || !customerData.phone) {
@@ -42,7 +42,7 @@ class CustomerController extends Controller {
       if (!id || !updateData) {
         return res.status(400).json({ message: 'ID e dados de atualização são obrigatórios' });
       }
-      const updatedCustomer = await this.service.update(id, updateData);
+      const updatedCustomer = await this.service.updateCustomer(id, updateData);
       debug.logger.info('Controlador: Cliente atualizado', { id, updateData });
       res.status(200).json(updatedCustomer);
     } catch (error) {
@@ -57,7 +57,7 @@ class CustomerController extends Controller {
       if (!id) {
         return res.status(400).json({ message: 'ID é obrigatório' });
       }
-      await this.service.delete(id);
+      await this.service.deletCustomere(id);
       debug.logger.info('Controlador: Cliente deletado', { id });
       res.status(204).end();
     } catch (error) {

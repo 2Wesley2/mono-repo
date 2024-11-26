@@ -5,9 +5,9 @@ class TicketRepository {
     this.model = model;
   }
 
-  async create(data) {
+  async createTicket(data) {
     try {
-      const ticket = await this.model.create(data);
+      const ticket = await this.model.createTicket(data);
       debug.logger.info('Repositório: Ticket criado com sucesso', { ticket });
       return ticket;
     } catch (error) {
@@ -16,9 +16,9 @@ class TicketRepository {
     }
   }
 
-  async findById(ticketId) {
+  async findByIdTicket(ticketId) {
     try {
-      const ticket = await this.model.findById(ticketId);
+      const ticket = await this.model.findByIdTicket(ticketId);
       if (!ticket) {
         debug.logger.warn('Repositório: Ticket não encontrado', { ticketId });
       } else {
@@ -31,9 +31,9 @@ class TicketRepository {
     }
   }
 
-  async update(ticketId, updateData) {
+  async updateTicket(ticketId, updateData) {
     try {
-      const updatedTicket = await this.model.update(ticketId, updateData);
+      const updatedTicket = await this.model.updateTicket(ticketId, updateData);
       debug.logger.info('Repositório: Ticket atualizado com sucesso', { ticketId, updateData });
       return updatedTicket;
     } catch (error) {

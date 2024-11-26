@@ -81,13 +81,13 @@ class CashbackService {
     try {
       this._validateCashbackData({ name, tiers });
       const cashbackData = { name };
-      const createdCashback = await this.repository.create(cashbackData);
+      const createdCashback = await this.repository.createCashback(cashbackData);
       const cashbackId = createdCashback._id;
 
       const formattedTiers = this._formatTierData(tiers, cashbackId);
       debug.logger.info(`CashbackService: tiers formatados ${JSON.stringify(formattedTiers)}`);
 
-      const createdTiers = await this.tierService.create(formattedTiers);
+      const createdTiers = await this.tierService.createTier(formattedTiers);
       debug.logger.info(`CashbackService: tiers criados ${createdTiers}`);
 
       const ruleDiscontIds = createdTiers.map((tier) => tier._id);

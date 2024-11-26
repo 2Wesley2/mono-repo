@@ -29,7 +29,7 @@ class CustomerModel extends Model {
     super(customerSchema, CUSTOMER);
   }
 
-  async create(customerData) {
+  async createCustomer(customerData) {
     try {
       const newCustomer = await this.model.create(customerData);
       await newCustomer.save();
@@ -64,7 +64,7 @@ class CustomerModel extends Model {
     }
   }
 
-  async update(id, updateData) {
+  async updateCustomer(id, updateData) {
     try {
       const updatedCustomer = await this.model.findByIdAndUpdate(id, updateData, { new: true });
       if (!updatedCustomer) throw new Error('Cliente não encontrado');
@@ -76,7 +76,7 @@ class CustomerModel extends Model {
     }
   }
 
-  async delete(id) {
+  async deleteCustomer(id) {
     try {
       const deletedCustomer = await this.model.findByIdAndDelete(id);
       if (!deletedCustomer) throw new Error('Cliente não encontrado');

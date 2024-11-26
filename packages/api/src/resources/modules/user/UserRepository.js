@@ -5,9 +5,9 @@ class UserRepository {
     this.model = model;
   }
 
-  async create(data) {
+  async createUser(data) {
     try {
-      return await this.model.create(data);
+      return await this.model.createUser(data);
     } catch (error) {
       throw new Error(`UserRepository.js: Erro ao criar usuário: ${error.message}`);
     }

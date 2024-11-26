@@ -11,17 +11,17 @@ class UserController extends Controller {
   initializeCustomRoutes() {
     this.router.post('/login', AuthMiddleware.blockIfAuthenticated.bind(AuthMiddleware), this.login.bind(this));
     this.router.post('/logout', this.logout.bind(this));
-    this.router.post('/register', this.create.bind(this));
+    this.router.post('/register', this.createUser.bind(this));
   }
 
-  async create(req, res, next) {
+  async createUser(req, res, next) {
     try {
       const { username, password, role } = req.body;
       if (!username || !password) {
         return res.status(400).json({ message: 'Username e password são obrigatórios' });
       }
 
-      const user = await this.service.create({ username, password, role });
+      const user = await this.service.createUser({ username, password, role });
       res.status(201).json(user);
     } catch (error) {
       next(error);

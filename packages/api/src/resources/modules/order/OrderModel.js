@@ -54,7 +54,7 @@ class OrderModel extends Model {
    * @param {Object} data - Dados do pedido a ser criado.
    * @returns {Promise<Object>} O pedido criado.
    */
-  async create(data) {
+  async createOrder(data) {
     return await this.model.create(data);
   }
 

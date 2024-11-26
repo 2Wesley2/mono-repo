@@ -11,7 +11,7 @@ class OrderRepository {
   }
 
   async createOrder(data) {
-    return await this.orderModel.create(data);
+    return await this.orderModel.createOrder(data);
   }
 
   async bulkCreate(data) {

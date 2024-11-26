@@ -27,7 +27,7 @@ class ProductModel extends Model {
     super(productSchema, PRODUCT);
   }
 
-  async create(data) {
+  async createProduct(data) {
     try {
       debug.logger.debug('Creating product with data:', { data });
       const newProduct = this.model.create(data);
@@ -62,7 +62,7 @@ class ProductModel extends Model {
   async getProductsByIds(ids) {
     return await this.model.find({ _id: { $in: ids } });
   }
-  async update(id, data) {
+  async updateProduct(id, data) {
     try {
       debug.logger.debug('Updating product', { id, data });
       const updatedProduct = await this.model.findByIdAndUpdate(id, data, { new: true });
@@ -74,7 +74,7 @@ class ProductModel extends Model {
     }
   }
 
-  async delete(id) {
+  async deleteProduct(id) {
     try {
       debug.logger.debug('Deleting product by ID', { id });
       await this.model.findByIdAndDelete(id);

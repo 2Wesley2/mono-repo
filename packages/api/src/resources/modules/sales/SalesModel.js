@@ -25,7 +25,7 @@ class SalesModel extends Model {
     super(salesSchema, SALES);
   }
 
-  async create(data) {
+  async createSale(data) {
     try {
       const sale = await this.model.create(data);
       debug.logger.info('Venda criada com sucesso', { data: sale });
@@ -36,7 +36,7 @@ class SalesModel extends Model {
     }
   }
 
-  async findById(id) {
+  async findByIdSales(id) {
     try {
       const sale = await this.model.findById(id);
       if (!sale) {
@@ -51,7 +51,7 @@ class SalesModel extends Model {
     }
   }
 
-  async find(filters = {}, options = {}) {
+  async findSales(filters = {}, options = {}) {
     try {
       const sales = await this.model.find(filters, null, options);
       debug.logger.info('Busca de vendas concluída', { filters, options, count: sales.length });
@@ -62,7 +62,7 @@ class SalesModel extends Model {
     }
   }
 
-  async findByIdAndUpdate(id, data, options = { new: true, runValidators: true }) {
+  async findByIdAndUpdateSales(id, data, options = { new: true, runValidators: true }) {
     try {
       const updatedSale = await this.model.findByIdAndUpdate(id, data, options);
       if (!updatedSale) {
@@ -77,7 +77,7 @@ class SalesModel extends Model {
     }
   }
 
-  async findByIdAndDelete(id) {
+  async findByIdAndDeleteSales(id) {
     try {
       const deletedSale = await this.model.findByIdAndDelete(id);
       if (!deletedSale) {

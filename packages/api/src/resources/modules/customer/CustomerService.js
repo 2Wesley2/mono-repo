@@ -16,9 +16,9 @@ class CustomerService {
     }
   }
 
-  async update(id, updateData) {
+  async updateCustomer(id, updateData) {
     try {
-      const updatedCustomer = await this.repository.update(id, updateData);
+      const updatedCustomer = await this.repository.updateCustomer(id, updateData);
       debug.logger.info('Serviço: Cliente atualizado', { id, updateData });
       return updatedCustomer;
     } catch (error) {
@@ -27,9 +27,9 @@ class CustomerService {
     }
   }
 
-  async delete(id) {
+  async deleteCustomer(id) {
     try {
-      const deletedCustomer = await this.repository.delete(id);
+      const deletedCustomer = await this.repository.deleteCustomer(id);
       debug.logger.info('Serviço: Cliente deletado', { id });
       return deletedCustomer;
     } catch (error) {

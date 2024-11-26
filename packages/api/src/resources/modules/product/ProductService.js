@@ -5,9 +5,9 @@ class ProductService {
     this.repository = repository;
   }
 
-  async create(productData) {
+  async createProduct(productData) {
     try {
-      const result = await this.repository.create(productData);
+      const result = await this.repository.createProduct(productData);
       debug.logger.info('Service: Product created successfully', { data: result });
       return result;
     } catch (error) {
@@ -49,9 +49,9 @@ class ProductService {
       throw error;
     }
   }
-  async update(productId, productData) {
+  async updateProduct(productId, productData) {
     try {
-      const updatedProduct = await this.repository.update(productId, productData);
+      const updatedProduct = await this.repository.updateProduct(productId, productData);
       debug.logger.info('Service: Product updated', { productId, data: updatedProduct });
       return updatedProduct;
     } catch (error) {
@@ -60,9 +60,9 @@ class ProductService {
     }
   }
 
-  async delete(productId) {
+  async deleteProduct(productId) {
     try {
-      const deleted = await this.repository.delete(productId);
+      const deleted = await this.repository.deleteProduct(productId);
       debug.logger.info('Service: Product deleted', { productId });
       return deleted;
     } catch (error) {
@@ -73,7 +73,7 @@ class ProductService {
 
   async updateStock(productId, quantityToAdjust) {
     try {
-      const product = await this.repository.findById(productId);
+      const product = await this.repository.findByIdInRepository(productId);
 
       if (!product) {
         throw new Error(`Product with ID ${productId} does not exist.`);
@@ -87,7 +87,7 @@ class ProductService {
             `Insufficient stock for product "${product.name}". Available: ${product.quantity}, Required: ${-quantityToAdjust}.`,
           );
         }
-        await this.repository.update(productId, { quantity: newQuantity });
+        await this.repository.updateProduct(productId, { quantity: newQuantity });
       }
     } catch (error) {
       debug.logger.error('ProductService: Error updating stock', { productId, error });

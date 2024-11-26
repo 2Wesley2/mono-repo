@@ -6,10 +6,10 @@ class CashbackRepository {
     this.model = model;
   }
 
-  async create(cashbackData) {
+  async createCashback(cashbackData) {
     try {
       debug.logger.info(`CashbackRepository: delegando para camada de modelo`);
-      const createdCashback = await this.model.create(cashbackData);
+      const createdCashback = await this.model.createCashback(cashbackData);
       return createdCashback;
     } catch (error) {
       debug.logger.error('CashbackRepository: Erro ao delegar para camada de modelo', error);

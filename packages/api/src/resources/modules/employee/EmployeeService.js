@@ -19,7 +19,7 @@ class EmployeeService {
   async getEmployeeById(id) {
     this.validateObjectId(id);
 
-    const employee = await this.repository.findById(id);
+    const employee = await this.repository.findByIdEmployee(id);
 
     if (!employee) {
       throw new AppError(404, 'Funcionário não encontrado.');

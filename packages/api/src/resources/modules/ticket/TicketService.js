@@ -23,12 +23,12 @@ class TicketService {
     this.repository = repository;
   }
 
-  async create(clientCPF, discount, discountType) {
+  async createTicket(clientCPF, discount, discountType) {
     try {
       const expiryDate = new Date();
       expiryDate.setMonth(expiryDate.getMonth() + 1);
       const data = { clientCPF, discountType, discount, expiryDate };
-      const result = await this.repository.create(data);
+      const result = await this.repository.createTicket(data);
       debug.logger.info('Serviço: Ticket criado com sucesso', { data: result });
       return result;
     } catch (error) {
@@ -37,9 +37,9 @@ class TicketService {
     }
   }
 
-  async findById(ticketId) {
+  async findByIdTicket(ticketId) {
     try {
-      const ticket = await this.repository.findById(ticketId);
+      const ticket = await this.repository.findByIdTicket(ticketId);
       if (!ticket) {
         debug.logger.warn('Serviço: Ticket não encontrado', { ticketId });
       } else {
@@ -54,9 +54,9 @@ class TicketService {
 
   async applyTicket(ticketId, clientCPF) {
     try {
-      const ticket = await this.repository.findById(ticketId);
+      const ticket = await this.repository.findByIdTicket(ticketId);
       validateTicket(ticket, clientCPF);
-      const updatedTicket = await this.repository.update(ticketId, { status: 'used' });
+      const updatedTicket = await this.repository.updateTicket(ticketId, { status: 'used' });
       debug.logger.info('Serviço: Ticket aplicado', { ticketId });
       return updatedTicket;
     } catch (error) {
