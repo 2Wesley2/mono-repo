@@ -41,11 +41,12 @@ class ProductService {
     }
 
     try {
-      const products = await this.repository.getProductsByIds();
-      debug.logger.info('Fetched products by IDs successfully', { ids, count: products.length });
+      debug.logger.debug(`Serviço: Buscando produtos com IDs: ${JSON.stringify(ids)}`);
+      const products = await this.repository.getProductsByIds(ids);
+      debug.logger.info('Serviço: Produtos obtidos com sucesso', { ids, count: products.length });
       return products;
     } catch (error) {
-      debug.logger.error('Error fetching products by IDs', { error: error.message, ids });
+      debug.logger.error('Serviço: Erro ao buscar produtos pelos IDs', { error: error.message, ids });
       throw error;
     }
   }

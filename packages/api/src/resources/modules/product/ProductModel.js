@@ -1,5 +1,4 @@
 import Model from '../../core/Model.js';
-//import loaders from '../../../loaders/index.js';
 import debug from '../../../debug/index.js';
 import { PRODUCT } from '../../constants/index.js';
 const productSchema = {
@@ -60,7 +59,14 @@ class ProductModel extends Model {
     return products;
   }
   async getProductsByIds(ids) {
-    return await this.model.find({ _id: { $in: ids } });
+    try {
+      const products = await this.model.find({ _id: { $in: ids } });
+      debug.logger.debug(`Modelo: Produtos encontrados: ${JSON.stringify(products)}`);
+      return products;
+    } catch (error) {
+      debug.logger.error(`Modelo: Erro ao buscar produtos: ${error.message}`, { ids });
+      throw error;
+    }
   }
   async updateProduct(id, data) {
     try {

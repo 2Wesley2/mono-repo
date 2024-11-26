@@ -34,10 +34,11 @@ class OrderController extends Controller {
 
     const { error, value } = validationSchema.validate(body);
     if (error) {
-      debug.logger.error('OrderController.createOrder: Validation error', { error: error.message });
+      console.log('[DEBUG] Erro de validação Joi:', error.message);
+      debug.logger.error('OrderController.bulkCreate: Validation error', { error: error.message });
       return res.status(400).json({ success: false, message: error.message });
     }
-
+    console.log('[DEBUG] Body validado com sucesso:', value);
     try {
       const order = await this.service.createOrder(value);
       debug.logger.info('OrderController.createOrder: Order created successfully', { data: order });
@@ -54,12 +55,14 @@ class OrderController extends Controller {
 
   async bulkCreate(req, res, next) {
     const { body } = req;
+    console.log('[DEBUG] Body recebido no bulkCreate:', body);
 
     const validationSchema = Joi.array()
       .items(
         Joi.object({
           orderNumber: Joi.number().required(),
           status: Joi.string().valid('Stand By', 'In Progress').required(),
+          totalAmount: Joi.number().min(0).required(),
           products: Joi.array()
             .items(
               Joi.object({
@@ -96,17 +99,25 @@ class OrderController extends Controller {
    */
 
   async updateOrderContent(req, res, next) {
+    debug.logger.debug(
+      `Controlador: updateOrderContent chamado com params: ${JSON.stringify(req.params)} e body: ${JSON.stringify(req.body)}`,
+    );
     try {
       const { orderNumber: orderNumberStr } = req.params;
       const { updateFields } = req.body;
 
       const orderNumber = this._validateOrderNumber(orderNumberStr);
+      debug.logger.debug(`Controlador: Número da ordem validado: ${orderNumber}`);
+
       this._validateUpdateFields(updateFields);
+      debug.logger.debug(`Controlador: updateFields validado: ${JSON.stringify(updateFields)}`);
 
       const result = await this.service.updateOrderContent(orderNumber, updateFields);
+      debug.logger.info(`Controlador: Ordem atualizada com sucesso: ${JSON.stringify(result)}`);
 
       return res.status(200).json(result);
     } catch (error) {
+      debug.logger.error(`Controlador: Erro ao atualizar ordem: ${error.message}`);
       if (error.message) {
         return res.status(400).json({
           success: false,
@@ -161,7 +172,7 @@ class OrderController extends Controller {
       if (!field.product || typeof field.product !== 'string') {
         throw new Error('Each updateFields item must have a valid product string.');
       }
-      if (!field.quantity || typeof field.quantity !== 'number' || field.quantity <= 0) {
+      if (!field.quantity || typeof field.quantity !== 'number') {
         throw new Error('Each updateFields item must have a valid positive quantity.');
       }
     }

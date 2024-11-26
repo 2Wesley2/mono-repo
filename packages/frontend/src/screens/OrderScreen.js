@@ -13,8 +13,8 @@ const OrderScreen = () => {
   return (
     <OrderStateProvider>
       <Container
+        maxWidth={false}
         disableGutters
-        maxWidth="xl"
         sx={{
           height: '100vh',
           display: 'flex',

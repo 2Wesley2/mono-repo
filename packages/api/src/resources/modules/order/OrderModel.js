@@ -1,5 +1,6 @@
 import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
+import debug from '../../../debug/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
 
 const validateOrder = function () {
@@ -73,7 +74,10 @@ class OrderModel extends Model {
    * @returns {Promise<Object|null>} - Pedido encontrado ou `null`.
    */
   async findByOrderNumber(orderNumber) {
-    return await this.model.findByUniqueKey(orderNumber);
+    debug.logger.debug(`findByOrderNumber: Iniciando busca com orderNumber: ${orderNumber}`);
+    const result = await this.model.findByUniqueKey({ orderNumber });
+    debug.logger.debug(`findByOrderNumber: Resultado da busca: ${JSON.stringify(result)}`);
+    return result;
   }
 
   /**
@@ -83,13 +87,19 @@ class OrderModel extends Model {
    * @returns {Promise<Object|null>} - Pedido atualizado ou `null`.
    */
   async updateByOrderNumber(orderNumber, updateFields) {
+    debug.logger.debug(
+      `updateByOrderNumber: Iniciando atualização com orderNumber: ${orderNumber} e updateFields: ${JSON.stringify(updateFields)}`,
+    );
     const order = await this.findByOrderNumber(orderNumber);
     if (!order) {
+      debug.logger.error(`updateByOrderNumber: Ordem com orderNumber ${orderNumber} não encontrada`);
       throw new Error(`Order with orderNumber ${orderNumber} not found`);
     }
 
     Object.assign(order, updateFields);
-    return await order.save();
+    const updatedOrder = await order.save();
+    debug.logger.debug(`updateByOrderNumber: Ordem atualizada com sucesso: ${JSON.stringify(updatedOrder)}`);
+    return updatedOrder;
   }
 
   /**

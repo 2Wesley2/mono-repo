@@ -1,3 +1,4 @@
+import debug from '../debug/index.js';
 /**
  * Plugin que adiciona métodos estáticos para busca e atualização com base em chaves únicas a um schema do Mongoose.
  *
@@ -12,8 +13,9 @@ const uniqueKeyPlugin = (newSchema) => {
    * @returns {Object} - O filtro corrigido ou um erro, se irreparável.
    */
   const ensureValidFilter = (filter) => {
+    debug.logger.debug(`Plugin: ensureValidFilter chamado com filtro: ${JSON.stringify(filter)}`);
     if (!filter || typeof filter !== 'object') {
-      console.warn('Filtro inválido fornecido. Convertendo para um objeto vazio.');
+      debug.logger.warn('Plugin: Filtro inválido fornecido. Convertendo para um objeto vazio.');
       return {};
     }
     return filter;
@@ -26,13 +28,16 @@ const uniqueKeyPlugin = (newSchema) => {
    * @returns {Promise<mongoose.Document|null>} - Documento encontrado ou `null` se nenhum for encontrado.
    */
   newSchema.statics.findByUniqueKey = async function (filter) {
+    debug.logger.debug(`Plugin: findByUniqueKey chamado com filtro: ${JSON.stringify(filter)}`);
     const validatedFilter = ensureValidFilter(filter);
     if (Object.keys(validatedFilter).length === 0) {
+      debug.logger.error('Plugin: Filtro da chave única vazio após validação');
       throw new Error('O filtro da chave única é obrigatório e não pode estar vazio.');
     }
-    return this.findOne(validatedFilter);
+    const result = await this.findOne(validatedFilter);
+    debug.logger.debug(`Plugin: Resultado de findByUniqueKey: ${JSON.stringify(result)}`);
+    return result;
   };
-
   /**
    * Atualiza um documento com base em uma chave única.
    *

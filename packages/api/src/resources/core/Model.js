@@ -4,6 +4,9 @@ import debug from '../../debug/index.js';
 class Model {
   constructor(schema, modelName) {
     this.model = loaders.mongoose.registerModel(schema, modelName);
+    this.objectId = loaders.mongoose.getObjectId();
+    this.getTypes = loaders.mongoose.getTypes();
+    this.isValidObjectId = loaders.isValidObjectId;
     this.attachCustomMethods();
     debug.logger.debug(`Model: Initialized with schema for ${modelName}`);
   }
