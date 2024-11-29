@@ -59,23 +59,14 @@ class ProductModel extends Model {
     return products;
   }
   async getProductsByIds(ids) {
-    try {
-      const products = await this.model.find({ _id: { $in: ids } });
-      debug.logger.debug(`Modelo: Produtos encontrados: ${JSON.stringify(products)}`);
-      return products;
-    } catch (error) {
-      debug.logger.error(`Modelo: Erro ao buscar produtos: ${error.message}`, { ids });
-      throw error;
-    }
+    const products = await this.model.find({ _id: { $in: ids } });
+    return products;
   }
   async updateProduct(id, data) {
     try {
-      debug.logger.debug('Updating product', { id, data });
       const updatedProduct = await this.model.findByIdAndUpdate(id, data, { new: true });
-      debug.logger.info('Product updated successfully', { id, updatedProduct });
       return updatedProduct;
     } catch (error) {
-      debug.logger.error('Error updating product', { error: error.message, id, data });
       throw error;
     }
   }

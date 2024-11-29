@@ -14,26 +14,52 @@ class OrderRepository {
   }
 
   async bulkCreate(data) {
-    console.log('[DEBUG] Dados recebidos no repositório:', data);
     return await this.orderModel.bulkCreate(data);
   }
+  async updateOrderProducts(currentOrder, updateOrderProductsFields) {
+    const currentOrderId = currentOrder._id;
+    const updatedProducts = currentOrder.products.reduce((acc, product) => {
+      const updatedProduct = updateOrderProductsFields.find(
+        (uProd) => String(uProd.product) === String(product.product),
+      );
+
+      if (updatedProduct) {
+        if (updatedProduct.quantity <= 0) {
+          return acc;
+        }
+        return [
+          ...acc,
+          {
+            ...product,
+            quantity: updatedProduct.quantity,
+          },
+        ];
+      }
+      return [...acc, product];
+    }, []);
+
+    const newProducts = updateOrderProductsFields
+      .filter(
+        (newProd) =>
+          !currentOrder.products.some((existingProd) => String(existingProd.product) === String(newProd.product)) &&
+          newProd.quantity > 0,
+      )
+      .map((newProd) => ({
+        product: newProd.product,
+        quantity: newProd.quantity,
+      }));
+    const finalProducts = [...updatedProducts, ...newProducts];
+    return await this.orderModel.updateOrderProducts(finalProducts, currentOrderId);
+  }
+
   async findByOrderNumber(orderNumber) {
-    debug.logger.debug(`Repositório: findByOrderNumber chamado com orderNumber: ${orderNumber}`);
     const result = await this.orderModel.findByOrderNumber(orderNumber);
-    debug.logger.debug(`Repositório: Resultado de findByOrderNumber: ${JSON.stringify(result)}`);
     return result;
   }
 
-  async updateByOrderNumber(orderNumber, updateFields) {
-    debug.logger.debug(
-      `Repositório: updateByOrderNumber chamado com orderNumber: ${orderNumber} e updateFields: ${JSON.stringify(updateFields)}`,
-    );
-    const result = await this.orderModel.updateByOrderNumber(orderNumber, updateFields);
-    debug.logger.debug(`Repositório: Resultado de updateByOrderNumber: ${JSON.stringify(result)}`);
-    return result;
-  }
-  async listProductsByOrderRepository(orderNumber) {
-    return await this.orderModel.listProductsByOrder(orderNumber);
+  async listProductsByOrder(orderNumber) {
+    const products = await this.orderModel.listProductsByOrder(orderNumber);
+    return products;
   }
 }
 

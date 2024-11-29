@@ -20,75 +20,81 @@ export const OrderStateProvider = ({ children }) => {
   const [commandNumber, setCommandNumber] = useState('');
   const [activeCommandNumber, setActiveCommandNumber] = useState(null);
   const [currentOrder, setCurrentOrder] = useState([]);
+  const [initialOrder, setInitialOrder] = useState([]); // Armazena o estado inicial do pedido
   const [errorMessage, setErrorMessage] = useState('');
   const [isWaitingForProduct, setIsWaitingForProduct] = useState(false);
-  const [getProductsByOrder, setGetProductsByOrder] = useState([]);
 
-  // Restore saved state from localStorage
+  // Restaurar estado salvo do localStorage
   useEffect(() => {
     const savedCommandNumber = localStorage.getItem('commandNumber');
     const savedIsWaitingForProduct =
       localStorage.getItem('isWaitingForProduct') === 'true';
+    const savedOrder = localStorage.getItem('currentOrder');
 
     if (savedCommandNumber) {
       setActiveCommandNumber(savedCommandNumber);
       setIsWaitingForProduct(savedIsWaitingForProduct);
+
+      if (savedOrder) {
+        const parsedOrder = JSON.parse(savedOrder);
+        setCurrentOrder(parsedOrder);
+        setInitialOrder(parsedOrder); // Define também o estado inicial
+      } else {
+        fetchProductsByOrder(savedCommandNumber);
+      }
     }
   }, []);
 
-  // Save activeCommandNumber and isWaitingForProduct in localStorage
+  // Salvar estado no localStorage
   useEffect(() => {
     if (activeCommandNumber !== null) {
       localStorage.setItem('commandNumber', activeCommandNumber);
       localStorage.setItem('isWaitingForProduct', isWaitingForProduct);
+      localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
     }
-  }, [activeCommandNumber, isWaitingForProduct]);
+  }, [activeCommandNumber, isWaitingForProduct, currentOrder]);
 
-  // Clear current order when no active command
+  // Limpar pedido ao remover comanda ativa
   useEffect(() => {
     if (!activeCommandNumber) {
       setCurrentOrder([]);
+      setInitialOrder([]); // Limpa também o estado inicial
+      localStorage.removeItem('currentOrder');
     }
   }, [activeCommandNumber]);
 
-  // Fetch products for a specific order
-  const fetchProductsByOrder = useCallback(
-    async (activeCommandNumber) => {
-      try {
-        setLoading(true);
+  // Buscar produtos para uma comanda específica
+  const fetchProductsByOrder = useCallback(async (activeCommandNumber) => {
+    try {
+      setLoading(true);
 
-        const productList =
-          await OrderService.listProductsByOrder(activeCommandNumber);
+      const productList =
+        await OrderService.listProductsByOrder(activeCommandNumber);
 
-        console.log('Produtos carregados da API:', productList);
-
-        if (!productList || productList.length === 0) {
-          console.warn(
-            `Nenhum produto encontrado para a comanda ${activeCommandNumber}`,
-          );
-          setErrorMessage(
-            `Nenhum produto encontrado para a comanda ${activeCommandNumber}.`,
-          );
-          setGetProductsByOrder([]);
-          return [];
-        }
-
-        setGetProductsByOrder(productList);
-        setErrorMessage('');
-        return productList;
-      } catch (error) {
-        console.error('Erro ao buscar produtos da comanda:', error.message);
-        setErrorMessage(`Erro ao buscar produtos da comanda: ${error.message}`);
-        setGetProductsByOrder([]);
+      if (!productList || productList.length === 0) {
+        setErrorMessage(
+          `Nenhum produto encontrado para a comanda ${activeCommandNumber}.`,
+        );
+        setCurrentOrder([]);
+        setInitialOrder([]); // Limpa também o estado inicial
         return [];
-      } finally {
-        setLoading(false);
       }
-    },
-    [activeCommandNumber],
-  );
 
-  // Fetch products for the current category
+      setCurrentOrder(productList);
+      setInitialOrder(productList); // Armazena o estado inicial
+      setErrorMessage('');
+      return productList;
+    } catch (error) {
+      setErrorMessage(`Erro ao buscar produtos da comanda: ${error.message}`);
+      setCurrentOrder([]);
+      setInitialOrder([]);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Buscar produtos para uma categoria
   const fetchCategoryProducts = useCallback(
     async (category) => {
       if (categoryProducts[category]) return;
@@ -111,36 +117,31 @@ export const OrderStateProvider = ({ children }) => {
     [categoryProducts],
   );
 
-  // Load category products when activeTab changes
   const currentCategory = categories[activeTab];
   useEffect(() => {
     fetchCategoryProducts(currentCategory);
   }, [activeTab, fetchCategoryProducts]);
 
-  // Memoize the products for the current category
   const products = useMemo(
     () => categoryProducts[currentCategory] || [],
     [currentCategory, categoryProducts],
   );
 
-  // Reset the command state
   const resetCommandState = () => {
     setCommandNumber('');
     setActiveCommandNumber(null);
     setCurrentOrder([]);
+    setInitialOrder([]); // Limpa o estado inicial
     setErrorMessage('');
     setIsWaitingForProduct(false);
     localStorage.removeItem('commandNumber');
     localStorage.removeItem('isWaitingForProduct');
+    localStorage.removeItem('currentOrder');
   };
 
-  // Add product to the current order
   const handleAddProduct = useCallback(
     (product) => {
-      console.log('Tentando adicionar produto:', product);
-
       if (!activeCommandNumber) {
-        console.warn('Nenhuma comanda ativa.');
         setErrorMessage(
           'Defina um número de comanda antes de adicionar produtos.',
         );
@@ -153,20 +154,17 @@ export const OrderStateProvider = ({ children }) => {
         );
 
         if (existingProduct) {
-          console.log('Produto já existe. Incrementando quantidade.');
-          const updatedOrder = prevOrder.map((item) =>
+          return prevOrder.map((item) =>
             item.product._id === product._id
               ? { ...item, quantity: item.quantity + 1 }
               : item,
           );
-          console.log('Novo estado após incremento:', updatedOrder);
-          return updatedOrder;
         }
 
-        console.log('Novo produto adicionado.');
-        const newOrder = [...prevOrder, { product, quantity: 1 }];
-        console.log('Novo estado após adição:', newOrder);
-        return newOrder;
+        return [
+          ...prevOrder,
+          { product: { ...product, price: product.price }, quantity: 1 },
+        ];
       });
 
       setErrorMessage('');
@@ -174,7 +172,6 @@ export const OrderStateProvider = ({ children }) => {
     [activeCommandNumber],
   );
 
-  // Validate the command input
   const validateCommandInput = (input) => {
     const trimmedInput = input.trim().toUpperCase();
     if (trimmedInput === 'X') return 'FINALIZE';
@@ -182,14 +179,29 @@ export const OrderStateProvider = ({ children }) => {
     return 'INVALID';
   };
 
-  // Build update fields for backend request
-  const buildUpdateFields = (order) =>
-    order.map((item) => ({
-      product: item.product._id,
-      quantity: item.quantity,
-    }));
+  const buildUpdateFields = (order, initialOrder) => {
+    const initialOrderMap = new Map(
+      initialOrder.map((item) => [item.product._id, item.quantity]),
+    );
 
-  // Handle command number input
+    return order
+      .map((item) => {
+        const initialQuantity = initialOrderMap.get(item.product._id) || 0;
+        const quantityChange = item.quantity - initialQuantity;
+
+        if (quantityChange !== 0) {
+          return {
+            product: item.product._id,
+            quantity: quantityChange,
+            price: item.product.price,
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
+  };
+
   const handleCommandNumberEnter = async (event) => {
     if (event.key !== 'Enter') return;
 
@@ -207,14 +219,13 @@ export const OrderStateProvider = ({ children }) => {
           return;
         }
 
-        const updateFields = buildUpdateFields(currentOrder);
+        const updateFields = buildUpdateFields(currentOrder, initialOrder);
 
         setLoading(true);
         await OrderService.updateOrderContent(activeCommandNumber, {
           updateFields,
         });
 
-        console.log('Pedido atualizado com sucesso.');
         resetCommandState();
         setErrorMessage('');
       } catch (error) {
@@ -225,15 +236,19 @@ export const OrderStateProvider = ({ children }) => {
         setLoading(false);
       }
     } else if (validation === 'VALID') {
-      if (!commandNumber || isNaN(Number(commandNumber))) {
-        setErrorMessage('Número da comanda inválido.');
-        return;
-      }
-
-      console.log(`Comanda ${commandNumber} ativada localmente.`);
       setActiveCommandNumber(commandNumber);
       setIsWaitingForProduct(true);
       setErrorMessage('');
+
+      try {
+        setLoading(true);
+        const products = await fetchProductsByOrder(commandNumber);
+        setCurrentOrder(products);
+      } catch {
+        setCurrentOrder([]);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrorMessage('Entrada inválida. Insira um número válido ou "X".');
     }
@@ -263,7 +278,6 @@ export const OrderStateProvider = ({ children }) => {
         products,
         currentCategory,
         fetchProductsByOrder,
-        getProductsByOrder,
       }}
     >
       {children}

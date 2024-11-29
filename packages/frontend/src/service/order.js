@@ -6,6 +6,12 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
+function logElegant(type, details) {
+  console.group(`🔍 ${type}`);
+  console.table(details);
+  console.groupEnd();
+}
+
 async function request(endpoint, method = 'GET', body = null) {
   const options = {
     method,
@@ -15,15 +21,33 @@ async function request(endpoint, method = 'GET', body = null) {
   if (body) {
     options.body = JSON.stringify(body);
   }
+  logElegant('Request', {
+    Endpoint: `${apiBaseUrl}${endpoint}`,
+    Method: method,
+    Headers: JSON.stringify(headers),
+    Body: body || 'N/A',
+  });
 
   const response = await fetch(`${apiBaseUrl}${endpoint}`, options);
 
   if (!response.ok) {
     const errorMessage = await response.text();
+    logElegant('Response Error', {
+      Status: response.status,
+      Error: errorMessage,
+    });
     throw new Error(`HTTP ${response.status} - ${errorMessage}`);
   }
 
-  return response.json();
+  const responseData = await response.json();
+
+  // Logando a resposta
+  logElegant('Response', {
+    Status: response.status,
+    Data: responseData,
+  });
+
+  return responseData;
 }
 
 const OrderService = {

@@ -7,7 +7,9 @@ import validateOrderAndProductExistence from './validateOrderAndProductExistence
 import updateOrderStatus from './updateOrderStatus.js';
 import handleAddProductToOrder from './handleAddProductToOrder.js';
 import mergeDuplicateProducts from './mergeDuplicateProducts.js';
-
+import removeCycles from './removeCycles.js';
+import extractedProductIds from './extractedProductsIds.js';
+import productsExistById from './productsExistById.js';
 export {
   validateAddProductToOrder,
   updateOrderProducts,
@@ -18,4 +20,7 @@ export {
   updateOrderStatus,
   handleAddProductToOrder,
   mergeDuplicateProducts,
+  removeCycles,
+  extractedProductIds,
+  productsExistById,
 };

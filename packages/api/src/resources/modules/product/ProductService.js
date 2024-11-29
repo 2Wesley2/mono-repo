@@ -35,21 +35,15 @@ class ProductService {
     const products = await this.repository.findByCategory(category);
     return products;
   }
+
   async getProductsByIds(ids) {
     if (!Array.isArray(ids) || ids.length === 0) {
-      throw new Error('Invalid or empty IDs array.');
+      return 'Invalid or empty IDs array.';
     }
-
-    try {
-      debug.logger.debug(`Serviço: Buscando produtos com IDs: ${JSON.stringify(ids)}`);
-      const products = await this.repository.getProductsByIds(ids);
-      debug.logger.info('Serviço: Produtos obtidos com sucesso', { ids, count: products.length });
-      return products;
-    } catch (error) {
-      debug.logger.error('Serviço: Erro ao buscar produtos pelos IDs', { error: error.message, ids });
-      throw error;
-    }
+    const products = await this.repository.getProductsByIds(ids);
+    return products;
   }
+
   async updateProduct(productId, productData) {
     try {
       const updatedProduct = await this.repository.updateProduct(productId, productData);

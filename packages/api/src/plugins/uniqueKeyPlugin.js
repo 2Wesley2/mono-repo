@@ -13,12 +13,30 @@ const uniqueKeyPlugin = (newSchema) => {
    * @returns {Object} - O filtro corrigido ou um erro, se irreparável.
    */
   const ensureValidFilter = (filter) => {
-    debug.logger.debug(`Plugin: ensureValidFilter chamado com filtro: ${JSON.stringify(filter)}`);
-    if (!filter || typeof filter !== 'object') {
-      debug.logger.warn('Plugin: Filtro inválido fornecido. Convertendo para um objeto vazio.');
-      return {};
+    if (!filter || typeof filter !== 'object' || typeof filter === 'string' || Array.isArray(filter)) {
+      return null;
     }
+
+    if (Object.keys(filter).length === 0) {
+      return null;
+    }
+
     return filter;
+  };
+
+  /**
+   * Garante que o valor fornecido seja válido para o tipo esperado.
+   *
+   * @param {*} value - Valor a ser validado.
+   * @param {string} type - Tipo esperado (por exemplo, 'number').
+   * @returns {boolean} - Retorna `true` se o valor for válido, caso contrário, `false`.
+   */
+  const ensureValidValue = (value, type) => {
+    if (type === 'number' && (typeof value !== 'number' || isNaN(value))) {
+      return false;
+    }
+    // Adicione mais validações de tipo conforme necessário
+    return true;
   };
 
   /**
@@ -28,16 +46,30 @@ const uniqueKeyPlugin = (newSchema) => {
    * @returns {Promise<mongoose.Document|null>} - Documento encontrado ou `null` se nenhum for encontrado.
    */
   newSchema.statics.findByUniqueKey = async function (filter) {
-    debug.logger.debug(`Plugin: findByUniqueKey chamado com filtro: ${JSON.stringify(filter)}`);
-    const validatedFilter = ensureValidFilter(filter);
-    if (Object.keys(validatedFilter).length === 0) {
-      debug.logger.error('Plugin: Filtro da chave única vazio após validação');
-      throw new Error('O filtro da chave única é obrigatório e não pode estar vazio.');
+    if (filter === null || filter === undefined) {
+      return 'Filtro inválido: Valor nulo ou indefinido.';
     }
+
+    const validatedFilter = ensureValidFilter(filter);
+
+    if (!validatedFilter) {
+      return 'Filtro inválido: Não foi possível executar a busca.';
+    }
+
+    const uniqueKey = Object.keys(validatedFilter)[0];
+    const value = validatedFilter[uniqueKey];
+
+    if (!ensureValidValue(value, typeof value)) {
+      return `Erro de tipo: O valor para a chave única "${uniqueKey}" deve ser um ${typeof value}.`;
+    }
+
     const result = await this.findOne(validatedFilter);
-    debug.logger.debug(`Plugin: Resultado de findByUniqueKey: ${JSON.stringify(result)}`);
+    if (!result) {
+      return 'Nenhum documento encontrado para o filtro fornecido.';
+    }
     return result;
   };
+
   /**
    * Atualiza um documento com base em uma chave única.
    *

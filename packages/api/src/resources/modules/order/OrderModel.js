@@ -49,74 +49,46 @@ class OrderModel extends Model {
   constructor() {
     super(orderSchema, ORDER, {}, [validateOrder]);
   }
-
-  /**
-   * Cria um novo pedido no banco de dados.
-   * @param {Object} data - Dados do pedido a ser criado.
-   * @returns {Promise<Object>} O pedido criado.
-   */
   async createOrder(data) {
     return await this.model.create(data);
   }
 
-  /**
-   * Cria vários pedidos no banco de dados.
-   * @param {Object[]} data - Array de objetos contendo os dados dos pedidos.
-   * @returns {Promise<Object[]>} Os pedidos criados.
-   */
   async bulkCreate(data) {
     return await this.model.insertMany(data);
   }
 
-  /**
-   * Encontra um pedido pelo número do pedido.
-   * @param {Object} filter - Filtro com o campo único.
-   * @returns {Promise<Object|null>} - Pedido encontrado ou `null`.
-   */
-  async findByOrderNumber(orderNumber) {
-    debug.logger.debug(`findByOrderNumber: Iniciando busca com orderNumber: ${orderNumber}`);
-    const result = await this.model.findByUniqueKey({ orderNumber });
-    debug.logger.debug(`findByOrderNumber: Resultado da busca: ${JSON.stringify(result)}`);
-    return result;
-  }
-
-  /**
-   * Atualiza um pedido pelo número do pedido.
-   * @param {Object} filter - Filtro com o campo único.
-   * @param {Object} updateFields - Campos a atualizar.
-   * @returns {Promise<Object|null>} - Pedido atualizado ou `null`.
-   */
-  async updateByOrderNumber(orderNumber, updateFields) {
-    debug.logger.debug(
-      `updateByOrderNumber: Iniciando atualização com orderNumber: ${orderNumber} e updateFields: ${JSON.stringify(updateFields)}`,
+  async updateOrderProducts(updatedProducts, currentOrderId) {
+    const resultOfUpdate = await this.model.updateOne(
+      { _id: currentOrderId },
+      {
+        $set: {
+          products: updatedProducts,
+        },
+      },
     );
-    const order = await this.findByOrderNumber(orderNumber);
-    if (!order) {
-      debug.logger.error(`updateByOrderNumber: Ordem com orderNumber ${orderNumber} não encontrada`);
-      throw new Error(`Order with orderNumber ${orderNumber} not found`);
-    }
-
-    Object.assign(order, updateFields);
-    const updatedOrder = await order.save();
-    debug.logger.debug(`updateByOrderNumber: Ordem atualizada com sucesso: ${JSON.stringify(updatedOrder)}`);
-    return updatedOrder;
+    return resultOfUpdate;
   }
 
-  /**
-   * Lista os produtos de um pedido específico.
-   * @param {number} orderNumber - O número do pedido.
-   * @returns {Promise<Object[]>} Lista de produtos do pedido.
-   * @throws {Error} Lança erro se o pedido não for encontrado.
-   */
-  async listProductsByOrder(orderNumber) {
-    const order = await this.findByOrderNumber(orderNumber);
-
-    if (!order) {
-      throw new Error(`Order with orderNumber ${orderNumber} not found`);
+  async findByOrderNumber(orderNumber) {
+    const result = await this.model.findByUniqueKey({ orderNumber });
+    if (typeof result === 'string') {
+      return result;
     }
+    if (!result) {
+      return 'Erro desconhecido ao buscar o pedido.';
+    }
+    return result.toObject();
+  }
 
-    const products = await order.populate('products.product', 'name price');
-    return products.products;
+  async listProductsByOrder(orderNumber) {
+    const result = await this.findByOrderNumber(orderNumber);
+    if (typeof result === 'string') {
+      return result;
+    }
+    if (result && Array.isArray(result.products)) {
+      return result.products.map(({ product, quantity }) => ({ product, quantity }));
+    }
+    return 'Erro ao processar os produtos do pedido.';
   }
 }
 

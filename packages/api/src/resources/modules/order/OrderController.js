@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import debug from '../../../debug/index.js';
 import Controller from '../../../resources/core/Controller.js';
+
 class OrderController extends Controller {
   constructor(service) {
     super();
@@ -17,7 +18,6 @@ class OrderController extends Controller {
 
   async createOrder(req, res, next) {
     const { body } = req;
-    debug.logger.debug('OrderController.createOrder: Received request', { body });
 
     const validationSchema = Joi.object({
       orderNumber: Joi.number().required(),
@@ -35,20 +35,13 @@ class OrderController extends Controller {
     const { error, value } = validationSchema.validate(body);
     if (error) {
       console.log('[DEBUG] Erro de validação Joi:', error.message);
-      debug.logger.error('OrderController.bulkCreate: Validation error', { error: error.message });
       return res.status(400).json({ success: false, message: error.message });
     }
     console.log('[DEBUG] Body validado com sucesso:', value);
     try {
       const order = await this.service.createOrder(value);
-      debug.logger.info('OrderController.createOrder: Order created successfully', { data: order });
       res.status(201).json({ success: true, data: order });
     } catch (error) {
-      debug.logger.error('OrderController.createOrder: Error creating order', {
-        body,
-        error: error.message,
-        stack: error.stack,
-      });
       next(error);
     }
   }
@@ -77,16 +70,52 @@ class OrderController extends Controller {
 
     const { error, value } = validationSchema.validate(body);
     if (error) {
-      debug.logger.error('OrderController.bulkCreate: Validation error', { error: error.message });
       return res.status(400).json({ success: false, message: error.message });
     }
 
     try {
       const createdOrders = await this.service.bulkCreate(value);
-      debug.logger.info('OrderController.bulkCreate: Bulk orders created successfully', { data: createdOrders });
       res.status(201).json({ success: true, data: createdOrders });
     } catch (error) {
-      debug.logger.error('OrderController.bulkCreate: Error creating bulk orders', { error });
+      next(error);
+    }
+  }
+  async listProductsByOrder(req, res, next) {
+    try {
+      let { orderNumber } = req.params;
+
+      orderNumber = parseInt(orderNumber, 10);
+      if (isNaN(orderNumber)) {
+        return res.status(400).json({ success: false, message: 'Parâmetro orderNumber deve ser um número válido.' });
+      }
+      const productsList = await this.service.listProductsByOrder(orderNumber);
+
+      const products = Array.isArray(productsList) ? productsList : productsList?.products || [];
+
+      const mappedProducts = products.map((item) => {
+        if (!item.product || !item.product._id || !item.product.name || item.product.price == null) {
+          return null; // Ignora itens com estrutura inválida
+        }
+
+        return {
+          product: {
+            _id: item.product._id,
+            name: item.product.name,
+            price: item.product.price,
+          },
+          quantity: item.quantity,
+        };
+      });
+
+      const validProducts = mappedProducts.filter(Boolean);
+
+      const result = {
+        orderNumber: productsList.orderNumber,
+        products: validProducts,
+      };
+
+      return res.status(200).json({ success: true, data: result });
+    } catch (error) {
       next(error);
     }
   }
@@ -99,58 +128,53 @@ class OrderController extends Controller {
    */
 
   async updateOrderContent(req, res, next) {
-    debug.logger.debug(
-      `Controlador: updateOrderContent chamado com params: ${JSON.stringify(req.params)} e body: ${JSON.stringify(req.body)}`,
-    );
     try {
       const { orderNumber: orderNumberStr } = req.params;
       const { updateFields } = req.body;
-
+      debug.logger.superdebug(
+        updateFields,
+        0,
+        'root',
+        '[CONTROLLER-updateOrderContent] const { updateFields } = req.body;',
+      );
+      debug.logger.superdebug(
+        orderNumberStr,
+        0,
+        'root',
+        '[CONTROLLER-updateOrderContent] const { orderNumber: orderNumberStr } = req.params;',
+      );
       const orderNumber = this._validateOrderNumber(orderNumberStr);
-      debug.logger.debug(`Controlador: Número da ordem validado: ${orderNumber}`);
+      debug.logger.superdebug(
+        orderNumber,
+        0,
+        'root',
+        '[CONTROLLER-updateOrderContent] const orderNumber = this._validateOrderNumber(orderNumberStr);',
+      );
 
+      if (!updateFields || !Array.isArray(updateFields) || updateFields.length === 0) {
+        return res.status(200).json({
+          success: true,
+          message: 'Nenhuma alteração realizada. O array de atualizações está vazio.',
+        });
+      }
+      debug.logger.info('passando updateField para validaçãos com this._validateUpdateFields(updateFields); ');
       this._validateUpdateFields(updateFields);
-      debug.logger.debug(`Controlador: updateFields validado: ${JSON.stringify(updateFields)}`);
 
       const result = await this.service.updateOrderContent(orderNumber, updateFields);
-      debug.logger.info(`Controlador: Ordem atualizada com sucesso: ${JSON.stringify(result)}`);
-
+      debug.logger.superdebug(
+        result,
+        0,
+        'root',
+        '[CONTROLLER-updateOrderContent] const result = await this.service.updateOrderContent(orderNumber, updateFields);',
+      );
       return res.status(200).json(result);
     } catch (error) {
-      debug.logger.error(`Controlador: Erro ao atualizar ordem: ${error.message}`);
       if (error.message) {
         return res.status(400).json({
           success: false,
           message: error.message,
         });
       }
-      next(error);
-    }
-  }
-
-  async listProductsByOrderController(req, res, next) {
-    try {
-      const { orderNumber } = req.params;
-      const productsList = await this.service.listProductsByOrderService(orderNumber);
-      debug.logger.info(
-        `OrderController.listProductsByOrderController: get products by orderNumber: ${orderNumber} successfully`,
-      );
-
-      const result = {
-        orderNumber: productsList.orderNumber,
-        products: productsList.products.map((item) => ({
-          product: {
-            _id: item.product._id,
-            name: item.product.name,
-            price: item.product.price,
-          },
-          quantity: item.quantity,
-        })),
-      };
-
-      console.log(JSON.stringify(result, null, 2));
-      res.status(200).json({ success: true, data: result });
-    } catch (error) {
       next(error);
     }
   }
@@ -168,12 +192,15 @@ class OrderController extends Controller {
       throw new Error('updateFields array is required and cannot be empty');
     }
 
-    for (const field of updateFields) {
-      if (!field.product || typeof field.product !== 'string') {
+    for (const { product, quantity, ...rest } of updateFields) {
+      if (!product || typeof product !== 'string') {
         throw new Error('Each updateFields item must have a valid product string.');
       }
-      if (!field.quantity || typeof field.quantity !== 'number') {
+      if (typeof quantity !== 'number' || quantity <= 0) {
         throw new Error('Each updateFields item must have a valid positive quantity.');
+      }
+      if (Object.keys(rest).length > 0) {
+        debug.logger.warn(`Unexpected fields in updateFields item: ${JSON.stringify(rest)}`);
       }
     }
   }
