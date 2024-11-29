@@ -7,6 +7,7 @@ import OrderModel from './resources/modules/order/OrderModel.js';
 import OrderRepository from './resources/modules/order/OrderRepository.js';
 import OrderService from './resources/modules/order/OrderService.js';
 import debug from './debug/index.js';
+import OrderController from './resources/modules/order/OrderController.js';
 
 const test = async () => {
   let result = null;
@@ -21,7 +22,8 @@ const test = async () => {
     const orderModel = new OrderModel();
     const orderRepository = new OrderRepository(orderModel);
     const orderService = new OrderService(orderRepository, productService);
-    const orderNumber = 2;
+    const orderController = new OrderController(orderService);
+    const orderNumber = '1';
     const updateProducts = [
       { product: '6745d9d3f7c376f561ad14ea', quantity: 15 },
       { product: '6745d9d3f7c376f561ad14eb', quantity: 4 },
@@ -29,7 +31,7 @@ const test = async () => {
       { product: '6745d9d3f7c376f561ad14fe', quantity: 5 },
     ];
 
-    result = await orderService.updateOrderProducts(orderNumber, updateProducts);
+    result = await orderService.updateOrderProducts(updateProducts);
     await Database.disconnect();
     console.log('Conexão encerrada.');
   } catch (err) {

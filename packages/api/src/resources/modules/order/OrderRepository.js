@@ -16,7 +16,7 @@ class OrderRepository {
   async bulkCreate(data) {
     return await this.orderModel.bulkCreate(data);
   }
-  async updateOrderProducts(currentOrder, updateOrderProductsFields) {
+  async updateOrderProducts(currentOrder, updateOrderProductsFields, getExistingProducts) {
     const currentOrderId = currentOrder._id;
     const updatedProducts = currentOrder.products.reduce((acc, product) => {
       const updatedProduct = updateOrderProductsFields.find(
@@ -49,7 +49,7 @@ class OrderRepository {
         quantity: newProd.quantity,
       }));
     const finalProducts = [...updatedProducts, ...newProducts];
-    return await this.orderModel.updateOrderProducts(finalProducts, currentOrderId);
+    return await this.orderModel.updateOrderProducts(finalProducts, currentOrderId, getExistingProducts);
   }
 
   async findByOrderNumber(orderNumber) {

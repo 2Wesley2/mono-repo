@@ -2,6 +2,7 @@ import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
 import debug from '../../../debug/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
+import { calculateTotalAmount } from '../../../utils/order/index.js';
 
 const validateOrder = function () {
   if (this.products.length > 0 && this.totalAmount <= 0) {
@@ -57,11 +58,14 @@ class OrderModel extends Model {
     return await this.model.insertMany(data);
   }
 
-  async updateOrderProducts(updatedProducts, currentOrderId) {
+  async updateOrderProducts(updatedProducts, currentOrderId, getExistingProducts) {
+    const totalAmount = calculateTotalAmount(getExistingProducts, updatedProducts);
     const resultOfUpdate = await this.model.updateOne(
       { _id: currentOrderId },
       {
         $set: {
+          status: 'In Progress',
+          totalAmount: totalAmount,
           products: updatedProducts,
         },
       },
