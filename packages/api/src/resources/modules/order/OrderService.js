@@ -7,16 +7,20 @@ class OrderService {
     this.repository = repository;
     this.productService = productService;
   }
-  async updateOrderProducts(orderNumber, updateOrderProductsFields) {
+  async updateOrderProducts(orderNumber, updateOrderProductsFields, currentOrderTotalAmount) {
     const productsIds = extractedProductIds(updateOrderProductsFields);
     const getExistingProducts = await this.getProductsByIds(productsIds);
-    debug.logger.superdebug('products documents', getExistingProducts);
     const productsExist = productsExistById(productsIds, getExistingProducts);
     if (!productsExist) {
       throw new AppError('Produtos inexistentes encontrados na solicitação', 400);
     }
     const currentOrder = await this.repository.findByOrderNumber(orderNumber);
-    return await this.repository.updateOrderProducts(currentOrder, updateOrderProductsFields, getExistingProducts);
+    return await this.repository.updateOrderProducts(
+      currentOrder,
+      updateOrderProductsFields,
+      getExistingProducts,
+      currentOrderTotalAmount,
+    );
   }
 
   async listProductsByOrder(orderNumber) {

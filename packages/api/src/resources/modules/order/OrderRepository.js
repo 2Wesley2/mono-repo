@@ -49,7 +49,19 @@ class OrderRepository {
         quantity: newProd.quantity,
       }));
     const finalProducts = [...updatedProducts, ...newProducts];
-    return await this.orderModel.updateOrderProducts(finalProducts, currentOrderId, getExistingProducts);
+    const relevantProducts = getExistingProducts.filter((prod) =>
+      finalProducts.some((fProd) => String(fProd.product) === String(prod._id)),
+    );
+    const currentOrderTotalAmount = currentOrder.totalAmount;
+    const currentOrderProducts = currentOrder.products;
+    console.log(JSON.stringify(`currentOrderTotalAmount: ${currentOrderTotalAmount}`));
+    return await this.orderModel.updateOrderProducts(
+      finalProducts,
+      currentOrderId,
+      relevantProducts,
+      currentOrderTotalAmount,
+      currentOrderProducts,
+    );
   }
 
   async findByOrderNumber(orderNumber) {

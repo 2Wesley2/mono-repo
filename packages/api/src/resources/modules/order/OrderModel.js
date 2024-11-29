@@ -58,8 +58,23 @@ class OrderModel extends Model {
     return await this.model.insertMany(data);
   }
 
-  async updateOrderProducts(updatedProducts, currentOrderId, getExistingProducts) {
-    const totalAmount = calculateTotalAmount(getExistingProducts, updatedProducts);
+  async updateOrderProducts(
+    updatedProducts,
+    currentOrderId,
+    relevantProducts,
+    currentOrderTotalAmount,
+    currentOrderProducts,
+  ) {
+    console.log('iniciando calculo do total');
+    const totalAmount = calculateTotalAmount(
+      relevantProducts,
+      updatedProducts,
+      currentOrderTotalAmount,
+      currentOrderProducts,
+    );
+    console.log('calculo do total', totalAmount);
+    debug.logger.superdebug('calculo do total', totalAmount);
+
     const resultOfUpdate = await this.model.updateOne(
       { _id: currentOrderId },
       {
@@ -70,9 +85,9 @@ class OrderModel extends Model {
         },
       },
     );
+
     return resultOfUpdate;
   }
-
   async findByOrderNumber(orderNumber) {
     const result = await this.model.findByUniqueKey({ orderNumber });
     if (typeof result === 'string') {
