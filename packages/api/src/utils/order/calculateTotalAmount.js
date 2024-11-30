@@ -1,50 +1,49 @@
 import debug from '../../debug/index.js';
-
 function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrderTotalAmount, currentOrderProducts) {
   try {
-    debug.logger.superdebug('getExistingProducts:', getExistingProducts);
-    debug.logger.superdebug('updatedProducts:', updatedProducts);
-    debug.logger.superdebug('currentOrderTotalAmount:', currentOrderTotalAmount);
-    debug.logger.superdebug('currentOrderProducts:', currentOrderProducts);
     const productMap = new Map(getExistingProducts.map((prod) => [prod._id.toString(), prod]));
-    debug.logger.superdebug('productMap:', [...productMap.entries()]);
     const currentOrderMap = new Map(currentOrderProducts.map((prod) => [prod.product.toString(), prod.quantity]));
-    const updatedProductsTotal = updatedProducts.reduce((acc, item) => {
-      const product = productMap.get(item.product.toString());
-      debug.logger.superdebug('productMap.get:', { productId: item.product, result: product });
 
+    let updatedProductsTotal = 0;
+    updatedProducts.forEach((item) => {
+      const product = productMap.get(item.product.toString());
       if (product) {
         const currentQuantity = currentOrderMap.get(item.product.toString()) || 0;
+        const quantityDifference = item.quantity - currentQuantity;
 
-        if (item.quantity !== currentQuantity) {
-          const quantityDifference = item.quantity - currentQuantity;
+        if (quantityDifference !== 0) {
           const productTotal = product.price * quantityDifference;
-          acc += productTotal;
+          updatedProductsTotal += productTotal;
 
           debug.logger.superdebug('Atualizando total:', {
             product: product.name,
             quantityDifference,
             productTotal,
-            acc,
-          });
-        } else {
-          debug.logger.superdebug('Produto inalterado, ignorado:', {
-            product: product.name,
-            currentQuantity,
-            newQuantity: item.quantity,
+            updatedProductsTotal,
           });
         }
-      } else {
-        debug.logger.superdebug('Produto não encontrado no mapa:', { productId: item.product });
       }
+    });
 
-      return acc;
-    }, 0);
+    currentOrderProducts.forEach((product) => {
+      const isRemoved = !updatedProducts.some((updatedProd) => String(updatedProd.product) === String(product.product));
+
+      if (isRemoved) {
+        const productDetails = productMap.get(product.product.toString());
+        if (productDetails) {
+          const removedTotal = productDetails.price * product.quantity;
+          updatedProductsTotal -= removedTotal;
+
+          debug.logger.superdebug('Produto removido, ajustando total:', {
+            product: productDetails.name,
+            removedTotal,
+            updatedProductsTotal,
+          });
+        }
+      }
+    });
 
     const totalAmount = currentOrderTotalAmount + updatedProductsTotal;
-
-    debug.logger.superdebug('updatedProductsTotal:', updatedProductsTotal);
-    debug.logger.superdebug('totalAmount:', totalAmount);
     return totalAmount;
   } catch (error) {
     console.group('Erro Capturado');
@@ -60,5 +59,4 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
     return currentOrderTotalAmount;
   }
 }
-
 export default calculateTotalAmount;
