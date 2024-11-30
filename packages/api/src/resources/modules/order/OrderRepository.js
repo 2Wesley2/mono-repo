@@ -1,6 +1,3 @@
-import debug from '../../../debug/index.js';
-import { calculateTotalAmount } from '../../../utils/order/index.js';
-
 /**
  * Classe responsável por interagir com o modelo de pedidos (OrderModel).
  * Centraliza a lógica de repositório e facilita o gerenciamento de dados de pedidos.

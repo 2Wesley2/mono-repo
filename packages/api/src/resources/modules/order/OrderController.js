@@ -61,7 +61,6 @@ class OrderController extends Controller {
    */
 
   async updateOrderProducts(req, res, next) {
-    console.log('controller');
     const { orderNumber } = req.params;
     const { products } = req.body;
     try {

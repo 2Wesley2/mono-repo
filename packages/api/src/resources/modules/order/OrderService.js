@@ -1,6 +1,5 @@
 import AppError from '../../../errors/AppError.js';
 import { extractedProductIds, productsExistById } from '../../../utils/order/index.js';
-import debug from '../../../debug/index.js';
 
 class OrderService {
   constructor(repository, productService) {

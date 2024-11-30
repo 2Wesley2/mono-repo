@@ -1,6 +1,5 @@
 import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
-import debug from '../../../debug/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
 import { calculateTotalAmount } from '../../../utils/order/index.js';
 
@@ -65,16 +64,12 @@ class OrderModel extends Model {
     currentOrderTotalAmount,
     currentOrderProducts,
   ) {
-    console.log('iniciando calculo do total');
     const totalAmount = calculateTotalAmount(
       relevantProducts,
       updatedProducts,
       currentOrderTotalAmount,
       currentOrderProducts,
     );
-    console.log('calculo do total', totalAmount);
-    debug.logger.superdebug('calculo do total', totalAmount);
-
     const resultOfUpdate = await this.model.updateOne(
       { _id: currentOrderId },
       {
