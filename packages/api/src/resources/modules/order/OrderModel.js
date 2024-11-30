@@ -89,20 +89,6 @@ class OrderModel extends Model {
     return resultOfUpdate;
   }
 
-  // CHECKPOINT
-  // QUANDO O PRODUTO É REMOVIDO DA ORDER FINAL O SEU VALOR NÃO ESTÁ SENDO DECREMENTADO DO AMOUNT TOTAL
-  //
-  // JSON para teste no postman
-  //{
-  //    "products": [
-  //        { "product": "6745d9d3f7c376f561ad14ea", "quantity": 1 },
-  //        { "product": "6745d9d3f7c376f561ad14eb", "quantity": 1 },
-  //        { "product": "6745d9d3f7c376f561ad14ec", "quantity": 1 },
-  //        { "product": "6745d9d3f7c376f561ad14fe", "quantity": 1 }
-  //     ]
-  //}
-  //
-  //
   async findByOrderNumber(orderNumber) {
     const result = await this.model.findByUniqueKey({ orderNumber });
     if (typeof result === 'string') {
