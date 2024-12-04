@@ -1,6 +1,8 @@
+'use client';
 import React from 'react';
 import { TextField, Typography } from '@mui/material';
-import { useOrderState } from '../context/useOrderState';
+import { useOrderState } from '../../context/useOrderState';
+
 const CommandInput = () => {
   const {
     commandNumber,
@@ -9,6 +11,8 @@ const CommandInput = () => {
     handleCommandNumberEnter,
     isWaitingForProduct,
   } = useOrderState();
+
+
   return (
     <>
       <Typography
@@ -44,8 +48,14 @@ const CommandInput = () => {
       <TextField
         autoFocus
         value={commandNumber}
-        onChange={(e) => setCommandNumber(e.target.value)}
-        onKeyDown={handleCommandNumberEnter}
+        onChange={(e) => {
+          setCommandNumber(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleCommandNumberEnter(e);
+          }
+        }}
         placeholder="Número da comanda ou 'X'"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{

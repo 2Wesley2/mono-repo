@@ -10,19 +10,19 @@ function validateRequest(type, input) {
       }
       return orderNumber;
 
-    case 'updateFields':
+    case 'products':
       if (!input || !Array.isArray(input) || input.length === 0) {
-        throw new AppError(badRequestNumberStatus, 'updateFields array is required and cannot be empty');
+        throw new AppError(badRequestNumberStatus, 'products array is required and cannot be empty');
       }
       for (const { product, quantity, ...rest } of input) {
         if (!product || typeof product !== 'string') {
-          throw new AppError(badRequestNumberStatus, 'Each updateFields item must have a valid product string.');
+          throw new AppError(badRequestNumberStatus, 'Each products item must have a valid product string.');
         }
         if (typeof quantity !== 'number') {
-          throw new AppError(badRequestNumberStatus, 'Each updateFields item must have a valid type number quantity.');
+          throw new AppError(badRequestNumberStatus, 'Each products item must have a valid type number quantity.');
         }
         if (Object.keys(rest).length > 0) {
-          throw new AppError(`Unexpected fields in updateFields item: ${JSON.stringify(rest)}`);
+          throw new AppError(`Unexpected fields in products item: ${JSON.stringify(rest)}`);
         }
       }
       return true;

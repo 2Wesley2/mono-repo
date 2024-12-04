@@ -1,6 +1,6 @@
-import debug from '../../../debug/index.js';
 import Controller from '../../../resources/core/Controller.js';
 import { validateRequest, mergeDuplicateProducts } from '../../../utils/order/index.js';
+import debug from '../../../debug/index.js';
 
 class OrderController extends Controller {
   constructor(service) {
@@ -18,36 +18,13 @@ class OrderController extends Controller {
   async listProductsByOrder(req, res, next) {
     try {
       let { orderNumber } = req.params;
-
       orderNumber = parseInt(orderNumber, 10);
       if (isNaN(orderNumber)) {
         return res.status(400).json({ success: false, message: 'Parâmetro orderNumber deve ser um número válido.' });
       }
-      const productsList = await this.service.listProductsByOrder(orderNumber);
-      const products = Array.isArray(productsList) ? productsList : productsList?.products || [];
-      const mappedProducts = products.map((item) => {
-        if (!item.product || !item.product._id || !item.product.name || item.product.price == null) {
-          return null;
-        }
-
-        return {
-          product: {
-            _id: item.product._id,
-            name: item.product.name,
-            price: item.product.price,
-          },
-          quantity: item.quantity,
-        };
-      });
-
-      const validProducts = mappedProducts.filter(Boolean);
-
-      const result = {
-        orderNumber: productsList.orderNumber,
-        products: validProducts,
-      };
-
-      return res.status(200).json({ success: true, data: result });
+      const products = await this.service.listProductsByOrder(orderNumber);
+      console.log(JSON.stringify(products));
+      return res.status(200).json(products);
     } catch (error) {
       next(error);
     }
@@ -65,7 +42,7 @@ class OrderController extends Controller {
     const { products } = req.body;
     try {
       validateRequest('orderNumber', orderNumber);
-      validateRequest('updateFields', products);
+      validateRequest('products', products);
       const mergedDuplicateProducts = mergeDuplicateProducts(products);
       const updatedProducts = await this.service.updateOrderProducts(orderNumber, mergedDuplicateProducts);
       res.status(200).json({ updatedProducts });

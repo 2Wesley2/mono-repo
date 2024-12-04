@@ -1,4 +1,3 @@
-import debug from '../../debug/index.js';
 function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrderTotalAmount, currentOrderProducts) {
   try {
     const productMap = new Map(getExistingProducts.map((prod) => [prod._id.toString(), prod]));
@@ -14,13 +13,6 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
         if (quantityDifference !== 0) {
           const productTotal = product.price * quantityDifference;
           updatedProductsTotal += productTotal;
-
-          debug.logger.superdebug('Atualizando total:', {
-            product: product.name,
-            quantityDifference,
-            productTotal,
-            updatedProductsTotal,
-          });
         }
       }
     });
@@ -33,12 +25,6 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
         if (productDetails) {
           const removedTotal = productDetails.price * product.quantity;
           updatedProductsTotal -= removedTotal;
-
-          debug.logger.superdebug('Produto removido, ajustando total:', {
-            product: productDetails.name,
-            removedTotal,
-            updatedProductsTotal,
-          });
         }
       }
     });
@@ -50,12 +36,6 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
     console.error('Mensagem de erro:', error.message);
     console.error('Stack Trace:', error.stack);
     console.groupEnd();
-
-    debug.logger.superdebug('Erro ao calcular o total:', {
-      message: error.message,
-      stack: error.stack,
-    });
-
     return currentOrderTotalAmount;
   }
 }

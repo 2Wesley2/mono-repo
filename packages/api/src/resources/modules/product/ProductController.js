@@ -26,7 +26,6 @@ class ProductController extends Controller {
       next(error);
     }
   }
-
   async bulkCreate(req, res, next) {
     try {
       const products = await this.service.bulkCreate(req.body);

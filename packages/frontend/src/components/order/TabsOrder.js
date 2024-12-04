@@ -1,5 +1,6 @@
+'use client';
 import { Tabs, Tab } from '@mui/material';
-import { useOrderState } from '../context/useOrderState';
+import { useOrderState } from '../../context/useOrderState';
 
 const TabsOrder = () => {
   const { activeTab, setActiveTab, categories } = useOrderState();
@@ -25,6 +26,7 @@ const TabsOrder = () => {
           textTransform: 'none',
           transition: 'color 0.3s ease, background-color 0.3s ease',
           borderBottom: '2px solid transparent',
+          cursor: 'pointer',
           '&:hover': {
             backgroundColor: '#EFEFEF',
             color: '#E50914',

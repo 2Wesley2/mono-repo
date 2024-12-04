@@ -1,4 +1,5 @@
 import debug from '../debug/index.js';
+import AppError from '../errors/AppError.js';
 /**
  * Plugin que adiciona métodos estáticos para busca e atualização com base em chaves únicas a um schema do Mongoose.
  *
@@ -47,25 +48,25 @@ const uniqueKeyPlugin = (newSchema) => {
    */
   newSchema.statics.findByUniqueKey = async function (filter) {
     if (filter === null || filter === undefined) {
-      return 'Filtro inválido: Valor nulo ou indefinido.';
+      throw new AppError(400, 'Filtro inválido: Valor nulo ou indefinido.');
     }
 
     const validatedFilter = ensureValidFilter(filter);
 
     if (!validatedFilter) {
-      return 'Filtro inválido: Não foi possível executar a busca.';
+      throw new AppError(400, 'Filtro inválido: Não foi possível executar a busca.');
     }
 
     const uniqueKey = Object.keys(validatedFilter)[0];
     const value = validatedFilter[uniqueKey];
 
     if (!ensureValidValue(value, typeof value)) {
-      return `Erro de tipo: O valor para a chave única "${uniqueKey}" deve ser um ${typeof value}.`;
+      throw new AppError(400, `Erro de tipo: O valor para a chave única "${uniqueKey}" deve ser um ${typeof value}.`);
     }
 
     const result = await this.findOne(validatedFilter);
     if (!result) {
-      return 'Nenhum documento encontrado para o filtro fornecido.';
+      throw new AppError(404, 'Nenhum documento encontrado para o filtro fornecido.');
     }
     return result;
   };

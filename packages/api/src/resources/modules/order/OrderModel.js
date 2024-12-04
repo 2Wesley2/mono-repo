@@ -2,7 +2,7 @@ import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
 import { calculateTotalAmount } from '../../../utils/order/index.js';
-
+import AppError from '../../../errors/AppError.js';
 const validateOrder = function () {
   if (this.products.length > 0 && this.totalAmount <= 0) {
     throw new Error('Total amount must be greater than zero if there are products.');
@@ -60,12 +60,12 @@ class OrderModel extends Model {
   async updateOrderProducts(
     updatedProducts,
     currentOrderId,
-    relevantProducts,
+    getExistingProducts,
     currentOrderTotalAmount,
     currentOrderProducts,
   ) {
     const totalAmount = calculateTotalAmount(
-      relevantProducts,
+      getExistingProducts,
       updatedProducts,
       currentOrderTotalAmount,
       currentOrderProducts,
@@ -80,30 +80,34 @@ class OrderModel extends Model {
         },
       },
     );
-
+    console.log('resultOfUpdate na camada model', resultOfUpdate);
     return resultOfUpdate;
   }
 
   async findByOrderNumber(orderNumber) {
     const result = await this.model.findByUniqueKey({ orderNumber });
-    if (typeof result === 'string') {
-      return result;
-    }
     if (!result) {
-      return 'Erro desconhecido ao buscar o pedido.';
+      throw new AppError(500, 'Erro desconhecido ao buscar o pedido.');
     }
     return result.toObject();
   }
 
   async listProductsByOrder(orderNumber) {
-    const result = await this.findByOrderNumber(orderNumber);
-    if (typeof result === 'string') {
-      return result;
+    const order = await this.findByOrderNumber(orderNumber);
+    if (!order) {
+      throw new AppError(404, 'Pedido não encontrado.');
     }
-    if (result && Array.isArray(result.products)) {
-      return result.products.map(({ product, quantity }) => ({ product, quantity }));
+    if (!Array.isArray(order.products)) {
+      throw new AppError(500, 'Estrutura de dados inesperada: "order.products" não é um array.');
     }
-    return 'Erro ao processar os produtos do pedido.';
+
+    return {
+      totalAmount: order.totalAmount,
+      products: order.products.map(({ product, quantity }) => ({
+        product,
+        quantity,
+      })),
+    };
   }
 }
 

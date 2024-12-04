@@ -1,27 +1,27 @@
-function mergeDuplicateProducts(productList) {
-  const uniqueProducts = {};
+// src/utils/validateCategoryObjects.js
 
-  productList.forEach((item) => {
-    const { product, quantity } = item;
+/**
+ * Valida se todos os objetos em cada categoria seguem o padrão de chaves esperadas.
+ * @param {Object} categorizedProducts - Objeto com produtos categorizados.
+ * @param {Array<string>} expectedKeys - Lista de chaves esperadas.
+ * @returns {Object|boolean} - Retorna true se todos os objetos forem válidos; caso contrário, retorna os objetos inválidos.
+ */
+function validateCategoryObjects(categorizedProducts, expectedKeys) {
+  const invalidEntries = Object.entries(categorizedProducts).reduce((acc, [category, products]) => {
+    const invalidObjects = products
+      .map((product, index) => {
+        const productKeys = Object.keys(product);
+        const missingKeys = expectedKeys.filter((key) => !productKeys.includes(key));
+        const extraKeys = productKeys.filter((key) => !expectedKeys.includes(key));
 
-    if (uniqueProducts[product]) {
-      uniqueProducts[product] += quantity;
-    } else {
-      uniqueProducts[product] = quantity;
-    }
-  });
+        return missingKeys.length || extraKeys.length
+          ? { category, index, productId: product._id || null, missingKeys, extraKeys }
+          : null;
+      })
+      .filter((item) => item !== null);
 
-  return Object.entries(uniqueProducts).map(([product, quantity]) => ({
-    product,
-    quantity,
-  }));
+    return [...acc, ...invalidObjects];
+  }, []);
+
+  return invalidEntries.length === 0 ? true : invalidEntries;
 }
-
-const productList = [
-  { product: '6745d9d3f7c376f561ad14ea', quantity: 576 },
-  { product: '6745d9d3f7c376f561ad14eb', quantity: 128 },
-  { product: '6745d9d3f7c376f561ad14ec', quantity: 128 },
-];
-
-const result = mergeDuplicateProducts(productList);
-console.log(result);

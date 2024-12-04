@@ -1,5 +1,6 @@
+'use client';
 import { Box } from '@mui/material';
-import { useOrderState } from '../context/useOrderState';
+import { useOrderState } from '../../context/useOrderState';
 
 const ErrorOrder = () => {
   const { errorMessage } = useOrderState();

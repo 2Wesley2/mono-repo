@@ -1,3 +1,4 @@
+'use client';
 import {
   Paper,
   Box,
@@ -8,11 +9,11 @@ import {
   TableBody,
   TableCell,
 } from '@mui/material';
-import { useOrderState } from '../context/useOrderState';
+import { useOrderState } from '../../context/useOrderState';
 
 const TableOrder = () => {
   const { currentOrder } = useOrderState();
-
+  const products = currentOrder?.products || [];
   return (
     <Box
       sx={{
@@ -57,10 +58,10 @@ const TableOrder = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentOrder.map(({ product, quantity }) => (
-              <TableRow key={product._id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell align="right">{product.price.toFixed(2)}</TableCell>
+            {products.map(({ _id, product, quantity, price }) => (
+              <TableRow key={_id}>
+                <TableCell>{product}</TableCell>
+                <TableCell align="right">{price}</TableCell>
                 <TableCell align="right">{quantity}</TableCell>
               </TableRow>
             ))}

@@ -9,7 +9,8 @@
     "dev": "nodemon src/main.js",
     "lint:fix": "npx eslint --fix .",
     "test": "cross-env NODE_ENV=test jest --runInBand",
-    "tt": "node src/test3.js"
+    "tt": "node src/test2.js",
+    "fetch": "node src/fetchTests/fetchAllCategories.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

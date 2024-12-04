@@ -1,4 +1,3 @@
-'use client';
 import { Box, Container } from '@mui/material';
 import { OrderStateProvider } from '../context/useOrderState';
 import {
@@ -33,6 +32,7 @@ const OrderScreen = () => {
           }}
         >
           <CommandInput />
+
           <TableOrder />
         </Box>
 
@@ -46,6 +46,7 @@ const OrderScreen = () => {
         >
           <TabsOrder />
           <ProductListForOrder />
+
           <ErrorOrder />
         </Box>
       </Container>

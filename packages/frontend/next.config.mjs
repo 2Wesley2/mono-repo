@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
   images: {
     // Limita a otimização apenas a imagens locais (no diretório 'public')
     domains: [],
