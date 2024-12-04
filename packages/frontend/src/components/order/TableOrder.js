@@ -13,6 +13,11 @@ import { useOrderState } from '../../context/useOrderState';
 
 const TableOrder = () => {
   const { currentOrder } = useOrderState();
+  console.log(
+    'currentOrder chega assim em TableOrder',
+    typeof currentOrder,
+    JSON.stringify(currentOrder),
+  );
   const products = currentOrder?.products || [];
   return (
     <Box
@@ -21,7 +26,7 @@ const TableOrder = () => {
         height: '100%',
         display: 'flex',
         alignSelf: 'flex-start',
-        width: '50%',
+        width: '100%',
       }}
     >
       <TableContainer

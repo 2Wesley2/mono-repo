@@ -19,10 +19,13 @@ export const OrderStateProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [productsByCategories, setProductsByCategories] = useState(null);
   const [activeCategoryProducts, setActiveCategoryProducts] = useState([]);
-  const [isWaitingForProducts, setIsWaitingForProducts] = useState(false); // Inicializamos como falso
+  const [isWaitingForProducts, setIsWaitingForProducts] = useState(false);
   const [commandNumber, setCommandNumber] = useState('');
   const [activeCommandNumber, setActiveCommandNumber] = useState(null);
-  const [currentOrder, setCurrentOrder] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState({
+    products: [],
+    totalAmount: 0,
+  });
   const [initialOrder, setInitialOrder] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -87,7 +90,7 @@ export const OrderStateProvider = ({ children }) => {
 
   const resetCommandState = () => {
     setActiveCommandNumber(null);
-    setCurrentOrder([]);
+    setCurrentOrder({ products: [], totalAmount: 0 });
     setCurrentOrder(null);
     setInitialOrder(null);
     setIsWaitingForProducts(false);

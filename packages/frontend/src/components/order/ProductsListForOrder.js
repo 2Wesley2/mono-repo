@@ -5,32 +5,37 @@ import { useOrderState } from '../../context/useOrderState';
 const ProductListForOrder = () => {
   const { activeCategoryProducts, activeCommandNumber, setCurrentOrder } =
     useOrderState();
+
   const handleProductClick = (product) => {
     if (!activeCommandNumber) {
       console.error('Nenhuma comanda ativa.');
       return;
     }
-
     setCurrentOrder((prevOrder) => {
       const existingProductIndex = prevOrder.products.findIndex(
         (item) => item._id === product._id,
       );
+      const updatedProducts =
+        existingProductIndex >= 0
+          ? [
+              ...prevOrder.products.slice(0, existingProductIndex),
+              {
+                ...prevOrder.products[existingProductIndex],
+                quantity: prevOrder.products[existingProductIndex].quantity + 1,
+              },
+              ...prevOrder.products.slice(existingProductIndex + 1),
+            ]
+          : [...prevOrder.products, { ...product, quantity: 1 }];
 
-      if (existingProductIndex >= 0) {
-        // Incrementa a quantidade do produto existente
-        const updatedProducts = [...prevOrder.products];
-        updatedProducts[existingProductIndex].quantity += 1;
-
-        return {
-          ...prevOrder,
-          products: updatedProducts,
-        };
-      } else {
-        return {
-          ...prevOrder,
-          products: [...prevOrder.products, { ...product, quantity: 1 }],
-        };
-      }
+      const totalAmount = updatedProducts.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+      );
+      return {
+        ...prevOrder,
+        products: updatedProducts,
+        totalAmount,
+      };
     });
   };
 

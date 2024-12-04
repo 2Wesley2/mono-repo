@@ -1,4 +1,4 @@
-import { Box, Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { OrderStateProvider } from '../context/useOrderState';
 import {
   CommandInput,
@@ -6,6 +6,7 @@ import {
   TabsOrder,
   ProductListForOrder,
   ErrorOrder,
+  TotalAmount,
 } from '../components';
 
 const OrderScreen = () => {
@@ -23,19 +24,39 @@ const OrderScreen = () => {
       >
         <Box
           sx={{
-            height: '60vh',
-            maxHeight: '60vh',
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            padding: '1%',
+            flexDirection: 'row',
           }}
         >
-          <CommandInput />
-
-          <TableOrder />
+          <Box
+            sx={{
+              height: '60vh',
+              maxHeight: '60vh',
+              minWidth: '60%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '1%',
+            }}
+          >
+            <CommandInput />
+            <TableOrder />
+          </Box>
+          <Box
+            className="AQUI"
+            sx={{
+              marginTop: '5%',
+              maxHeight: '60vh',
+              minWidth: '40%',
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+          >
+            <TotalAmount />
+          </Box>
         </Box>
-
         <Box
           sx={{
             height: '40vh',
@@ -46,7 +67,6 @@ const OrderScreen = () => {
         >
           <TabsOrder />
           <ProductListForOrder />
-
           <ErrorOrder />
         </Box>
       </Container>

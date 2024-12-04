@@ -12,7 +12,6 @@ const CommandInput = () => {
     isWaitingForProduct,
   } = useOrderState();
 
-
   return (
     <>
       <Typography
@@ -59,7 +58,7 @@ const CommandInput = () => {
         placeholder="Número da comanda ou 'X'"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{
-          width: '50%',
+          width: '100%',
           backgroundColor: '#FFFFFF',
           '& .MuiInputBase-root': {
             fontFamily: 'Roboto, Arial, sans-serif',

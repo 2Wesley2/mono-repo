@@ -6,4 +6,5 @@ export {
   TabsOrder,
   ProductListForOrder,
   ErrorOrder,
+  TotalAmount,
 } from './order';
