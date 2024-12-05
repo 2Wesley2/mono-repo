@@ -70,7 +70,7 @@ const CommandInput = () => {
           width: '100%',
           backgroundColor: '#FFFFFF',
           '& .MuiInputBase-root': {
-            fontFamily: 'Roboto, Arial, sans-serif',
+            fontFamily: 'inherit',
             fontWeight: 'bold',
             fontSize: '1.25rem',
           },

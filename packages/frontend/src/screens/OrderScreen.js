@@ -52,6 +52,7 @@ const OrderScreen = () => {
               alignItems: 'center',
               flexDirection: 'column',
               overflow: 'hidden',
+              justifyContent: 'center',
             }}
           >
             <TotalAmount />
