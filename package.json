@@ -7,17 +7,17 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "audit:all": "lerna exec -- yarn audit"
+    "audit:all": "lerna exec -- yarn audit",
+    "dev":"concurrently \"yarn workspace api dev\" \"yarn workspace frontend dev\""
   },
   "workspaces": [
     "packages/api",
-    "packages/ui",
     "packages/frontend"
-    
   ],
   "dependencies": {},
   "devDependencies": {
     "@nrwl/workspace": "^19.5.7",
+    "concurrently": "^9.1.0",
     "lerna": "^8.1.8"
   },
   "resolutions": {

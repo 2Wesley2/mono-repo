@@ -53,7 +53,16 @@ const CommandInput = () => {
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleCommandNumberEnter(e);
+            e.target.value = ''
+            e.target.focus()
           }
+        }}
+        slotProps={{
+          input: {
+            onInput: (e) => {
+              e.target.value = e.target.value.toUpperCase();
+            },
+          },
         }}
         placeholder="Número da comanda ou 'X'"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"

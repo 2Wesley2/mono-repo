@@ -5,7 +5,7 @@ import { useOrderState } from '../../context/useOrderState';
 const TotalAmount = () => {
   const { activeCommandNumber, currentOrder } = useOrderState();
   const totalAmount = currentOrder?.totalAmount;
-  console.log()
+  console.log();
   return (
     <>
       {activeCommandNumber !== null ? (
