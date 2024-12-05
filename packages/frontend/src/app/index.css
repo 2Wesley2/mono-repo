@@ -3,11 +3,13 @@ body,
 #root {
   box-sizing: border-box;
   background-color: #ffffff;
+  font-family: 'Roboto, Arial, sans-serif !important';
 }
 
 body {
   margin: auto;
   background-color: #f7f7f7;
+  font-family: 'Roboto, Arial, sans-serif !important';
 }
 
 .background {

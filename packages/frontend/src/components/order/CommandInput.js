@@ -15,7 +15,7 @@ const CommandInput = () => {
   return (
     <>
       <Typography
-        gutterBottom
+        autoComplete="off"
         sx={{
           fontFamily: 'Roboto, Arial, sans-serif',
           display: 'flex',
@@ -29,6 +29,7 @@ const CommandInput = () => {
           <>
             Comanda&nbsp;
             <Typography
+              autoComplete="off"
               component="span"
               sx={{
                 fontSize: 'inherit',
@@ -53,8 +54,8 @@ const CommandInput = () => {
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleCommandNumberEnter(e);
-            e.target.value = ''
-            e.target.focus()
+            e.target.value = '';
+            e.target.focus();
           }
         }}
         slotProps={{
@@ -64,7 +65,6 @@ const CommandInput = () => {
             },
           },
         }}
-        placeholder="Número da comanda ou 'X'"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{
           width: '100%',

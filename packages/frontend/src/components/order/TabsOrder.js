@@ -11,6 +11,7 @@ const TabsOrder = () => {
       onChange={(event, newValue) => setActiveTab(newValue)}
       variant="fullWidth"
       sx={{
+        minHeight: '0.1%',
         marginInline: '1% 1%',
         backgroundColor: '#F7F7F7',
         borderRadius: '8px',
@@ -21,7 +22,7 @@ const TabsOrder = () => {
           justifyContent: 'center',
           fontSize: '1rem',
           color: '#000000',
-          fontFamily: 'Roboto, Arial, sans-serif !important',
+          fontFamily: 'inherit',
           fontWeight: 'normal',
           textTransform: 'none',
           transition: 'color 0.3s ease, background-color 0.3s ease',
@@ -34,13 +35,16 @@ const TabsOrder = () => {
         },
         '& .MuiTabs-indicator': {
           backgroundColor: '#E50914',
-          height: '4px',
+          height: '5%',
           borderRadius: '4px 4px 0 0',
         },
         '& .css-hmk518-MuiButtonBase-root-MuiTab-root.Mui-selected': {
           color: '#E50914',
           fontWeight: 'bold',
           borderBottom: '2px solid #E50914',
+        },
+        '& .MuiTab-root': {
+          minHeight: '0.1%',
         },
       }}
     >

@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { OrderStateProvider } from '../context/useOrderState';
 import {
   CommandInput,
@@ -13,6 +13,7 @@ const OrderScreen = () => {
   return (
     <OrderStateProvider>
       <Container
+        className=""
         maxWidth={false}
         disableGutters
         sx={{
@@ -30,9 +31,9 @@ const OrderScreen = () => {
         >
           <Box
             sx={{
-              height: '60vh',
-              maxHeight: '60vh',
-              minWidth: '60%',
+              height: '50vh',
+              maxHeight: '50vh',
+              width: '60%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -43,11 +44,10 @@ const OrderScreen = () => {
             <TableOrder />
           </Box>
           <Box
-            className="AQUI"
             sx={{
-              marginTop: '5%',
-              maxHeight: '60vh',
-              minWidth: '40%',
+              height: '50vh',
+              maxHeight: '50vh',
+              width: '40%',
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
@@ -59,7 +59,7 @@ const OrderScreen = () => {
         </Box>
         <Box
           sx={{
-            height: '40vh',
+            height: '50vh',
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
