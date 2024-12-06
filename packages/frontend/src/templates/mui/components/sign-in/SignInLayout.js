@@ -3,7 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Logo from '@/components/Logo';
+import Logo from '@/components/global/Logo';
 
 export default function SignInLayout({ children }) {
   console.log(

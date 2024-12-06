@@ -1,6 +1,6 @@
 import './index.css';
-import DrawerNavigation from '../../src/components/DrawerNavigation';
-import Footer from '../../src/components/Footer';
+import DrawerNavigation from '../components/global/DrawerNavigation';
+import Footer from '../components/global/Footer';
 export const metadata = {
   title: 'Facilite Varejo',
   description: 'Facilite Varejo App',
