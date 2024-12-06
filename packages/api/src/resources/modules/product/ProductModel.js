@@ -58,10 +58,17 @@ class ProductModel extends Model {
     const products = await this.model.find({ category });
     return products;
   }
+
   async getProductsByIds(ids) {
     const products = await this.model.find({ _id: { $in: ids } });
     return products;
   }
+
+  async searchProducts(q) {
+    const product = await this.model.find({ name: { $regex: q, $options: 'i' } });
+    return product;
+  }
+
   async updateProduct(id, data) {
     try {
       const updatedProduct = await this.model.findByIdAndUpdate(id, data, { new: true });

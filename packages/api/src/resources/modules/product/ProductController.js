@@ -14,6 +14,7 @@ class ProductController extends Controller {
     this.router.put('/:id', this.updateProduct.bind(this));
     this.router.delete('/:id', this.deleteProduct.bind(this));
     this.router.get('/category/:category', this.findByCategory.bind(this));
+    this.router.get('/search', this.searchProducts.bind(this));
   }
 
   async createProduct(req, res, next) {
@@ -36,6 +37,20 @@ class ProductController extends Controller {
       next(error);
     }
   }
+
+  async searchProducts(req, res, next) {
+    try {
+      const { q } = req.query;
+      if (!q) {
+        return;
+      }
+      const product = await this.service.searchProducts(q);
+      return res.json(product);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async findByCategory(req, res, next) {
     try {
       const { category } = req.params;

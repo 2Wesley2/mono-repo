@@ -44,6 +44,10 @@ class ProductService {
     return products;
   }
 
+  async searchProducts(q) {
+    const product = await this.repository.searchProducts(q);
+    return product;
+  }
   async updateProduct(productId, productData) {
     try {
       const updatedProduct = await this.repository.updateProduct(productId, productData);

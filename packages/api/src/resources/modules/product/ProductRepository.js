@@ -28,6 +28,11 @@ class ProductRepository {
     return await this.model.getProductsByIds(ids);
   }
 
+  async searchProducts(q) {
+    const product = await this.model.searchProducts(q);
+    return product;
+  }
+
   async findByIdProducts(id) {
     const product = await this.model.findByIdsProducts(ids);
     return product;
