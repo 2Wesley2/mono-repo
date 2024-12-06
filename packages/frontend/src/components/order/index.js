@@ -4,6 +4,7 @@ import TabsOrder from './TabsOrder';
 import ProductListForOrder from './ProductsListForOrder';
 import ErrorOrder from './ErrorOrder';
 import TotalAmount from './TotalAmount';
+import SearchButton from './SearchButton';
 export {
   CommandInput,
   TableOrder,
@@ -11,4 +12,5 @@ export {
   ProductListForOrder,
   ErrorOrder,
   TotalAmount,
+  SearchButton,
 };

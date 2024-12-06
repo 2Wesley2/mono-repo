@@ -1,3 +1,8 @@
 import initializeProductsByCategories from './initializeProductsByCategories';
 import initializeCurrentOrder from './initializeCurrentOrder';
-export { initializeProductsByCategories, initializeCurrentOrder };
+import formatCurrency from './formatCurrency';
+export {
+  initializeProductsByCategories,
+  initializeCurrentOrder,
+  formatCurrency,
+};

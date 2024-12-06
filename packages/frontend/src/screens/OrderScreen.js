@@ -7,13 +7,13 @@ import {
   ProductListForOrder,
   ErrorOrder,
   TotalAmount,
+  SearchButton,
 } from '../components';
 
 const OrderScreen = () => {
   return (
     <OrderStateProvider>
       <Container
-        className=""
         maxWidth={false}
         disableGutters
         sx={{
@@ -56,6 +56,7 @@ const OrderScreen = () => {
             }}
           >
             <TotalAmount />
+            <SearchButton />
           </Box>
         </Box>
         <Box

@@ -155,7 +155,7 @@ export const OrderStateProvider = ({ children }) => {
 
     setCommandNumber('');
   };
-
+  console.log(JSON.stringify(currentOrder));
   return (
     <OrderStateContext.Provider
       value={{

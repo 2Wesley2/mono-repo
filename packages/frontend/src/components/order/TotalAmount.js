@@ -1,15 +1,12 @@
 'use client';
 import { Typography, Box } from '@mui/material';
 import { useOrderState } from '../../context/useOrderState';
+import { formatCurrency } from '../../helper/';
 
 const TotalAmount = () => {
   const { activeCommandNumber, currentOrder } = useOrderState();
   const totalAmount = currentOrder?.totalAmount;
 
-  const formatCurrency = (amount) => {
-    if (amount === null || amount === undefined) return '';
-    return amount.toFixed(2).replace('.', ',');
-  };
   const commonStyles = {
     fontFamily: 'inherit',
     fontSize: '2rem',

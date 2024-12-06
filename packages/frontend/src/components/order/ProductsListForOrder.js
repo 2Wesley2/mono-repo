@@ -1,43 +1,11 @@
 'use client';
 import { Paper, Box, Typography } from '@mui/material';
+import { useHandleProductClick } from '../../hooks';
 import { useOrderState } from '../../context/useOrderState';
 
 const ProductListForOrder = () => {
-  const { activeCategoryProducts, activeCommandNumber, setCurrentOrder } =
-    useOrderState();
-
-  const handleProductClick = (product) => {
-    if (!activeCommandNumber) {
-      console.error('Nenhuma comanda ativa.');
-      return;
-    }
-    setCurrentOrder((prevOrder) => {
-      const existingProductIndex = prevOrder.products.findIndex(
-        (item) => item._id === product._id,
-      );
-      const updatedProducts =
-        existingProductIndex >= 0
-          ? [
-              ...prevOrder.products.slice(0, existingProductIndex),
-              {
-                ...prevOrder.products[existingProductIndex],
-                quantity: prevOrder.products[existingProductIndex].quantity + 1,
-              },
-              ...prevOrder.products.slice(existingProductIndex + 1),
-            ]
-          : [...prevOrder.products, { ...product, quantity: 1 }];
-
-      const totalAmount = updatedProducts.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0,
-      );
-      return {
-        ...prevOrder,
-        products: updatedProducts,
-        totalAmount,
-      };
-    });
-  };
+  const { activeCategoryProducts } = useOrderState();
+  const { handleProductClick } = useHandleProductClick();
 
   if (!activeCategoryProducts.length) {
     return (
@@ -63,7 +31,12 @@ const ProductListForOrder = () => {
           <Paper
             elevation={7}
             key={product._id}
-            onClick={() => handleProductClick(product)}
+            onClick={() =>
+              handleProductClick({
+                ...product,
+                product: product.name,
+              })
+            }
             sx={{
               textAlign: 'center',
               display: 'flex',

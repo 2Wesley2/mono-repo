@@ -7,4 +7,5 @@ export {
   ProductListForOrder,
   ErrorOrder,
   TotalAmount,
+  SearchButton,
 } from './order';
