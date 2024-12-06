@@ -49,14 +49,27 @@ const OrderScreen = () => {
               maxHeight: '50vh',
               width: '40%',
               display: 'flex',
-              alignItems: 'center',
               flexDirection: 'column',
               overflow: 'hidden',
-              justifyContent: 'center',
             }}
           >
-            <TotalAmount />
-            <SearchButton />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                padding: '3%',
+              }}
+            >
+              <SearchButton />
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
+              <TotalAmount />
+            </Box>
           </Box>
         </Box>
         <Box

@@ -3,6 +3,36 @@ import React from 'react';
 import { TextField, Typography } from '@mui/material';
 import { useOrderState } from '../../context/useOrderState';
 
+const styled = {
+  Typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+    display: 'flex',
+    alignSelf: 'flex-start',
+    fontSize: '2rem',
+    fontWeight: 'bold',
+  },
+  TextField: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    '& .MuiInputBase-root': {
+      fontFamily: 'inherit',
+      fontWeight: 'bold',
+      fontSize: '1.25rem',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#FFFFFF',
+      },
+      '&:hover fieldset': {
+        borderColor: '#E50914',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#E50914',
+      },
+    },
+  },
+};
+
 const CommandInput = () => {
   const {
     commandNumber,
@@ -15,13 +45,8 @@ const CommandInput = () => {
   return (
     <>
       <Typography
-        autoComplete="off"
         sx={{
-          fontFamily: 'Roboto, Arial, sans-serif',
-          display: 'flex',
-          alignSelf: 'flex-start',
-          fontSize: '2rem',
-          fontWeight: 'bold',
+          ...styled.Typography,
           color: activeCommandNumber ? '#E50914' : '#006400',
         }}
       >
@@ -29,11 +54,9 @@ const CommandInput = () => {
           <>
             Comanda&nbsp;
             <Typography
-              autoComplete="off"
               component="span"
               sx={{
-                fontSize: 'inherit',
-                fontWeight: 'bold',
+                ...styled.Typography,
                 color: '#000000',
               }}
             >
@@ -69,24 +92,7 @@ const CommandInput = () => {
         autoComplete="off"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{
-          width: '100%',
-          backgroundColor: '#FFFFFF',
-          '& .MuiInputBase-root': {
-            fontFamily: 'inherit',
-            fontWeight: 'bold',
-            fontSize: '1.25rem',
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: '#FFFFFF',
-            },
-            '&:hover fieldset': {
-              borderColor: '#E50914',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: '#E50914',
-            },
-          },
+          ...styled.TextField,
         }}
         margin="dense"
       />
