@@ -15,7 +15,7 @@ import {
   DialogActions,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import DataTable from '../../components/DataTable';
+import DataTable from '../../components/customer/DataTable';
 import useDebounce from '../../hooks/useDebounce';
 import {
   addEmployee,
@@ -23,7 +23,7 @@ import {
   deleteEmployee,
   getEmployees,
 } from '../../service/index';
-import Title from '../../components/Title';
+import Title from '../../components/global/Title';
 
 const EMPTY_EMPLOYEE = { name: '', number: '' };
 

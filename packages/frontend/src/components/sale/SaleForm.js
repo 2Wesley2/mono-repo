@@ -8,7 +8,7 @@ import {
   Paper,
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { createSale } from '../service/index';
+import { createSale } from '../../service/index';
 
 const SaleForm = ({ cpf, ticket, onBack }) => {
   const [totalAmount, setTotalAmount] = useState(0);

@@ -18,7 +18,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { createCashback, updateCashback } from '../service/cashback';
+import { createCashback, updateCashback } from '../../service/cashback';
 import React from 'react';
 
 const CashbackForm = ({ cashback: initialCashback, onBack }) => {

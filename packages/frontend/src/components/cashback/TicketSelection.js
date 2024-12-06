@@ -23,8 +23,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { format } from 'date-fns';
-import { getCustomerTickets } from '../service/index';
-import Title from '../components/Title';
+import { getCustomerTickets } from '../../service/index';
+import Title from '../global/Title';
 
 const TicketSelection = ({
   customer,

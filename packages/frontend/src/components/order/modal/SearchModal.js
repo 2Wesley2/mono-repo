@@ -92,7 +92,7 @@ const ProductList = memo(
               <ListItemText
                 primary={product.product}
                 secondary={`R$ ${formatCurrency(product.price)}`}
-                sx={styled.ListItemText}
+                sx={{...styled.ListItemText}}
               />
             </ListItem>
           ))}

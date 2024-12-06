@@ -31,7 +31,7 @@ const TotalAmount = () => {
           >
             {'Total: R$'}
           </Typography>
-          <Typography sx={{ ...commonStyles, color: '#E50914' }}>
+          <Typography sx={{ ...commonStyles, color: '#000000' }}>
             {` ${formatCurrency(totalAmount)}`}
           </Typography>
         </Box>

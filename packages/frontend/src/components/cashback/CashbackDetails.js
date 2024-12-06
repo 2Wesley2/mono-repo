@@ -14,7 +14,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Title from './Title';
+import Title from '../global/Title';
 
 const CashbackDetails = ({ cashback, onBack, onEdit }) => {
   if (!cashback) return null;

@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
-import CustomerSelection from '../../components/CustomerSelection';
-import TicketSelection from '../../components/TicketSelection';
-import SaleForm from '../../components/SaleForm';
+import CustomerSelection from '../../components/customer/CustomerSelection';
+import TicketSelection from '../../components/cashback/TicketSelection';
+import SaleForm from '../../components/sale/SaleForm';
 
 const CheckoutPage = () => {
   const [step, setStep] = useState(1);

@@ -11,8 +11,8 @@ import {
   Fade,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import { getAllCustomers } from '../service/index';
-import Title from '../components/Title';
+import { getAllCustomers } from '../../service/index';
+import Title from '../global/Title';
 
 const CustomerSelection = ({ onSelectCustomer, onBack }) => {
   const [customers, setCustomers] = useState([]);

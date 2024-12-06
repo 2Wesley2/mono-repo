@@ -1,8 +1,8 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
-import CashbackList from '../../components/CashbackList';
-import CashbackForm from '../../components/CashbackForm';
-import CashbackDetails from '../../components/CashbackDetails';
+import CashbackList from '../../components/cashback/CashbackList';
+import CashbackForm from '../../components/cashback/CashbackForm';
+import CashbackDetails from '../../components/cashback/CashbackDetails';
 import { getAllCashbacks } from '../../service/cashback';
 
 const CashbackConfiguration = () => {

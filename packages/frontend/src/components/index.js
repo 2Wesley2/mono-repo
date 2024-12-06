@@ -1,5 +1,5 @@
-export { default as CashbackList } from './CashbackList';
-export { default as CashbackDetails } from './CashbackDetails';
+export { default as CashbackList } from './cashback/CashbackList';
+export { default as CashbackDetails } from './cashback/CashbackDetails';
 export {
   CommandInput,
   TableOrder,

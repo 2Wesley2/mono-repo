@@ -21,8 +21,8 @@ import {
   editCustomer,
   deleteCustomer,
 } from '../../service/index';
-import DataTable from '../../components/DataTable';
-import Title from '../../components/Title';
+import DataTable from '../../components/customer/DataTable';
+import Title from '../../components/global/Title';
 
 const EMPTY_CUSTOMER = { name: '', cpf: '', phone: '', email: '' };
 
