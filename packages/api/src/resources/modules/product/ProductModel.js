@@ -65,7 +65,7 @@ class ProductModel extends Model {
   }
 
   async searchProducts(q) {
-    const product = await this.model.find({ name: { $regex: q, $options: 'i' } });
+    const product = await this.model.find({ name: { $regex: `^${q}`, $options: 'i' } });
     return product;
   }
 

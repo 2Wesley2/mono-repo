@@ -13,11 +13,6 @@ import { useOrderState } from '../../context/useOrderState';
 import { formatCurrency } from '../../helper';
 const TableOrder = () => {
   const { currentOrder } = useOrderState();
-  console.log(
-    'currentOrder chega assim em TableOrder',
-    typeof currentOrder,
-    JSON.stringify(currentOrder),
-  );
   const products = currentOrder?.products || [];
   return (
     <Box

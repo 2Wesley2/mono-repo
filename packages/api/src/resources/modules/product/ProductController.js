@@ -40,12 +40,16 @@ class ProductController extends Controller {
 
   async searchProducts(req, res, next) {
     try {
-      const { q } = req.query;
-      if (!q) {
-        return;
+      const query = req.query.q;
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: 'Query parameter "q" is required and must be a string.' });
       }
-      const product = await this.service.searchProducts(q);
-      return res.json(product);
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === '') {
+        return res.status(400).json({ error: 'Query parameter "q" cannot be empty after trimming.' });
+      }
+      const products = await this.service.searchProducts(trimmedQuery);
+      return res.json(products);
     } catch (error) {
       next(error);
     }
