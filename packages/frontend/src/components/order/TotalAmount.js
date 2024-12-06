@@ -9,10 +9,9 @@ const TotalAmount = () => {
 
   const commonStyles = {
     fontFamily: 'inherit',
-    fontSize: '2rem',
+    fontSize: '2.5rem',
     fontWeight: 'bold',
     WebkitBackgroundClip: 'text',
-    textShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
     textTransform: 'uppercase',
   };
   return (

@@ -10,7 +10,7 @@ import {
   TableCell,
 } from '@mui/material';
 import { useOrderState } from '../../context/useOrderState';
-
+import { formatCurrency } from '../../helper';
 const TableOrder = () => {
   const { currentOrder } = useOrderState();
   console.log(
@@ -66,7 +66,7 @@ const TableOrder = () => {
             {products.map(({ _id, product, quantity, price }) => (
               <TableRow key={_id}>
                 <TableCell>{product}</TableCell>
-                <TableCell align="right">{price}</TableCell>
+                <TableCell align="right">{formatCurrency(price)}</TableCell>
                 <TableCell align="right">{quantity}</TableCell>
               </TableRow>
             ))}

@@ -96,12 +96,32 @@ const SearchModal = ({ open, onClose }) => {
               fontWeight: 'normal',
               fontSize: '1.25rem',
             },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#FFFFFF',
+              },
+              '&:hover fieldset': {
+                borderColor: '#E50914',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#E50914',
+              },
+            },
           }}
           fullWidth
           placeholder="Digite para buscar produto..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           autoFocus
+          slotProps={{
+            input: {
+              onInput: (e) => {
+                e.target.value = e.target.value.toUpperCase();
+              },
+            },
+            autoComplete: 'new-password',
+          }}
+          autoComplete="off"
           margin="dense"
         />
         {loading ? (

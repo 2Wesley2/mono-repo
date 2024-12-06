@@ -64,7 +64,9 @@ const CommandInput = () => {
               e.target.value = e.target.value.toUpperCase();
             },
           },
+          autoComplete: 'new-password',
         }}
+        autoComplete="off"
         aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{
           width: '100%',
@@ -73,6 +75,17 @@ const CommandInput = () => {
             fontFamily: 'inherit',
             fontWeight: 'bold',
             fontSize: '1.25rem',
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#FFFFFF',
+            },
+            '&:hover fieldset': {
+              borderColor: '#E50914',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#E50914',
+            },
           },
         }}
         margin="dense"

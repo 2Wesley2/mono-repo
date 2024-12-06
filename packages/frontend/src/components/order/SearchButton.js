@@ -21,6 +21,11 @@ const SearchButton = () => {
         onClick={handleOpenModal}
         sx={{
           backgroundColor: '#FFFFFF',
+          cursor: 'auto',
+          '&:hover': {
+            transform: 'scale(1.10)',
+            WebkitTransform: 'scale(1.10)',
+          },
         }}
       >
         <SearchIcon sx={{ color: '#E50914' }} />
