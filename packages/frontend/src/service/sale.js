@@ -4,7 +4,7 @@ const apiBaseUrl = env.apiBaseUrl;
 
 export const createSale = async (saleData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/sale`, {
+    const response = await fetch(`${apiBaseUrl}/sale`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ async function simplifyStructure(categorizedProducts) {
 async function fetchAllCategories() {
   try {
     const categoryPromises = categories.map((category) =>
-      request(`/api/product/category/${encodeURIComponent(category)}`, 'GET'),
+      request(`/product/category/${encodeURIComponent(category)}`, 'GET'),
     );
     const resolveCategoryPromises = await Promise.all(categoryPromises);
     const categorizedProducts = categories.reduce((acc, category, index) => {

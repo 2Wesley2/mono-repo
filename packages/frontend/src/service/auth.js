@@ -4,7 +4,7 @@ const apiBaseUrl = env.apiBaseUrl;
 
 export async function login(username, password) {
   try {
-    const res = await fetch(`${apiBaseUrl}/api/user/login`, {
+    const res = await fetch(`${apiBaseUrl}/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

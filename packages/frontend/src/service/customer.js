@@ -4,7 +4,7 @@ const apiBaseUrl = env.apiBaseUrl;
 
 export const getAllCustomers = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/all`, {
+    const response = await fetch(`${apiBaseUrl}/customer/all`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const getAllCustomers = async () => {
 
 export const getCustomerTickets = async (cpf) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/${cpf}/tickets`, {
+    const response = await fetch(`${apiBaseUrl}/customer/${cpf}/tickets`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

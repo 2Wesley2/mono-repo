@@ -5,7 +5,7 @@ const apiBaseUrl = env.apiBaseUrl;
 // LOGIN
 export async function login(username, password) {
   try {
-    const res = await fetch(`${apiBaseUrl}/api/user/login`, {
+    const res = await fetch(`${apiBaseUrl}/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function login(username, password) {
 // CUSTOMERS
 export const getCustomer = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer`, {
+    const response = await fetch(`${apiBaseUrl}/customer`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export const getCustomer = async () => {
 
 export const addCustomer = async (customerData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer`, {
+    const response = await fetch(`${apiBaseUrl}/customer`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export const addCustomer = async (customerData) => {
 
 export const editCustomer = async (cpf, customerData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/${cpf}`, {
+    const response = await fetch(`${apiBaseUrl}/customer/${cpf}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export const editCustomer = async (cpf, customerData) => {
 
 export const deleteCustomer = async (cpf) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/customer/${cpf}`, {
+    const response = await fetch(`${apiBaseUrl}/customer/${cpf}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export const deleteCustomer = async (cpf) => {
 // EMPLOYEES
 export const getEmployees = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/employee`, {
+    const response = await fetch(`${apiBaseUrl}/employee`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export const getEmployees = async () => {
 
 export const addEmployee = async (employeeData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/employee`, {
+    const response = await fetch(`${apiBaseUrl}/employee`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ export const addEmployee = async (employeeData) => {
 
 export const editEmployee = async (id, employeeData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/employee/${id}`, {
+    const response = await fetch(`${apiBaseUrl}/employee/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ export const editEmployee = async (id, employeeData) => {
 
 export const deleteEmployee = async (id) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/employee/${id}`, {
+    const response = await fetch(`${apiBaseUrl}/employee/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ export const deleteEmployee = async (id) => {
 // SALES
 export const createSale = async (saleData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/sale`, {
+    const response = await fetch(`${apiBaseUrl}/sale`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

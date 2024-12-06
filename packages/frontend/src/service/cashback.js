@@ -4,7 +4,7 @@ const apiBaseUrl = env.apiBaseUrl;
 
 export const getAllCashbacks = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/cashback/cashbacks`, {
+    const response = await fetch(`${apiBaseUrl}/cashback/cashbacks`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const getAllCashbacks = async () => {
 
 export const createCashback = async (cashbackData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/cashback/create`, {
+    const response = await fetch(`${apiBaseUrl}/cashback/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const createCashback = async (cashbackData) => {
 
 export const updateCashback = async (cashbackId, cashbackData) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/cashback/${cashbackId}`, {
+    const response = await fetch(`${apiBaseUrl}/cashback/${cashbackId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
