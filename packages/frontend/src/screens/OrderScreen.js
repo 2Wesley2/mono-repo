@@ -65,7 +65,7 @@ const OrderScreen = () => {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
               <TotalAmount />
