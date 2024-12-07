@@ -18,7 +18,8 @@ function useHandleProductClick() {
               ...prevOrder.products.slice(0, existingProductIndex),
               {
                 ...prevOrder.products[existingProductIndex],
-                quantity: prevOrder.products[existingProductIndex].quantity + quantity,
+                quantity:
+                  prevOrder.products[existingProductIndex].quantity + quantity,
               },
               ...prevOrder.products.slice(existingProductIndex + 1),
             ]

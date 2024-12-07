@@ -12,6 +12,7 @@ const styled = {
     fontWeight: 'bold',
   },
   TextField: {
+    borderRadius: '4%',
     width: '100%',
     backgroundColor: '#FFFFFF',
     '& .MuiInputBase-root': {
@@ -90,7 +91,6 @@ const CommandInput = () => {
           autoComplete: 'new-password',
         }}
         autoComplete="off"
-        aria-label="Campo para inserir o número da comanda ou finalizar com X"
         sx={{
           ...styled.TextField,
         }}

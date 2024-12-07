@@ -21,15 +21,12 @@ const styled = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '100%',
-    maxWidth: '45%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
     borderRadius: 2,
   },
   TextField: {
-    width: '100%',
     backgroundColor: '#FFFFFF',
     '& .MuiInputBase-root': {
       fontFamily: 'inherit',
@@ -77,7 +74,6 @@ const ProductList = memo(
     return (
       <Box
         sx={{
-          p: 1,
           maxHeight: '40vh',
           overflowY: 'auto',
         }}
@@ -183,9 +179,18 @@ const SearchModal = ({ open, onClose }) => {
         aria-labelledby="search-modal-title"
         aria-describedby="search-modal-description"
       >
-        <Box sx={{ ...styled.Box }}>
+        <Box
+          sx={{
+            ...styled.Box,
+            width: '100%',
+            maxWidth: '45%',
+          }}
+        >
           <TextField
-            sx={{ ...styled.TextField }}
+            sx={{
+              ...styled.TextField,
+              width: '100%',
+            }}
             fullWidth
             placeholder="Digite para buscar produto..."
             value={searchQuery}
@@ -210,34 +215,31 @@ const SearchModal = ({ open, onClose }) => {
         aria-labelledby="quantity-modal-title"
         aria-describedby="quantity-modal-description"
       >
-        <Box sx={{ ...styled.Box, maxWidth: '30%' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Adicionar quantidade para {selectedProduct?.product}
-          </Typography>
+        <Box
+          sx={{
+            ...styled.Box,
+            width: '10%',
+            
+          }}
+        >
           <TextField
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            sx={{ ...styled.TextField }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleConfirmQuantity();
+              }
+            }}
+            sx={{
+              ...styled.TextField,
+              display: 'flex',
+              justifySelf: 'center',
+              width: '75%'
+            }}
             autoFocus
             margin="dense"
           />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={() => setQuantityModalOpen(false)}
-              sx={{ mr: 2 }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleConfirmQuantity}
-            >
-              Confirmar
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </>
