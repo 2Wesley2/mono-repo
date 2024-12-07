@@ -219,7 +219,6 @@ const SearchModal = ({ open, onClose }) => {
           sx={{
             ...styled.Box,
             width: '10%',
-            
           }}
         >
           <TextField
@@ -235,7 +234,7 @@ const SearchModal = ({ open, onClose }) => {
               ...styled.TextField,
               display: 'flex',
               justifySelf: 'center',
-              width: '75%'
+              width: '75%',
             }}
             autoFocus
             margin="dense"

@@ -52,10 +52,10 @@ const TableOrder = () => {
       <TableContainer component={Paper} sx={{ ...styled.TableContainer }}>
         <Table padding="none">
           <TableHead>
-            <TableRow>
-              <TableCell>Nome do Produto</TableCell>
-              <TableCell align="right">Preço</TableCell>
-              <TableCell align="right">Quantidade</TableCell>
+            <TableRow hover={true}>
+              <TableCell align='left' >Nome do Produto</TableCell>
+              <TableCell align="right" >Preço</TableCell>
+              <TableCell align="right" >Quantidade</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
