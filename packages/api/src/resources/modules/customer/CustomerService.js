@@ -1,17 +1,20 @@
 import debug from '../../../debug/index.js';
 
 class CustomerService {
-  constructor(repository) {
+  constructor(repository, rewardService) {
     this.repository = repository;
+    this.rewardService = rewardService;
   }
 
   async createCustomer(customerData) {
     try {
       const newCustomer = await this.repository.createCustomer(customerData);
-      debug.logger.info(`Serviço: Novo Cliente criado`, { customerData });
-      return newCustomer;
+      const newReward = await this.rewardService.createReward(newCustomer._id);
+      const updatedCustomer = await this.repository.updateCustomer(newCustomer._id, { rewards: newReward._id });
+      debug.logger.info('Serviço: Novo Cliente criado com sucesso', { customerData, updatedCustomer });
+      return updatedCustomer;
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao criar Cliente`, { customerData, error });
+      debug.logger.error('Serviço: Erro ao criar Cliente', { customerData, error });
       throw error;
     }
   }
@@ -37,53 +40,20 @@ class CustomerService {
       throw error;
     }
   }
-
-  async findByCPF(cpf) {
+  async listAllCustomers() {
+    return await this.repository.listAllCustomers();
+  }
+  async getCustomerWithRewards(customerId) {
     try {
-      if (!cpf) {
-        throw new Error('CPF não pode ser nulo');
-      }
-      const customer = await this.repository.findByCPF(cpf);
+      const customer = await this.repository.getCustomerById(customerId);
       if (!customer) {
-        throw new Error(`Cliente não encontrado`);
+        throw new Error('Cliente não encontrado');
       }
-      debug.logger.info(`Serviço: Cliente encontrado`, { cpf });
-      return customer;
+
+      const rewards = await this.rewardService.getRewardByCustomerId(customerId);
+      return { customer, rewards };
     } catch (error) {
-      debug.logger.error(`Serviço: Erro ao buscar Cliente por CPF`, { cpf, error });
-      throw error;
-    }
-  }
-
-  async getAllCustomers(filters = {}, options = {}) {
-    return await this.repository.findAll(filters, options);
-  }
-
-  async addTicketToCustomer(cpf, ticketId) {
-    try {
-      const updatedCustomer = await this.repository.addTicketToCustomer(cpf, ticketId);
-      debug.logger.info(`Serviço: Ticket adicionado ao cliente Cliente`, { cpf, ticketId });
-      return updatedCustomer;
-    } catch (error) {
-      debug.logger.error(`Serviço: Erro ao adicionar ticket ao cliente Cliente`, { cpf, ticketId, error });
-      throw error;
-    }
-  }
-
-  async getTicketsByCustomer(cpf) {
-    try {
-      debug.logger.info(`CustomerService.js: Iniciando recuperação de tickets para o ${cpf}`);
-      const tickets = await this.repository.getTicketsByCustomer(cpf);
-
-      debug.logger.info(`CustomerService.js: ${tickets} recuperados com sucesso`, {
-        cpf,
-        ticketsCount: tickets.length,
-        tickets,
-      });
-
-      return tickets;
-    } catch (error) {
-      debug.logger.error(`CustomerService.js: Erro ao recuperar tickets para o ${cpf}`, { error: error.message });
+      debug.logger.error('Serviço: Erro ao buscar cliente e recompensas', { customerId, error });
       throw error;
     }
   }

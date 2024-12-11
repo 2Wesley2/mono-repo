@@ -2,8 +2,8 @@ import loaders from '../../loaders/index.js';
 import debug from '../../debug/index.js';
 
 class Model {
-  constructor(schema, modelName) {
-    this.model = loaders.mongoose.registerModel(schema, modelName);
+  constructor(schema, modelName, options = {}, middlewares = []) {
+    this.model = loaders.mongoose.registerModel(schema, modelName, options, middlewares);
     this.objectId = loaders.mongoose.getObjectId();
     this.getTypes = loaders.mongoose.getTypes();
     this.isValidObjectId = loaders.isValidObjectId;

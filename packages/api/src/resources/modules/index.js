@@ -3,6 +3,11 @@ import UserRepository from './user/UserRepository.js';
 import UserService from './user/UserService.js';
 import UserController from './user/UserController.js';
 
+import CalcRefModel from './calcRef/CalcRefModel.js';
+import CalcRefRepository from './calcRef/CalcRefRepository.js';
+import CalcRefService from './calcRef/CalcRefService.js';
+import CalcRefController from './calcRef/CalcRefController.js';
+
 import CustomerModel from './customer/CustomerModel.js';
 import CustomerRepository from './customer/CustomerRepository.js';
 import CustomerService from './customer/CustomerService.js';
@@ -32,6 +37,11 @@ import TicketModel from './ticket/TicketModel.js';
 import TicketRepository from './ticket/TicketRepository.js';
 import TicketService from './ticket/TicketService.js';
 
+import RewardModel from './reward/RewardModel.js';
+import RewardRepository from './reward/RewardRepository.js';
+import RewardService from './reward/RewardService.js';
+import RewardController from './reward/RewardController.js';
+
 import TierModel from './tier/TierModel.js';
 import TierRepository from './tier/TierRepository.js';
 import TierService from './tier/TierService.js';
@@ -50,13 +60,23 @@ const userRepository = new UserRepository(userModel);
 const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
+const calcRefModel = new CalcRefModel();
+const calcRefRepository = new CalcRefRepository(calcRefModel);
+const calcRefService = new CalcRefService(calcRefRepository);
+const calcRefController = new CalcRefController(calcRefService);
+
+const rewardModel = new RewardModel();
+const rewardRepository = new RewardRepository(rewardModel);
+const rewardService = new RewardService(rewardRepository, calcRefModel);
+const rewardController = new RewardController(rewardService);
+
 const ticketModel = new TicketModel();
 const ticketRepository = new TicketRepository(ticketModel);
 const ticketService = new TicketService(ticketRepository);
 
 const customerModel = new CustomerModel();
 const customerRepository = new CustomerRepository(customerModel);
-const customerService = new CustomerService(customerRepository);
+const customerService = new CustomerService(customerRepository, rewardModel);
 const customerController = new CustomerController(customerService);
 
 const productModel = new ProductModel();
@@ -108,4 +128,6 @@ export {
   cashbackController,
   productController,
   orderController,
+  rewardController,
+  calcRefController,
 };

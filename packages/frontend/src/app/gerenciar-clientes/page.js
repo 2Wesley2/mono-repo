@@ -15,12 +15,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import {
-  getAllCustomers,
-  addCustomer,
-  editCustomer,
-  deleteCustomer,
-} from '../../service/index';
+import { CustomerService } from '../../service/index';
 import DataTable from '../../components/customer/DataTable';
 import Title from '../../components/global/Title';
 
@@ -36,11 +31,24 @@ const CustomerManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const { getAll, deleteCustomer, register, updateCustomer } = CustomerService;
 
   const loadCustomers = useCallback(async () => {
     try {
-      const customerList = await getAllCustomers();
-      console.log('Clientes recebidos do backend:', customerList);
+      const response = await getAll();
+      console.log('Clientes recebidos do backend:', response);
+      const customerList = response.customers.map((customer) => ({
+        _id: customer._id,
+        name: customer.name,
+        cpf: customer.cpf,
+        email: customer.email,
+        phone: customer.phone,
+        cashback: customer.rewards.cash,
+        lifetimeValue: customer.lifetimeValue,
+        createdAt: customer.createdAt,
+        updatedAt: customer.updatedAt,
+      }));
+
       setCustomers(customerList);
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
@@ -89,7 +97,7 @@ const CustomerManagement = () => {
     if (!validateForm()) return;
 
     try {
-      const addedCustomer = await addCustomer(newCustomer);
+      const addedCustomer = await register(newCustomer);
       setCustomers((prev) => [...prev, addedCustomer]);
       handleCloseDialog();
       handleSnackbarOpen();
@@ -102,7 +110,7 @@ const CustomerManagement = () => {
     if (!validateForm()) return;
 
     try {
-      const updatedCustomer = await editCustomer(
+      const updatedCustomer = await updateCustomer(
         dialogState.customer._id,
         newCustomer,
       );
@@ -120,13 +128,20 @@ const CustomerManagement = () => {
 
   const handleDeleteCustomer = async (customerToDelete) => {
     try {
+      console.log(`Tentando excluir cliente com ID: ${customerToDelete._id}`);
       await deleteCustomer(customerToDelete._id);
+
       setCustomers((prev) =>
         prev.filter((cust) => cust._id !== customerToDelete._id),
+      );
+
+      console.log(
+        `Cliente com ID ${customerToDelete._id} removido da lista local.`,
       );
       handleSnackbarOpen();
     } catch (error) {
       console.error('Erro ao excluir cliente:', error);
+      alert('Erro ao excluir cliente. Tente novamente.');
     }
   };
 
@@ -138,13 +153,17 @@ const CustomerManagement = () => {
     }
   }, [dialogState.type, handleAddCustomer, handleEditCustomer]);
 
-  const filteredCustomers = useMemo(
-    () =>
-      customers.filter((customer) =>
-        customer.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [customers, searchQuery],
-  );
+  const filteredCustomers = useMemo(() => {
+    const filtered = customers.filter((customer) =>
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+    console.log(
+      'Lista de clientes filtrada:',
+      JSON.stringify(filtered, null, 2),
+    );
+    return filtered;
+  }, [customers, searchQuery]);
+
   return (
     <div>
       <Box
@@ -342,8 +361,8 @@ const CustomerManagement = () => {
         </Typography>
       ) : (
         <DataTable
-          headers={['Nome', 'CPF', 'Email', 'Telefone']}
-          dataKeys={['name', 'cpf', 'email', 'phone']}
+          headers={['Nome', 'CPF', 'Email', 'Telefone', 'Cashback']}
+          dataKeys={['name', 'cpf', 'email', 'phone', 'cashback']}
           data={filteredCustomers}
           handleEdit={(customer) => handleOpenDialog('edit', customer)}
           handleDelete={handleDeleteCustomer}

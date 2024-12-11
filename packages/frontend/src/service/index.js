@@ -6,4 +6,5 @@ export * from './cashback';
 import OrderService from './orderService';
 import fetchAllCategories from './fetchAllCategories';
 import ProductService from './productService';
-export { fetchAllCategories, OrderService, ProductService };
+import CustomerService from './customerService';
+export { fetchAllCategories, OrderService, ProductService, CustomerService };

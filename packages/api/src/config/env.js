@@ -39,6 +39,8 @@ const {
   EMAIL_PORT,
   EMAIL_USER,
   EMAIL_PASSWORD,
+  PAGSEGURO_BASE_URL,
+  PAGSEGURO_ACCESS_TOKEN,
 } = process.env;
 
 export default {
@@ -96,6 +98,9 @@ export default {
    */
   nodeEnv: NODE_ENV,
 
+  PagSeguroAccessToken: PAGSEGURO_ACCESS_TOKEN,
+
+  PagSeguroBaseUrl: PAGSEGURO_BASE_URL,
   /**
    * Token de acesso do Mercado Pago
    * @type {string}

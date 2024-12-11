@@ -15,7 +15,7 @@ class AuthMiddleware {
     const token = await new SignJWT(payload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('1h')
+      .setExpirationTime('24h')
       .sign(this.secretKey);
 
     debug.logger.info('AuthMiddleware.js: Token gerado com sucesso.');

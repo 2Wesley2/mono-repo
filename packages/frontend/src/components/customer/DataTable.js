@@ -8,6 +8,7 @@ import {
   Paper,
   IconButton,
   Tooltip,
+  LinearProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -37,7 +38,24 @@ const DataTable = ({ headers, data, dataKeys, handleEdit, handleDelete }) => (
             }}
           >
             {dataKeys.map((key) => (
-              <TableCell key={key}>{item[key]}</TableCell>
+              <TableCell key={key}>
+                {key === 'cashback' ? (
+                  item.cashback !== undefined ? (
+                    <>
+                      <div>{`R$ ${item.cashback.toFixed(2)}`}</div>
+                      <LinearProgress
+                        variant="determinate"
+                        value={Math.min((item.cashback / 100) * 100, 100)}
+                        sx={{ marginTop: 1 }}
+                      />
+                    </>
+                  ) : (
+                    'Sem cashback'
+                  )
+                ) : (
+                  item[key]
+                )}
+              </TableCell>
             ))}
             <TableCell align="center">
               <Tooltip title="Editar">

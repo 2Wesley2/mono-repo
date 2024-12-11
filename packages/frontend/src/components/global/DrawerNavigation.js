@@ -26,6 +26,7 @@ const DrawerNavigation = () => {
     { path: '/checkout', name: 'Vender' },
     { path: '/configuration', name: 'Config' },
     { path: '/controle-de-comanda', name: 'Controle de Comanda' },
+    { path: '/caixa', name: 'Caixa' },
   ];
 
   const filteredRoutes = routes.filter((route) => route.path !== pathname);
@@ -35,7 +36,9 @@ const DrawerNavigation = () => {
   };
 
   const isLoginPageOrOrderPage =
-    pathname === '/login' || pathname === '/controle-de-comanda';
+    pathname === '/login' ||
+    pathname === '/controle-de-comanda' ||
+    pathname === '/caixa';
 
   if (isLoginPageOrOrderPage) return null;
 

@@ -7,11 +7,11 @@ const Layout = ({ children }) => (
       display: 'flex',
       justifySelf: 'center',
       alignSelf: 'center',
-      width: '75%',
+      width: '95%',
     }}
   >
     <Container
-      maxWidth="md"
+      maxWidth="xl"
       sx={{
         paddingBottom: '10%',
       }}

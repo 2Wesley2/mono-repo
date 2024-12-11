@@ -1,9 +1,30 @@
 import mongoose from 'mongoose';
 import config from '../config/index.js';
-import { addValidations } from '../helpers/addValidations.js';
 import { findWithPlugin, uniqueKeyPlugin } from '../plugins/index.js';
 
 export default class Database {
+  /**
+   * Adiciona um middleware a um schema existente.
+   * @param {mongoose.Schema} schema - O schema Mongoose alvo.
+   * @param {string} type - Tipo de middleware (ex: 'pre', 'post').
+   * @param {string} event - O evento alvo (ex: 'save', 'findOneAndUpdate').
+   * @param {Function} fn - A função do middleware.
+   */
+  static addMiddleware(schema, type, event, fn) {
+    if (!schema || !(schema instanceof mongoose.Schema)) {
+      throw new Error('O primeiro argumento deve ser um schema Mongoose válido.');
+    }
+    if (!['pre', 'post'].includes(type)) {
+      throw new Error(`O tipo de middleware "${type}" é inválido. Use "pre" ou "post".`);
+    }
+    if (typeof event !== 'string' || typeof fn !== 'function') {
+      throw new Error('Os argumentos "event" e "fn" devem ser uma string e uma função, respectivamente.');
+    }
+
+    schema[type](event, fn);
+    console.log(`Middleware ${type}-${event} adicionado com sucesso ao schema.`);
+  }
+
   /**
    * Conecta ao banco de dados MongoDB.
    * @param {string} dbName - Nome do banco de dados.
@@ -70,11 +91,15 @@ export default class Database {
    * @param {Object} [param0.options] - Opções do schema.
    * @returns {mongoose.Schema} - Schema configurado.
    */
-  static configSchema({ schema, options = {} }) {
+  static configSchema({ schema, options = {}, middlewares = [] }) {
     const newOptions = { timestamps: true, ...options };
     const newSchema = new mongoose.Schema(schema, newOptions);
     newSchema.plugin(uniqueKeyPlugin);
     newSchema.plugin(findWithPlugin);
+    middlewares.forEach(({ type, event, fn }) => {
+      console.log(`Registrando middleware: ${type}-${event}`); // Log para verificação
+      this.addMiddleware(newSchema, type, event, fn);
+    });
     return newSchema;
   }
 
@@ -88,7 +113,7 @@ export default class Database {
    * @param {Array<Function>|Function} [param0.validations=[]] - Funções de validação.
    * @returns {mongoose.Model} - Modelo registrado.
    */
-  static registerModel({ schema, modelName, options = {}, validations = [] }) {
+  static registerModel({ schema, modelName, options = {}, middlewares = [] }) {
     if (!schema || typeof schema !== 'object') {
       throw new Error('Schema inválido ou não fornecido.');
     }
@@ -103,7 +128,6 @@ export default class Database {
     }
 
     const newSchema = this.configSchema({ schema, options });
-    addValidations(newSchema, validations);
     const model = mongoose.model(modelName, newSchema);
     console.log(`Modelo registrado: "${modelName}"`, model);
     return model;

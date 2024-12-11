@@ -14,7 +14,8 @@ import { usePathname } from 'next/navigation';
 
 const Footer = () => {
   const pathname = usePathname();
-  const isOrderPage = pathname === '/controle-de-comanda';
+  const isOrderPage =
+    pathname === '/controle-de-comanda' || pathname === '/caixa';
 
   if (isOrderPage) return null;
   return (

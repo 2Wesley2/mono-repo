@@ -9,7 +9,7 @@
     "dev": "nodemon src/main.js",
     "lint:fix": "npx eslint --fix .",
     "test": "cross-env NODE_ENV=test jest --runInBand",
-    "tt": "node src/test2.js",
+    "tt": "node src/test4.js",
     "fetch": "node src/fetchTests/fetchAllCategories.js"
   },
   "dependencies": {
