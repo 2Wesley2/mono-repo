@@ -1,3 +1,7 @@
+/**
+ * Importação de middlewares e dependências externas necessárias para o funcionamento da aplicação.
+ */
+
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express from 'express';
@@ -8,48 +12,65 @@ import errorHandler from '../middlewares/errorHandler.js';
 import {
   customerController,
   employeeController,
-  salesController,
   userController,
-  ticketService,
-  cashbackController,
   productController,
   orderController,
   rewardController,
   calcRefController,
 } from '../resources/modules/index.js';
 
+/**
+ * Classe principal responsável por configurar e inicializar a aplicação Express.
+ */
 export default class App {
+  /**
+   * Inicializa uma nova instância da classe App.
+   * Cria uma aplicação Express.
+   */
   constructor() {
+    /**
+     * A instância da aplicação Express.
+     * @type {express.Application}
+     */
     this.app = express();
   }
 
+  /**
+   * Configura a aplicação, conectando ao banco de dados, configurando middlewares, rotas e tratamento de erros.
+   * @async
+   */
   async configureApp() {
     await this.connectDatabase();
     this.setPort();
     this.configureMiddlewares();
     this.setRoutes();
-    this.configureLogging();
-    this.scheduleDailyTicketCheck();
     this.handleErrors();
   }
 
+  /**
+   * Conecta ao banco de dados utilizando o módulo de loaders.
+   * @async
+   * @returns {Promise<void>} Uma promessa que resolve após a conexão com o banco de dados.
+   */
   async connectDatabase() {
     await loaders.mongoose.init();
     debug.logger.info('app.js: Banco de dados conectado.');
   }
 
+  /**
+   * Define a porta na qual a aplicação será executada.
+   */
   setPort() {
     const port = config.apiPort || 3009;
     this.app.set('port', port);
     debug.logger.info(`app.js: Porta definida para ${port}.`);
   }
 
+  /**
+   * Configura os middlewares globais para parsing de requisições e CORS.
+   */
   configureMiddlewares() {
     this.app.use(express.json());
-    this.app.use((req, res, next) => {
-      console.log('[DEBUG] Body parseado pelo Express:', req.body);
-      next();
-    });
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(
       cors({
@@ -61,19 +82,18 @@ export default class App {
     debug.logger.info('app.js: Middlewares de parsing e CORS configurados.');
   }
 
+  /**
+   * Define as rotas da aplicação e associa os controladores.
+   * @throws {Error} Lança um erro caso ocorra problema ao definir rotas.
+   */
   setRoutes() {
     this.app.get('/', (_, res) => res.json('Hello World'));
     debug.logger.info('app.js: Definindo rotas para os controladores...');
     try {
-      this.app.use((req, res, next) => {
-        console.log(`[DEBUG] Incoming request: ${req.method} ${req.originalUrl}`);
-        next();
-      });
+      this.logRequests();
       this.app.use('/api/customer', customerController.getRouter());
       this.app.use('/api/employee', employeeController.getRouter());
-      this.app.use('/api/sale', salesController.getRouter());
       this.app.use('/api/user', userController.getRouter());
-      this.app.use('/api/cashback', cashbackController.getRouter());
       this.app.use('/api/product', productController.getRouter());
       this.app.use('/api/order', orderController.getRouter());
       this.app.use('/api/reward', rewardController.getRouter());
@@ -84,60 +104,30 @@ export default class App {
     }
   }
 
-  configureLogging() {
+  /**
+   * Middleware que registra todas as requisições recebidas pela aplicação.
+   */
+  logRequests() {
     this.app.use((req, res, next) => {
       const { method, url } = req;
       const timestamp = new Date().toISOString();
-      debug.logger.info(`[${timestamp}] ${method} ${url}`);
+      debug.logger.info(`[DEBUG] Incoming request: [${timestamp}] ${method} ${url}`);
       next();
     });
-    debug.logger.info('app.js: Middleware de logging de requisições configurado.');
   }
 
-  scheduleDailyTicketCheck() {
-    const checkTicketsExpiringSoon = async () => {
-      try {
-        const daysUntilExpiry = 7;
-        const expiringTickets = await ticketService.findTicketsExpiringSoon(daysUntilExpiry);
-
-        for (const ticket of expiringTickets) {
-          const cliente = await customerController.findClienteByCPF(ticket.clientCPF);
-
-          if (cliente) {
-            const mensagem = `
-            Olá! Seu ticket está próximo de expirar em 
-            ${ticket.expiryDate.toLocaleDateString()}. 
-            Use-o antes dessa data para aproveitar o desconto.
-            `;
-            await notificationService.sendToAllChannels(cliente, mensagem);
-
-            debug.logger.info('Notificação enviada para cliente com ticket próximo de expirar.', {
-              clientCPF: ticket.clientCPF,
-              expiryDate: ticket.expiryDate,
-            });
-          } else {
-            debug.logger.warn('Cliente não encontrado para notificação de ticket expiring soon', {
-              clientCPF: ticket.clientCPF,
-            });
-          }
-        }
-
-        debug.logger.info('App.js: Verificação diária de tickets próximos de expirar concluída.', {
-          count: expiringTickets.length,
-        });
-      } catch (error) {
-        debug.logger.error('App.js: Erro na verificação diária de tickets:', error);
-      }
-    };
-
-    loaders.cron.scheduleJob('checkTicketsExpiringSoon', '0 0 * * *', checkTicketsExpiringSoon);
-  }
-
+  /**
+   * Registra o middleware de tratamento de erros globais.
+   */
   handleErrors() {
     this.app.use(errorHandler);
     debug.logger.info('app.js: Middleware de tratamento de erros registrado.');
   }
 
+  /**
+   * Recupera a instância da aplicação Express.
+   * @returns {express.Application} A instância da aplicação Express.
+   */
   getInstance() {
     return this.app;
   }

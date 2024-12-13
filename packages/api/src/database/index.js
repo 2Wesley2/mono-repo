@@ -2,13 +2,23 @@ import mongoose from 'mongoose';
 import config from '../config/index.js';
 import { findWithPlugin, uniqueKeyPlugin } from '../plugins/index.js';
 
+/**
+ * Classe responsável pela gestão de conexões e configuração de schemas no MongoDB usando Mongoose.
+ */
 export default class Database {
   /**
    * Adiciona um middleware a um schema existente.
+   *
    * @param {mongoose.Schema} schema - O schema Mongoose alvo.
    * @param {string} type - Tipo de middleware (ex: 'pre', 'post').
    * @param {string} event - O evento alvo (ex: 'save', 'findOneAndUpdate').
    * @param {Function} fn - A função do middleware.
+   * @example
+   * const schema = new mongoose.Schema({ name: String });
+   * Database.addMiddleware(schema, 'pre', 'save', function(next) {
+   *   console.log('Salvando documento...');
+   *   next();
+   * });
    */
   static addMiddleware(schema, type, event, fn) {
     if (!schema || !(schema instanceof mongoose.Schema)) {
@@ -27,7 +37,11 @@ export default class Database {
 
   /**
    * Conecta ao banco de dados MongoDB.
+   *
    * @param {string} dbName - Nome do banco de dados.
+   * @throws {Error} Lança um erro caso a conexão falhe.
+   * @example
+   * await Database.connect('meuBanco');
    */
   static async connect(dbName = config.dbName) {
     let dbUri;
@@ -64,7 +78,7 @@ export default class Database {
       });
 
       mongoose.connection.on('disconnected', () => {
-        console.warn('Mongoose desconectado. Tentando reconectar...');
+        console.warn('Mongoose desconectado.');
       });
     } catch (error) {
       console.error(`Falha ao conectar ao banco ${dbName}:`, error.message);
@@ -74,6 +88,9 @@ export default class Database {
 
   /**
    * Desconecta do banco de dados MongoDB.
+   *
+   * @example
+   * await Database.disconnect();
    */
   static async disconnect() {
     try {
@@ -86,18 +103,26 @@ export default class Database {
 
   /**
    * Configura o schema do Mongoose com opções e plugins personalizados.
-   * @param {Object} param0
+   *
+   * @param {Object} param0 - Objeto de configuração.
    * @param {Object} param0.schema - Definição do schema.
-   * @param {Object} [param0.options] - Opções do schema.
+   * @param {Object} [param0.options] - Opções adicionais para o schema.
+   * @param {Array<{type: string, event: string, fn: Function}>} [param0.middlewares=[]] - Middlewares a serem adicionados.
    * @returns {mongoose.Schema} - Schema configurado.
+   * @example
+   * const schema = Database.configSchema({
+   *   schema: { name: { type: String, required: true } },
+   *   options: { timestamps: true },
+   * });
    */
+
   static configSchema({ schema, options = {}, middlewares = [] }) {
     const newOptions = { timestamps: true, ...options };
     const newSchema = new mongoose.Schema(schema, newOptions);
     newSchema.plugin(uniqueKeyPlugin);
     newSchema.plugin(findWithPlugin);
     middlewares.forEach(({ type, event, fn }) => {
-      console.log(`Registrando middleware: ${type}-${event}`); // Log para verificação
+      console.log(`Registrando middleware: ${type}-${event}`);
       this.addMiddleware(newSchema, type, event, fn);
     });
     return newSchema;
@@ -110,9 +135,16 @@ export default class Database {
    * @param {Object} param0.schema - Definição do schema.
    * @param {string} param0.modelName - Nome do modelo.
    * @param {Object} [param0.options={}] - Opções do schema.
-   * @param {Array<Function>|Function} [param0.validations=[]] - Funções de validação.
+   * @param {Array<{type: string, event: string, fn: Function}>} [param0.middlewares=[]] - Middlewares a serem aplicados.
    * @returns {mongoose.Model} - Modelo registrado.
+   * @example
+   * const userSchema = { name: { type: String, required: true } };
+   * const UserModel = Database.registerModel({
+   *   schema: userSchema,
+   *   modelName: 'User',
+   * });
    */
+
   static registerModel({ schema, modelName, options = {}, middlewares = [] }) {
     if (!schema || typeof schema !== 'object') {
       throw new Error('Schema inválido ou não fornecido.');
@@ -127,26 +159,37 @@ export default class Database {
       return mongoose.models[modelName];
     }
 
-    const newSchema = this.configSchema({ schema, options });
+    const newSchema = this.configSchema({ schema, options, middlewares });
     const model = mongoose.model(modelName, newSchema);
-    console.log(`Modelo registrado: "${modelName}"`, model);
     return model;
   }
 
   /**
-   * Retorna o ObjectId do Mongoose.
+   * Retorna o tipo ObjectId do Mongoose.
+   *
+   * @returns {mongoose.Schema.Types.ObjectId} - Tipo ObjectId.
    */
   static get ObjectId() {
     return mongoose.Schema.Types.ObjectId;
   }
 
+  /**
+   * Retorna os tipos padrão do Mongoose.
+   *
+   * @returns {mongoose.Schema.Types} - Tipos do schema do Mongoose.
+   */
   static get Types() {
     return mongoose.Schema.Types;
   }
+
   /**
    * Valida um ObjectId.
+   *
    * @param {string} id - O ID a ser validado.
    * @returns {boolean} - True se o ID for válido, caso contrário, false.
+   * @example
+   * const isValid = Database.isValidObjectId('60d5ec49fdd5cf0015fded23');
+   * console.log(isValid); // true
    */
   static isValidObjectId(id) {
     return mongoose.Types.ObjectId.isValid(id);

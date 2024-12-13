@@ -1,16 +1,55 @@
+import mongoose from 'mongoose';
 import loaders from '../../loaders/index.js';
 import debug from '../../debug/index.js';
 
+/**
+ * Classe base para criação de modelos Mongoose com métodos personalizados.
+ */
 class Model {
+  /**
+   * @constructor
+   * @param {Object} schema - Definição do schema do modelo.
+   * @param {string} modelName - Nome do modelo.
+   * @param {Object} [options={}] - Opções adicionais para o schema.
+   * @param {Array<{type: string, event: string, fn: Function}>} [middlewares=[]] - Middlewares para o schema.
+   * @example
+   * const userSchema = { name: { type: String, required: true } };
+   * const UserModel = new Model(userSchema, 'User');
+   */
   constructor(schema, modelName, options = {}, middlewares = []) {
+    /**
+     * @type {mongoose.Model}
+     * O modelo Mongoose configurado.
+     */
     this.model = loaders.mongoose.registerModel(schema, modelName, options, middlewares);
+
+    /**
+     * @type {mongoose.Schema.Types.ObjectId}
+     * O tipo ObjectId do Mongoose.
+     */
     this.objectId = loaders.mongoose.getObjectId();
+
+    /**
+     * @type {mongoose.Schema.Types}
+     * Tipos padrão do Mongoose.
+     */
     this.getTypes = loaders.mongoose.getTypes();
+
+    /**
+     * @type {Function}
+     * Função para validar ObjectId.
+     * @param {string} id - O ID a ser validado.
+     * @returns {boolean} True se o ID for válido, caso contrário, false.
+     */
     this.isValidObjectId = loaders.isValidObjectId;
+
     this.attachCustomMethods();
-    debug.logger.debug(`Model: Initialized with schema for ${modelName}`);
   }
 
+  /**
+   * Anexa métodos personalizados à instância do modelo.
+   * @throws {Error} Lança um erro se um método tentar sobrescrever métodos padrão do Mongoose.
+   */
   attachCustomMethods() {
     const reservedMethods = new Array(
       'save', // Salva o documento no banco
@@ -39,6 +78,10 @@ class Model {
       'update', // (descontinuado) Atualiza documentos (não deve ser usado, mas ainda funciona em versões antigas)
     );
 
+    /**
+     * @type {string[]}
+     * Métodos personalizados definidos na classe derivada.
+     */
     const customMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(
       (method) => method !== 'constructor' && typeof this[method] === 'function' && !method.startsWith('_'), // Ignora métodos que começam com "_"
     );
@@ -54,7 +97,6 @@ class Model {
       }
       this.model[method] = this[method].bind(this);
     });
-    debug.logger.debug(`Model: Custom methods attached: ${customMethods.join(', ')}`);
   }
 }
 

@@ -1,4 +1,3 @@
-import debug from '../debug/index.js';
 import AppError from '../errors/AppError.js';
 /**
  * Plugin que adiciona métodos estáticos para busca e atualização com base em chaves únicas a um schema do Mongoose.

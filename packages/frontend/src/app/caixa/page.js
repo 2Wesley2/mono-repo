@@ -32,14 +32,25 @@ const styles = {
     backgroundColor: 'yellow',
     minHeight: '95%',
     width: '95%',
+    maxWidth: '95%',
     borderRadius: '1rem',
     p: 2,
+    overflow: 'hidden',
+  },
+  TableContainer: {
+    width: '100%',
+    overflowX: 'auto',
+  },
+  Table: {
+    tableLayout: 'fixed',
+    width: '100%',
   },
   TableCell: {
-    fontSize: 'clamp(0.75rem, 1vw, 1rem)', // Ajusta a fonte dinamicamente
-    whiteSpace: 'normal', // Permite que o texto quebre em várias linhas
-    wordWrap: 'break-word', // Quebra palavras longas
-    overflowWrap: 'break-word', // Ajuda a quebrar palavras longas
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    wordBreak: 'break-word',
+    padding: '8px',
   },
 };
 
@@ -58,8 +69,8 @@ const Checkout = () => {
           square={true}
           sx={{ ...styles.Paper }}
         >
-          <TableContainer component={Paper}>
-            <Table padding="none">
+          <TableContainer component={Box} sx={{ ...styles.TableContainer }}>
+            <Table padding="none" sx={{ ...styles.Table }}>
               <TableHead>
                 <TableRow>
                   <TableCell
@@ -77,14 +88,14 @@ const Checkout = () => {
                     Nome do Produto
                   </TableCell>
                   <TableCell
-                    align="left"
+                    align="right"
                     variant="head"
                     sx={{ ...styles.TableCell }}
                   >
                     Preço
                   </TableCell>
                   <TableCell
-                    align="left"
+                    align="right"
                     variant="head"
                     sx={{ ...styles.TableCell }}
                   >
@@ -94,17 +105,17 @@ const Checkout = () => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell align="left" sx={{ ...styles.TableCell }}>
-                    Código de barraaaaaaaaaaaaaaaaaaaaaaa
+                  <TableCell datatype='text' align="left" sx={{ ...styles.TableCell }}>
+                    3516546456546446664
                   </TableCell>
                   <TableCell sx={{ ...styles.TableCell }}>
-                    produtoaaaaaaaaaaaaaaaaaaaaa
+                    produto
                   </TableCell>
-                  <TableCell align="right" sx={{ ...styles.TableCell }}>
-                    quantidadaaaaaaaaaaaaaa
-                  </TableCell>
-                  <TableCell align="right" sx={{ ...styles.TableCell }}>
-                    valor unitáraaaaaaaaaaaaaaaaaioaa
+                 <TableCell datatype='currency' align="right" sx={{ ...styles.TableCell }}>
+                   10,00
+                 </TableCell>
+                  <TableCell datatype='number' align="right" sx={{ ...styles.TableCell }}>
+                    5 
                   </TableCell>
                 </TableRow>
               </TableBody>

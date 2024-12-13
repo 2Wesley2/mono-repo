@@ -23,33 +23,15 @@ import OrderRepository from './order/OrderRepository.js';
 import OrderService from './order/OrderService.js';
 import OrderController from './order/OrderController.js';
 
-import SalesModel from './sales/SalesModel.js';
-import SalesRepository from './sales/SalesRepository.js';
-import SalesService from './sales/SalesService.js';
-import SalesController from './sales/SalesController.js';
-
 import EmployeeModel from './employee/EmployeeModel.js';
 import EmployeeRepository from './employee/EmployeeRepository.js';
 import EmployeeService from './employee/EmployeeService.js';
 import EmployeeController from './employee/EmployeeController.js';
 
-import TicketModel from './ticket/TicketModel.js';
-import TicketRepository from './ticket/TicketRepository.js';
-import TicketService from './ticket/TicketService.js';
-
 import RewardModel from './reward/RewardModel.js';
 import RewardRepository from './reward/RewardRepository.js';
 import RewardService from './reward/RewardService.js';
 import RewardController from './reward/RewardController.js';
-
-import TierModel from './tier/TierModel.js';
-import TierRepository from './tier/TierRepository.js';
-import TierService from './tier/TierService.js';
-
-import CashbackModel from './cashback/CashbackModel.js';
-import CashbackRepository from './cashback/CashbackRepository.js';
-import CashbackService from './cashback/CashbackService.js';
-import CashbackController from './cashback/CashbackController.js';
 
 import NotificationModel from './notification/NotificationModel.js';
 import NotificationRepository from './notification/NotificationRepository.js';
@@ -69,10 +51,6 @@ const rewardModel = new RewardModel();
 const rewardRepository = new RewardRepository(rewardModel);
 const rewardService = new RewardService(rewardRepository, calcRefModel);
 const rewardController = new RewardController(rewardService);
-
-const ticketModel = new TicketModel();
-const ticketRepository = new TicketRepository(ticketModel);
-const ticketService = new TicketService(ticketRepository);
 
 const customerModel = new CustomerModel();
 const customerRepository = new CustomerRepository(customerModel);
@@ -98,34 +76,11 @@ const employeeRepository = new EmployeeRepository(employeeModel);
 const employeeService = new EmployeeService(employeeRepository);
 const employeeController = new EmployeeController(employeeService);
 
-const tierModel = new TierModel();
-const tierRepository = new TierRepository(tierModel);
-const tierService = new TierService(tierRepository);
-
-const cashbackModel = new CashbackModel();
-const cashbackRepository = new CashbackRepository(cashbackModel);
-const cashbackService = new CashbackService(cashbackRepository, tierService);
-const cashbackController = new CashbackController(cashbackService);
-
-const salesModel = new SalesModel();
-const salesRepository = new SalesRepository(salesModel);
-const salesService = new SalesService(
-  salesRepository,
-  ticketService,
-  customerRepository,
-  notificationService,
-  cashbackService,
-);
-const salesController = new SalesController(salesService);
-
 export {
   userController,
   customerController,
   employeeController,
-  salesController,
-  ticketService,
   notificationService,
-  cashbackController,
   productController,
   orderController,
   rewardController,

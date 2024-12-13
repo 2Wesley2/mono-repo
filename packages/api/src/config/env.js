@@ -2,25 +2,40 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 
+// Lista de ambientes que possuem arquivos de configuração específicos
 const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test'];
 
+/**
+ * Define o caminho do arquivo de configuração de ambiente com base no valor de NODE_ENV.
+ * Se NODE_ENV estiver listado em ENVIRONMENTS_WITH_FILES, utiliza o arquivo correspondente (e.g., .env.production).
+ * Caso contrário, utiliza o arquivo padrão (.env).
+ * @type {string}
+ */
 const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
-  ? path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`)
-  : path.resolve(process.cwd(), '.env');
+  ? // Resolve o caminho para o arquivo de ambiente específico
+    path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`)
+  : // Resolve o caminho para o arquivo de ambiente padrão
+    path.resolve(process.cwd(), '.env');
 
+// Verifica se o arquivo de configuração existe
 if (!fs.existsSync(envPath)) {
   throw new Error(`env.js: Arquivo de configuração de ambiente não encontrado: ${envPath}`);
 }
 
+// Carrega as variáveis de ambiente a partir do arquivo
 dotenv.config({ path: envPath });
 
-const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET', 'MERCADO_PAGO_ACCESS_TOKEN'];
+// Lista de variáveis de ambiente obrigatórias
+const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
+
+// Itera sobre as variáveis obrigatórias e verifica se estão definidas
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
     throw new Error(`env.js: A variável de ambiente ${envVar} é necessária.`);
   }
 });
 
+// Desestrutura as variáveis de ambiente
 const {
   PORT,
   DB_ATLAS,
@@ -31,7 +46,6 @@ const {
   DB_USER,
   JWT_SECRET,
   NODE_ENV,
-  MERCADO_PAGO_ACCESS_TOKEN,
   TWILIO_ACCOUNT_SID,
   TWILIO_AUTH_TOKEN,
   TWILIO_PHONE_NUMBER,
@@ -39,10 +53,12 @@ const {
   EMAIL_PORT,
   EMAIL_USER,
   EMAIL_PASSWORD,
-  PAGSEGURO_BASE_URL,
-  PAGSEGURO_ACCESS_TOKEN,
+  URL_NEW_PAYMENT_V2_GETNET,
+  URL_NEW_PAYMENT_V3_GETNET,
+  URL_CHECK_STATUS_GETNET,
 } = process.env;
 
+// Exporta as configurações como um objeto
 export default {
   /**
    * Porta em que a API será executada
@@ -98,15 +114,6 @@ export default {
    */
   nodeEnv: NODE_ENV,
 
-  PagSeguroAccessToken: PAGSEGURO_ACCESS_TOKEN,
-
-  PagSeguroBaseUrl: PAGSEGURO_BASE_URL,
-  /**
-   * Token de acesso do Mercado Pago
-   * @type {string}
-   */
-  mercadoPagoAccessToken: MERCADO_PAGO_ACCESS_TOKEN,
-
   /**
    * Configuração do Twilio
    */
@@ -121,4 +128,11 @@ export default {
   emailPort: Number(EMAIL_PORT),
   emailUser: EMAIL_USER,
   emailPassword: EMAIL_PASSWORD,
+
+  /**
+   * URLs para integração com GetNet
+   */
+  urlNewPaymentV2Getnet: URL_NEW_PAYMENT_V2_GETNET,
+  urlNewPaymentV3Getnet: URL_NEW_PAYMENT_V3_GETNET,
+  urlCheckStatusGetnet: URL_CHECK_STATUS_GETNET,
 };
