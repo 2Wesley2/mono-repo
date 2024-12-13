@@ -3,6 +3,12 @@ import loaders from '../../../loaders/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
 import { calculateTotalAmount } from '../../../utils/order/index.js';
 import AppError from '../../../errors/AppError.js';
+
+/**
+ * Valida a consistência da comanda.
+ * Lança um erro se houver produtos na comanda, mas o valor total for menor ou igual a zero.
+ * @throws {Error} Caso a validação falhe.
+ */
 const validateOrder = function () {
   if (this.products.length > 0 && this.totalAmount <= 0) {
     throw new Error('Total amount must be greater than zero if there are products.');
@@ -10,7 +16,8 @@ const validateOrder = function () {
 };
 
 /**
- * Definição do schema do pedido no MongoDB.
+ * Esquema do modelo da comanda no MongoDB.
+ * Define a estrutura do documento, validações e referências.
  * @type {Object}
  */
 const orderSchema = {
@@ -49,14 +56,34 @@ class OrderModel extends Model {
   constructor() {
     super(orderSchema, ORDER, {}, [validateOrder]);
   }
+
+  /**
+   * Cria uma nova comanda no banco de dados.
+   * @param {Object} data - Dados da comanda a ser criada.
+   * @returns {Object} A comanda criada.
+   */
   async createOrder(data) {
     return await this.model.create(data);
   }
 
+  /**
+   * Cria múltiplas comandas em lote.
+   * @param {Object[]} data - Lista de dados das comandas a serem criadas.
+   * @returns {Object[]} Lista de comandas criadas.
+   */
   async bulkCreate(data) {
     return await this.model.insertMany(data);
   }
 
+  /**
+   * Atualiza os produtos e o valor total de uma comanda existente.
+   * @param {Object[]} updatedProducts - Produtos atualizados na comanda.
+   * @param {string} currentOrderId - ID da comanda atual.
+   * @param {Object[]} getExistingProducts - Lista de produtos existentes no sistema.
+   * @param {number} currentOrderTotalAmount - Valor total atual da comanda.
+   * @param {Object[]} currentOrderProducts - Produtos associados à comanda atual.
+   * @returns {Object} Resultado da operação de atualização.
+   */
   async updateOrderProducts(
     updatedProducts,
     currentOrderId,
@@ -84,6 +111,12 @@ class OrderModel extends Model {
     return resultOfUpdate;
   }
 
+  /**
+   * Busca uma comanda pelo número da comanda.
+   * @param {number} orderNumber - Número da comanda.
+   * @returns {Object} A comanda encontrada.
+   * @throws {AppError} Caso não encontre a comanda ou ocorra erro inesperado.
+   */
   async findByOrderNumber(orderNumber) {
     const result = await this.model.findByUniqueKey({ orderNumber });
     if (!result) {
@@ -92,6 +125,12 @@ class OrderModel extends Model {
     return result.toObject();
   }
 
+  /**
+   * Lista os produtos associados a uma comanda pelo número da comanda.
+   * @param {number} orderNumber - Número da comanda.
+   * @returns {Object} Informações sobre os produtos e o valor total da comanda.
+   * @throws {AppError} Caso a comanda não seja encontrada ou a estrutura de dados seja inválida.
+   */
   async listProductsByOrder(orderNumber) {
     const order = await this.findByOrderNumber(orderNumber);
     if (!order) {
