@@ -1,5 +1,5 @@
 import AppError from '../../../errors/AppError.js';
-import { extractedProductIds, productsExistById } from '../../../utils/order/index.js';
+import { extractedProductIds, productsExistById, calculateTotalAmount } from '../../../utils/order/index.js';
 
 /**
  * @class OrderService
@@ -47,9 +47,63 @@ class OrderService {
 
     // Obtém a ordem atual no banco de dados
     const currentOrder = await this.repository.findByOrderNumber(orderNumber);
+    // Atualiza os produtos e calcula totalAmount
+    const finalProducts = this.calculateUpdatedProducts(currentOrder.products, updateOrderProductsFields);
+    const totalAmount = calculateTotalAmount(
+      getExistingProducts, // Produtos existentes no sistema
+      finalProducts, // Produtos atualizados na comanda
+      currentOrder.totalAmount, // Valor total atual da comanda
+      currentOrder.products, // Produtos associados à comanda atual
+    );
 
     // Atualiza os produtos da ordem com base nos dados fornecidos
-    return await this.repository.updateOrderProducts(currentOrder, updateOrderProductsFields, getExistingProducts);
+    return await this.repository.updateOrderProducts(currentOrder._id, finalProducts, totalAmount);
+  }
+
+  /**
+   * Combina os produtos existentes e novos, removendo os de quantidade <= 0.
+   * @param {Object[]} currentProducts - Produtos existentes na ordem.
+   * @param {Object[]} updateFields - Dados para atualização dos produtos.
+   * @returns {Object[]} Produtos combinados e atualizados.
+   * @example
+   * const updatedProducts = orderService.calculateUpdatedProducts(
+   *   [{ product: 'productId1', quantity: 1 }],
+   *   [{ product: 'productId1', quantity: 3 }, { product: 'productId2', quantity: 5 }]
+   * );
+   * console.log(updatedProducts);
+   */
+
+  calculateUpdatedProducts(currentProducts, updateFields) {
+    const updatedProducts = currentProducts.reduce((acc, product) => {
+      const updatedProduct = updateFields.find((uProd) => String(uProd.product) === String(product.product));
+
+      if (updatedProduct) {
+        if (updatedProduct.quantity <= 0) {
+          return acc; // Remove produtos com quantidade <= 0
+        }
+        return [
+          ...acc,
+          {
+            ...product,
+            quantity: updatedProduct.quantity,
+          },
+        ];
+      }
+      return [...acc, product];
+    }, []);
+
+    const newProducts = updateFields
+      .filter(
+        (newProd) =>
+          !currentProducts.some((existingProd) => String(existingProd.product) === String(newProd.product)) &&
+          newProd.quantity > 0,
+      )
+      .map((newProd) => ({
+        product: newProd.product,
+        quantity: newProd.quantity,
+      }));
+
+    return [...updatedProducts, ...newProducts];
   }
 
   /**

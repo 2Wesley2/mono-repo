@@ -1,78 +1,53 @@
 import debug from '../../../debug/index.js';
 
+/**
+ * Serviço para lógica de negócios de produtos.
+ *
+ * @class ProductService
+ */
 class ProductService {
+  /**
+   * Cria uma instância de ProductService.
+   *
+   * @param {ProductRepository} repository - Repositório para manipulação de produtos.
+   */
   constructor(repository) {
     this.repository = repository;
   }
 
   async createProduct(productData) {
-    try {
-      const result = await this.repository.createProduct(productData);
-      debug.logger.info('Service: Product created successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Service: Error creating product', { error });
-      throw error;
-    }
+    return await this.repository.createProduct(productData);
   }
 
   async bulkCreate(productList) {
-    try {
-      const result = await this.repository.bulkCreate(productList);
-      debug.logger.info('Service: Products created in bulk successfully', { data: result });
-      return result;
-    } catch (error) {
-      debug.logger.error('Service: Error creating products in bulk', { error });
-      throw error;
-    }
-  }
-  async findByIdInService(productId) {
-    const product = await this.repository.findByIdInRepository(productId);
-    return product;
+    return await this.repository.bulkCreate(productList);
   }
 
   async findByCategory(category) {
-    const products = await this.repository.findByCategory(category);
-    return products;
+    return await this.repository.findByCategory(category);
   }
 
   async getProductsByIds(ids) {
     if (!Array.isArray(ids) || ids.length === 0) {
       return 'Invalid or empty IDs array.';
     }
-    const products = await this.repository.getProductsByIds(ids);
-    return products;
+    return await this.repository.getProductsByIds(ids);
   }
 
   async searchProducts(q) {
-    const product = await this.repository.searchProducts(q);
-    return product;
+    return await this.repository.searchProducts(q);
   }
   async updateProduct(productId, productData) {
-    try {
-      const updatedProduct = await this.repository.updateProduct(productId, productData);
-      debug.logger.info('Service: Product updated', { productId, data: updatedProduct });
-      return updatedProduct;
-    } catch (error) {
-      debug.logger.error('Service: Error updating product', { productId, error });
-      throw error;
-    }
+    return await this.repository.updateProduct(productId, productData);
   }
 
   async deleteProduct(productId) {
-    try {
-      const deleted = await this.repository.deleteProduct(productId);
-      debug.logger.info('Service: Product deleted', { productId });
-      return deleted;
-    } catch (error) {
-      debug.logger.error('Service: Error deleting product', { productId, error });
-      throw error;
-    }
+    return await this.repository.deleteProduct(productId);
   }
 
   async updateStock(productId, quantityToAdjust) {
     try {
-      const product = await this.repository.findByIdInRepository(productId);
+      const product = await this.getProductsByIds([productId]);
 
       if (!product) {
         throw new Error(`Product with ID ${productId} does not exist.`);
@@ -86,7 +61,7 @@ class ProductService {
             `Insufficient stock for product "${product.name}". Available: ${product.quantity}, Required: ${-quantityToAdjust}.`,
           );
         }
-        await this.repository.updateProduct(productId, { quantity: newQuantity });
+        return await this.repository.updateProduct(productId, { quantity: newQuantity });
       }
     } catch (error) {
       debug.logger.error('ProductService: Error updating stock', { productId, error });

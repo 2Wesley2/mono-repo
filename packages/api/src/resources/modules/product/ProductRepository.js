@@ -1,27 +1,28 @@
 import debug from '../../../debug/index.js';
 import Database from '../../../database/index.js';
 
+/**
+ * Repositório para manipulação de produtos no banco de dados.
+ *
+ * @class ProductRepository
+ */
+
 class ProductRepository {
+  /**
+   * Cria uma instância de ProductRepository.
+   *
+   * @param {ProductModel} model - Modelo de dados para operações do repositório.
+   */
   constructor(model) {
     this.model = model;
   }
 
   async createProduct(data) {
-    try {
-      const result = await this.model.createProduct(data);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.createProduct(data);
   }
 
   async bulkCreate(productList) {
-    try {
-      const result = await this.model.bulkCreate(productList);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.bulkCreate(productList);
   }
 
   async getProductsByIds(ids) {
@@ -29,36 +30,19 @@ class ProductRepository {
   }
 
   async searchProducts(q) {
-    const product = await this.model.searchProducts(q);
-    return product;
-  }
-
-  async findByIdProducts(id) {
-    const product = await this.model.findByIdsProducts(ids);
-    return product;
+    return await this.model.searchProducts(q);
   }
 
   async findByCategory(category) {
-    const products = await this.model.findByCategory(category);
-    return products;
+    return await this.model.findByCategory(category);
   }
 
   async updateProduct(id, data) {
-    try {
-      const updatedProduct = await this.model.updateProduct(id, data);
-      return updatedProduct;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.updateProduct(id, data);
   }
 
   async deleteProduct(id) {
-    try {
-      const deleted = await this.model.deleteProduct(id);
-      return deleted;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.deleteProduct(id);
   }
 }
 

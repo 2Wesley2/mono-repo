@@ -37,64 +37,17 @@ class OrderRepository {
   }
 
   /**
-   * Atualiza os produtos associados a uma comanda existente no banco de dados.
-   * @param {Object} currentOrder - Pedido atual que será atualizado.
-   * @param {Object[]} updateOrderProductsFields - Dados dos produtos para atualização.
-   * @property {string} updateOrderProductsFields[].product - ID do produto.
-   * @property {number} updateOrderProductsFields[].quantity - Quantidade do produto.
-   * @param {Object[]} getExistingProducts - Lista de produtos existentes no banco de dados.
+   * Atualiza os produtos de uma comanda e o valor total associado.
+   * @param {string} orderId - ID único da comanda.
+   * @param {Object[]} finalProducts - Lista de produtos atualizados associados à comanda.
+   * @param {number} totalAmount - Novo valor total da comanda.
    * @returns {Promise<Object>} Retorna a comanda atualizada.
    * @example
-   * const updatedOrder = await orderRepository.updateOrderProducts(currentOrder, updateFields, existingProducts);
+   * const updatedOrder = await orderRepository.updateOrderProducts('orderId123', [{ product: 'productId1', quantity: 3 }], 200);
    * console.log(updatedOrder);
    */
-  async updateOrderProducts(currentOrder, updateOrderProductsFields, getExistingProducts) {
-    const currentOrderId = currentOrder._id;
-
-    // Atualiza produtos existentes na comanda
-    const updatedProducts = currentOrder.products.reduce((acc, product) => {
-      const updatedProduct = updateOrderProductsFields.find(
-        (uProd) => String(uProd.product) === String(product.product),
-      );
-
-      if (updatedProduct) {
-        if (updatedProduct.quantity <= 0) {
-          return acc; // Remove produtos com quantidade <= 0
-        }
-        return [
-          ...acc,
-          {
-            ...product,
-            quantity: updatedProduct.quantity,
-          },
-        ];
-      }
-      return [...acc, product];
-    }, []);
-
-    // Adiciona novos produtos a comanda
-    const newProducts = updateOrderProductsFields
-      .filter(
-        (newProd) =>
-          !currentOrder.products.some((existingProd) => String(existingProd.product) === String(newProd.product)) &&
-          newProd.quantity > 0,
-      )
-      .map((newProd) => ({
-        product: newProd.product,
-        quantity: newProd.quantity,
-      }));
-    const finalProducts = [...updatedProducts, ...newProducts];
-    const currentOrderTotalAmount = currentOrder.totalAmount;
-    const currentOrderProducts = currentOrder.products;
-    console.log(JSON.stringify(`currentOrderTotalAmount: ${currentOrderTotalAmount}`));
-
-    return await this.orderModel.updateOrderProducts(
-      finalProducts,
-      currentOrderId,
-      getExistingProducts,
-      currentOrderTotalAmount,
-      currentOrderProducts,
-    );
+  async updateOrderProducts(orderId, finalProducts, totalAmount) {
+    return await this.orderModel.updateOrderProducts(orderId, finalProducts, totalAmount);
   }
 
   /**

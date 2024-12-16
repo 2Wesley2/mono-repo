@@ -1,7 +1,6 @@
 import Controller from '../../../resources/core/Controller.js';
 import { validateRequest, mergeDuplicateProducts } from '../../../utils/order/index.js';
-import debug from '../../../debug/index.js';
-
+import isPromiseResolved from '../../../helpers/isPromiseResolved.js';
 /**
  * @class OrderController
  * Controlador para gerenciar operações relacionadas a ordens, incluindo listagem e atualização de produtos em uma ordem.
@@ -53,8 +52,7 @@ class OrderController extends Controller {
       if (isNaN(orderNumber)) {
         return res.status(400).json({ success: false, message: 'Parâmetro orderNumber deve ser um número válido.' });
       }
-      const products = await this.service.listProductsByOrder(orderNumber);
-      console.log(JSON.stringify(products));
+      const products = await isPromiseResolved(this.service.listProductsByOrder(orderNumber));
       return res.status(200).json(products);
     } catch (error) {
       next(error);
@@ -96,7 +94,9 @@ class OrderController extends Controller {
 
       // Remove duplicados e realiza atualização
       const mergedDuplicateProducts = mergeDuplicateProducts(products);
-      const updatedProducts = await this.service.updateOrderProducts(orderNumber, mergedDuplicateProducts);
+      const updatedProducts = await isPromiseResolved(
+        this.service.updateOrderProducts(orderNumber, mergedDuplicateProducts),
+      );
 
       // Responde com os dados atualizados
       res.status(200).json({ updatedProducts });

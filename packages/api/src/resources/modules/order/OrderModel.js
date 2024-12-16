@@ -1,7 +1,6 @@
 import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
-import { calculateTotalAmount } from '../../../utils/order/index.js';
 import AppError from '../../../errors/AppError.js';
 
 /**
@@ -76,33 +75,19 @@ class OrderModel extends Model {
   }
 
   /**
-   * Atualiza os produtos e o valor total de uma comanda existente.
-   * @param {Object[]} updatedProducts - Produtos atualizados na comanda.
-   * @param {string} currentOrderId - ID da comanda atual.
-   * @param {Object[]} getExistingProducts - Lista de produtos existentes no sistema.
-   * @param {number} currentOrderTotalAmount - Valor total atual da comanda.
-   * @param {Object[]} currentOrderProducts - Produtos associados à comanda atual.
-   * @returns {Object} Resultado da operação de atualização.
+   * Atualiza os produtos e o valor total de uma ordem existente.
+   * @param {string} orderId - ID da ordem.
+   * @param {Object[]} updatedProducts - Lista de produtos atualizados.
+   * @param {number} totalAmount - Valor total calculado.
+   * @returns {Promise<Object>} Resultado da operação de atualização.
    */
-  async updateOrderProducts(
-    updatedProducts,
-    currentOrderId,
-    getExistingProducts,
-    currentOrderTotalAmount,
-    currentOrderProducts,
-  ) {
-    const totalAmount = calculateTotalAmount(
-      getExistingProducts,
-      updatedProducts,
-      currentOrderTotalAmount,
-      currentOrderProducts,
-    );
+  async updateOrderProducts(OrderId, updatedProducts, totalAmount) {
     const resultOfUpdate = await this.model.updateOne(
-      { _id: currentOrderId },
+      { _id: OrderId },
       {
         $set: {
           status: 'In Progress',
-          totalAmount: totalAmount,
+          totalAmount,
           products: updatedProducts,
         },
       },

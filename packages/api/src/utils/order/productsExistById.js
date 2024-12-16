@@ -1,18 +1,15 @@
 /**
- * Verifica se todos os IDs fornecidos existem em uma lista de produtos retornados.
+ * Verifica se todos os IDs fornecidos existem em uma lista de produtos.
  *
- * @param {string[]} ids - Lista de IDs de produtos a serem verificados.
- * @param {Object[]} products - Lista de objetos representando produtos existentes, contendo pelo menos uma propriedade `_id`.
- * @returns {boolean} Retorna `true` se todos os IDs forem encontrados, caso contrário, `false`.
+ * @param {string[]} ids - Lista de IDs de produtos a verificar.
+ * @param {Object[]} products - Lista de produtos existentes.
+ * @param {string} products[].id - Identificador único do produto.
+ * @returns {boolean} Retorna `true` se todos os IDs existirem, caso contrário `false`.
  *
  * @example
- * const ids = ['productId1', 'productId2'];
- * const products = [
- *   { _id: 'productId1', name: 'Produto A' },
- *   { _id: 'productId2', name: 'Produto B' }
- * ];
- * const result = productsExistById(ids, products);
- * console.log(result); // true
+ * const ids = ['id1', 'id2'];
+ * const products = [{ _id: 'id1' }, { _id: 'id2' }];
+ * console.log(productsExistById(ids, products)); // true
  */
 function productsExistById(ids, products) {
   const returnedIds = products.map((product) => product._id.toString());

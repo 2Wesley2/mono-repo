@@ -15,9 +15,10 @@
  * @property {string} currentOrderProducts[].product - ID do produto na comanda.
  * @property {number} currentOrderProducts[].quantity - Quantidade do produto na comanda.
  * @returns {number} Retorna o valor total atualizado da comanda.
+ *
  * @example
  * const total = calculateTotalAmount(existingProducts, updatedProducts, 100, currentOrderProducts);
- * console.log(total); // Exibe o valor total atualizado da comanda.
+ * console.log(total); // 150
  */
 
 function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrderTotalAmount, currentOrderProducts) {
