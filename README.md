@@ -41,6 +41,13 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ## 💻 **Instalação**
 
+### *Pré-requisitos*
+
+Certifique-se de ter o **Node.js** instalado em sua máquina:
+
+- Versão mínima: >= 20
+- Versão utilizada no projeto: 20.12.2
+
 ## *1. Clone o repositório*
 
 - para HTTPS:
@@ -67,7 +74,7 @@ cd mono-repo
 yarn install
 ```
 
-## Inicie o ambiente de desenvolvimento com
+## *4. Inicie o ambiente de desenvolvimento com:*
 
 ```bash
 yarn dev
