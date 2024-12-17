@@ -219,7 +219,7 @@ Próximo passo:
 
 - **Endpoint:** PUT /api/orders/:orderNumber/order
 - **Parâmetros:**
-  - `orderNumber (path):` Número da comanda a ser atualizada. Deve ser um número inteiro válido.
+  - `orderNumber` *(path)*: Número da comanda a ser atualizada. Deve ser um número inteiro válido.
 
 - **Body:**
 
