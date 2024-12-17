@@ -158,15 +158,14 @@ Próximo passo:
 
 ### **1. Listar Produtos de uma Comanda**
 
-### **Descrição:** Retorna a lista de produtos associados a uma comanda específica, enriquecida com        informações detalhadas de cada produto
+  **Descrição:** Retorna a lista de produtos associados a uma comanda específica, enriquecida com informações detalhadas de cada produto.
 
-### - **Endpoint:** `GET /api/orders/:orderNumber/products`
+- **Endpoint:** `GET /api/orders/:orderNumber/products`
+- **Parâmetros:**
+  - `orderNumber` *(path)*: Número da comanda a ser consultada. Recebida como string via params
+ **Exemplos**
 
-### - **Parâmetros:**
-
-- `orderNumber` *(path)*: Número da comanda a ser consultada. Recebida como string via params
-
-### - **Exemplo de Requisição:**
+#### -Requisição
 
   ```javascript
   const listProductsByOrder = async (orderNumber) => {
@@ -185,9 +184,9 @@ Próximo passo:
 
   listProductsByOrder(123);
   ```
-
-#### - **Exemplo de resposta**
   
+##### -Resposta
+
   ```json
   {
     "totalAmount": 300,
