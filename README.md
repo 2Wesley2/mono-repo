@@ -1,4 +1,4 @@
-# *API de Relacionamento com Clientes*
+# *Facilite Varejo API*
 >
 > Esta api é projetada para simplificar o gerenciamento de dados e a execução da regra de negócio,
 > fornecendo uma solução que recebe e retorna informações em formato JSON.
