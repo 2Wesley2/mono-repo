@@ -5,6 +5,8 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 import debug from '../debug/index.js';
 import config from '../config/index.js';
 import loaders from '../loaders/index.js';
@@ -43,10 +45,54 @@ export default class App {
     await this.connectDatabase();
     this.setPort();
     this.configureMiddlewares();
+    this.configureSwagger();
     this.setRoutes();
     this.handleErrors();
   }
 
+  /**
+   * Configura a aplicação, conectando ao banco de dados, configurando middlewares, rotas e tratamento de erros.
+   * @async
+   */
+  async configureApp() {
+    await this.connectDatabase();
+    this.setPort();
+    this.configureMiddlewares();
+    this.configureSwagger();
+    this.setRoutes();
+    this.handleErrors();
+  }
+
+  /**
+   * Configura a documentação Swagger para a API.
+   */
+  configureSwagger() {
+    const swaggerOptions = {
+      definition: {
+        openapi: '3.0.0',
+        info: {
+          title: 'API Documentation',
+          version: '1.0.0',
+          description: 'Documentação da API utilizando Swagger',
+        },
+        servers: [
+          {
+            url: `http://localhost:${this.app.get('port') || 3000}`,
+          },
+        ],
+      },
+      apis: ['./src/resources/modules/**/*.js'],
+    };
+
+    const swaggerSpec = swaggerJsdoc(swaggerOptions);
+    const swaggerUiOptions = {
+      customCss: '.swagger-ui .topbar { display: none }',
+      customSiteTitle: 'API Docs',
+    };
+
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
+    debug.logger.info('app.js: Swagger UI configurado em /api-docs.');
+  }
   /**
    * Conecta ao banco de dados utilizando o módulo de loaders.
    * @async

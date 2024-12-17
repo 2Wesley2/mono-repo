@@ -8,13 +8,10 @@
     "start": "node src/main.js",
     "dev": "nodemon src/main.js",
     "lint:fix": "npx eslint --fix .",
-    "test": "cross-env NODE_ENV=test jest --runInBand",
-    "tt": "node src/test4.js",
-    "fetch": "node src/fetchTests/fetchAllCategories.js"
+    "test": "cross-env NODE_ENV=test jest --runInBand"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cielo-sdk": "^2.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -27,6 +24,7 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
     "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "twilio": "^5.3.5",
     "winston": "^3.15.0"
   },

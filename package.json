@@ -21,6 +21,13 @@
     "lerna": "^8.1.8"
   },
   "resolutions": {
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "openapi-types": "^7.0.0",
+    "glob": "^9.3.5",
+    "axios": "^1.5.0",
+    "@humanwhocodes/config-array": "0.13.0",
+    "@humanwhocodes/object-schema": "2.0.3",
+    "rimraf": "^4.4.1",
+    "z-schema": "^5.0.1"
   }
 }
