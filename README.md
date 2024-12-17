@@ -163,9 +163,10 @@ Próximo passo:
 - **Endpoint:** `GET /api/orders/:orderNumber/products`
 - **Parâmetros:**
   - `orderNumber` *(path)*: Número da comanda a ser consultada. Recebida como string via params
- **Exemplos**
 
-#### -Requisição
+- **Exemplos**
+  
+  - Requisição:
 
   ```javascript
   const listProductsByOrder = async (orderNumber) => {
@@ -185,7 +186,7 @@ Próximo passo:
   listProductsByOrder(123);
   ```
   
-##### -Resposta
+  - Resposta
 
   ```json
   {
