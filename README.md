@@ -26,7 +26,7 @@
 
 [Arquitetura]: #️-arquitetura
 A api faz parte de um **mono-repo** organizado com a arquitetura baseada em **MVC** (Model, View, Controller).
-Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo organização e separação clara de responsabilidades.
+Com o ajuste para  **Model-Repository-Service-Controller (MRSC)**, garantindo organização e separação clara de responsabilidades.
 
 - **Mono-repo:** Um repositório central que agrupa diferentes pacotes ou módulos, incluindo a API.  
 - **MRSC:** A API segue o padrão:
