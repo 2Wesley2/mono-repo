@@ -94,6 +94,7 @@ Crie os arquivos `.env` necessários no projeto.
 
 No diretório `mono-repo/packages/api/`, crie o arquivo `.env` e adicione as seguintes configurações:  
 (use No diretório mono-repo barra packages barra api barra vírgula crie o arquivo ponto env e adicione as seguintes configurações dois pontos)
+[variáveis]: #configuração-das-variáveis-de-ambiente
 
 ```plaintext
 # Configurações da API
@@ -128,5 +129,5 @@ EMAIL_PASSWORD=passwordEmailApp
 URL_NEW_PAYMENT_V2_GETNET=getnet://pagamento/v2/payment  
 URL_NEW_PAYMENT_V3_GETNET=getnet://pagamento/v3/payment  
 URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
-[variáveis]: #configuração-das-variáveis-de-ambiente
+
 ```
