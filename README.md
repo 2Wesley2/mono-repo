@@ -210,7 +210,7 @@ Próximo passo:
 
   - Códigos de Reposta:
     - `200 OK`: Dados da comanda retornados com sucesso.
-    - `400 Bad Request`: O parâmetro orderNumber não é válido.
+    - `400 Bad Request`: O parâmetro `orderNumber` não é válido.
     - `404 Not Found`: A comanda não foi encontrada.
 
 ### **2. Atualizar Produtos de uma Comanda**
@@ -231,3 +231,57 @@ Próximo passo:
     ]
   }
   ```
+
+- **Exemplos:**
+  
+  - *Requisição:*
+
+  ```javascript
+    const updateOrderProducts = async (orderNumber, updatedProducts) => {
+      try {
+        const response = await fetch(`http://localhost:3001/api/orders/${orderNumber}/order`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(updatedProducts)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro ao atualizar produtos: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Produtos atualizados:', data);
+      } catch (error) {
+        console.error('Erro:', error.message);
+      }
+    };
+
+
+    // Exemplo de uso
+    updateOrderProducts(123, {
+      products: [
+        { product: "63cf54b", quantity: 3 },
+        { product: "63cf54c", quantity: 5 }
+      ]
+    });
+
+  ```
+  
+  - *Resposta:*
+
+  ```json
+  {
+    "updatedProducts": [
+      { "product": "63cf54b", "quantity": 3 },
+      { "product": "63cf54c", "quantity": 5 }
+    ]
+  }
+
+  ```
+
+  - Códigos de Reposta:
+    - `200 OK`: Produtos da comanda atualizados com sucesso.
+    - `400 Bad Request`: O parâmetro `orderNumber` não é válido ou body da requisição não são válidos.
+    - `404 Not Found`: A comanda não foi encontrada.
