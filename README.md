@@ -41,26 +41,26 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ## 💻 **Instalação**
 
-- ### *Pré-requisitos*
+### *Pré-requisitos*
 
-  Certifique-se de ter o **Node.js** instalado em sua máquina
+Certifique-se de ter o **Node.js** instalado em sua máquina
 
-  - Versão mínima: >= 20
-  - Versão utilizada no projeto: 20.12.2
+- Versão mínima: >= 20
+- Versão utilizada no projeto: 20.12.2
 
-- ### *1. Clone o repositório*
+### *1. Clone o repositório*
 
-  - para HTTPS:
+- para HTTPS:
 
-    ```bash
-    git clone https://github.com/2Wesley2/mono-repo.git
-    ```
+```bash
+git clone https://github.com/2Wesley2/mono-repo.git
+```
 
-  - Para SSH
+- Para SSH
 
-    ```bash
-    git@github.com:2Wesley2/mono-repo.git
-    ```
+```bash
+git@github.com:2Wesley2/mono-repo.git
+```
 
 ### *2. Acesse o diretório do mono-repo*
 
@@ -86,7 +86,7 @@ Configure as [variaveis-de-ambiente]
 yarn dev
 ```
 
- ---
+---
 
 ## *Configuracao das Variaveis de Ambiente*
 
