@@ -57,7 +57,7 @@ git clone https://github.com/2Wesley2/mono-repo.git
 git@github.com:2Wesley2/mono-repo.git
 ```
 
-## 2. *Acesse o diretório do mono-repo*
+## 2. _Acesse o diretório do mono-repo*
 
 ```bash
 cd mono-repo
