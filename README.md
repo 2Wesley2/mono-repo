@@ -76,7 +76,7 @@ yarn install
 
 ### *4. Configure as variáveis de ambiente*
 
-[Variáveis de Ambiente] (#configuração-das-variáveis-de-ambiente)
+[Configure as variáveis de ambiente][variáveis]
 
 ### *5. Inicie o ambiente de desenvolvimento com:*
 
@@ -126,7 +126,7 @@ EMAIL_PASSWORD=passwordEmailApp
 URL_NEW_PAYMENT_V2_GETNET=getnet://pagamento/v2/payment  
 URL_NEW_PAYMENT_V3_GETNET=getnet://pagamento/v3/payment  
 URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
-```
+``` [variáveis]: #configuração-das-variáveis-de-ambiente
 
 ## 🔗 **Endpoints**
 
