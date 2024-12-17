@@ -8,25 +8,23 @@
 
 ## 📜 **Índice**  
 
-1. [Objetivo] (#objetivo)  
-2. [Arquitetura] (#arquitetura)  
-3. [Instalação] (#instalação)  
-4. [Uso] (#uso)  
-5. [Endpoints] (#endpoints)  
-6. [Exemplos de Respostas] (#exemplos-de-respostas)  
-7. [Contribuindo] (#contribuindo)  
-8. [Licença] (#licença)  
+1. [Objetivo]
+2. [Arquitetura]
+3. [Instalacao]
+4. [Endpoints]
 
 ---
 
-## 🎯 **Objetivo**  
+## 🎯 **Objetivo**
 
+[Objetivo]: #-objetivo
 > Esta API foi criada para atender negócios como varejo, postos de gasolina, restaurantes, adegas e outros setores que buscam melhorar a
 > fidelização de clientes e otimizar suas operações.
 > A API processa solicitações no formato JSON, aplicando regras de negócio e retornando dados estruturados de forma eficiente.
 
 ## 🛠️ **Arquitetura**  
 
+[Arquitetura]: #️-arquitetura
 A api faz parte de um **mono-repo** organizado com a arquitetura baseada em **MVC** (Model, View, Controller).
 Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo organização e separação clara de responsabilidades.
 
@@ -39,7 +37,9 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ---
 
-## 💻 **Instalação**
+## 💻 **Instalacao**
+
+[Instalacao]: #-instalacao
 
 ### *Pré-requisitos*
 
@@ -155,6 +155,8 @@ Próximo passo:
 ---
 
 ## 🔌 *Endpoints*
+
+[Endpoints]: #-endpoints
 
 ### **1. Listar Produtos de uma Comanda**
 
