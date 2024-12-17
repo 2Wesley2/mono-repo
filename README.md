@@ -151,3 +151,56 @@ NEXT_PUBLIC_NODE_ENV=development
 
 Próximo passo:
 [iniciar-ambiente-de-desenvolvimento]
+
+---
+
+## 🔌 *Endpoints*
+
+### **1. Listar Produtos de uma Comanda**
+
+**Descrição:** Retorna a lista de produtos associados a uma comanda específica, enriquecida com informações detalhadas de cada produto.
+
+- **Endpoint:** `GET /api/orders/:orderNumber/products`
+- **Parâmetros:**
+  - `orderNumber` *(path)*: Número da comanda a ser consultada. Recebida como string via params
+- **Exemplo de Requisição:**
+
+  ```javascript
+  const listProductsByOrder = async (orderNumber) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/orders/${orderNumber}/products`);
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar produtos: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Produtos da comanda:', data);
+    } catch (error) {
+      console.error('Erro:', error.message);
+    }
+  };
+
+  listProductsByOrder(123);
+  ```
+
+### **Exemplod de resposta**
+  
+  ```json
+  {
+    "totalAmount": 300,
+    "products": [
+      {
+        "_id": "63cf54b",
+        "product": "Produto A",
+        "quantity": 2,
+        "price": 100
+      },
+      {
+        "_id": "63cf54c",
+        "product": "Produto B",
+        "quantity": 1,
+        "price": 200
+      }
+    ]
+  }
+  ```
