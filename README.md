@@ -29,7 +29,7 @@ A api faz parte de um **mono-repo** organizado com a arquitetura baseada em **MV
 Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo organização e separação clara de responsabilidades.
 
 - **Mono-repo:** Um repositório central que agrupa diferentes pacotes ou módulos, incluindo a API.  
-- **MRSC:** A API segue o padrão:  
+- **MRSC:** A API segue o padrão:
   - **Model**: Define a estrutura dos dados, validações e interações com o banco de dados.
   - **Repository**: Contém as regras de negócio, validando entradas e processando dados antes de retorná-los.
   - **Service**: Contém as regras de negócio, validando entradas e processando dados antes de retorná-los.
