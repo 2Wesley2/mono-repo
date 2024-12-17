@@ -88,8 +88,6 @@ yarn dev
 
 [variaveis-de-ambiente]: #configuracao-das-variaveis-de-ambiente
 
-Crie os arquivos `.env` necessários no projeto.
-
 ### 🔑 *1. Variáveis para a API*
 
 No diretório `mono-repo/packages/api/`, crie o arquivo `.env` e adicione as seguintes configurações:  
@@ -113,7 +111,7 @@ JWT_SECRET=Token
 # Ambiente
 NODE_ENV=development  
 
-# Configurações do Twilio (use cerquilha Configurações do Twilio)
+# Configurações do Twilio
 TWILIO_ACCOUNT_SID=idTwilioAccount
 TWILIO_AUTH_TOKEN=token 
 TWILIO_PHONE_NUMBER=phoneNumber  
