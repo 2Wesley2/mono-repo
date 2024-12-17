@@ -48,7 +48,7 @@ Certifique-se de ter o **Node.js** instalado em sua máquina
 - Versão mínima: >= 20
 - Versão utilizada no projeto: 20.12.2
 
-## *1. Clone o repositório*
+### *1. Clone o repositório*
 
 - para HTTPS:
 
@@ -62,25 +62,25 @@ git clone https://github.com/2Wesley2/mono-repo.git
 git@github.com:2Wesley2/mono-repo.git
 ```
 
-## *2. Acesse o diretório do mono-repo*
+### *2. Acesse o diretório do mono-repo*
 
 ```bash
 cd mono-repo
 ```
 
-## *3. Instale as dependências*
+### *3. Instale as dependências*
 
 ```bash
 yarn install
 ```
 
-## *4. Inicie o ambiente de desenvolvimento com:*
+### *4. Inicie o ambiente de desenvolvimento com:*
 
 ```bash
 yarn dev
 ```
 
-# 🔑 *Configuração das Variáveis de Ambiente*
+## 🔑 *Configuração das Variáveis de Ambiente*
 
 ## 🔗 **Endpoints**
 
@@ -90,6 +90,7 @@ Aqui está uma versão melhorada da seção Endpoints do README, com base nos en
 A API expõe endpoints RESTful que permitem gerenciar comandas e seus produtos.
 
 🛒 Comandas
+
 1. Criar uma nova comanda
 Método: POST
 Endpoint: /orders
