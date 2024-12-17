@@ -78,7 +78,9 @@ yarn install
 
 Configure as [variaveis-de-ambiente]
 
-### *5. Inicie o ambiente de desenvolvimento com:*
+### *5. Inicie o ambiente de desenvolvimento com*
+
+[iniciar-servidores-de-desenvolvimento]: #Inicie-o-ambiente-de-desenvolvimento-com
 
 ```bash
 yarn dev
@@ -128,3 +130,22 @@ URL_NEW_PAYMENT_V3_GETNET=getnet://pagamento/v3/payment
 URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
 
 ```
+
+### 🔑 *2. Variáveis para a FrontEnd com NextJS*
+
+No diretório `mono-repo/packages/frontend`, crie um arquivo `.env` com as seguintes variáveis
+
+```plaintext
+# URL Base do Servidor  
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api  
+  
+# Configuração JWT  
+NEXT_PUBLIC_JWT_SECRET=mesmoTokenDaAPi
+  
+# Ambiente  
+NEXT_PUBLIC_NODE_ENV=development  
+
+```
+
+Próximo passo
+[iniciar-servidores-de-desenvolvimento]
