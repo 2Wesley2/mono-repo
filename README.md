@@ -39,11 +39,9 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ---
 
-## 💻 **Instalação**  
+## 💻 *Instalação*
 
-Explique como instalar e configurar o projeto. Exemplo:
-
-## 1. Clone o repositório
+## 1. **Clone o repositório**
 
 - para HTTPS:
 
