@@ -76,7 +76,7 @@ yarn install
 
 ### *4. Configure as variáveis de ambiente*
 
-[Configure as variáveis de ambiente][variáveis]
+[Configure as variaveis de ambiente] [variaveis]
 
 ### *5. Inicie o ambiente de desenvolvimento com:*
 
@@ -84,7 +84,9 @@ yarn install
 yarn dev
 ```
 
-## 🔑 *Configuração das Variáveis de Ambiente*
+## *Configuracao das Variaveis de Ambiente*
+
+[variaveis]: #configuracao-das-variaveis-de-ambiente
 
 Crie os arquivos `.env` necessários no projeto.
 
