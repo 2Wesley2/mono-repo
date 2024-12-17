@@ -1,4 +1,4 @@
-# *API de Relacionamento com Clientes**
+# *API de Relacionamento com Clientes*
 >
 > Esta api é projetada para simplificar o gerenciamento de dados e a execução da regra de negócio,
 > fornecendo uma solução que que recebe e retorna informações em formato JSON.
@@ -43,21 +43,23 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 Explique como instalar e configurar o projeto. Exemplo:
 
-```bash
+## Clone o repositório
 
-# Clone o repositório
 - para HTTPS:
-- git clone https://github.com/2Wesley2/mono-repo.git 
 
-# Acesse o diretório do mono-repo
+```bash
+git clone https://github.com/2Wesley2/mono-repo.git
+```
+
+## Acesse o diretório do mono-repo
 cd caminho/para/a/api
 
-# Instale as dependências
+## Instale as dependências
 npm install
 
-# Inicialize o servidor
+## Inicialize o servidor
 npm start
-```
+
 ## 🔗 **Endpoints**
 
 Aqui está uma versão melhorada da seção Endpoints do README, com base nos endpoints da camada de OrderService e suas funcionalidades:
