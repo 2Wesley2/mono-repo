@@ -50,15 +50,13 @@ Certifique-se de ter o **Node.js** instalado em sua máquina
 
 ### *1. Clone o repositório*
 
--
-  - para HTTPS:
+  Para HTTPS:
 
 ```bash
 git clone https://github.com/2Wesley2/mono-repo.git
 ```
 
--
-  - Para SSH:
+  Para SSH:
 
 ```bash
 git@github.com:2Wesley2/mono-repo.git
