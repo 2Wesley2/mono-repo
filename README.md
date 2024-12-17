@@ -86,6 +86,8 @@ Configure as [variaveis-de-ambiente]
 yarn dev
 ```
 
+ ---
+
 ## *Configuracao das Variaveis de Ambiente*
 
 [variaveis-de-ambiente]: #configuracao-das-variaveis-de-ambiente
