@@ -51,6 +51,12 @@ Explique como instalar e configurar o projeto. Exemplo:
 git clone https://github.com/2Wesley2/mono-repo.git
 ```
 
+- Para SSH
+
+```bash
+git@github.com:2Wesley2/mono-repo.git
+```
+
 ## Acesse o diretório do mono-repo
 cd caminho/para/a/api
 
