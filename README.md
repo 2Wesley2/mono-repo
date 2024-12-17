@@ -80,7 +80,7 @@ Configure as [variaveis-de-ambiente]
 
 ### *5. Inicie o ambiente de desenvolvimento com*
 
-[iniciar-servidores-de-desenvolvimento]: #Inicie-o-ambiente-de-desenvolvimento-com
+[iniciar-desenvolvimento]: #5-inicie-o-ambiente-de-desenvolvimento-com
 
 ```bash
 yarn dev
@@ -148,4 +148,4 @@ NEXT_PUBLIC_NODE_ENV=development
 ```
 
 Próximo passo
-[iniciar-servidores-de-desenvolvimento]
+[iniciar-desenvolvimento]
