@@ -76,7 +76,7 @@ yarn install
 
 ### *4. Configure as variáveis de ambiente*
 
-[Configure as variaveis de ambiente] [variaveis]
+Configure as: [variaveis-de-ambiente]
 
 ### *5. Inicie o ambiente de desenvolvimento com:*
 
@@ -86,7 +86,7 @@ yarn dev
 
 ## *Configuracao das Variaveis de Ambiente*
 
-[variaveis]: #configuracao-das-variaveis-de-ambiente
+[variaveis-de-ambiente]: #configuracao-das-variaveis-de-ambiente
 
 Crie os arquivos `.env` necessários no projeto.
 
@@ -94,7 +94,6 @@ Crie os arquivos `.env` necessários no projeto.
 
 No diretório `mono-repo/packages/api/`, crie o arquivo `.env` e adicione as seguintes configurações:  
 (use No diretório mono-repo barra packages barra api barra vírgula crie o arquivo ponto env e adicione as seguintes configurações dois pontos)
-[variáveis]: #configuração-das-variáveis-de-ambiente
 
 ```plaintext
 # Configurações da API
