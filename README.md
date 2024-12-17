@@ -166,7 +166,7 @@ Próximo passo:
 
 - **Exemplos**
   
-  - Requisição:
+  - *Requisição:*
 
   ```javascript
   const listProductsByOrder = async (orderNumber) => {
@@ -186,7 +186,7 @@ Próximo passo:
   listProductsByOrder(123);
   ```
   
-  - Resposta
+  - *Resposta:*
 
   ```json
   {
