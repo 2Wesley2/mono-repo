@@ -39,9 +39,9 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ---
 
-## 💻 *Instalação*
+## 💻 **Instalação**
 
-## 1. **Clone o repositório**
+## *1. Clone o repositório*
 
 - para HTTPS:
 
@@ -55,13 +55,13 @@ git clone https://github.com/2Wesley2/mono-repo.git
 git@github.com:2Wesley2/mono-repo.git
 ```
 
-## 2. Acesse o diretório do mono-repo
+## *2. Acesse o diretório do mono-repo*
 
 ```bash
 cd mono-repo
 ```
 
-## 3. Instale as dependências
+## *3. Instale as dependências*
 
 ```bash
 yarn install
