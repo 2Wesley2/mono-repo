@@ -74,7 +74,11 @@ cd mono-repo
 yarn install
 ```
 
-### *4. Inicie o ambiente de desenvolvimento com:*
+### *4. Configure as variáveis de ambiente*
+
+[Variáveis de Ambiente] (#configuração-das-variáveis-de-ambiente)
+
+### *5. Inicie o ambiente de desenvolvimento com:*
 
 ```bash
 yarn dev
