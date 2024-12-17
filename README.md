@@ -82,6 +82,48 @@ yarn dev
 
 ## 🔑 *Configuração das Variáveis de Ambiente*
 
+Crie os arquivos `.env` necessários no projeto.
+
+### *1. Variáveis para a API*
+
+No diretório `mono-repo/packages/api/`, crie o arquivo `.env` e adicione as seguintes configurações:  
+(use No diretório mono-repo barra packages barra api barra vírgula crie o arquivo ponto env e adicione as seguintes configurações dois pontos)
+
+```plaintext
+# Configurações da API
+PORT=3001  
+
+# Configurações do Banco de Dados
+DB_HOST=localhost  
+DB_PORT=27017  
+DB_NAME=system  
+DB_USER=  
+DB_PASSWORD=  
+DB_ATLAS=  
+
+# Configuração JWT
+JWT_SECRET=Token
+
+# Ambiente
+NODE_ENV=development  
+
+# Configurações do Twilio (use cerquilha Configurações do Twilio)
+TWILIO_ACCOUNT_SID=idTwilioAccount
+TWILIO_AUTH_TOKEN=token 
+TWILIO_PHONE_NUMBER=phoneNumber  
+
+# Configurações do Email
+EMAIL_HOST=smtp.gmail.com  
+EMAIL_PORT=587 
+EMAIL_USER=email@email
+EMAIL_PASSWORD=passwordEmailApp  
+
+# URLs de Pagamento GetNet
+URL_NEW_PAYMENT_V2_GETNET=getnet://pagamento/v2/payment  
+URL_NEW_PAYMENT_V3_GETNET=getnet://pagamento/v3/payment  
+URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
+```
+
 ## 🔗 **Endpoints**
 
 Aqui está uma versão melhorada da seção Endpoints do README, com base nos endpoints da camada de OrderService e suas funcionalidades:
