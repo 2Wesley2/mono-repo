@@ -43,7 +43,7 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 Explique como instalar e configurar o projeto. Exemplo:
 
-### Clone o repositório
+## 1. Clone o repositório
 
 - para HTTPS:
 
@@ -57,8 +57,11 @@ git clone https://github.com/2Wesley2/mono-repo.git
 git@github.com:2Wesley2/mono-repo.git
 ```
 
-## Acesse o diretório do mono-repo
-cd caminho/para/a/api
+## 2. *Acesse o diretório do mono-repo*
+
+```bash
+cd mono-repo
+```
 
 ## Instale as dependências
 npm install
