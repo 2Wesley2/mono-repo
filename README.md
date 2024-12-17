@@ -164,7 +164,7 @@ Próximo passo:
 - **Parâmetros:**
   - `orderNumber` *(path)*: Número da comanda a ser consultada. Recebida como string via params
 
-- **Exemplos**
+- **Exemplos:**
   
   - *Requisição:*
 
@@ -204,6 +204,30 @@ Próximo passo:
         "quantity": 1,
         "price": 200
       }
+    ]
+  }
+  ```
+
+  - Códigos de Reposta:
+    - `200 OK`: Dados da comanda retornados com sucesso.
+    - `400 Bad Request`: O parâmetro orderNumber não é válido.
+    - `404 Not Found`: A comanda não foi encontrada.
+
+### **2. Atualizar Produtos de uma Comanda**
+
+  **Descrição:** Atualiza a lista de produtos de uma comanda, incluindo a quantidade e removendo aqueles com quantidade igual ou inferior a zero.
+
+- **Endpoint:** PUT /api/orders/:orderNumber/order
+- **Parâmetros:**
+  - `orderNumber (path):` Número da comanda a ser atualizada. Deve ser um número inteiro válido.
+
+- **Body:**
+
+  ```json
+  {
+    "products": [
+      { "product": "63cf54b", "quantity": 3 },
+      { "product": "63cf54c", "quantity": 5 }
     ]
   }
   ```
