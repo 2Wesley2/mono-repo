@@ -88,11 +88,11 @@ yarn dev
 
 ---
 
-## *Configuracao das Variaveis de Ambiente*
+## 🔑 *Configuracao das Variaveis de Ambiente*
 
-[variaveis-de-ambiente]: #configuracao-das-variaveis-de-ambiente
+[variaveis-de-ambiente]: #-configuracao-das-variaveis-de-ambiente
 
-### 🔑 *1. Variáveis para a API*
+### *1. Variáveis para a API*
 
 No diretório `mono-repo/packages/api/`, crie o arquivo `.env` e adicione as seguintes configurações:  
 (use No diretório mono-repo barra packages barra api barra vírgula crie o arquivo ponto env e adicione as seguintes configurações dois pontos)
@@ -133,7 +133,7 @@ URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
 
 ```
 
-### 🔑 *2. Variáveis para a FrontEnd com NextJS*
+### *2. Variáveis para a FrontEnd com NextJS*
 
 No diretório `mono-repo/packages/frontend`, crie um arquivo `.env` com as seguintes variáveis
 
