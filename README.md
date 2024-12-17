@@ -43,7 +43,7 @@ Com o ajuste de para  **Model-Repository-Service-Controller (MRSC)**, garantindo
 
 ### *Pré-requisitos*
 
-Certifique-se de ter o **Node.js** instalado em sua máquina:
+Certifique-se de ter o **Node.js** instalado em sua máquina
 
 - Versão mínima: >= 20
 - Versão utilizada no projeto: 20.12.2
@@ -79,6 +79,8 @@ yarn install
 ```bash
 yarn dev
 ```
+
+# 🔑 *Configuração das Variáveis de Ambiente*
 
 ## 🔗 **Endpoints**
 
