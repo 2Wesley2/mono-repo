@@ -133,7 +133,7 @@ URL_CHECK_STATUS_GETNET=getnet://pagamento/v1/checkstatus
 
 ```
 
-### *2. Variáveis para a FrontEnd com NextJS*
+### *2. Variáveis para o FrontEnd com NextJS*
 
 No diretório `mono-repo/packages/frontend`, crie um arquivo `.env` com as seguintes variáveis
 
