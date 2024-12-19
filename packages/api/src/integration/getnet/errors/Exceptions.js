@@ -1,3 +1,4 @@
+// Exceptions.js
 class BaseError extends Error {
   constructor(details) {
     const messages = details?.map((e) => e.descriptionDetail).flat();

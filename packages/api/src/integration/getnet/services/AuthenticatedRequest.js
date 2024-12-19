@@ -1,19 +1,35 @@
-import Singleton from '../utils/Singleton.js';
-import httpRequest from '../utils/httpRequest.js';
-import getAccessToken from '../utils/getAccessToken.js';
+export default class AuthenticatedRequest {
+  constructor(httpClient, tokenProvider, clientConfig) {
+    if (!httpClient || !tokenProvider || !clientConfig) {
+      throw new Error('HttpClient, AccessTokenProvider, and ClientConfig are required for AuthenticatedRequest.');
+    }
 
-const client = new Singleton().getInstance();
+    this.httpClient = httpClient;
+    this.tokenProvider = tokenProvider;
+    this.clientConfig = clientConfig.client;
+  }
 
-const authenticatedRequest = async (url, method, body = null, customHeaders = {}) => {
-  const accessToken = await getAccessToken();
+  async request(endpoint, method, body = null, customHeaders = {}) {
+    if (!this.tokenProvider) {
+      throw new Error('AccessTokenProvider is not initialized.');
+    }
 
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Seller-Id': client.sellerId,
-    ...customHeaders,
-  };
+    const accessToken = await this.tokenProvider.getAccessToken();
 
-  return httpRequest(url, method, body, headers);
-};
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      'Seller-Id': this.clientConfig.sellerId,
+      ...customHeaders,
+    };
 
-export default authenticatedRequest;
+    return this.httpClient.request(endpoint, method, body, headers);
+  }
+
+  async get(endpoint, headers = {}) {
+    return this.request(endpoint, 'GET', null, headers);
+  }
+
+  async post(endpoint, body, headers = {}) {
+    return this.request(endpoint, 'POST', body, headers);
+  }
+}

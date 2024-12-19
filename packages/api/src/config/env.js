@@ -56,6 +56,10 @@ const {
   URL_NEW_PAYMENT_V2_GETNET,
   URL_NEW_PAYMENT_V3_GETNET,
   URL_CHECK_STATUS_GETNET,
+  GETNET_SELLER_ID,
+  GETNET_CLIENT_ID,
+  GETNET_SECRET,
+  GETNET_ENV,
 } = process.env;
 
 // Exporta as configurações como um objeto
@@ -135,4 +139,13 @@ export default {
   urlNewPaymentV2Getnet: URL_NEW_PAYMENT_V2_GETNET,
   urlNewPaymentV3Getnet: URL_NEW_PAYMENT_V3_GETNET,
   urlCheckStatusGetnet: URL_CHECK_STATUS_GETNET,
+
+  getnetSellerId: GETNET_SELLER_ID,
+  getnetClientId: GETNET_CLIENT_ID,
+  getnetSecret: GETNET_SECRET,
+  getnetEnv: GETNET_ENV,
+
+  getnetUrlSandbox: GETNET_URL_SANDBOX,
+  getnetUrlProduction: GETNET_URL_PRODUCTION,
+  getnetUrlHomolog: GETNET_URL_HOMOLOG,
 };

@@ -1,23 +1,31 @@
-import { authRequest } from '../config/Auth.js';
-
-import { handleError } from '../errors/Exceptions';
+// Card.js
+import { authenticatedRequest } from '../config/authenticatedRequest.js';
+import { handleError } from '../errors/Exceptions.js';
 
 export default class Card {
   static async asToken(params = {}) {
     try {
-      const { data } = await authRequest.post('/v1/tokens/card', params);
-      return data.numberToken;
-    } catch (ex) {
-      throw handleError(ex);
+      if (!params.cardNumber || !params.customerId) {
+        throw new Error('Missing required parameters: cardNumber or customerId.');
+      }
+
+      const response = await authenticatedRequest.post('/v1/tokens/card', params);
+      return response?.data?.numberToken ?? null;
+    } catch (error) {
+      throw handleError(error);
     }
   }
 
   static async verification(params = {}) {
     try {
-      const { data } = await authRequest.post('/v1/cards/verification', params);
-      return data;
-    } catch (ex) {
-      throw handleError(ex);
+      if (!params.numberToken) {
+        throw new Error('Missing required parameter: numberToken.');
+      }
+
+      const response = await authenticatedRequest.post('/v1/cards/verification', params);
+      return response?.data ?? null;
+    } catch (error) {
+      throw handleError(error);
     }
   }
 
@@ -26,19 +34,19 @@ export default class Card {
       const { totalAmount, paymentType, posId } = transaction;
 
       if (!totalAmount || !paymentType || !posId) {
-        throw new Error('Missing required transaction parameters: totalAmount, paymentType, or posId');
+        throw new Error('Missing required transaction parameters: totalAmount, paymentType, or posId.');
       }
 
       const endpoint = paymentType === 'PIX' ? '/v1/pos/transaction/pix' : '/v1/pos/transaction/card';
 
-      const { data } = await authRequest.post(endpoint, {
+      const response = await authenticatedRequest.post(endpoint, {
         posId,
         amount: totalAmount,
         paymentType,
       });
-      return data;
-    } catch (ex) {
-      throw handleError(ex);
+      return response?.data ?? null;
+    } catch (error) {
+      throw handleError(error);
     }
   }
 
@@ -47,10 +55,11 @@ export default class Card {
       if (!transactionId) {
         throw new Error('Transaction ID is required to get transaction status.');
       }
-      const { data } = await authRequest.get(`/v1/pos/transaction/status/${transactionId}`);
-      return data;
-    } catch (ex) {
-      throw handleError(ex);
+
+      const response = await authenticatedRequest.get(`/v1/pos/transaction/status/${transactionId}`);
+      return response?.data ?? null;
+    } catch (error) {
+      throw handleError(error);
     }
   }
 }
