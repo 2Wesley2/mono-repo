@@ -21,8 +21,23 @@
  * console.log(total); // 150
  */
 
+import { InvalidRequestError, GenericError } from '../../errors/Exceptions.js';
+
 function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrderTotalAmount, currentOrderProducts) {
   try {
+    // Valida os parâmetros de entrada.
+    if (
+      !Array.isArray(getExistingProducts) ||
+      !Array.isArray(updatedProducts) ||
+      !Array.isArray(currentOrderProducts)
+    ) {
+      throw new InvalidRequestError([
+        { field: 'getExistingProducts', message: 'A lista de produtos existentes deve ser um array válido.' },
+        { field: 'updatedProducts', message: 'A lista de produtos atualizados deve ser um array válido.' },
+        { field: 'currentOrderProducts', message: 'A lista de produtos atuais deve ser um array válido.' },
+      ]);
+    }
+
     // Mapeia os produtos existentes para facilitar consultas rápidas por ID.
     const productMap = new Map(getExistingProducts.map((prod) => [prod._id.toString(), prod]));
     const currentOrderMap = new Map(currentOrderProducts.map((prod) => [prod.product.toString(), prod.quantity]));
@@ -32,27 +47,38 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
     // Calcula o impacto das atualizações de quantidade nos produtos.
     updatedProducts.forEach((item) => {
       const product = productMap.get(item.product.toString());
-      if (product) {
-        const currentQuantity = currentOrderMap.get(item.product.toString()) || 0;
-        const quantityDifference = item.quantity - currentQuantity;
+      if (!product) {
+        throw new InvalidRequestError([
+          {
+            field: 'updatedProducts',
+            message: `Produto com ID ${item.product} não encontrado nos produtos existentes.`,
+          },
+        ]);
+      }
+      const currentQuantity = currentOrderMap.get(item.product.toString()) || 0;
+      const quantityDifference = item.quantity - currentQuantity;
 
-        if (quantityDifference !== 0) {
-          const productTotal = product.price * quantityDifference;
-          updatedProductsTotal += productTotal;
-        }
+      if (quantityDifference !== 0) {
+        const productTotal = product.price * quantityDifference;
+        updatedProductsTotal += productTotal;
       }
     });
 
     // Subtrai o valor dos produtos removidos da comanda.
     currentOrderProducts.forEach((product) => {
       const isRemoved = !updatedProducts.some((updatedProd) => String(updatedProd.product) === String(product.product));
-
       if (isRemoved) {
         const productDetails = productMap.get(product.product.toString());
-        if (productDetails) {
-          const removedTotal = productDetails.price * product.quantity;
-          updatedProductsTotal -= removedTotal;
+        if (!productDetails) {
+          throw new InvalidRequestError([
+            {
+              field: 'currentOrderProducts',
+              message: `Produto com ID ${product.product} não encontrado nos produtos existentes.`,
+            },
+          ]);
         }
+        const removedTotal = productDetails.price * product.quantity;
+        updatedProductsTotal -= removedTotal;
       }
     });
 
@@ -60,12 +86,12 @@ function calculateTotalAmount(getExistingProducts, updatedProducts, currentOrder
     const totalAmount = currentOrderTotalAmount + updatedProductsTotal;
     return totalAmount;
   } catch (error) {
-    // Trata erros capturados durante o cálculo.
-    console.group('Erro Capturado');
-    console.error('Mensagem de erro:', error.message);
-    console.error('Stack Trace:', error.stack);
-    console.groupEnd();
-    return currentOrderTotalAmount;
+    if (!(error instanceof InvalidRequestError || error instanceof GenericError)) {
+      throw new GenericError([
+        { field: 'calculation', message: 'Erro inesperado durante o cálculo do valor total da comanda.' },
+      ]);
+    }
+    throw error;
   }
 }
 export default calculateTotalAmount;

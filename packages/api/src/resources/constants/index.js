@@ -1,5 +1,5 @@
 const CUSTOMER = 'Customer';
-const SALES = 'Sales';
+const SALE = 'Sale';
 const TICKET = 'Ticket';
 const EMPLOYEE = 'Employee';
 const USER = 'User';
@@ -14,7 +14,7 @@ const CALCREF = 'CalcRef';
 
 export {
   CUSTOMER,
-  SALES,
+  SALE,
   TICKET,
   EMPLOYEE,
   USER,

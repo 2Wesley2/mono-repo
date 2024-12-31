@@ -1,4 +1,4 @@
-import AppError from '../../../errors/AppError.js';
+import { NotFoundError, InvalidRequestError } from '../../../errors/Exceptions.js';
 import { extractedProductIds, productsExistById, calculateTotalAmount } from '../../../utils/order/index.js';
 
 /**
@@ -25,7 +25,7 @@ class OrderService {
    * @property {string} updateOrderProductsFields[].product - ID do produto a ser atualizado.
    * @property {number} updateOrderProductsFields[].quantity - Nova quantidade do produto.
    * @returns {Promise<Object>} Retorna os dados da ordem atualizados.
-   * @throws {AppError} Lança erro se produtos inexistentes forem encontrados ou se a atualização falhar.
+   * @throws {InvalidRequestError|NotFoundError} Caso a validação ou atualização falhe.
    * @example
    * const updatedOrder = await orderService.updateOrderProducts(123, [
    *   { product: 'productId1', quantity: 2 },
@@ -111,7 +111,7 @@ class OrderService {
    *
    * @param {number} orderNumber - Número único identificador da ordem.
    * @returns {Promise<Object>} Retorna os dados da ordem, incluindo informações detalhadas dos produtos.
-   * @throws {AppError} Lança erro se a ordem não for encontrada ou se houver falha ao buscar produtos.
+   * @throws {NotFoundError} Caso a ordem não seja encontrada ou se houver falha ao buscar produtos.
    * @example
    * const products = await orderService.listProductsByOrder(123);
    * console.log(products);

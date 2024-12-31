@@ -1,4 +1,4 @@
-import AppError from '../errors/AppError.js';
+import { InvalidRequestError, NotFoundError } from '../errors/Exceptions.js';
 /**
  * Plugin que adiciona métodos estáticos para busca e atualização com base em chaves únicas a um schema do Mongoose.
  *
@@ -47,25 +47,55 @@ const uniqueKeyPlugin = (newSchema) => {
    */
   newSchema.statics.findByUniqueKey = async function (filter) {
     if (filter === null || filter === undefined) {
-      throw new AppError(400, 'Filtro inválido: Valor nulo ou indefinido.');
+      throw new InvalidRequestError(
+        [],
+        `Erro de tipo: O valor para a chave única "${uniqueKey}" deve ser um ${typeof value}.`,
+      );
     }
 
     const validatedFilter = ensureValidFilter(filter);
 
     if (!validatedFilter) {
-      throw new AppError(400, 'Filtro inválido: Não foi possível executar a busca.');
+      throw new InvalidRequestError(
+        [
+          {
+            field: 'filter',
+            value: filter,
+            message: 'Filtro inválido: Não é um objeto válido ou está vazio.',
+          },
+        ],
+        'Erro no filtro fornecido.',
+      );
     }
 
     const uniqueKey = Object.keys(validatedFilter)[0];
     const value = validatedFilter[uniqueKey];
 
     if (!ensureValidValue(value, typeof value)) {
-      throw new AppError(400, `Erro de tipo: O valor para a chave única "${uniqueKey}" deve ser um ${typeof value}.`);
+      throw new InvalidRequestError(
+        [
+          {
+            field: uniqueKey,
+            value,
+            message: `O valor deve ser um ${typeof value}.`,
+          },
+        ],
+        `Erro de tipo no campo "${uniqueKey}".`,
+      );
     }
 
     const result = await this.findOne(validatedFilter);
     if (!result) {
-      throw new AppError(404, 'Nenhum documento encontrado para o filtro fornecido.');
+      throw new NotFoundError(
+        [
+          {
+            field: uniqueKey,
+            value,
+            message: 'Nenhum documento encontrado para o valor fornecido.',
+          },
+        ],
+        'Documento não encontrado.',
+      );
     }
     return result;
   };
@@ -83,13 +113,30 @@ const uniqueKeyPlugin = (newSchema) => {
   newSchema.statics.findByUniqueKeyAndUpdate = async function (filter, updateFields, options = { new: true }) {
     const validatedFilter = ensureValidFilter(filter);
     if (Object.keys(validatedFilter).length === 0) {
-      throw new Error('O filtro da chave única é obrigatório e não pode estar vazio.');
+      throw new InvalidRequestError(
+        [
+          {
+            field: 'filter',
+            value: filter,
+            message: 'O filtro não pode ser vazio ou inválido.',
+          },
+        ],
+        'Erro no filtro fornecido.',
+      );
     }
 
     const uniqueKey = Object.keys(validatedFilter)[0];
 
     if (updateFields[uniqueKey] !== undefined && updateFields[uniqueKey] !== validatedFilter[uniqueKey]) {
-      throw new Error(`O campo único "${uniqueKey}" não pode ser modificado.`);
+      throw new InvalidRequestError(
+        [
+          {
+            field: uniqueKey,
+            message: `O campo único "${uniqueKey}" não pode ser modificado.`,
+          },
+        ],
+        `Erro ao tentar modificar o campo "${uniqueKey}".`,
+      );
     }
 
     return this.findOneAndUpdate(validatedFilter, updateFields, { ...options, runValidators: true });

@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 // Lista de ambientes que possuem arquivos de configuração específicos
-const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test'];
+const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test', 'development'];
 
 /**
  * Define o caminho do arquivo de configuração de ambiente com base no valor de NODE_ENV.
@@ -31,7 +31,8 @@ const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
 // Itera sobre as variáveis obrigatórias e verifica se estão definidas
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
-    throw new Error(`env.js: A variável de ambiente ${envVar} é necessária.`);
+    console.error(`env.js: A variável de ambiente ${envVar} é necessária.`);
+    process.exit(1);
   }
 });
 
@@ -60,6 +61,9 @@ const {
   GETNET_CLIENT_ID,
   GETNET_SECRET,
   GETNET_ENV,
+  GETNET_URL_SANDBOX,
+  GETNET_URL_PRODUCTION,
+  GETNET_URL_HOMOLOG,
 } = process.env;
 
 // Exporta as configurações como um objeto

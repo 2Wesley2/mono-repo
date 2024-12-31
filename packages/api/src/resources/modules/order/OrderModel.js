@@ -1,7 +1,14 @@
 import Model from '../../core/Model.js';
 import loaders from '../../../loaders/index.js';
 import { ORDER, PRODUCT } from '../../constants/index.js';
-import AppError from '../../../errors/AppError.js';
+import {
+  GenericError,
+  NotFoundError,
+  InvalidRequestError,
+  ForbiddenError,
+  ConflictError,
+  UnprocessableEntityError,
+} from '../../../errors/Exceptions.js';
 
 /**
  * Valida a consistência da comanda.
@@ -10,7 +17,9 @@ import AppError from '../../../errors/AppError.js';
  */
 const validateOrder = function () {
   if (this.products.length > 0 && this.totalAmount <= 0) {
-    throw new Error('Total amount must be greater than zero if there are products.');
+    throw new InvalidRequestError([
+      { field: 'totalAmount', message: 'O valor total deve ser maior que zero se houver produtos na comanda.' },
+    ]);
   }
 };
 
@@ -92,7 +101,9 @@ class OrderModel extends Model {
         },
       },
     );
-    console.log('resultOfUpdate na camada model', resultOfUpdate);
+    if (resultOfUpdate.matchedCount === 0) {
+      throw new ConflictError([{ field: 'orderId', message: 'Nenhuma ordem encontrada para atualizar.' }]);
+    }
     return resultOfUpdate;
   }
 
@@ -100,12 +111,12 @@ class OrderModel extends Model {
    * Busca uma comanda pelo número da comanda.
    * @param {number} orderNumber - Número da comanda.
    * @returns {Object} A comanda encontrada.
-   * @throws {AppError} Caso não encontre a comanda ou ocorra erro inesperado.
+   * @throws {NotFoundError} Caso não encontre a comanda ou ocorra erro inesperado.
    */
   async findByOrderNumber(orderNumber) {
     const result = await this.model.findByUniqueKey({ orderNumber });
     if (!result) {
-      throw new AppError(500, 'Erro desconhecido ao buscar o pedido.');
+      throw new NotFoundError([{ field: 'orderNumber', message: 'Pedido não encontrado.' }]);
     }
     return result.toObject();
   }
@@ -114,17 +125,13 @@ class OrderModel extends Model {
    * Lista os produtos associados a uma comanda pelo número da comanda.
    * @param {number} orderNumber - Número da comanda.
    * @returns {Object} Informações sobre os produtos e o valor total da comanda.
-   * @throws {AppError} Caso a comanda não seja encontrada ou a estrutura de dados seja inválida.
+   * @throws {NotFoundError} Caso a comanda não seja encontrada ou a estrutura de dados seja inválida.
    */
   async listProductsByOrder(orderNumber) {
     const order = await this.findByOrderNumber(orderNumber);
     if (!order) {
-      throw new AppError(404, 'Pedido não encontrado.');
+      throw new NotFoundError([{ field: 'orderNumber', message: 'Pedido não encontrado.' }]);
     }
-    if (!Array.isArray(order.products)) {
-      throw new AppError(500, 'Estrutura de dados inesperada: "order.products" não é um array.');
-    }
-
     return {
       totalAmount: order.totalAmount,
       products: order.products.map(({ product, quantity }) => ({

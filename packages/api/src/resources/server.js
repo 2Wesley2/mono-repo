@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 /**
  * Importações necessárias para o carregamento e gerenciamento do servidor.
  */
@@ -44,6 +46,12 @@ export default class Server {
   start() {
     return new Promise((resolve, reject) => {
       const port = this.appInstance.get('port');
+
+      // Configurar opções de HTTPS
+      const httpsOptions = {
+        key: fs.readFileSync('./key1.pem'),
+        cert: fs.readFileSync('./cert1.pem'),
+      };
       /**
        * Instância do servidor HTTP.
        * @type {Object}
@@ -53,6 +61,7 @@ export default class Server {
         resolve();
       });
 
+      this.appInstance.set('httpsOptions', httpsOptions);
       this.server.on('error', (error) => {
         reject(error);
       });

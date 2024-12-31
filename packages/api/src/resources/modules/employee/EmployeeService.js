@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import AppError from '../../../errors/AppError.js';
+import { InvalidRequestError, NotFoundError } from '../../../errors/Exceptions.js';
 
 class EmployeeService {
   constructor(repository) {
@@ -8,7 +8,7 @@ class EmployeeService {
 
   validateObjectId(id) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, 'ID de funcionário inválido.');
+      throw new InvalidRequestError([{ field: 'id', message: 'ID de funcionário inválido.' }]);
     }
   }
 
@@ -22,7 +22,7 @@ class EmployeeService {
     const employee = await this.repository.findByIdEmployee(id);
 
     if (!employee) {
-      throw new AppError(404, 'Funcionário não encontrado.');
+      throw new NotFoundError([{ field: 'id', message: 'Funcionário não encontrado.' }]);
     }
 
     return employee;
@@ -38,7 +38,7 @@ class EmployeeService {
     const updatedEmployee = await this.repository.update(id, updateData);
 
     if (!updatedEmployee) {
-      throw new AppError(404, 'Funcionário não encontrado para atualização.');
+      throw new NotFoundError([{ field: 'id', message: 'Funcionário não encontrado para atualização.' }]);
     }
 
     return updatedEmployee;
@@ -48,7 +48,7 @@ class EmployeeService {
     this.validateObjectId(id);
     const deletedEmployee = await this.repository.delete(id);
     if (!deletedEmployee) {
-      throw new AppError(404, 'Funcionário não encontrado para remoção.');
+      throw new NotFoundError([{ field: 'id', message: 'Funcionário não encontrado para remoção.' }]);
     }
     return;
   }
