@@ -5,6 +5,14 @@ class UserRepository {
     this.model = model;
   }
 
+  async getRoleByUser(userID) {
+    try {
+      return await this.model.getRoleByUser(userID);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createUser(data) {
     try {
       return await this.model.createUser(data);

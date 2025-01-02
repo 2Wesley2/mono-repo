@@ -1,4 +1,4 @@
-import Model from '../../core/Model.js';
+import Model from '../../components/Model.js';
 import loaders from '../../../loaders/index.js';
 import { REWARD, CUSTOMER } from '../../constants/index.js';
 

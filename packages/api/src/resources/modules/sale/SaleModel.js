@@ -1,4 +1,4 @@
-import Model from '../../core/Model.js';
+import Model from '../../components/Model.js';
 import { SALE } from '../../constants/index.js';
 
 const saleSchema = {};

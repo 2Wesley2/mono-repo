@@ -1,4 +1,4 @@
-import Controller from '../../core/Controller.js';
+import Controller from '../../components/Controller.js';
 import debug from '../../../debug/index.js';
 //import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 //import AuthorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';

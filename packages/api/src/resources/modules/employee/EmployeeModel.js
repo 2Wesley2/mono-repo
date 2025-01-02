@@ -1,5 +1,5 @@
 import { EMPLOYEE } from '../../constants/index.js';
-import Model from '../../core/Model.js';
+import Model from '../../components/Model.js';
 import debug from '../../../debug/index.js';
 
 const employeeSchema = {

@@ -1,16 +1,29 @@
 import bcrypt from 'bcryptjs';
-import Model from '../../core/Model.js';
-import { USER } from '../../constants/index.js';
+import Model from '../../components/Model.js';
+import { USER, ROLE } from '../../constants/index.js';
 import debug from '../../../debug/index.js';
+import loaders from '../../../loaders/index.js';
 
 const userSchema = {
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'admin' },
+  role: { type: loaders.mongoose.getObjectId(), ref: ROLE, required: true },
 };
 class UserModel extends Model {
   constructor() {
     super(userSchema, USER);
+  }
+
+  async getRoleByUser(userID) {
+    console.log(`[UserModel] Buscando role para userID: ${userID} (Tipo: ${typeof userID})`);
+    try {
+      const user = await this.model.findById(userID).populate('role');
+      console.log(`[UserModel] Role populada: ${JSON.stringify(user.role._id)} (Tipo: ${typeof user.role._id})`);
+      return user.role._id;
+    } catch (error) {
+      console.error(`[UserModel] Erro ao buscar role para userID ${userID}: ${error.message}`);
+      throw error;
+    }
   }
 
   async createUser(data) {
@@ -30,15 +43,10 @@ class UserModel extends Model {
 
   async login(username, password) {
     try {
-      debug.logger.info(`UserModel: inciando método de login`);
-      debug.logger.info(`UserModel: inciando procura pelo ${username} no MongoDB`);
       const user = await this.model.findOne({ username });
       if (!user) {
-        debug.logger.warn(`UserModel: ${username} não encontrado`);
         throw { status: 401, message: 'Usuário ou senha inválidos' };
       }
-      debug.logger.info(`UserModel: ${username} encontrado!`);
-      debug.logger.info(`UserModel: iniciando validação da senha fornecida`);
 
       const isMatch = await this.comparePassword(password, user.password);
       if (!isMatch) {

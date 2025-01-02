@@ -1,5 +1,5 @@
-import { Validator } from '../../../module/contracts/index.js';
-import { InvalidRequestError, UnprocessableEntityError } from '../../../../../errors/Exceptions.js';
+import { Validator } from '../../../../../../contracts/index.js';
+import { InvalidRequestError, UnprocessableEntityError } from '../../../../../../../../errors/Exceptions.js';
 
 export default class DefaultPayloadValidator extends Validator {
   validate(payload) {

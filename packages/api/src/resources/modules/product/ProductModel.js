@@ -1,4 +1,4 @@
-import Model from '../../core/Model.js';
+import Model from '../../components/Model.js';
 import debug from '../../../debug/index.js';
 import { PRODUCT } from '../../constants/index.js';
 

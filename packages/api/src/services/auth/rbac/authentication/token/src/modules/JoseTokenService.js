@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { UnauthorizedError, InvalidRequestError, GenericError } from '../../../../errors/Exceptions.js';
+import { UnauthorizedError, InvalidRequestError } from '../../../../../../../errors/Exceptions.js';
 
-export default class TokenService {
+export default class JoseTokenService {
   constructor({ secretKey, joseSecretKeyFormatter, userPayloadValidator }) {
     this.secretKey = secretKey;
     this.userPayloadValidator = userPayloadValidator;

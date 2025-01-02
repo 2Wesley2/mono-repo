@@ -7,6 +7,14 @@ class UserService {
     this.secretKey = config.jwtSecret;
   }
 
+  async getRoleByUser(userID) {
+    try {
+      return await this.repository.getRoleByUser(userID);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createUser(data) {
     try {
       if (!data.username || !data.password) {

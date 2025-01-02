@@ -1,4 +1,4 @@
-import { Validator } from '../../../module/contracts/index.js';
+import { Validator } from '../../../../../../contracts/index.js';
 
 export default class DefaultSecretKeyValidator extends Validator {
   validate(secretKey) {

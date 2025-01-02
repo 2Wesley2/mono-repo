@@ -11,7 +11,9 @@ const ORDER = 'Order';
 const PRODUCT = 'Product';
 const REWARD = 'Reward';
 const CALCREF = 'CalcRef';
-
+const AUTH = 'Auth';
+const PERMISSION = 'Permission';
+const ROLE = 'Role';
 export {
   CUSTOMER,
   SALE,
@@ -26,4 +28,7 @@ export {
   PRODUCT,
   REWARD,
   CALCREF,
+  AUTH,
+  PERMISSION,
+  ROLE,
 };

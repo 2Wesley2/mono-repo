@@ -1,4 +1,4 @@
-import Controller from '../../core/Controller.js';
+import Controller from '../../components/Controller.js';
 
 class CalcRefController extends Controller {
   constructor(service) {

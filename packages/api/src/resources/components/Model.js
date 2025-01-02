@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import loaders from '../../loaders/index.js';
-import debug from '../../debug/index.js';
 
 /**
  * Classe base para criação de modelos Mongoose com métodos personalizados.
@@ -89,7 +88,6 @@ class Model {
     customMethods.forEach((method) => {
       const isNativeMethod = Object.prototype.hasOwnProperty.call(Object.prototype, method);
       if (isNativeMethod) {
-        debug.logger.warn(`Model: Método "${method}" é nativo do JavaScript e não será anexado.`);
         return;
       }
       if (reservedMethods.includes(method)) {

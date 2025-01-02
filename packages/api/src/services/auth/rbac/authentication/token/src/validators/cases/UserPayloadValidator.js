@@ -1,5 +1,5 @@
 import { DefaultPayloadValidator } from '../default/index.js';
-import { InvalidRequestError } from '../../../../../errors/Exceptions.js';
+import { InvalidRequestError } from '../../../../../../../../errors/Exceptions.js';
 
 export default class UserPayloadValidator extends DefaultPayloadValidator {
   validate(payload) {

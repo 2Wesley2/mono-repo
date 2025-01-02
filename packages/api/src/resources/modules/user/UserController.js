@@ -1,4 +1,4 @@
-import Controller from '../../core/Controller.js';
+import Controller from '../../components/Controller.js';
 import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import debug from '../../../debug/index.js';
 class UserController extends Controller {
