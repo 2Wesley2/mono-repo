@@ -1,4 +1,4 @@
-import { Validator } from '../../../../../contracts/index.js';
+import { Validator } from '../../../contracts/index.js';
 
 export default class DefaultArgsValidator extends Validator {
   validate(args) {

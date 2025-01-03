@@ -1,6 +1,5 @@
-import TokenService from './interface/index.js';
-import JoseTokenService from './modules/JoseTokenService.js';
-import JsonWebTokenService from './modules/JsonWebTokenService.js';
+import JoseTokenService from './services/JoseTokenService.js';
+import JsonWebTokenService from './services/JsonWebTokenService.js';
 import { JoseSecretKeyFormatter, JsonWebTokenSecretKeyFormatter } from './formatters/index.js';
 import { Base64SecretKeyValidator, UserPayloadValidator } from './validators/cases/index.js';
 
@@ -20,7 +19,7 @@ const jsonwebtokenArguments = {
 };
 const joseTokenService = new JoseTokenService({ ...joseArguments });
 const jsonWebTokenService = new JsonWebTokenService({ ...jsonwebtokenArguments });
-const tokenServiceArguments = { joseTokenService: joseTokenService, jsonWebTokenService: jsonWebTokenService };
-const tokenService = new TokenService({ ...tokenServiceArguments });
 
-export { tokenService };
+const tokenServices = { joseTokenService, jsonWebTokenService };
+
+export { tokenServices };

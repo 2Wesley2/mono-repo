@@ -2,10 +2,12 @@ import Controller from '../../components/Controller.js';
 import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import debug from '../../../debug/index.js';
 class UserController extends Controller {
-  constructor(service) {
+  constructor(service, authenticationService, authorizationService) {
     super();
     this.initializeCustomRoutes();
     this.service = service;
+    this.authenticationService = authenticationService;
+    this.authorizationService = authorizationService;
   }
 
   initializeCustomRoutes() {
@@ -30,17 +32,17 @@ class UserController extends Controller {
 
   async login(req, res, next) {
     try {
-      debug.logger.info('UserController: iniciando método de login na camada de UserController.');
-      debug.logger.info('UserController: extraindo username e password do body da requisição');
+      const isToken = req.cookies?.token;
+      const isAuthenticated = await this.authenticationService.isAuthenticate(isToken);
+      if (isToken && isAuthenticated) {
+        res.json('Usuário já está autênticado');
+      }
       const { username, password } = req.body;
-      debug.logger.info(`UserController: ${username} e ${password} extraídos do body`);
-      debug.logger.info(
-        `UserController: delegando login para camada de service passando o username e password extraídos do body`,
-      );
-      const { user, token } = await this.service.login(username, password);
-      debug.logger.info(`UserController: ${user} e ${token} obtidos da camada de serviço`);
-      debug.logger.info(`UserController: passando o token para o cookie na resposta ao usuário`);
-
+      const authUser = await this.authenticationService.authenticate(password, passwordHashed);
+      if (!authUser) {
+        throw Error('usuário ou senha inválidos');
+      }
+      const token = await this.authenticationService.generateToken(payload);
       res.cookie('wfSystem', token, {
         httpOnly: true,
         secure: false,

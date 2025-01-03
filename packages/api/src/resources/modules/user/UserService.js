@@ -2,7 +2,7 @@ import AuthMiddleware from '../../../middlewares/authMiddleware.js';
 import config from '../../../config/index.js';
 import debug from '../../../debug/index.js';
 class UserService {
-  constructor(repository) {
+  constructor(repository, authenticationService) {
     this.repository = repository;
     this.secretKey = config.jwtSecret;
   }

@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import debug from '../debug/index.js';
-import { tokenService } from '../services/auth/rbac/authentication/token/src/index.js';
+import { tokenService } from '../services/auth/authentication/token/src/index.js';
 class AuthMiddleware {
   async generateToken(user) {
     const payload = { id: user._id, role: user.role };

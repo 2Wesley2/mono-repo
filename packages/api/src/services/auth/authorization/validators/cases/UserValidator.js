@@ -1,5 +1,5 @@
 import { DefaultArgsValidator } from '../default/index.js';
-import loaders from '../../../../../../../loaders/index.js';
+import loaders from '../../../../../loaders/index.js';
 
 export default class UserValidator extends DefaultArgsValidator {
   validate(userID) {

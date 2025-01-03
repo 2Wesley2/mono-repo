@@ -1,5 +1,5 @@
 import { Authorizer } from '../contracts/index.js';
-import { isString } from '../../../../../../helpers/stringHelper.js';
+import { isString } from '../../../../helpers/stringHelper.js';
 
 export default class Authorization extends Authorizer {
   constructor({ userService, roleService }) {
