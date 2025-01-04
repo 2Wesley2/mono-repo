@@ -1,4 +1,3 @@
-import CryptoService from './interface/index.js';
 import { BcryptjsService } from './services/index.js';
 import { PasswordValidator } from './validators/cases/index.js';
 import { PasswordFormatter } from './formatters/index.js';

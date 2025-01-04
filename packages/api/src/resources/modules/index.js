@@ -1,7 +1,3 @@
-import PermissionModel from './rbac/permission/PermissionModel.js';
-import RoleModel from './rbac/role/RoleModel.js';
-import RoleService from './rbac/role/RoleModel.js';
-
 import UserModel from './user/UserModel.js';
 import UserRepository from './user/UserRepository.js';
 import UserService from './user/UserService.js';
@@ -40,10 +36,6 @@ import RewardController from './reward/RewardController.js';
 import NotificationModel from './notification/NotificationModel.js';
 import NotificationRepository from './notification/NotificationRepository.js';
 import NotificationService from './notification/NotificationService.js';
-
-const permissionModel = new PermissionModel();
-const roleModel = new RoleModel();
-const roleService = new RoleService(roleModel);
 
 const userModel = new UserModel();
 const userRepository = new UserRepository(userModel);
@@ -94,5 +86,4 @@ export {
   rewardController,
   calcRefController,
   userService,
-  roleService,
 };

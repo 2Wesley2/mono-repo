@@ -5,8 +5,6 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
 import debug from '../debug/index.js';
 import config from '../config/index.js';
 import loaders from '../loaders/index.js';
@@ -81,7 +79,6 @@ export default class App {
       }),
     );
     this.app.use(cookieParser());
-    debug.logger.info('app.js: Middlewares de parsing e CORS configurados.');
   }
 
   /**
@@ -90,7 +87,6 @@ export default class App {
    */
   setRoutes() {
     this.app.get('/', (_, res) => res.json('Hello World'));
-    debug.logger.info('app.js: Definindo rotas para os controladores...');
     try {
       this.logRequests();
       this.app.use('/api/customer', customerController.getRouter());
@@ -100,10 +96,7 @@ export default class App {
       this.app.use('/api/order', orderController.getRouter());
       this.app.use('/api/reward', rewardController.getRouter());
       this.app.use('/api/calcRef', calcRefController.getRouter());
-
-      this.app.post('/api/rebatedor/pre-authorization', this.handlePreAuthorizationRequest);
     } catch (error) {
-      debug.logger.error('app.js: Erro ao definir rotas para os controladores:', error);
       throw error;
     }
   }
@@ -134,78 +127,5 @@ export default class App {
    */
   getInstance() {
     return this.app;
-  }
-
-  /**
-   * Função para tratar a requisição de pré-autorização.
-   * Faz uma requisição para o endpoint de pré-autorização de outra API.
-   */
-  handlePreAuthorizationRequest(req, res) {
-    const { amount, currencyPosition, currencyCode, orderId } = req.body;
-
-    if (!amount || !currencyPosition || !currencyCode || !orderId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Dados insuficientes para realizar a pré-autorização.',
-      });
-    }
-
-    const requestBody = JSON.stringify({
-      amount,
-      currencyPosition,
-      currencyCode,
-      orderId,
-    });
-
-    const endpoint = 'getnet://pagamento/v1/pre-authorization';
-
-    const parsedUrl = new URL(endpoint);
-
-    const options = {
-      hostname: parsedUrl.hostname,
-      port: 443,
-      path: parsedUrl.pathname,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(requestBody),
-      },
-    };
-
-    const request = https.request(options, (response) => {
-      let data = '';
-
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      response.on('end', () => {
-        try {
-          const parsedData = JSON.parse(data);
-          res.json({
-            success: true,
-            message: 'Pré-autorização realizada com sucesso.',
-            data: parsedData,
-          });
-        } catch (error) {
-          res.status(500).json({
-            success: false,
-            message: 'Erro ao processar a resposta.',
-            error: error.message,
-          });
-        }
-      });
-    });
-
-    request.on('error', (error) => {
-      res.status(500).json({
-        success: false,
-        message: 'Falha ao realizar a pré-autorização.',
-        error: error.message,
-      });
-    });
-
-    request.write(requestBody);
-    request.end();
   }
 }

@@ -1,8 +1,7 @@
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
 class UserService {
-  constructor(repository, authService) {
+  constructor(repository) {
     this.repository = repository;
-    this.authService = authService;
   }
 
   async getRoleByUser(userID) {
