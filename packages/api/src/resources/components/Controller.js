@@ -1,5 +1,5 @@
 import { Router } from 'express';
-
+import { authMiddlewares } from '../../middlewares/index.js';
 /**
  * Classe que representa um controlador genérico com funcionalidade de roteamento.
  */
@@ -14,6 +14,8 @@ class Controller {
      * @type {Router}
      */
     this.router = Router();
+
+    this.middlewares = authMiddlewares;
   }
 
   /**
@@ -25,6 +27,10 @@ class Controller {
    */
   getRouter() {
     return this.router;
+  }
+
+  get middleware() {
+    return this.middlewares;
   }
 }
 

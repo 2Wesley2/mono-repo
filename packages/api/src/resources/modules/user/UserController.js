@@ -1,13 +1,12 @@
 import Controller from '../../components/Controller.js';
 import AuthMiddleware from '../../../middlewares/authMiddlewares.js';
-import debug from '../../../debug/index.js';
+import { UnauthorizedError } from '../../../errors/Exceptions.js';
+
 class UserController extends Controller {
-  constructor(service, authenticationService, authorizationService) {
+  constructor(service) {
     super();
     this.initializeCustomRoutes();
     this.service = service;
-    this.authenticationService = authenticationService;
-    this.authorizationService = authorizationService;
   }
 
   initializeCustomRoutes() {
@@ -31,32 +30,27 @@ class UserController extends Controller {
   }
 
   async login(req, res, next) {
+    const { password, username } = req;
+    const user = await this.service.getUserByUsername(username);
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+    const authService = super.middlewares;
+    const payload = { user: user.username, role: user.role };
+    const credentials = { password: password, userPasswordHashed: user.password, payload: payload };
+    const auth = await authService.authenticate({ ...credentials });
+    if (!auth) {
+      throw new UnauthorizedError();
+    }
     try {
-      const isToken = req.cookies?.token;
-      const isAuthenticated = await this.authenticationService.isAuthenticate(isToken);
-      if (isToken && isAuthenticated) {
-        res.json('Usuário já está autênticado');
-      }
-      const { username, password } = req.body;
-      const authUser = await this.authenticationService.authenticate(password, passwordHashed);
-      if (!authUser) {
-        throw Error('usuário ou senha inválidos');
-      }
-      const token = await this.authenticationService.generateToken(payload);
-      res.cookie('wfSystem', token, {
+      res.cookie('wfSystem', auth, {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',
         maxAge: 3600000,
       });
-      debug.logger.info(`UserController: cookie enviado`);
       res.status(200).json({ id: user._id, username: user.username });
-      debug.logger.info(`UserController: finalizado`);
     } catch (error) {
-      debug.logger.warn(`UserController: problema de login na camada de controller`);
-      if (error.status === 401) {
-        return res.status(401).json({ message: 'Usuário ou senha inválidos' });
-      }
       next(error);
     }
   }

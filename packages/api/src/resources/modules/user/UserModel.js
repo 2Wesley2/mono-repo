@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import Model from '../../components/Model.js';
 import { USER, ROLE } from '../../constants/index.js';
-import debug from '../../../debug/index.js';
 import loaders from '../../../loaders/index.js';
 
 const userSchema = {
@@ -15,10 +14,8 @@ class UserModel extends Model {
   }
 
   async getRoleByUser(userID) {
-    console.log(`[UserModel] Buscando role para userID: ${userID} (Tipo: ${typeof userID})`);
     try {
       const user = await this.model.findById(userID).populate('role');
-      console.log(`[UserModel] Role populada: ${JSON.stringify(user.role._id)} (Tipo: ${typeof user.role._id})`);
       return user.role._id;
     } catch (error) {
       console.error(`[UserModel] Erro ao buscar role para userID ${userID}: ${error.message}`);
@@ -37,27 +34,9 @@ class UserModel extends Model {
     }
   }
 
-  async comparePassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword);
-  }
-
-  async login(username, password) {
-    try {
-      const user = await this.model.findOne({ username });
-      if (!user) {
-        throw { status: 401, message: 'Usuário ou senha inválidos' };
-      }
-
-      const isMatch = await this.comparePassword(password, user.password);
-      if (!isMatch) {
-        debug.logger.warn(`UserModel: ${password} inválida`);
-        throw { status: 401, message: 'Usuário ou senha inválidos' };
-      }
-
-      return user;
-    } catch (error) {
-      throw error;
-    }
+  async getUserByUsername(username) {
+    const user = await this.model.findOne({ username });
+    return user;
   }
 }
 

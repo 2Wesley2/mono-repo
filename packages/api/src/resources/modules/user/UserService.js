@@ -1,10 +1,8 @@
-import AuthMiddleware from '../../../middlewares/authMiddlewares.js';
-import config from '../../../config/index.js';
-import debug from '../../../debug/index.js';
+import { UnauthorizedError } from '../../../errors/Exceptions.js';
 class UserService {
-  constructor(repository, authenticationService) {
+  constructor(repository, authService) {
     this.repository = repository;
-    this.secretKey = config.jwtSecret;
+    this.authService = authService;
   }
 
   async getRoleByUser(userID) {
@@ -28,23 +26,12 @@ class UserService {
     }
   }
 
-  async login(username, password) {
-    try {
-      debug.logger.info(`UserService: Delegando login para camada de e esperando a resposta`);
-      const user = await this.repository.login(username, password);
-      debug.logger.info(`UserService: O ${username} pode fazer o login!`);
-      debug.logger.info(`UserService: iniciando processo de geração de token`);
-
-      const token = await AuthMiddleware.generateToken(user);
-      debug.logger.info(`UserService: ${token} gerado para ${user}`);
-      return { user, token };
-    } catch (error) {
-      debug.logger.warn(`UserService: ocorreu um erro no login na camada de serviço`);
-      if (error.status === 401) {
-        throw { status: 401, message: error.message };
-      }
-      throw error;
+  async getUserByUsername(username) {
+    const user = await this.repository.getUserByUsername(username);
+    if (!user) {
+      throw new UnauthorizedError();
     }
+    return user;
   }
 }
 export default UserService;
