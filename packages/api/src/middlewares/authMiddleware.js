@@ -1,62 +1,22 @@
-import { SignJWT, jwtVerify } from 'jose';
-import debug from '../debug/index.js';
-import { tokenService } from '../services/auth/authentication/token/src/index.js';
-class AuthMiddleware {
-  async generateToken(user) {
-    const payload = { id: user._id, role: user.role };
-    const token = await tokenService.generateToken(payload);
-    return token;
+import Auth from '../services/auth/index.js';
+import { UnauthorizedError } from '../errors/Exceptions.js';
+export default class AuthMiddleware extends Auth {
+  async authenticate({ password, userPasswordHashed, payload }) {
+    const service = super.authenticationService;
+    const validatedPassword = await service.validatePassword(password, userPasswordHashed);
+    if (!validatedPassword) {
+      throw new UnauthorizedError();
+    }
+    const generatedToken = await service.generateToken(payload);
+    return generatedToken;
   }
 
-  static async verifyToken(token) {
-    try {
-      const verifyToken = await tokenService.verifyToken(token);
-      return verifyToken;
-    } catch (error) {
-      debug.logger.error(`AuthMiddleware.js: Erro na verificação do token - ${error.message}`);
-      throw new Error('Token inválido');
+  async isAuthenticate(token) {
+    const service = super.authenticationService;
+    const isAuth = await service.verifyToken(token);
+    if (!isAuth) {
+      throw new UnauthorizedError();
     }
-  }
-
-  static async authenticate(req, res, next) {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: 'Autenticação necessária' });
-
-    try {
-      const decoded = await this.verifyToken(token);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      return res.status(401).json({ message: 'Token inválido' });
-    }
-  }
-
-  static async blockIfAuthenticated(req, res, next) {
-    const token = req.cookies.token;
-
-    if (!token) {
-      debug.logger.info('blockIfAuthenticated: Nenhum token encontrado. Permitir login.');
-      return next();
-    }
-
-    try {
-      const decoded = await this.verifyToken(token);
-
-      if (decoded) {
-        debug.logger.info('blockIfAuthenticated: Token válido encontrado. Bloqueando login.');
-        return res.status(403).json({ message: 'Você já está autenticado' });
-      }
-    } catch (error) {
-      debug.logger.warn(`blockIfAuthenticated: Token inválido ou expirado. Erro: ${error.message}`);
-      return next();
-    }
-  }
-
-  static logout(req, res) {
-    res.clearCookie('token');
-    debug.logger.info('AuthMiddleware.js: Token removido. Logout realizado com sucesso.');
-    return res.status(200).json({ message: 'Logout realizado com sucesso' });
+    return true;
   }
 }
-
-export default AuthMiddleware;

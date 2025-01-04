@@ -1,5 +1,5 @@
 import Controller from '../../components/Controller.js';
-import AuthMiddleware from '../../../middlewares/authMiddleware.js';
+import AuthMiddleware from '../../../middlewares/authMiddlewares.js';
 import debug from '../../../debug/index.js';
 class UserController extends Controller {
   constructor(service, authenticationService, authorizationService) {

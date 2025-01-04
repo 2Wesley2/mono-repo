@@ -1,19 +1,7 @@
-import { Authenticator } from '../contracts/index.js';
-
-export default class Authentication extends Authenticator {
+export default class Authentication {
   constructor({ tokenService, cryptoService }) {
     this.tokenService = tokenService;
     this.cryptoService = cryptoService;
-  }
-
-  async authenticate(passwordProvided, passwordHashed) {
-    const validatedPassword = await this.validatePassword(passwordProvided, passwordHashed);
-    return validatedPassword;
-  }
-
-  async isAuthenticate(token) {
-    const isAuth = await this.verifyToken(token);
-    return isAuth;
   }
 
   async validatePassword(passwordProvided, passwordHashed) {

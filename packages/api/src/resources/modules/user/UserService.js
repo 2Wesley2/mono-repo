@@ -1,4 +1,4 @@
-import AuthMiddleware from '../../../middlewares/authMiddleware.js';
+import AuthMiddleware from '../../../middlewares/authMiddlewares.js';
 import config from '../../../config/index.js';
 import debug from '../../../debug/index.js';
 class UserService {
