@@ -1,6 +1,6 @@
 export default class BcryptjsService {
-  constructor({ passawordValidator, passwordFormatter }) {
-    this.passawordValidator = passawordValidator;
+  constructor({ passwordValidator, passwordFormatter }) {
+    this.passwordValidator = passwordValidator;
     this.passwordFormatter = passwordFormatter;
   }
 
@@ -9,7 +9,8 @@ export default class BcryptjsService {
     return hashedPassword;
   }
   async validatePassword(passwordProvided, passwordHashed) {
-    const isMatch = await passawordValidator.validate(passwordProvided, passwordHashed);
+    console.log('chegou aqui 2');
+    const isMatch = await passwordValidator.validate(passwordProvided, passwordHashed);
     return isMatch;
   }
 }

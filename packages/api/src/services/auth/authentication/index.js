@@ -5,4 +5,7 @@ import { cryptoServices } from './services/crypto/src/index.js';
 const tokenService = tokenServices.jsonWebTokenService;
 const cryptoService = cryptoServices.bcryptjsService;
 
-export const authentication = new Authentication({ ...tokenService, ...cryptoService });
+export const authentication = new Authentication({
+  tokenService: tokenService,
+  cryptoService: cryptoService,
+});

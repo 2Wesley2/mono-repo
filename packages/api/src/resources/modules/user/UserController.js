@@ -32,15 +32,11 @@ class UserController extends Controller {
     try {
       console.log(`inicio da depuração`);
       const { password, username } = req.body;
-      console.log(
-        `username e password recebidos do body da request:\n  ${username}\n ${password}\nSeus tipos:\n ${typeof username}\n ${typeof password}`,
-      );
       const user = await this.service.getUserByUsername(username);
-      console.log(`resultado de const user:\n  ${user}\ntipo:\n ${typeof user}`);
       if (!user) {
         throw new UnauthorizedError();
       }
-      const authService = super.middlewares;
+      const authService = this.middlewares;
       console.log(`serviço de autenticação\n  ${authService}\ntipo:\n ${typeof authService}`);
       const payload = { id: user._id, role: user.role };
       console.log(
