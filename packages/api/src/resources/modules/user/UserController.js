@@ -9,7 +9,7 @@ class UserController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/login', this.login.bind(this));
+    this.router.post('/login', this.middlewares.blockIfAuthenticated.bind(this.middlewares), this.login.bind(this));
     this.router.post('/logout', this.logout.bind(this));
     this.router.post('/register', this.createUser.bind(this));
   }
@@ -30,7 +30,6 @@ class UserController extends Controller {
 
   async login(req, res, next) {
     try {
-      console.log(`inicio da depuração`);
       const { password, username } = req.body;
       const user = await this.service.getUserByUsername(username);
       if (!user) {

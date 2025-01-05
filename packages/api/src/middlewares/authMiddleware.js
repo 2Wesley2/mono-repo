@@ -20,4 +20,19 @@ export default class AuthMiddleware extends Auth {
     }
     return true;
   }
+
+  async blockIfAuthenticated(req, res, next) {
+    try {
+      const token = req.cookies?.wfSystem;
+      if (token) {
+        const isAuthenticated = await this.isAuthenticate(token);
+        if (isAuthenticated) {
+          return res.status(403).json({ message: 'Usuário já está autenticado' });
+        }
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
 }
