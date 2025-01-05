@@ -5,12 +5,11 @@ export default class BcryptjsService {
   }
 
   async hash(password) {
-    const hashedPassword = await passwordFormatter.format(password);
+    const hashedPassword = await this.passwordFormatter.format(password);
     return hashedPassword;
   }
   async validatePassword(passwordProvided, passwordHashed) {
-    console.log('chegou aqui 2');
-    const isMatch = await passwordValidator.validate(passwordProvided, passwordHashed);
+    const isMatch = await this.passwordValidator.validate(passwordProvided, passwordHashed);
     return isMatch;
   }
 }

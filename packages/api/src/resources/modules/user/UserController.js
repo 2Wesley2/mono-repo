@@ -1,6 +1,6 @@
 import Controller from '../../components/Controller.js';
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
-
+import { toStrings } from '../../../helpers/stringHelper.js';
 class UserController extends Controller {
   constructor(service) {
     super();
@@ -37,18 +37,11 @@ class UserController extends Controller {
         throw new UnauthorizedError();
       }
       const authService = this.middlewares;
-      console.log(`serviço de autenticação\n  ${authService}\ntipo:\n ${typeof authService}`);
-      const payload = { id: user._id, role: user.role };
-      console.log(
-        `payload montado:\n  ${payload}\n tipos:\n payload: ${typeof payload}\n payload.id: ${typeof payload.id}\n payload.role: ${payload.role}`,
-      );
+      const payloadValues = toStrings([user._id, user.role]);
+      const [id, role] = payloadValues;
+      const payload = { id: id, role: role };
       const credentials = { password: password, userPasswordHashed: user.password, payload: payload };
-      console.log(
-        `credenciais montada:\n  ${credentials}\n tipos:\n credentials: ${typeof credentials}\n credentials.password: ${typeof credentials.password}\n credentials.userPasswordHashed: ${credentials.userPasswordHashed}\n`,
-      );
       const auth = await authService.authenticate({ ...credentials });
-      console.log(`resultado de da autenticação:\n  ${auth}\ntipo:\n ${typeof auth}`);
-
       if (!auth) {
         throw new UnauthorizedError();
       }
