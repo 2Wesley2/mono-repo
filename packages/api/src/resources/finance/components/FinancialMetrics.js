@@ -14,7 +14,7 @@ export default class FinancialMetrics extends FinancialMetricsInterface {
     return this.mathOperations.subtractOperation(totalRevenue, productsCostPrice);
   }
 
-  averageTicket(totalRevenue, totalSales) {
+  calculateAverageTicket(totalRevenue, totalSales) {
     return this.mathOperations.divisionOperation(totalRevenue, totalSales);
   }
 

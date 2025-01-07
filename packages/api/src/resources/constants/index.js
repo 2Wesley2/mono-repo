@@ -1,34 +1,18 @@
-const CUSTOMER = 'Customer';
-const SALE = 'Sale';
-const TICKET = 'Ticket';
-const EMPLOYEE = 'Employee';
-const USER = 'User';
-const NOTIFICATION = 'Notification';
-const CASHBACK = 'Cashback';
-const TIER = 'Tier';
-const PAYMENT = 'Payment';
-const ORDER = 'Order';
-const PRODUCT = 'Product';
-const REWARD = 'Reward';
-const CALCREF = 'CalcRef';
-const AUTH = 'Auth';
-const PERMISSION = 'Permission';
-const ROLE = 'Role';
-export {
-  CUSTOMER,
-  SALE,
-  TICKET,
-  EMPLOYEE,
-  USER,
-  NOTIFICATION,
-  CASHBACK,
-  TIER,
-  PAYMENT,
-  ORDER,
-  PRODUCT,
-  REWARD,
-  CALCREF,
-  AUTH,
-  PERMISSION,
-  ROLE,
-};
+export const CUSTOMER = 'Customer';
+export const SALE = 'Sale';
+export const TICKET = 'Ticket';
+export const EMPLOYEE = 'Employee';
+export const USER = 'User';
+export const NOTIFICATION = 'Notification';
+export const CASHBACK = 'Cashback';
+export const TIER = 'Tier';
+export const PAYMENT = 'Payment';
+export const ORDER = 'Order';
+export const PRODUCT = 'Product';
+export const REWARD = 'Reward';
+export const CALCREF = 'CalcRef';
+export const AUTH = 'Auth';
+export const PERMISSION = 'Permission';
+export const ROLE = 'Role';
+export const SESSION = 'Session';
+export const CASHREGISTER = 'CashRegister';

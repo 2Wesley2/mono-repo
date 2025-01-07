@@ -5,9 +5,15 @@ export default class MathOperations extends MathOperationsInterface {
     return Array.isArray(value) ? value : [value];
   }
 
+  static isNumber(number) {
+    if (typeof number !== 'number') {
+      throw TypeError(`${number} não é um número`);
+    }
+    return number;
+  }
   static validateNumbersArray(array) {
     array = this.toArray(array);
-    if (!array.every((value) => typeof value === 'number')) {
+    if (!array.every((value) => this.isNumber(value))) {
       throw new TypeError(`Todos os valores no array devem ser números:\n array: ${JSON.stringify(array)}`);
     }
     return array;

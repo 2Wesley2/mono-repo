@@ -1,0 +1,25 @@
+import MathOperations from '../../finance/components/MathOperations';
+import CashRegister from '../../finance/components/CashRegister';
+export default class CashRegisterReposioty {
+  constructor(model) {
+    this.model = model;
+  }
+  async inflow(cash) {
+    const currentBalance = await this.model.getCurrentBalance();
+    const newCurrentBalance = CashRegister.inflow(currentBalance, cash);
+    if (newCurrentBalance < currentBalance) {
+      throw Error('O novo valor contido no caixa deve ser maior que o anterior');
+    }
+    const updateCurrentBalance = await this.model.updateCurrentBalance(newCurrentBalance);
+    return updateCurrentBalance;
+  }
+  async outflow(cash) {
+    const currentBalance = await this.model.getCurrentBalance();
+    const newCurrentBalance = CashRegister.outflow(currentBalance, cash);
+    if (newCurrentBalance > currentBalance) {
+      throw Error('O novo valor contido no caixa deve ser menor que o anterior');
+    }
+    const updateCurrentBalance = await this.model.updateCurrentBalance(newCurrentBalance);
+    return updateCurrentBalance;
+  }
+}
