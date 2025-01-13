@@ -1,19 +1,17 @@
 import Model from '../../components/Model.js';
-import { CASHREGISTER, SESSION } from '../../constants/index.js';
+import { CASH_REGISTER } from '../../collections/index.js';
 import loaders from '../../../loaders/index.js';
-import CashRegister from '../../finance/components/CashRegister.js';
 
 const cashRegisterSchema = {
   currentBalance: { type: Number, required: true },
-  // session: { type: loaders.mongoose.getObjectId(), ref: SESSION, required: true },
 };
 
 export default class CashRegisterModel extends Model {
   constructor() {
-    super(cashRegisterSchema, CASHREGISTER);
+    super(cashRegisterSchema, CASH_REGISTER);
   }
   async findDocument() {
-    const document = await this.model.findOne({});
+    const document = await this.model.findOne();
     return document;
   }
   async createCashRegister(initialBalance) {
@@ -21,8 +19,17 @@ export default class CashRegisterModel extends Model {
     if (existsCashRegister) {
       throw Error('Já existe um caixa, não é possível criar outro');
     }
-    const createCashRegister = new CashRegister.create(initialBalance);
-    const saveCashRegister = this.model.create(createCashRegister);
+    const createCashRegister = loaders.cashRegister.create(initialBalance);
+    const saveCashRegister = await this.model.create(createCashRegister);
     return saveCashRegister;
+  }
+
+  async updateCurrentBalance(newValue) {
+    const registerCash = await this.findDocument();
+    if (!registerCash) {
+      throw new Error('Nenhum caixa encontrado para atualizar o saldo.');
+    }
+    const result = await this.model.updateOne({ _id: registerCash._id }, { $set: { currentBalance: newValue } });
+    return result;
   }
 }

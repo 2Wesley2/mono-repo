@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import Model from '../../components/Model.js';
-import { USER, ROLE } from '../../constants/index.js';
+import { USER, ROLE } from '../../collections/index.js';
 import loaders from '../../../loaders/index.js';
 
 const userSchema = {

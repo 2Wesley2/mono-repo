@@ -1,4 +1,9 @@
 import mongoose from './mongoose.js';
+import cashRegister from './cashRegister.js';
+import stock from './stock.js';
+import backStock from './backStock.js';
+import showRoom from './showRoom.js';
+
 /**
  * Exporta um objeto centralizado contendo o módulo `mongoose`.
  *
@@ -14,4 +19,8 @@ import mongoose from './mongoose.js';
  */
 export default {
   mongoose,
+  cashRegister,
+  stock,
+  backStock,
+  showRoom,
 };

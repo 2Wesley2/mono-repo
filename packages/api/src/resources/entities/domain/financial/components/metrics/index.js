@@ -1,0 +1,27 @@
+import FinancialMetrics from './service/FinancialMetrics.js';
+
+export default {
+  calculateGrossRevenue: (...args) => FinancialMetrics.calculateGrossRevenue(...args),
+  calculateNetRevenue: (...args) => FinancialMetrics.calculateNetRevenue(...args),
+  calculateGrossMargin: (...args) => FinancialMetrics.calculateGrossMargin(...args),
+  calculateAverageTicket: (...args) => FinancialMetrics.calculateAverageTicket(...args),
+  calculateConversionRate: (...args) => FinancialMetrics.calculateConversionRate(...args),
+  calculateNetProfit: (...args) => FinancialMetrics.calculateNetProfit(...args),
+  calculateROI: (...args) => FinancialMetrics.calculateROI(...args),
+  calculatePercentageROI: (...args) => FinancialMetrics.calculatePercentageROI(...args),
+  calculateTotalGrossRevenue: (...args) => FinancialMetrics.calculateTotalGrossRevenue(...args),
+  calculateCMV: (...args) => FinancialMetrics.calculateCMV(...args),
+  calculateOperationalExpenses: (...args) => FinancialMetrics.calculateOperationalExpenses(...args),
+  calculatePreTaxProfit: (...args) => FinancialMetrics.calculatePreTaxProfit(...args),
+  calculateTaxProvisions: (...args) => FinancialMetrics.calculateTaxProvisions(...args),
+  calculateNetIncome: (...args) => FinancialMetrics.calculateNetIncome(...args),
+  calculateFinalNetIncome: (...args) => FinancialMetrics.calculateFinalNetIncome(...args),
+  calculateOperationalGrossRevenue: (...args) => FinancialMetrics.calculateOperationalGrossRevenue(...args),
+  calculateDeductions: (...args) => FinancialMetrics.calculateDeductions(...args),
+  calculateOperationalNetRevenue: (...args) => FinancialMetrics.calculateOperationalNetRevenue(...args),
+  calculateGrossProfit: (...args) => FinancialMetrics.calculateGrossProfit(...args),
+  calculateOperationalResult: (...args) => FinancialMetrics.calculateOperationalResult(...args),
+  calculateNonOperationalResult: (...args) => FinancialMetrics.calculateNonOperationalResult(...args),
+  calculateBeforeTaxProfit: (...args) => FinancialMetrics.calculateBeforeTaxProfit(...args),
+  calculateParticipations: (...args) => FinancialMetrics.calculateParticipations(...args),
+};

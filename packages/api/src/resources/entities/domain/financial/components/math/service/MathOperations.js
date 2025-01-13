@@ -1,4 +1,5 @@
-import MathOperationsInterface from '../interfaces/MathOperationsInterface.js';
+import MathOperationsInterface from '../interface/MathOperationsInterface.js';
+
 export default class MathOperations extends MathOperationsInterface {
   static toArray(value) {
     if (value == null) return [];

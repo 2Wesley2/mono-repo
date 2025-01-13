@@ -1,5 +1,5 @@
 import Model from '../../components/Model.js';
-import { CALCREF } from '../../constants/index.js';
+import { CALCREF } from '../../collections/index.js';
 
 const calcRefSchema = {
   baseValue: { type: Number, required: true },

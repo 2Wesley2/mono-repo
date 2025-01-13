@@ -1,7 +1,7 @@
 import Database from '../../../database/index.js';
 import Model from '../../components/Model.js';
 import debug from '../../../debug/index.js';
-import { NOTIFICATION, TICKET, CUSTOMER, SALE } from '../../constants/index.js';
+import { NOTIFICATION, TICKET, CUSTOMER, SALE } from '../../collections/index.js';
 
 const notificationSchema = {
   ticket: { type: Database.ObjectId, ref: TICKET, required: true },

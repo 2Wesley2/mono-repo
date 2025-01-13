@@ -1,6 +1,6 @@
 import Model from '../../components/Model.js';
 import debug from '../../../debug/index.js';
-import { PRODUCT } from '../../constants/index.js';
+import { PRODUCT } from '../../collections/index.js';
 
 /**
  * Esquema do modelo de produto.

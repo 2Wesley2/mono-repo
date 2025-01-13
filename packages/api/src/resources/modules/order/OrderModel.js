@@ -1,6 +1,6 @@
 import Model from '../../components/Model.js';
 import loaders from '../../../loaders/index.js';
-import { ORDER, PRODUCT } from '../../constants/index.js';
+import { ORDER, PRODUCT } from '../../collections/index.js';
 import {
   GenericError,
   NotFoundError,

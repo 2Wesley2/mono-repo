@@ -1,5 +1,5 @@
 import Model from '../../components/Model.js';
-import { SESSION, USER } from '../../constants/index.js';
+import { SESSION, USER } from '../../collections/index.js';
 import loaders from '../../../loaders/index.js';
 
 const statusValues = Object.freeze({

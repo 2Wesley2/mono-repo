@@ -1,5 +1,5 @@
 import Model from '../../../components/Model.js';
-import { ROLE, PERMISSION } from '../../../constants/index.js';
+import { ROLE, PERMISSION } from '../../../collections/index.js';
 import loaders from '../../../../loaders/index.js';
 
 const roleSchema = {

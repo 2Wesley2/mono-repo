@@ -1,6 +1,6 @@
 import Model from '../../components/Model.js';
 import loaders from '../../../loaders/index.js';
-import { REWARD, CUSTOMER } from '../../constants/index.js';
+import { REWARD, CUSTOMER } from '../../collections/index.js';
 
 /**
  * Esquema para o modelo de recompensa.

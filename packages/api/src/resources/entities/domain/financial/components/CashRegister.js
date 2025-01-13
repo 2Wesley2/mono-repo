@@ -1,9 +1,6 @@
 import MathOperations from './MathOperations.js';
 
 export default class CashRegister extends MathOperations {
-  constructor() {
-    super();
-  }
   static create(initialCurrentBalance) {
     initialCurrentBalance = this.isNumber(initialCurrentBalance);
     return { currentBalance: initialCurrentBalance };

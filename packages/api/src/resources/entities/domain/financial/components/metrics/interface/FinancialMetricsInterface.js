@@ -1,5 +1,5 @@
 export default class FinancialMetricsInterface {
-  calculateTotalRevenue(salesValues) {
+  calculateGrossRevenue(salesValues) {
     throw new Error('Method not implemented.');
   }
 
