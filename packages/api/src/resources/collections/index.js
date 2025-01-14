@@ -22,3 +22,4 @@ export const STOCK = 'Stock';
 export const SHOW_ROOM = 'ShowRoom';
 export const BACK_STOCK = 'BackStock';
 export const FINANCIAL = 'Financial';
+export const BUSINESS = 'Business';
