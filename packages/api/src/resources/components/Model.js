@@ -23,12 +23,6 @@ class Model {
     this.model = loaders.mongoose.registerModel(schema, modelName, options, middlewares);
 
     /**
-     * @type {mongoose.Schema.Types.ObjectId}
-     * O tipo ObjectId do Mongoose.
-     */
-    this.objectId = loaders.mongoose.getObjectId();
-
-    /**
      * @type {mongoose.Schema.Types}
      * Tipos padrão do Mongoose.
      */
@@ -43,6 +37,14 @@ class Model {
     this.isValidObjectId = loaders.isValidObjectId;
 
     this.attachCustomMethods();
+  }
+
+  /**
+   * @type {mongoose.Schema.Types.ObjectId}
+   * O tipo ObjectId do Mongoose.
+   */
+  static get objectIdType() {
+    return loaders.mongoose.getObjectIdType();
   }
 
   /**

@@ -1,13 +1,12 @@
 import financial from '../components/index.js';
 
 export default class Financial {
-  constructor({ sales, purchases, investments, expenses, deductions, stock }) {
+  constructor({ sales, stockAudits, investments, expenses, deductions }) {
     this.sales = sales;
-    this.purchases = purchases;
+    this.stockAudits = stockAudits;
     this.investments = investments;
     this.expenses = expenses;
     this.deductions = deductions;
-    this.stock = stock;
   }
 
   async financialMetricsSummary(startDate, endDate) {
@@ -106,14 +105,14 @@ export default class Financial {
     //receita liquida
     const [grossRevenue, deductions] = await Promise.all([
       this.reportGrossRevenue(startDate, endDate),
-      this.getDeductions(startDate, endDate),
+      this.reportDeductionsValue(startDate, endDate),
     ]);
     const netRevenue = financial.metrics.revenues.calculateNetRevenue(grossRevenue, deductions);
     return netRevenue;
   }
 
-  async getDeductions(startDate, endDate) {
-    const deductions = await this.deductions.aggregateDeductionsByPeriod(startDate, endDate);
+  async reportDeductionsValue(startDate, endDate) {
+    const deductions = await this.deductions.aggregateDeductionsValueByPeriod(startDate, endDate);
     return deductions;
   }
 
@@ -133,12 +132,12 @@ export default class Financial {
   }
 
   async getPurchasesValue(startDate, endDate) {
-    const purchasesValues = await this.purchases.agreggatePurchasesValueByPeriod(startDate, endDate);
+    const purchasesValues = await this.stockAudits.agreggatePurchasesValueByPeriod(startDate, endDate);
     return purchasesValues;
   }
 
   async agreggateStockValueByDate(date) {
-    const initialCostPriceProductsStock = await this.stock.agreggateStockValueAtDate(date);
+    const initialCostPriceProductsStock = await this.stockAudits.agreggateStockValueAtDate(date);
     return initialCostPriceProductsStock;
   }
 

@@ -169,7 +169,7 @@ export default class Database {
    *
    * @returns {mongoose.Schema.Types.ObjectId} - Tipo ObjectId.
    */
-  static get ObjectId() {
+  static get ObjectIdType() {
     return mongoose.Schema.Types.ObjectId;
   }
 

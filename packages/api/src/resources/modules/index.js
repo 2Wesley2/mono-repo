@@ -8,25 +8,25 @@ import CalcRefRepository from './calcRef/CalcRefRepository.js';
 import CalcRefService from './calcRef/CalcRefService.js';
 import CalcRefController from './calcRef/CalcRefController.js';
 
-import CustomerModel from './customer/CustomerModel.js';
-import CustomerRepository from './customer/CustomerRepository.js';
-import CustomerService from './customer/CustomerService.js';
-import CustomerController from './customer/CustomerController.js';
+import CustomerModel from './commercial/customer/CustomerModel.js';
+import CustomerRepository from './commercial/customer/CustomerRepository.js';
+import CustomerService from './commercial/customer/CustomerService.js';
+import CustomerController from './commercial/customer/CustomerController.js';
 
-import ProductModel from './product/ProductModel.js';
-import ProductRepository from './product/ProductRepository.js';
-import ProductService from './product/ProductService.js';
-import ProductController from './product/ProductController.js';
+import ProductModel from './logistics/product/ProductModel.js';
+import ProductRepository from './logistics/product/ProductRepository.js';
+import ProductService from './logistics/product/ProductService.js';
+import ProductController from './logistics/product/ProductController.js';
 
 import OrderModel from './order/OrderModel.js';
 import OrderRepository from './order/OrderRepository.js';
 import OrderService from './order/OrderService.js';
 import OrderController from './order/OrderController.js';
 
-import EmployeeModel from './employee/EmployeeModel.js';
-import EmployeeRepository from './employee/EmployeeRepository.js';
-import EmployeeService from './employee/EmployeeService.js';
-import EmployeeController from './employee/EmployeeController.js';
+import EmployeeModel from './humanResources/employee/EmployeeModel.js';
+import EmployeeRepository from './humanResources/employee/EmployeeRepository.js';
+import EmployeeService from './humanResources/employee/EmployeeService.js';
+import EmployeeController from './humanResources/employee/EmployeeController.js';
 
 import RewardModel from './reward/RewardModel.js';
 import RewardRepository from './reward/RewardRepository.js';

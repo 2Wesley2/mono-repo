@@ -62,7 +62,7 @@ export default {
    * import db from '../database/index.js';
    * const ObjectId = db.getObjectId();
    */
-  getObjectId: () => Database.ObjectId,
+  getObjectIdType: () => Database.ObjectIdType,
 
   /**
    * Valida se um ID fornecido é um ObjectId válido.

@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import Database from '../../../../database/index.js';
 import UserModel from '../../../modules/user/UserModel.js';
 import RoleModel from '../../../auth/rbac/role/RoleModel.js';
-import BackStockModel from '../../../modules/backStock/BackStockModel.js';
-import ShowRoomModel from '../../../modules/showRoom/ShowRoomModel.js';
+import BackStockModel from '../../../modules/logistics/backStock/BackStockModel.js';
+import ShowRoomModel from '../../../modules/logistics/showRoom/ShowRoomModel.js';
 //import { authorizationService } from '../src/services/auth/authorization/index.js';
 import loaders from '../../../../loaders/index.js';
 const test = async () => {
