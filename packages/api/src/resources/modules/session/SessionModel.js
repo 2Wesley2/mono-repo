@@ -1,6 +1,6 @@
-import Model from '../../components/Model.js';
+import Model from '../../../core/entities/system/base/Model.js';
 import { SESSION, USER } from '../../collections/index.js';
-import loaders from '../../../loaders/index.js';
+import loaders from '../../../core/loaders/index.js';
 
 const statusValues = Object.freeze({
   ACTIVE: 'active',

@@ -1,5 +1,5 @@
 import debug from '../../../../debug/index.js';
-import Database from '../../../../database/index.js';
+import Database from '../../../../core/infrastructure/database/index.js';
 
 /**
  * Repositório para manipulação de produtos no banco de dados.

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import Model from '../../components/Model.js';
+import Model from '../../../core/entities/system/base/Model.js';
 import { USER, ROLE } from '../../collections/index.js';
-import loaders from '../../../loaders/index.js';
+import loaders from '../../../core/loaders/index.js';
 
 const userSchema = {
   username: { type: String, required: true, unique: true },

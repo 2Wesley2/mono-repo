@@ -7,8 +7,8 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import debug from '../debug/index.js';
 import config from '../config/index.js';
-import loaders from '../loaders/index.js';
-import errorHandler from '../middlewares/errorHandler.js';
+import loaders from '../core/loaders/index.js';
+import errorHandler from '../core/middlewares/errorHandler.js';
 import {
   customerController,
   employeeController,

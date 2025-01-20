@@ -1,4 +1,4 @@
-import loaders from '../../../../loaders/index.js';
+import loaders from '../../../../core/loaders/index.js';
 const emptyStock = [{ productId: 'null', productName: 'null', totalQuantity: 0 }];
 
 export default class BackStockRepository {

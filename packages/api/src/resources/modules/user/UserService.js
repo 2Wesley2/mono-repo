@@ -1,9 +1,14 @@
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
+import loaders from '../../../core/loaders/index.js';
+
 class UserService {
   constructor(repository) {
     this.repository = repository;
   }
-
+  async login(credentials) {
+    const { plainPassword, hashedPassword, payload } = credentials;
+    return await loaders.auth.authentication.authenticate(plainPassword, hashedPassword, payload);
+  }
   async getRoleByUser(userID) {
     try {
       return await this.repository.getRoleByUser(userID);

@@ -1,6 +1,7 @@
-import Controller from '../../components/Controller.js';
+import Controller from '../../../core/entities/system/base/Controller.js';
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
 import { toStrings } from '../../../helpers/stringHelper.js';
+
 class UserController extends Controller {
   constructor(service) {
     super();
@@ -35,12 +36,12 @@ class UserController extends Controller {
       if (!user) {
         throw new UnauthorizedError();
       }
-      const authService = this.middlewares;
+
       const payloadValues = toStrings([user._id, user.role]);
       const [id, role] = payloadValues;
       const payload = { id: id, role: role };
       const credentials = { password: password, userPasswordHashed: user.password, payload: payload };
-      const auth = await authService.authenticate({ ...credentials });
+      const auth = await this.service.login({ ...credentials });
       if (!auth) {
         throw new UnauthorizedError();
       }

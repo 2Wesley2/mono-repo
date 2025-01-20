@@ -1,4 +1,4 @@
-import loaders from '../../../../loaders/index.js';
+import loaders from '../../../../core/loaders/index.js';
 
 export default class CashRegisterReposioty {
   constructor(model) {

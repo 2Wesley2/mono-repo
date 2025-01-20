@@ -1,4 +1,4 @@
-import Model from '../../components/Model.js';
+import Model from '../../../core/entities/system/base/Model.js';
 import { CALCREF } from '../../collections/index.js';
 
 const calcRefSchema = {

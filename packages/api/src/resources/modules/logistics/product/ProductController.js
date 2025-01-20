@@ -1,4 +1,4 @@
-import Controller from '../../../components/Controller.js';
+import Controller from '../../../../core/entities/system/base/Controller.js';
 import debug from '../../../../debug/index.js';
 
 class ProductController extends Controller {

@@ -3,7 +3,7 @@ import fs from 'fs';
 /**
  * Importações necessárias para o carregamento e gerenciamento do servidor.
  */
-import loaders from '../loaders/index.js';
+import loaders from '../core/loaders/index.js';
 import { listServerEndpoints } from '../helpers/listEndpointsHelper.js';
 import debug from '../debug/index.js';
 

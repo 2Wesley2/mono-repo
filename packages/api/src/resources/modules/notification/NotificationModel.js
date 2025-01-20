@@ -1,5 +1,5 @@
-import Database from '../../../database/index.js';
-import Model from '../../components/Model.js';
+import Database from '../../../core/infrastructure/database/index.js';
+import Model from '../../../core/entities/system/base/Model.js';
 import debug from '../../../debug/index.js';
 import { NOTIFICATION, TICKET, CUSTOMER, SALE } from '../../collections/index.js';
 

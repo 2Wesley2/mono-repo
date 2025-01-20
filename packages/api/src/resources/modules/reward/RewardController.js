@@ -1,4 +1,4 @@
-import Controller from '../../components/Controller.js';
+import Controller from '../../../core/entities/system/base/Controller.js';
 
 class RewardController extends Controller {
   constructor(service) {

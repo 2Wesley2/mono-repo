@@ -1,6 +1,6 @@
-import Model from '../../components/Model.js';
+import Model from '../../../core/entities/system/base/Model.js';
 import { BUSINESS, USER, SALE, STOCK } from '../../collections/index.js';
-import loaders from '../../../loaders/index.js';
+import loaders from '../../../core/loaders/index.js';
 
 const businessModels = [
   'B2B (Business to Business)',

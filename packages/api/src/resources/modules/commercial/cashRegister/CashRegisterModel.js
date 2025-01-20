@@ -1,6 +1,6 @@
-import Model from '../../../components/Model.js';
+import Model from '../../../../core/entities/system/base/Model.js';
 import { CASH_REGISTER } from '../../../collections/index.js';
-import loaders from '../../../../loaders/index.js';
+import loaders from '../../../../core/loaders/index.js';
 
 const cashRegisterSchema = {
   currentBalance: { type: Number, required: true },

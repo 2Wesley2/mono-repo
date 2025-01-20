@@ -1,4 +1,4 @@
-import Controller from '../../components/Controller.js';
+import Controller from '../../../core/entities/system/base/Controller.js';
 import { validateRequest, mergeDuplicateProducts } from '../../../utils/order/index.js';
 import isPromiseResolved from '../../../helpers/isPromiseResolved.js';
 /**
