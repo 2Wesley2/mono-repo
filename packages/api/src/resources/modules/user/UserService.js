@@ -1,13 +1,21 @@
+import auth from '../../../core/adapters/auth/index.js';
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
-import loaders from '../../../core/loaders/index.js';
+import { isString } from '../../../helpers/stringHelper.js';
 
-class UserService {
+export default class UserService {
   constructor(repository) {
     this.repository = repository;
   }
   async login(credentials) {
-    const { plainPassword, hashedPassword, payload } = credentials;
-    return await loaders.auth.authentication.authenticate(plainPassword, hashedPassword, payload);
+    const userAuth = await this.repository.login({ ...credentials });
+    if (!userAuth) {
+      throw new UnauthorizedError();
+    }
+    const { password } = credentials;
+    const payloadValues = isString([userAuth._id, userAuth.role]);
+    const payload = { id: payloadValues.id, role: payloadValues.role };
+    const setPayload = await auth.authentication.authenticate(password, userAuth.password, payload);
+    return setPayload;
   }
   async getRoleByUser(userID) {
     try {
@@ -38,4 +46,3 @@ class UserService {
     return user;
   }
 }
-export default UserService;

@@ -1,8 +1,25 @@
-import debug from '../../../debug/index.js';
-
-class UserRepository {
+import { UnauthorizedError } from '../../../errors/Exceptions.js';
+import auth from '../../../core/adapters/auth/authentication/index.js';
+export default class UserRepository {
   constructor(model) {
     this.model = model;
+  }
+
+  async login(credentials) {
+    const { username, password } = credentials;
+    const user = await this.model.getUserByUsername(username);
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+    const login = await auth.authenticate(password, user.password);
+    if (!login) {
+      throw new UnauthorizedError();
+    }
+    return {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    };
   }
 
   async getRoleByUser(userID) {
@@ -25,5 +42,3 @@ class UserRepository {
     return await this.model.getUserByUsername(username);
   }
 }
-
-export default UserRepository;

@@ -10,7 +10,7 @@ class UserController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/login', this.middlewares.blockIfAuthenticated.bind(this.middlewares), this.login.bind(this));
+    this.router.post('/login', this.middlewares.blockIfAuthenticated, this.login.bind(this));
     this.router.post('/logout', this.logout.bind(this));
     this.router.post('/register', this.createUser.bind(this));
   }
@@ -32,20 +32,11 @@ class UserController extends Controller {
   async login(req, res, next) {
     try {
       const { password, username } = req.body;
-      const user = await this.service.getUserByUsername(username);
-      if (!user) {
+      const login = await this.service.login({ username, password });
+      if (!login) {
         throw new UnauthorizedError();
       }
-
-      const payloadValues = toStrings([user._id, user.role]);
-      const [id, role] = payloadValues;
-      const payload = { id: id, role: role };
-      const credentials = { password: password, userPasswordHashed: user.password, payload: payload };
-      const auth = await this.service.login({ ...credentials });
-      if (!auth) {
-        throw new UnauthorizedError();
-      }
-      res.cookie('wfSystem', auth, {
+      res.cookie('wfSystem', login, {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',
