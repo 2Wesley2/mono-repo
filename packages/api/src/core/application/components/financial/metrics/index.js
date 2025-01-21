@@ -1,4 +1,4 @@
-import FinancialMetrics from './service/FinancialMetrics.js';
+import FinancialMetrics from './interface/FinancialMetrics.js';
 
 export default {
   revenues: {

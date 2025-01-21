@@ -6,7 +6,7 @@ const discountsType = ['commercialDiscount', 'conditionalDiscount'];
 const discountSchema = {
   discounts: [
     {
-      type: Model.objectId,
+      type: Model.objectIdType,
       required: true,
       enum: [...discountsType],
     },

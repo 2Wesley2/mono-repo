@@ -1,5 +1,4 @@
 import Model from '../../../../core/entities/system/base/Model.js';
-import debug from '../../../../debug/index.js';
 import { PRODUCT } from '../../../collections/index.js';
 
 /**

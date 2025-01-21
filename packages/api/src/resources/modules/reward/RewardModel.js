@@ -11,7 +11,7 @@ import { REWARD, CUSTOMER } from '../../collections/index.js';
  * @property {number} cash - Valor monetário acumulado do cliente.
  */
 const rewardSchema = {
-  customerId: { type: loaders.mongoose.getObjectId(), ref: CUSTOMER, unique: true, required: true },
+  customerId: { type: Model.objectIdType, ref: CUSTOMER, unique: true, required: true },
   points: { type: Number, required: true, default: 0 },
   cash: { type: Number, required: true, default: 0 },
 };

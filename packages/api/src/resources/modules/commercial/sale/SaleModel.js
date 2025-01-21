@@ -29,7 +29,7 @@ async function preventTradeDiscountModification(next) {
 }
 
 const saleSchema = {
-  customerId: { type: Model.objectIdType, ref: CUSTOMER, required: false },
+  customerId: { type: Model.objectIdType(), ref: CUSTOMER, required: false },
   type: {
     type: Model.objectIdType,
     required: true,
@@ -47,12 +47,12 @@ const saleSchema = {
     },
   ],
   tradeDiscount: {
-    type: Model.objectIdType,
+    type: Model.objectIdType(),
     ref: TRADE_DISCOUNT,
     default: null,
   },
   allowance: {
-    type: Model.objectIdType,
+    type: Model.objectIdType(),
     ref: ALLOWANCE,
     default: null,
   },

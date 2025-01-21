@@ -11,7 +11,7 @@ const statusValues = Object.freeze({
 const statusEnum = Object.values(statusValues);
 
 const sessionSchema = {
-  user: { type: loaders.mongoose.getObjectId(), ref: USER, required: true },
+  user: { type: Mode.objectIdType(), ref: USER, required: true },
   status: { type: String, enum: statusEnum, default: statusValues.ACTIVE },
 };
 

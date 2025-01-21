@@ -1,12 +1,11 @@
 import bcrypt from 'bcryptjs';
 import Model from '../../../core/entities/system/base/Model.js';
 import { USER, ROLE } from '../../collections/index.js';
-import loaders from '../../../core/loaders/index.js';
 
 const userSchema = {
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: loaders.mongoose.getObjectId(), ref: ROLE, required: true },
+  role: { type: Model.objectIdType, ref: ROLE, required: true },
 };
 class UserModel extends Model {
   constructor() {

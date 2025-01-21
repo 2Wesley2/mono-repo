@@ -1,4 +1,4 @@
-import MathOperations from './service/MathOperations.js';
+import MathOperations from './interface/MathOperations.js';
 export default {
   sum: (...args) => MathOperations.sumAllNumbersArray(...args),
   sub: (...args) => MathOperations.subtractOperation(...args),

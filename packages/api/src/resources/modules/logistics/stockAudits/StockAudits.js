@@ -10,7 +10,7 @@ const stockAuditsSchema = {
   type: { type: String, enum: Object.keys(typesEnum), required: true },
   origin: {
     type: {
-      type: Model.objectId,
+      type: Model.objectIdType,
       required: true,
       ref: function () {
         return typesEnum[this.type] || null;

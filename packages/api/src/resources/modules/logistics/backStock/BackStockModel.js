@@ -4,8 +4,8 @@ import Stock from '../resources/entities/domain/stock/Stock.js';
 
 import loaders from '../../../../core/loaders/index.js';
 const stockSchema = {
-  backStock: { type: Model.loaders.mongoose.getObjectId(), ref: BACK_STOCK, required: true },
-  showRoom: { type: Model.loaders.mongoose.getObjectId(), ref: SHOW_ROOM, required: true },
+  backStock: { type: Model.objectIdType, ref: BACK_STOCK, required: true },
+  showRoom: { type: Model.objectIdType, ref: SHOW_ROOM, required: true },
 };
 
 export default class StockModel extends Model {

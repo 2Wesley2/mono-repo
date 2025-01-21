@@ -1,6 +1,5 @@
 import Controller from '../../../core/entities/system/base/Controller.js';
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
-import { toStrings } from '../../../helpers/stringHelper.js';
 
 class UserController extends Controller {
   constructor(service) {

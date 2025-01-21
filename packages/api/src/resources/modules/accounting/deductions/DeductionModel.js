@@ -11,7 +11,7 @@ const refTypes = {
 const deductionSchema = {
   deductions: [
     {
-      type: Model.objectId,
+      type: Model.objectIdType,
       required: true,
       ref: function () {
         return refTypes[this.type] || null;

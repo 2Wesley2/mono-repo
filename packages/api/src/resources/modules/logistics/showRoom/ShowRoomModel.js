@@ -5,7 +5,7 @@ import loaders from '../../../../core/loaders/index.js';
 const showRoomSchema = {
   products: [
     {
-      product: { type: loaders.mongoose.getObjectId(), ref: PRODUCT, required: true },
+      product: { type: Model.objectIdType, ref: PRODUCT, required: true },
       quantity: { type: Number, required: true, validate: { validator: (v) => v >= 0 } },
     },
   ],

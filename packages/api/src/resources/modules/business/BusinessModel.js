@@ -45,13 +45,13 @@ const industrySectors = [
 ];
 
 const businessSchema = {
-  userID: { type: loaders.mongoose.getObjectId(), ref: USER, required: true, unique: true },
+  userID: { type: Model.objectIdType, ref: USER, required: true, unique: true },
   tradeName: { type: String, required: true },
   legalName: { type: String, required: true, unique: true },
   businessModel: { type: String, enum: [...businessModels], required: true },
   industrySectors: { type: String, enum: [...industrySectors], required: true },
-  sales: [{ type: loaders.mongoose.getObjectId(), ref: SALE, required: true }],
-  stock: { type: loaders.mongoose.getObjectId(), ref: STOCK, required: true },
+  sales: [{ type: Model.objectIdType, ref: SALE, required: true }],
+  stock: { type: Model.objectIdType, ref: STOCK, required: true },
 };
 
 export default class BusinessModel extends Model {

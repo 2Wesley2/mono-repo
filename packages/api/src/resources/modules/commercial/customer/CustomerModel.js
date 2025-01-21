@@ -1,7 +1,5 @@
 import Model from '../../../../core/entities/system/base/Model.js';
-import debug from '../../../../debug/index.js';
 import { CUSTOMER, REWARD } from '../../../collections/index.js';
-import loaders from '../../../../core/loaders/index.js';
 
 /**
  * Esquema para o modelo de cliente.
@@ -20,7 +18,7 @@ const customerSchema = {
   cpf: { type: String, unique: true, required: true },
   email: { type: String, unique: true },
   phone: { type: String, unique: true, required: true },
-  rewards: { type: loaders.mongoose.getObjectId(), ref: REWARD, unique: true },
+  rewards: { type: Model.objectIdType, ref: REWARD, unique: true },
   lifetimeValue: { type: Number, default: 0 },
 };
 

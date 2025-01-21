@@ -1,4 +1,5 @@
-import math from '../../index.js';
+import math from '../../../math/index.js';
+
 export default class FinancialMetrics {
   // Receitas
   static calculateTotalRevenue(salesRevenue, serviceRevenue, otherRevenues = []) {

@@ -42,7 +42,7 @@ const orderSchema = {
   },
   products: [
     {
-      product: { type: loaders.mongoose.getObjectId(), ref: PRODUCT, required: true },
+      product: { type: Model.objectIdType, ref: PRODUCT, required: true },
       quantity: {
         type: Number,
         required: true,

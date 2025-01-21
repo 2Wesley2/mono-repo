@@ -4,7 +4,7 @@ import loaders from '../../../../core/loaders/index.js';
 
 const roleSchema = {
   name: { type: String, required: true },
-  permissions: [{ type: loaders.mongoose.getObjectId(), ref: PERMISSION }],
+  permissions: [{ type: Model.objectId, ref: PERMISSION }],
 };
 
 export default class RoleModel extends Model {

@@ -2,7 +2,10 @@ import UserModel from './user/UserModel.js';
 import UserRepository from './user/UserRepository.js';
 import UserService from './user/UserService.js';
 import UserController from './user/UserController.js';
-
+import FinancialRepository from './accounting/financial/FinancialRepository.js';
+import FinancialService from './accounting/financial/FinancialService.js';
+import FinancialModel from './accounting/financial/FinancialModel.js';
+import GenerateFinancialReport from '../../core/use_cases/financial/GenerateFinancialReport.js';
 import CalcRefModel from './calcRef/CalcRefModel.js';
 import CalcRefRepository from './calcRef/CalcRefRepository.js';
 import CalcRefService from './calcRef/CalcRefService.js';
@@ -32,10 +35,6 @@ import RewardModel from './reward/RewardModel.js';
 import RewardRepository from './reward/RewardRepository.js';
 import RewardService from './reward/RewardService.js';
 import RewardController from './reward/RewardController.js';
-
-import NotificationModel from './notification/NotificationModel.js';
-import NotificationRepository from './notification/NotificationRepository.js';
-import NotificationService from './notification/NotificationService.js';
 
 const userModel = new UserModel();
 const userRepository = new UserRepository(userModel);
@@ -67,20 +66,23 @@ const orderRepository = new OrderRepository(orderModel);
 const orderService = new OrderService(orderRepository, productService);
 const orderController = new OrderController(orderService);
 
-const notificationModel = new NotificationModel();
-const notificationRepository = new NotificationRepository(notificationModel);
-const notificationService = new NotificationService(notificationRepository);
-
 const employeeModel = new EmployeeModel();
 const employeeRepository = new EmployeeRepository(employeeModel);
 const employeeService = new EmployeeService(employeeRepository);
 const employeeController = new EmployeeController(employeeService);
 
+//const genereteFinancialReport = new GenerateFinancialReport();
+//const useCases = {
+// financial: { reportFinancialMetrics: (...args) => genereteFinancialReport.reportFinancialMetrics(...args) },
+//};
+//const financialModel = new FinancialModel();
+//const financialRepository = new FinancialRepository(financialModel);
+//const financialService = new FinancialService(financialRepository, useCases.financial);
+
 export {
   userController,
   customerController,
   employeeController,
-  notificationService,
   productController,
   orderController,
   rewardController,
