@@ -1,4 +1,4 @@
-import financial from '../../../../core/entities/domain/financial/components/index.js';
+import financial from '../../../../core/use_cases/financial/components/index.js';
 
 export default class FinancialRepository {
   constructor(model) {
