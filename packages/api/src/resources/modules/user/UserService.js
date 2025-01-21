@@ -14,7 +14,7 @@ export default class UserService {
     const { password } = credentials;
     const payloadValues = isString([userAuth._id, userAuth.role]);
     const payload = { id: payloadValues.id, role: payloadValues.role };
-    const setPayload = await auth.authentication.authenticate(password, userAuth.password, payload);
+    const setPayload = auth.authentication.generateToken(payload);
     return setPayload;
   }
   async getRoleByUser(userID) {

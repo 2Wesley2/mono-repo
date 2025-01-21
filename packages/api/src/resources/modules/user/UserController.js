@@ -32,11 +32,12 @@ class UserController extends Controller {
   async login(req, res, next) {
     try {
       const { password, username } = req.body;
-      const login = await this.service.login({ username, password });
-      if (!login) {
+      const credentials = { username, password };
+      const token = await this.service.login({ ...credentials });
+      if (!token) {
         throw new UnauthorizedError();
       }
-      res.cookie('wfSystem', login, {
+      res.cookie('wfSystem', token, {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',

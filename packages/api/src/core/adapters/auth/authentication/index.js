@@ -7,17 +7,20 @@ class Authentication {
     return env.jwtSecret;
   }
 
-  static async authenticate(plainPassword, hashedPassword, payload) {
+  static async authenticate(plainPassword, hashedPassword) {
     const validatePassword = await auth.bcryptjs.compare(plainPassword, hashedPassword);
     if (!validatePassword) {
       throw new UnauthorizedError();
     }
-    const generateToken = await auth.jsonwebtoken.generate(payload, this.#secretKey);
-    return generateToken;
+    return validatePassword;
   }
 
-  static async isAuthenticate(token) {
-    const isAuth = await auth.jsonwebtoken.verify(token, this.#secretKey);
+  static generateToken(payload) {
+    return auth.jsonwebtoken.generate(payload, this.#secretKey);
+  }
+
+  static isAuthenticate(token) {
+    const isAuth = auth.jsonwebtoken.verify(token, this.#secretKey);
     return isAuth;
   }
 
@@ -29,6 +32,7 @@ class Authentication {
 
 export default {
   authenticate: (...args) => Authentication.authenticate(...args),
+  generateToken: (...args) => Authentication.generateToken(...args),
   isAuthenticate: (...args) => Authentication.isAuthenticate(...args),
   decodeToken: (...args) => Authentication.decodeToken(...args),
 };
