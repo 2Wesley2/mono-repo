@@ -15,7 +15,7 @@ export default class FinancialService {
   async financialReport(startDate, endDate) {
     const timeFrame = { startDate, endDate };
     const financialMetrics = await usecase.reportFinancialMetrics(startDate, endDate, this.services);
-    const saveReport = await this.repository.consolidateReport(report, timeFrame);
+    const saveReport = await this.repository.consolidateReport(financialMetrics, timeFrame);
     return saveReport;
   }
 }
