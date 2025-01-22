@@ -1,15 +1,7 @@
 import metrics from '../../application/components/financial/metrics/index.js';
 
-export default class GenerateFinancialReport {
-  constructor(services) {
-    this.sales = services.sales;
-    this.stockAudits = services.stockAudits;
-    this.investments = services.investments;
-    this.expenses = services.expenses;
-    this.deductions = services.deductions;
-  }
-
-  async reportFinancialMetrics(startDate, endDate) {
+class GenerateFinancialReport {
+  static async reportFinancialMetrics(startDate, endDate, services) {
     const [
       grossRevenue,
       netRevenue,
@@ -22,132 +14,110 @@ export default class GenerateFinancialReport {
       totalSales,
       purchasesValue,
     ] = await Promise.all([
-      this.reportGrossRevenue(startDate, endDate),
-      this.reportNetRevenue(startDate, endDate),
-      this.reportAverageTicket(startDate, endDate),
-      this.reportNetProfit(startDate, endDate),
-      this.reportTotalExpensesValue(startDate, endDate),
-      this.reportGrossMargin(startDate, endDate),
-      this.reportGrossProfit(startDate, endDate),
-      this.reportCMV(startDate, endDate),
-      this.getTotalSales(startDate, endDate),
-      this.getPurchasesValue(startDate, endDate),
+      this.reportGrossRevenue(startDate, endDate, services),
+      this.reportNetRevenue(startDate, endDate, services),
+      this.reportAverageTicket(startDate, endDate, services),
+      this.reportNetProfit(startDate, endDate, services),
+      this.reportTotalExpensesValue(startDate, endDate, services),
+      this.reportGrossMargin(startDate, endDate, services),
+      this.reportGrossProfit(startDate, endDate, services),
+      this.reportCMV(startDate, endDate, services),
+      this.getTotalSales(startDate, endDate, services),
+      this.getPurchasesValue(startDate, endDate, services),
     ]);
 
-    const metrics = {
-      grossRevenue: grossRevenue,
-      netRevenue: netRevenue,
-      averageTicket: averageTicket,
-      totalSales: totalSales,
-      netProfit: netProfit,
-      grossProfit: grossProfit,
-      totalExpensesValue: totalExpensesValue,
-      cmv: cmv,
-      purchasesValue: purchasesValue,
-      grossMargin: grossMargin,
+    return {
+      grossRevenue,
+      netRevenue,
+      averageTicket,
+      totalSales,
+      netProfit,
+      grossProfit,
+      totalExpensesValue,
+      cmv,
+      purchasesValue,
+      grossMargin,
     };
-    return { ...metrics };
   }
 
-  async reportNetProfit(startDate, endDate) {
-    //lucro líquido
+  static async reportNetProfit(startDate, endDate, services) {
     const [netRevenue, totalExpensesValue] = await Promise.all([
-      this.reportNetRevenue(startDate, endDate),
-      this.reportTotalExpensesValue(startDate, endDate),
+      this.reportNetRevenue(startDate, endDate, services),
+      this.reportTotalExpensesValue(startDate, endDate, services),
     ]);
-    const netProfit = metrics.profits.calculateNetProfit(netRevenue, totalExpensesValue);
-    return netProfit;
+    return metrics.profits.calculateNetProfit(netRevenue, totalExpensesValue);
   }
 
-  async reportTotalExpensesValue(startDate, endDate) {
-    const totalExpensesValue = await this.expenses.aggregateExpensesValueByPeriod(startDate, endDate);
-    return totalExpensesValue;
+  static async reportTotalExpensesValue(startDate, endDate, services) {
+    return await services.expenses.aggregateExpensesValueByPeriod(startDate, endDate);
   }
 
-  async reportAverageTicket(startDate, endDate) {
-    // ticket médio
+  static async reportAverageTicket(startDate, endDate, services) {
     const [grossRevenue, totalSales] = await Promise.all([
-      this.reportGrossRevenue(startDate, endDate),
-      this.getTotalSales(startDate, endDate),
+      this.reportGrossRevenue(startDate, endDate, services),
+      this.getTotalSales(startDate, endDate, services),
     ]);
-    const averageTicket = metrics.marginsAndPerformance.calculateAverageTicket(grossRevenue, totalSales);
-    return averageTicket;
+    return metrics.marginsAndPerformance.calculateAverageTicket(grossRevenue, totalSales);
   }
 
-  async reportGrossMargin(startDate, endDate) {
-    // margem bruta
+  static async reportGrossMargin(startDate, endDate, services) {
     const [grossProfit, netRevenue] = await Promise.all([
-      this.reportGrossProfit(startDate, endDate),
-      this.reportNetRevenue(startDate, endDate),
+      this.reportGrossProfit(startDate, endDate, services),
+      this.reportNetRevenue(startDate, endDate, services),
     ]);
-    const grossMargin = metrics.costsAndExpenses.calculateCMV(grossProfit, netRevenue);
-    return grossMargin;
+    return metrics.costsAndExpenses.calculateCMV(grossProfit, netRevenue);
   }
 
-  async reportGrossProfit(startDate, endDate) {
-    // lucro bruto
+  static async reportGrossProfit(startDate, endDate, services) {
     const [netRevenue, cmv] = await Promise.all([
-      this.reportNetRevenue(startDate, endDate),
-      this.reportCMV(startDate, endDate),
+      this.reportNetRevenue(startDate, endDate, services),
+      this.reportCMV(startDate, endDate, services),
     ]);
-    const grossProfit = metrics.profits.calculateGrossProfit(netRevenue, cmv);
-    return grossProfit;
+    return metrics.profits.calculateGrossProfit(netRevenue, cmv);
   }
 
-  async reportNetRevenue(startDate, endDate) {
-    //receita liquida
+  static async reportNetRevenue(startDate, endDate, services) {
     const [grossRevenue, deductions] = await Promise.all([
-      this.reportGrossRevenue(startDate, endDate),
-      this.reportDeductionsValue(startDate, endDate),
+      this.reportGrossRevenue(startDate, endDate, services),
+      this.reportDeductionsValue(startDate, endDate, services),
     ]);
-    const netRevenue = metrics.revenues.calculateNetRevenue(grossRevenue, deductions);
-    return netRevenue;
+    return metrics.revenues.calculateNetRevenue(grossRevenue, deductions);
   }
 
-  async reportDeductionsValue(startDate, endDate) {
-    const deductions = await this.deductions.aggregateDeductionsValueByPeriod(startDate, endDate);
-    return deductions;
+  static async reportDeductionsValue(startDate, endDate, services) {
+    return await services.deductions.aggregateDeductionsValueByPeriod(startDate, endDate);
   }
 
-  async reportCMV(startDate, endDate) {
-    //custo de mercadorias vendidas
-    const [initialCostPriceProductsStock, finalCostPriceProductsStock, purchases] = await Promise.all([
-      this.agreggateStockValueByDate(startDate),
-      this.agreggateStockValueByDate(endDate),
-      this.getPurchasesValue(startDate, endDate),
+  static async reportCMV(startDate, endDate, services) {
+    const [initialStock, finalStock, purchases] = await Promise.all([
+      this.aggregateStockValueByDate(startDate, services),
+      this.aggregateStockValueByDate(endDate, services),
+      this.getPurchasesValue(startDate, endDate, services),
     ]);
-    const cmv = metrics.costsAndExpenses.calculateCMV(
-      initialCostPriceProductsStock,
-      finalCostPriceProductsStock,
-      purchases,
-    );
-    return cmv;
+    return metrics.costsAndExpenses.calculateCMV(initialStock, finalStock, purchases);
   }
 
-  async getPurchasesValue(startDate, endDate) {
-    const purchasesValues = await this.stockAudits.agreggatePurchasesValueByPeriod(startDate, endDate);
-    return purchasesValues;
+  static async getPurchasesValue(startDate, endDate, services) {
+    return await services.stockAudits.aggregatePurchasesValueByPeriod(startDate, endDate);
   }
 
-  async agreggateStockValueByDate(date) {
-    const initialCostPriceProductsStock = await this.stockAudits.agreggateStockValueAtDate(date);
-    return initialCostPriceProductsStock;
+  static async aggregateStockValueByDate(date, services) {
+    return await services.stockAudits.aggregateStockValueAtDate(date);
   }
 
-  async getTotalSales(startDate, endDate) {
-    const totalSales = await this.sales.countSalesByPeriod(startDate, endDate);
-    return totalSales;
+  static async getTotalSales(startDate, endDate, services) {
+    return await services.sales.countSalesByPeriod(startDate, endDate);
   }
 
-  async reportGrossRevenue(startDate, endDate) {
-    // receita bruta
-    const salesValues = await this.getSalesValues(startDate, endDate);
-    const grossRevenue = metrics.revenues.calculateGrossRevenue(salesValues);
-    return grossRevenue;
+  static async reportGrossRevenue(startDate, endDate, services) {
+    const salesValues = await this.getSalesValues(startDate, endDate, services);
+    return metrics.revenues.calculateGrossRevenue(salesValues);
   }
 
-  async getSalesValues(startDate, endDate) {
-    const salesValues = await this.sales.getSalesValuesByPeriod(startDate, endDate);
-    return salesValues;
+  static async getSalesValues(startDate, endDate, services) {
+    return await services.sales.getSalesValuesByPeriod(startDate, endDate);
   }
 }
+export default {
+  reportFinancialMetrics: (...args) => GenerateFinancialReport.reportFinancialMetrics(...args),
+};
