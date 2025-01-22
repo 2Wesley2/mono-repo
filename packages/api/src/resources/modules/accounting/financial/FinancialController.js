@@ -13,7 +13,7 @@ export default class FinancialController extends Controller {
   async genereteReport(req, res, next) {
     try {
       const { startDate, endDate } = req.body.date;
-      const report = await this.service.getFinancialMetrics(startDate, endDate);
+      const report = await this.service.financialReport(startDate, endDate);
       return res.status(200).json(report);
     } catch (error) {
       next(error);
