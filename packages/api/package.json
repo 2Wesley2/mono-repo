@@ -5,9 +5,9 @@
   "type": "module",
   "license": "MIT",
   "imports": {
-    "#src/": "./src/",
-    "#resources/": "./src/resources/",
-    "#core/": "./src/core/"
+    "#src/*": "./src/*",
+    "#resources/*": "./src/resources/*",
+    "#core/*": "./src/core/*"
   },
   "scripts": {
     "start": "node src/main.js",
