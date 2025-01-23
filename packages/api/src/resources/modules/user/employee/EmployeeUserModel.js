@@ -1,4 +1,4 @@
-import UserModel from '../base/UserModel.js';
+import UserModel from '../model/UserModel.js';
 import { EMPLOYEE_USER } from '../../../collections/index.js';
 
 const employeeUserSchema = {};

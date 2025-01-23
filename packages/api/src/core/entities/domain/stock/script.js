@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Database from '../../../infrastructure/database/index.js';
-import UserModel from '../../../../resources/modules/user/base/UserModel.js';
+import UserModel from '../../../../resources/modules/user/model/UserModel.js';
 import RoleModel from '../../../../resources/modules/auth/role/RoleModel.js';
 import BackStockModel from '../../../../resources/modules/logistics/backStock/BackStockModel.js';
 import ShowRoomModel from '../../../../resources/modules/logistics/showRoom/ShowRoomModel.js';

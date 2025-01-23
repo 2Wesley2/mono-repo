@@ -12,7 +12,6 @@ import errorHandler from '../core/middlewares/errorHandler.js';
 import {
   customerController,
   employeeController,
-  userController,
   productController,
   orderController,
   rewardController,
@@ -91,7 +90,7 @@ export default class App {
       this.logRequests();
       this.app.use('/api/customer', customerController.getRouter());
       this.app.use('/api/employee', employeeController.getRouter());
-      this.app.use('/api/user', userController.getRouter());
+      //this.app.use('/api/user', userController.getRouter());
       this.app.use('/api/product', productController.getRouter());
       this.app.use('/api/order', orderController.getRouter());
       this.app.use('/api/reward', rewardController.getRouter());
