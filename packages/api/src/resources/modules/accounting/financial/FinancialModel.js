@@ -1,5 +1,5 @@
-import { FINANCIAL } from '../../../collections/index.js';
-import Model from '../../../../core/entities/system/base/Model.js';
+import { FINANCIAL } from '#resources/collections/index.js';
+import Model from '#core/infrastructure/database/components/base/Model.js';
 
 const financialSchema = {
   timeFrame: { startData: { type: Date, required: true }, endDate: { type: Date, required: true }, required: true },

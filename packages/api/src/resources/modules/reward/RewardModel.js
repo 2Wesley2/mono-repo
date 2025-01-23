@@ -1,4 +1,4 @@
-import Model from '../../../core/entities/system/base/Model.js';
+import Model from '../../../core/infrastructure/database/components/base/Model.js';
 import loaders from '../../../core/loaders/index.js';
 import { REWARD, CUSTOMER } from '../../collections/index.js';
 

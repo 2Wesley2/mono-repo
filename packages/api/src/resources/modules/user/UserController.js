@@ -1,4 +1,4 @@
-import Controller from '../../../core/entities/system/base/Controller.js';
+import Controller from '../../../core/infrastructure/database/components/base/Controller.js';
 import { UnauthorizedError } from '../../../errors/Exceptions.js';
 
 class UserController extends Controller {

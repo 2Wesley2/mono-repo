@@ -1,4 +1,4 @@
-import Model from '../../../../core/entities/system/base/Model.js';
+import Model from '../../../../core/infrastructure/database/components/base/Model.js';
 import { STOCK, SHOW_ROOM, BACK_STOCK } from '../../../collections/index.js';
 import Stock from '../resources/entities/domain/stock/Stock.js';
 

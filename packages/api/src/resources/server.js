@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 /**
  * Importações necessárias para o carregamento e gerenciamento do servidor.
  */
@@ -47,11 +45,6 @@ export default class Server {
     return new Promise((resolve, reject) => {
       const port = this.appInstance.get('port');
 
-      // Configurar opções de HTTPS
-      const httpsOptions = {
-        key: fs.readFileSync('./key1.pem'),
-        cert: fs.readFileSync('./cert1.pem'),
-      };
       /**
        * Instância do servidor HTTP.
        * @type {Object}
@@ -60,8 +53,6 @@ export default class Server {
         debug.logger.info(`server.js: Servidor rodando na porta: ${port}`);
         resolve();
       });
-
-      this.appInstance.set('httpsOptions', httpsOptions);
       this.server.on('error', (error) => {
         reject(error);
       });
@@ -92,7 +83,7 @@ export default class Server {
    */
   setupGracefulShutdown() {
     /**
-     * Gerencia o encerramento gracioso do servidor.
+     * Gerencia o encerramento do servidor.
      * @param {string} signal - O sinal recebido para encerrar o servidor.
      */
     const gracefulShutdown = async (signal) => {

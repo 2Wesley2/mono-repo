@@ -1,4 +1,4 @@
-import Model from '../../../core/entities/system/base/Model.js';
+import Model from '../../../core/infrastructure/database/components/base/Model.js';
 import { BUSINESS, USER, SALE, STOCK } from '../../collections/index.js';
 import loaders from '../../../core/loaders/index.js';
 

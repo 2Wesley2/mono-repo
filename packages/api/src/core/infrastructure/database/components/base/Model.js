@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import loaders from '../../../loaders/index.js';
+import loaders from '../../../../loaders/index.js';
 
 /**
  * Classe base para criação de modelos Mongoose com métodos personalizados.

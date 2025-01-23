@@ -1,4 +1,4 @@
-import Model from '../../../../core/entities/system/base/Model.js';
+import Model from '../../../../core/infrastructure/database/components/base/Model.js';
 import { RETURN, SALE, PRODUCT, TRADE_DISCOUNT, ALLOWANCE } from '../../../collections/index.js';
 
 const returnSchema = {

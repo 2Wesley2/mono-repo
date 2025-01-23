@@ -8,13 +8,6 @@ const __dirname = path.dirname(__filename);
 
 const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test', 'development'];
 
-/**
- * Função que busca o arquivo .env recursivamente, subindo pelos diretórios.
- *
- * @param {string} startDir - Diretório inicial para a busca.
- * @param {string} fileName - Nome do arquivo a ser procurado (padrão: '.env').
- * @returns {string|null} - Caminho para o arquivo encontrado ou null.
- */
 function findEnvFile(startDir, fileName = '.env') {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
@@ -36,13 +29,10 @@ if (!envPath) {
   throw new Error('env.js: Arquivo de configuração .env não encontrado.');
 }
 
-// Carrega as variáveis de ambiente
 dotenv.config({ path: envPath });
 
-// Lista de variáveis de ambiente obrigatórias
 const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
 
-// Verifica se todas as variáveis obrigatórias estão definidas
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
     console.error(`env.js: A variável de ambiente ${envVar} é necessária.`);
@@ -50,7 +40,6 @@ requiredEnv.forEach((envVar) => {
   }
 });
 
-// Exporta as configurações como um objeto
 const {
   PORT,
   DB_ATLAS,
@@ -68,16 +57,6 @@ const {
   EMAIL_PORT,
   EMAIL_USER,
   EMAIL_PASSWORD,
-  URL_NEW_PAYMENT_V2_GETNET,
-  URL_NEW_PAYMENT_V3_GETNET,
-  URL_CHECK_STATUS_GETNET,
-  GETNET_SELLER_ID,
-  GETNET_CLIENT_ID,
-  GETNET_SECRET,
-  GETNET_ENV,
-  GETNET_URL_SANDBOX,
-  GETNET_URL_PRODUCTION,
-  GETNET_URL_HOMOLOG,
 } = process.env;
 
 export default {
@@ -97,14 +76,4 @@ export default {
   emailPort: Number(EMAIL_PORT),
   emailUser: EMAIL_USER,
   emailPassword: EMAIL_PASSWORD,
-  urlNewPaymentV2Getnet: URL_NEW_PAYMENT_V2_GETNET,
-  urlNewPaymentV3Getnet: URL_NEW_PAYMENT_V3_GETNET,
-  urlCheckStatusGetnet: URL_CHECK_STATUS_GETNET,
-  getnetSellerId: GETNET_SELLER_ID,
-  getnetClientId: GETNET_CLIENT_ID,
-  getnetSecret: GETNET_SECRET,
-  getnetEnv: GETNET_ENV,
-  getnetUrlSandbox: GETNET_URL_SANDBOX,
-  getnetUrlProduction: GETNET_URL_PRODUCTION,
-  getnetUrlHomolog: GETNET_URL_HOMOLOG,
 };
