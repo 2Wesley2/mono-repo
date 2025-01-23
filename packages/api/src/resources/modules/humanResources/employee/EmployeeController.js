@@ -1,4 +1,4 @@
-import Controller from '../../../../core/infrastructure/database/components/base/Controller.js';
+import Controller from '../../../../core/infrastructure/components/base/Controller.js';
 
 class EmployeeController extends Controller {
   constructor(service) {

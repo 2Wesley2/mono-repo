@@ -1,4 +1,4 @@
-import Model from '../../../../core/infrastructure/database/components/base/Model.js';
+import Model from '../../../../core/infrastructure/components/base/Model.js';
 import { ALLOWANCE, TRADE_DISCOUNT, CUSTOMER, SALE } from '../../collections/index.js';
 
 const allowanceSchema = {

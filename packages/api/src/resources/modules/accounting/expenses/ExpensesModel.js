@@ -1,4 +1,4 @@
-import Model from '../../../../core/infrastructure/database/components/base/Model.js';
+import Model from '../../../../core/infrastructure/components/base/Model.js';
 import { EXPENSE } from '../../../collections/index.js';
 
 const expenseCategories = ['Operational', 'Non-Operational'];

@@ -1,4 +1,4 @@
-import Model from '../../../../core/infrastructure/database/components/base/Model.js';
+import Model from '../../../../core/infrastructure/components/base/Model.js';
 import { STOCK_AUDITS, SALE, PURCHASE } from '../../../collections/index.js';
 
 const typesEnum = {

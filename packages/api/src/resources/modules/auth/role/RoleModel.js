@@ -1,10 +1,9 @@
-import Model from '../../../../core/infrastructure/database/components/base/Model.js';
-import { ROLE, PERMISSION } from '../../../collections/index.js';
-import loaders from '../../../../core/loaders/index.js';
+import Model from '#core/infrastructure/components/base/Model.js';
+import { ROLE } from '../../../collections/index.js';
 
 const roleSchema = {
   name: { type: String, required: true },
-  permissions: [{ type: Model.objectId, ref: PERMISSION }],
+  permissions: [{ type: String }],
 };
 
 export default class RoleModel extends Model {

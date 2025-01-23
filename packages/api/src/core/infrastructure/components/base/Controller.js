@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import auth from '../../../../middlewares/index.js';
+import auth from '../../../middlewares/index.js';
 /**
  * Classe que representa um controlador genérico com funcionalidade de roteamento.
  */

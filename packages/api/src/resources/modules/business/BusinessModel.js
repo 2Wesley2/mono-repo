@@ -1,4 +1,4 @@
-import Model from '../../../core/infrastructure/database/components/base/Model.js';
+import Model from '../../../core/infrastructure/components/base/Model.js';
 import { BUSINESS, OWNER_USER, SALE, STOCK } from '../../collections/index.js';
 import loaders from '../../../core/loaders/index.js';
 
@@ -45,7 +45,7 @@ const industrySectors = [
 ];
 
 const businessSchema = {
-  userID: { type: Model.objectIdType, ref: OWNER_USER, required: true, unique: true },
+  ownerUserID: { type: Model.objectIdType, ref: OWNER_USER, required: true, unique: true },
   tradeName: { type: String, required: true },
   legalName: { type: String, required: true, unique: true },
   businessModel: { type: String, enum: [...businessModels], required: true },

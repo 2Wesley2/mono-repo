@@ -1,4 +1,4 @@
-import Controller from '../../../../core/infrastructure/database/components/base/Controller.js';
+import Controller from '../../../../core/infrastructure/components/base/Controller.js';
 
 export default class FinancialController extends Controller {
   constructor(service) {

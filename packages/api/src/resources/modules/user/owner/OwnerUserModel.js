@@ -1,14 +1,28 @@
 import UserModel from '../model/UserModel.js';
 import { OWNER_USER, ROLE } from '../../../collections/index.js';
 import auth from '#core/adapters/auth/index.js';
+import { UnauthorizedError } from '#src/errors/Exceptions.js';
 
 const ownerUserSchema = {
+  name: { type: String, required: true },
   role: { type: UserModel.objectIdType, ref: ROLE, required: true },
 };
 
 export default class OwnerUserModel extends UserModel {
   constructor() {
     super(ownerUserSchema, OWNER_USER);
+  }
+
+  async login(credentials) {
+    const userLoggedIn = await super.login(credentials);
+    if (!userLoggedIn) {
+      throw new UnauthorizedError();
+    }
+    return {
+      name: userLoggedIn.name,
+      email: userLoggedIn.email,
+      role: userLoggedIn.role,
+    };
   }
 
   async createUser(data) {

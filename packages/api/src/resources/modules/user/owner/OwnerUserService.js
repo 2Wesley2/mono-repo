@@ -7,11 +7,10 @@ export default class UserService {
     this.repository = repository;
   }
   async login(credentials) {
-    const userAuth = await this.repository.login({ ...credentials });
+    const userAuth = await this.repository.login(credentials);
     if (!userAuth) {
       throw new UnauthorizedError();
     }
-    const { password } = credentials;
     const payloadValues = isString([userAuth._id, userAuth.role]);
     const payload = { id: payloadValues.id, role: payloadValues.role };
     const setPayload = auth.authentication.generateToken(payload);

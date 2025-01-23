@@ -6,20 +6,7 @@ export default class OwnerUserRepository {
   }
 
   async login(credentials) {
-    const { username, password } = credentials;
-    const user = await this.model.getUserByUsername(username);
-    if (!user) {
-      throw new UnauthorizedError();
-    }
-    const login = await auth.authenticate(password, user.password);
-    if (!login) {
-      throw new UnauthorizedError();
-    }
-    return {
-      id: user.id,
-      username: user.username,
-      role: user.role,
-    };
+    return await this.model.login(credentials);
   }
 
   async getRoleByUser(userID) {
