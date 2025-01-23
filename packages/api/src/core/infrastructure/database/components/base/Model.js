@@ -4,17 +4,7 @@ import loaders from '../../../../loaders/index.js';
 /**
  * Classe base para criação de modelos Mongoose com métodos personalizados.
  */
-class Model {
-  /**
-   * @constructor
-   * @param {Object} schema - Definição do schema do modelo.
-   * @param {string} modelName - Nome do modelo.
-   * @param {Object} [options={}] - Opções adicionais para o schema.
-   * @param {Array<{type: string, event: string, fn: Function}>} [middlewares=[]] - Middlewares para o schema.
-   * @example
-   * const userSchema = { name: { type: String, required: true } };
-   * const UserModel = new Model(userSchema, 'User');
-   */
+export default class Model {
   constructor(schema, modelName, options = {}, middlewares = []) {
     /**
      * @type {mongoose.Model}
@@ -89,5 +79,3 @@ class Model {
     });
   }
 }
-
-export default Model;

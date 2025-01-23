@@ -1,5 +1,5 @@
-import Controller from '../../../core/infrastructure/database/components/base/Controller.js';
-import { UnauthorizedError } from '../../../errors/Exceptions.js';
+import Controller from '../../../../core/infrastructure/database/components/base/Controller.js';
+import { UnauthorizedError } from '../../../../errors/Exceptions.js';
 
 class UserController extends Controller {
   constructor(service) {

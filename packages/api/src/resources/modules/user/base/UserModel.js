@@ -1,15 +1,17 @@
-import bcrypt from 'bcryptjs';
-import Model from '../../../core/infrastructure/database/components/base/Model.js';
-import { USER, ROLE } from '../../collections/index.js';
+import auth from '#core/adapters/auth/index.js';
+import Model from '#core/infrastructure/database/components/base/Model.js';
+import { USER } from '../../../collections/index.js';
 
 const userSchema = {
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: Model.objectIdType, ref: ROLE, required: true },
 };
-class UserModel extends Model {
-  constructor() {
-    super(userSchema, USER);
+
+export default class UserModel extends Model {
+  constructor(schema = {}, modelName = USER, options = {}, middlewares = []) {
+    const isSchemaEmpty = !schema || Object.keys(schema).length === 0;
+    const combinedSchema = isSchemaEmpty ? userSchema : { ...userSchema, ...schema };
+    super(combinedSchema, modelName, options, middlewares);
   }
 
   async getRoleByUser(userID) {
@@ -25,7 +27,7 @@ class UserModel extends Model {
   async createUser(data) {
     try {
       const { username, password, role } = data;
-      const hashedPassword = await bcrypt.hash(password, 12);
+      const hashedPassword = await auth.authentication.hash(password);
       const user = await this.model.create({ username, password: hashedPassword, role });
       return user;
     } catch (error) {
@@ -38,5 +40,3 @@ class UserModel extends Model {
     return user;
   }
 }
-
-export default UserModel;

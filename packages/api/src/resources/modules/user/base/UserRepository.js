@@ -1,5 +1,5 @@
-import { UnauthorizedError } from '../../../errors/Exceptions.js';
-import auth from '../../../core/adapters/auth/authentication/index.js';
+import { UnauthorizedError } from '../../../../errors/Exceptions.js';
+import auth from '../../../../core/adapters/auth/authentication/index.js';
 export default class UserRepository {
   constructor(model) {
     this.model = model;

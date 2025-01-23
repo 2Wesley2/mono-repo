@@ -1,6 +1,6 @@
-import auth from '../../../core/adapters/auth/index.js';
-import { UnauthorizedError } from '../../../errors/Exceptions.js';
-import { isString } from '../../../helpers/stringHelper.js';
+import auth from '../../../../core/adapters/auth/index.js';
+import { UnauthorizedError } from '../../../../errors/Exceptions.js';
+import { isString } from '../../../../helpers/stringHelper.js';
 
 export default class UserService {
   constructor(repository) {

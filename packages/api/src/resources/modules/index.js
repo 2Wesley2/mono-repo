@@ -1,7 +1,9 @@
-import UserModel from './user/UserModel.js';
-import UserRepository from './user/UserRepository.js';
-import UserService from './user/UserService.js';
-import UserController from './user/UserController.js';
+import UserModel from './user/base/UserModel.js';
+import UserRepository from './user/base/UserRepository.js';
+import UserService from './user/base/UserService.js';
+import UserController from './user/base/UserController.js';
+import OwnerUserModel from './user/owner/OwnerUserModel.js';
+
 import FinancialRepository from './accounting/financial/FinancialRepository.js';
 import FinancialService from './accounting/financial/FinancialService.js';
 import FinancialModel from './accounting/financial/FinancialModel.js';
@@ -37,6 +39,7 @@ import RewardService from './reward/RewardService.js';
 import RewardController from './reward/RewardController.js';
 
 const userModel = new UserModel();
+const ownerUserModel = new OwnerUserModel();
 const userRepository = new UserRepository(userModel);
 const userService = new UserService(userRepository);
 const userController = new UserController(userService);

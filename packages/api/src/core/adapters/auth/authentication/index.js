@@ -15,6 +15,10 @@ class Authentication {
     return validatePassword;
   }
 
+  static async hash(password) {
+    return await auth.bcryptjs.hash(password);
+  }
+
   static generateToken(payload) {
     return auth.jsonwebtoken.generate(payload, this.#secretKey);
   }
@@ -32,6 +36,7 @@ class Authentication {
 
 export default {
   authenticate: (...args) => Authentication.authenticate(...args),
+  hash: (...args) => Authentication.hash(...args),
   generateToken: (...args) => Authentication.generateToken(...args),
   isAuthenticate: (...args) => Authentication.isAuthenticate(...args),
   decodeToken: (...args) => Authentication.decodeToken(...args),
