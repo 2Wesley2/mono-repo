@@ -7,8 +7,9 @@ class Authentication {
     return env.jwtSecret;
   }
 
-  static async authenticate(plainPassword, hashedPassword) {
-    const validatePassword = await auth.bcryptjs.compare(plainPassword, hashedPassword);
+  static async authenticate(credentials) {
+    const { password, hashedPassword } = credentials;
+    const validatePassword = await auth.bcryptjs.compare(password, hashedPassword);
     if (!validatePassword) {
       throw new UnauthorizedError();
     }

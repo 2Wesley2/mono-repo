@@ -4,11 +4,14 @@ import secretKeyValidate from '../../../../../application/services/validators/Se
 import tokenValidate from '../../../../../application/services/validators/TokenValidator.js';
 
 class JsonWebToken {
-  static generateToken(payload, secretKey, options = { algorithm: 'HS256', expiresIn: '24h' }) {
+  static async generateToken(payload, secretKey, options = { algorithm: 'HS256', expiresIn: '24h' }) {
     const validPayload = payloadValidate.validate(payload);
-    const validSecretKey = secretKeyValidate.validate(secretKey);
-    if (!validPayload || !validSecretKey) {
-      throw new TypeError('payload ou secretKey inválidos');
+    const validSecretKey = await secretKeyValidate.validate(secretKey);
+    if (!validSecretKey) {
+      throw new TypeError('secretKey inválida');
+    }
+    if (!validPayload) {
+      throw new TypeError(`payload inválido ${JSON.stringify(typeof validPayload)}`);
     }
     return jwt.sign(payload, secretKey, options);
   }

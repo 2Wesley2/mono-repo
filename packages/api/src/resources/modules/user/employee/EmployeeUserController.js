@@ -9,25 +9,29 @@ export default class OwnerUserController extends Controller {
   }
 
   initializeCustomRoutes() {
-    this.router.post('/login', this.login.bind(this));
+    this.router.post('/login', this.middlewares.blockIfAuthenticated, this.login.bind(this));
     this.router.post('/logout', this.logout.bind(this));
-    this.router.post('/signup', this.signUp.bind(this));
+    this.router.post('/register', this.createUser.bind(this));
   }
 
-  async signUp(req, res, next) {
-    const { email, password, name } = req.body;
+  async createUser(req, res, next) {
     try {
-      const createdUser = await this.service.signUp({ email, password, name });
-      return res.status(200).json(createdUser);
-    } catch (err) {
-      next(err);
+      const { username, password, role } = req.body;
+      if (!username || !password) {
+        return res.status(400).json({ message: 'Username e password são obrigatórios' });
+      }
+
+      const user = await this.service.createUser({ username, password, role });
+      res.status(201).json(user);
+    } catch (error) {
+      next(error);
     }
   }
 
   async login(req, res, next) {
     try {
-      const { password, email } = req.body;
-      const credentials = { email, password };
+      const { password, username } = req.body;
+      const credentials = { username, password };
       const token = await this.service.login({ ...credentials });
       if (!token) {
         throw new UnauthorizedError();
@@ -38,7 +42,7 @@ export default class OwnerUserController extends Controller {
         sameSite: 'Strict',
         maxAge: 3600000,
       });
-      res.status(200).json('logou');
+      res.status(200).json({ id: user._id, username: user.username });
     } catch (error) {
       next(error);
     }

@@ -27,6 +27,7 @@ class PayloadValidator {
         'Invalid or missing role in payload',
       );
     }
+    return true;
   }
 }
 export default {

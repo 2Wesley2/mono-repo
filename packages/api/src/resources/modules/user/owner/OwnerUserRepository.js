@@ -1,31 +1,28 @@
+import auth from '#core/adapters/auth/index.js';
 import { UnauthorizedError } from '#src/errors/Exceptions.js';
-import auth from '#core/adapters/auth/authentication/index.js';
+import { isString } from '#src/helpers/stringHelper.js';
+
 export default class OwnerUserRepository {
   constructor(model) {
     this.model = model;
   }
 
+  async signUp(userData) {
+    return await this.model.signUp(userData);
+  }
+
   async login(credentials) {
-    return await this.model.login(credentials);
-  }
-
-  async getRoleByUser(userID) {
-    try {
-      return await this.model.getRoleByUser(userID);
-    } catch (error) {
-      throw error;
+    const authenticatedUser = await this.model.login(credentials);
+    if (!authenticatedUser) {
+      throw new UnauthorizedError();
     }
-  }
-
-  async createUser(data) {
-    try {
-      return await this.model.createUser(data);
-    } catch (error) {
-      throw new Error(`UserRepository.js: Erro ao criar usuário: ${error.message}`);
+    const { id, role } = authenticatedUser;
+    const userValues = isString([id, role]);
+    if (!userValues) {
+      throw new TypeError('ID ou role inválidos. Ambos devem ser strings.');
     }
-  }
-
-  async getUserByUsername(username) {
-    return await this.model.getUserByUsername(username);
+    const tokenPayload = { id, role };
+    const authToken = auth.authentication.generateToken(tokenPayload);
+    return authToken;
   }
 }

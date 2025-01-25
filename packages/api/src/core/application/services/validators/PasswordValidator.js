@@ -9,5 +9,5 @@ class PasswordValidator {
   }
 }
 export default {
-  validateDataType: (...args) => PasswordValidator.validate(...args),
+  validateDataType: (...args) => PasswordValidator.validateDataType(...args),
 };

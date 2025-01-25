@@ -1,12 +1,13 @@
-import UserModel from './user/model/UserModel.js';
-import UserRepository from './user/owner/OwnerUserRepository.js';
-
 import OwnerUserModel from './user/owner/OwnerUserModel.js';
+import OwnerUserRepository from './user/owner/OwnerUserRepository.js';
+import OwnerUserService from './user/owner/OwnerUserService.js';
+import OwnerUserController from './user/owner/OwnerUserController.js';
 
 import FinancialRepository from './accounting/financial/FinancialRepository.js';
 import FinancialService from './accounting/financial/FinancialService.js';
 import FinancialModel from './accounting/financial/FinancialModel.js';
 import GenerateFinancialReport from '../../core/use_cases/financial/GenerateFinancialReport.js';
+
 import CalcRefModel from './calcRef/CalcRefModel.js';
 import CalcRefRepository from './calcRef/CalcRefRepository.js';
 import CalcRefService from './calcRef/CalcRefService.js';
@@ -37,9 +38,10 @@ import RewardRepository from './reward/RewardRepository.js';
 import RewardService from './reward/RewardService.js';
 import RewardController from './reward/RewardController.js';
 
-const userModel = new UserModel();
 const ownerUserModel = new OwnerUserModel();
-const userRepository = new UserRepository(userModel);
+const ownerUserRepository = new OwnerUserRepository(ownerUserModel);
+const ownerUserService = new OwnerUserService(ownerUserRepository);
+const ownerUserController = new OwnerUserController(ownerUserService);
 
 const calcRefModel = new CalcRefModel();
 const calcRefRepository = new CalcRefRepository(calcRefModel);
@@ -86,4 +88,5 @@ export {
   orderController,
   rewardController,
   calcRefController,
+  ownerUserController,
 };

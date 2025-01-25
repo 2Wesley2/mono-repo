@@ -13,6 +13,7 @@
     "start": "node src/main.js",
     "dev": "nodemon src/main.js",
     "lint:fix": "npx eslint --fix .",
+    "tt": "node src/ignore/test.js",
     "test": "cross-env NODE_ENV=test jest --runInBand"
   },
   "dependencies": {

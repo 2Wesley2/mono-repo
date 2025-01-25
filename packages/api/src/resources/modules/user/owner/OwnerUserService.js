@@ -1,20 +1,20 @@
-import auth from '#core/adapters/auth/index.js';
 import { UnauthorizedError } from '#src/errors/Exceptions.js';
-import { isString } from '#src/helpers/stringHelper.js';
 
-export default class UserService {
+export default class OwnerUserService {
   constructor(repository) {
     this.repository = repository;
   }
+
+  async signUp(userData) {
+    return await this.repository.signUp(userData);
+  }
+
   async login(credentials) {
-    const userAuth = await this.repository.login(credentials);
-    if (!userAuth) {
+    const authToken = await this.repository.login(credentials);
+    if (!authToken) {
       throw new UnauthorizedError();
     }
-    const payloadValues = isString([userAuth._id, userAuth.role]);
-    const payload = { id: payloadValues.id, role: payloadValues.role };
-    const setPayload = auth.authentication.generateToken(payload);
-    return setPayload;
+    return authToken;
   }
   async getRoleByUser(userID) {
     try {
@@ -22,26 +22,5 @@ export default class UserService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async createUser(data) {
-    try {
-      if (!data.username || !data.password) {
-        throw new Error('Username e password são obrigatórios');
-      }
-
-      const user = await this.repository.createUser(data);
-      return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getUserByUsername(username) {
-    const user = await this.repository.getUserByUsername(username);
-    if (!user) {
-      throw new UnauthorizedError();
-    }
-    return user;
   }
 }
