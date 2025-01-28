@@ -25,8 +25,9 @@ const productSchema = {
 };
 
 class ProductModel extends Model {
-  constructor() {
-    super(productSchema, PRODUCT);
+  constructor(schema = {}, modelName = PRODUCT, options = {}, middlewares = []) {
+    const combinedSchema = { ...productSchema, ...schema };
+    super(combinedSchema, modelName, options, middlewares);
   }
 
   async createProduct(data) {
