@@ -5,13 +5,13 @@ export default class MathOperations {
   }
 
   static isNumber(number) {
-    if (typeof number !== 'number') {
-      throw TypeError(`${number} não é um número`);
-    }
-    return number;
+    return typeof number === 'number' && !Number.isNaN(number);
   }
   static validateNumbersArray(array) {
     array = this.toArray(array);
+    if (array.length === 0) {
+      throw new Error('O array não pode estar vazio.');
+    }
     if (!array.every((value) => this.isNumber(value))) {
       throw new TypeError(`Todos os valores no array devem ser números:\n array: ${JSON.stringify(array)}`);
     }
@@ -35,9 +35,7 @@ export default class MathOperations {
   static divisionOperation(dividend, divisor = 1) {
     dividend = this.sumAllNumbersArray(dividend);
     divisor = this.sumAllNumbersArray(divisor);
-    if (divisor === 0) {
-      throw new Error('Divisão por zero não é permitida.');
-    }
+    if (divisor === 0) throw new Error('Divisão por zero não é permitida.');
     const quotient = dividend / divisor;
     return quotient;
   }
