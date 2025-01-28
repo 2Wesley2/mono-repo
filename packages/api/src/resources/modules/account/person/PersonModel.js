@@ -29,7 +29,6 @@ export default class PersonModel extends Model {
     if (!created) {
       throw new InvalidRequestError();
     }
-    console.log(`person:\n ${created}`);
     return created;
   }
 }

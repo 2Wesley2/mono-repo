@@ -4,7 +4,6 @@ export const TICKET = 'Ticket';
 export const EMPLOYEE = 'Employee';
 export const USER = 'User';
 export const OWNER = 'Owner';
-export const EMPLOYEE_USER = 'EmployeeUser';
 export const NOTIFICATION = 'Notification';
 export const CASHBACK = 'Cashback';
 export const TIER = 'Tier';

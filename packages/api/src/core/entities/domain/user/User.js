@@ -6,6 +6,8 @@ class User {
     const values = Object.values(fields);
     return values;
   }
+
+  static async login() {}
 }
 export default {
   validateRequiredFields: (...args) => User.validateRequiredFields(...args),
