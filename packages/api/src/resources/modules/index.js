@@ -1,7 +1,7 @@
-import OwnerUserModel from './user/owner/OwnerUserModel.js';
-import OwnerUserRepository from './user/owner/OwnerUserRepository.js';
-import OwnerUserService from './user/owner/OwnerUserService.js';
-import OwnerUserController from './user/owner/OwnerUserController.js';
+import OwnerUserModel from './account/user/owner/OwnerUserModel.js';
+import OwnerUserRepository from './account/user/owner/OwnerUserRepository.js';
+import OwnerUserService from './account/user/owner/OwnerUserService.js';
+import OwnerUserController from './account/user/owner/OwnerUserController.js';
 
 import FinancialRepository from './accounting/financial/FinancialRepository.js';
 import FinancialService from './accounting/financial/FinancialService.js';

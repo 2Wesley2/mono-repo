@@ -1,5 +1,5 @@
-import Model from '../../../../core/infrastructure/components/base/Model.js';
-import { PERMISSION } from '../../../collections/index.js';
+import Model from '../../../../../core/infrastructure/components/base/Model.js';
+import { PERMISSION } from '../../../../collections/index.js';
 
 const permissionSchema = { name: { type: String, required: true } };
 

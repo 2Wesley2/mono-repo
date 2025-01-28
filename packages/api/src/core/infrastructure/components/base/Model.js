@@ -5,7 +5,10 @@ import loaders from '../../../loaders/index.js';
  * Classe base para criação de modelos Mongoose com métodos personalizados.
  */
 export default class Model {
-  constructor(schema, modelName, options = {}, middlewares = []) {
+  constructor(schema = {}, modelName, options = {}, middlewares = []) {
+    if (!Object.keys(schema).length) {
+      throw new Error('O esquema fornecido não pode estar vazio.');
+    }
     /**
      * @type {mongoose.Model}
      * O modelo Mongoose configurado.
@@ -26,7 +29,6 @@ export default class Model {
   static get objectIdType() {
     return loaders.mongoose.getObjectIdType();
   }
-
   /**
    * Anexa métodos personalizados à instância do modelo.
    * @throws {Error} Lança um erro se um método tentar sobrescrever métodos padrão do Mongoose.

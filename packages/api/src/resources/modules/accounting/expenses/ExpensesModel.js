@@ -1,23 +1,31 @@
 import Model from '../../../../core/infrastructure/components/base/Model.js';
-import { EXPENSE } from '../../../collections/index.js';
+import { EXPENSE, OWNER } from '../../../collections/index.js';
 
 const expenseCategories = ['Operational', 'Non-Operational'];
 const operationalSubcategories = ['Administrative', 'Sales', 'Production', 'Logistics', 'Marketing'];
 const nonOperationalSubcategories = ['Financial', 'Legal', 'Losses', 'Extraordinary'];
+const expenseTypes = ['Fixed', 'Variable'];
 
 function getSubcategoryEnum(category) {
   if (category === 'Operational') return operationalSubcategories;
   if (category === 'Non-Operational') return nonOperationalSubcategories;
-  return null;
+  return [];
 }
-const expenseTypes = ['Fixed', 'Variable'];
+
 const expenseSchema = {
   name: {
     type: String,
     required: true,
   },
-  amount: { type: Number, required: true },
-  category: { type: String, enum: [...expenseCategories], required: true },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  category: {
+    type: String,
+    enum: [...expenseCategories],
+    required: true,
+  },
   subcategory: {
     type: String,
     enum: function () {
@@ -30,6 +38,25 @@ const expenseSchema = {
     enum: [...expenseTypes],
     required: true,
   },
+  ownerID: {
+    type: Model.objectIdType,
+    ref: OWNER,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  paymentMethod: {
+    type: String,
+  },
+  receipt: {
+    type: String,
+  },
+  recurring: {
+    type: Boolean,
+    default: false,
+  },
 };
 
 export default class ExpenseModel extends Model {
@@ -41,17 +68,33 @@ export default class ExpenseModel extends Model {
     return await this.model.create(expense);
   }
 
-  async getAllExpensesByFilters({ name, category, subcategory, expenseType, startDate, endDate }) {
+  async getAllExpensesByFilters({
+    name,
+    category,
+    subcategory,
+    expenseType,
+    ownerID,
+    startDate,
+    endDate,
+    paymentMethod,
+    recurring,
+  }) {
     const filter = {
       ...(name && { name: { $regex: name, $options: 'i' } }),
       ...(category && { category }),
       ...(subcategory && { subcategory }),
       ...(expenseType && { expenseType }),
+      ...(ownerID && { ownerID }),
       ...(startDate || endDate
         ? {
-            createdAt: { ...(startDate && { $gte: new Date(startDate) }), ...(endDate && { $lte: new Date(endDate) }) },
+            date: {
+              ...(startDate && { $gte: new Date(startDate) }),
+              ...(endDate && { $lte: new Date(endDate) }),
+            },
           }
         : {}),
+      ...(paymentMethod && { paymentMethod }),
+      ...(recurring !== undefined && { recurring }),
     };
 
     return this.model.find(filter);

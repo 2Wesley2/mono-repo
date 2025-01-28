@@ -15,9 +15,42 @@ export default class OwnerUserController extends Controller {
   }
 
   async signUp(req, res, next) {
-    const { email, password, name } = req.body;
+    const {
+      cpf,
+      firstName,
+      lastName,
+      birthDate,
+      street,
+      neighborhood,
+      houseNumber,
+      postalCode,
+      city,
+      state,
+      email,
+      password,
+      cnpj,
+      legalName,
+      tradeName,
+    } = req.body;
     try {
-      const createdUser = await this.service.signUp({ email, password, name });
+      const userData = {
+        cpf,
+        firstName,
+        lastName,
+        birthDate,
+        street,
+        neighborhood,
+        houseNumber,
+        postalCode,
+        city,
+        state,
+        email,
+        password,
+        cnpj,
+        legalName,
+        tradeName,
+      };
+      const createdUser = await this.service.signUp({ ...userData });
       return res.status(200).json(createdUser);
     } catch (err) {
       next(err);

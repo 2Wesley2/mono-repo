@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Database from '../../../infrastructure/database/index.js';
-import UserModel from '../../../../resources/modules/user/model/UserModel.js';
-import RoleModel from '../../../../resources/modules/auth/role/RoleModel.js';
+import UserModel from '../../../../resources/modules/account/user/model/UserModel.js';
+import RoleModel from '../../../../resources/modules/account/auth/role/RoleModel.js';
 import BackStockModel from '../../../../resources/modules/logistics/backStock/BackStockModel.js';
 import ShowRoomModel from '../../../../resources/modules/logistics/showRoom/ShowRoomModel.js';
 //import { authorizationService } from '../src/services/auth/authorization/index.js';

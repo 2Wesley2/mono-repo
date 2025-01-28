@@ -1,4 +1,4 @@
-import Model from '#src/core/infrastructure/components/base/Model.js';
+import PersonModel from '../../person/PersonModel.js';
 import user from '#core/entities/domain/user/User.js';
 import auth from '#core/adapters/auth/authentication/index.js';
 import { UnauthorizedError, InvalidRequestError } from '#src/errors/Exceptions.js';
@@ -8,22 +8,17 @@ const userSchema = {
   password: { type: String, required: true },
 };
 
-export default class UserModel extends Model {
+export default class UserModel extends PersonModel {
   constructor(schema = {}, modelName, options = {}, middlewares = []) {
-    const isSchemaEmpty = !schema || Object.keys(schema).length === 0;
-    const combinedSchema = isSchemaEmpty ? userSchema : { ...userSchema, ...schema };
+    const combinedSchema = { ...userSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
   }
 
   async signUp(userData) {
     const hashedPassword = await auth.hash(userData.password);
     userData.password = hashedPassword;
-    const createdUser = user.validateRequiredFields(userData) ? await this.model.create(userData) : null;
-    if (!createdUser) {
-      throw new InvalidRequestError();
-    }
-    console.log(`usuário criado:\n ${createdUser}`);
-    return createdUser;
+    console.log('[UserModel] Dados do usuário antes de criar:', userData);
+    return await super.signUp(userData);
   }
 
   async login({ email, password }) {

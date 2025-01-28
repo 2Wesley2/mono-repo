@@ -1,5 +1,5 @@
 import Model from '#core/infrastructure/components/base/Model.js';
-import { ROLE } from '../../../collections/index.js';
+import { ROLE } from '../../../../collections/index.js';
 
 const roleSchema = {
   name: { type: String, required: true },
