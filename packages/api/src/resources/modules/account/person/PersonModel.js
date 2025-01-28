@@ -25,7 +25,6 @@ export default class PersonModel extends Model {
   async signUp(userData) {
     const hashedPassword = await auth.hash(userData.password);
     userData.password = hashedPassword;
-    console.log('[PersonModel] Dados do usuário antes de criar:', userData);
     const created = await this.model.create(userData);
     if (!created) {
       throw new InvalidRequestError();

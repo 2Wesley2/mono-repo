@@ -17,7 +17,6 @@ export default class UserModel extends PersonModel {
   async signUp(userData) {
     const hashedPassword = await auth.hash(userData.password);
     userData.password = hashedPassword;
-    console.log('[UserModel] Dados do usuário antes de criar:', userData);
     return await super.signUp(userData);
   }
 

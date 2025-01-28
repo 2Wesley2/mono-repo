@@ -16,33 +16,8 @@ export default class OwnerUserModel extends UserModel {
   }
 
   async signUp(userData) {
-    console.log('[OwnerUserModel] Dados do usuário antes de passar para o UserModel:', userData);
-
     const roleOwner = { role: 'owner' };
     const combinedData = { ...userData, ...roleOwner };
-
-    const requiredFields = [
-      'cnpj',
-      'legalName',
-      'cpf',
-      'firstName',
-      'lastName',
-      'birthDate',
-      'street',
-      'neighborhood',
-      'houseNumber',
-      'postalCode',
-      'city',
-      'state',
-      'email',
-      'password',
-    ];
-    for (const field of requiredFields) {
-      if (!combinedData[field]) {
-        throw new Error(`[OwnerUserModel] Campo obrigatório ausente: ${field}`);
-      }
-    }
-
     return await super.signUp(combinedData);
   }
 
