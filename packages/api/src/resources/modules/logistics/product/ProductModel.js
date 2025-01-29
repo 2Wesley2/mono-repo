@@ -1,5 +1,5 @@
 import Model from '../../../../core/infrastructure/components/base/Model.js';
-import { PRODUCT, OWNER } from '../../../collections/index.js';
+import { PRODUCT, OWNER, SALE, PURCHASE } from '../../../collections/index.js';
 
 const productSchema = {
   ownerID: { type: Model.objectIdType, ref: OWNER, required: true },
@@ -22,6 +22,8 @@ const productSchema = {
     },
   },
   category: { type: String },
+  sales: [{ type: Model.objectIdType, ref: SALE }],
+  purchases: [{ type: Model.objectIdType, ref: PURCHASE }],
 };
 
 class ProductModel extends Model {
