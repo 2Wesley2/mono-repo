@@ -1,4 +1,3 @@
-import financial from '../../../../core/application/components/financial/metrics/index.js';
 export default class FinancialRepository {
   constructor(model) {
     this.model = model;
@@ -11,39 +10,66 @@ export default class FinancialRepository {
     if (!reportMetricsIsNumber(metrics)) {
       throw new Error('All report metrics must be numbers');
     }
+
     const { startDate, endDate } = timeFrame;
     const {
       grossRevenue,
       netRevenue,
       averageTicket,
-      netProfit,
-      totalExpensesValue,
-      grossMargin,
-      grossProfit,
-      cmv,
       totalSales,
+      conversionRate,
+      netProfit,
+      grossProfit,
+      finalNetIncome,
+      totalExpensesValue,
+      cmv,
       purchasesValue,
+      deductions,
+      grossMargin,
+      operationalResult,
+      nonOperationalResult,
+      beforeTaxProfit,
+      taxProvisions,
+      participations,
+      roi,
+      percentageROI,
     } = metrics;
 
     const report = {
       timeFrame: { startDate: startDate, endDate: endDate },
       revenueMetrics: {
-        grossRevenue: grossRevenue,
-        netRevenue: netRevenue,
-        averageTicket: averageTicket,
-        totalSales: totalSales,
+        grossRevenue,
+        netRevenue,
+        averageTicket,
+        totalSales,
+        conversionRate,
       },
       profitMetrics: {
-        netProfit: netProfit,
-        grossProfit: grossProfit,
+        netProfit,
+        grossProfit,
+        finalNetIncome,
       },
       expenseMetrics: {
-        totalExpensesValue: totalExpensesValue,
-        cmv: cmv,
-        purchasesValue: purchasesValue,
+        totalExpensesValue,
+        cmv,
+        purchasesValue,
+        deductions,
       },
       marginMetrics: {
-        grossMargin: grossMargin,
+        grossMargin,
+      },
+      operationalMetrics: {
+        operationalResult,
+        nonOperationalResult,
+        beforeTaxProfit,
+      },
+      taxMetrics: {
+        taxProvisions,
+        participations,
+      },
+      roiMetrics: {
+        roi,
+        percentageROI,
       },
     };
 

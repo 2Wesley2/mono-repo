@@ -1,4 +1,4 @@
-import Model from '../../../../core/infrastructure/components/base/Model.js';
+import Model from '#core/infrastructure/components/base/Model.js';
 import { SALE, PRODUCT, OWNER } from '../../../collections/index.js';
 
 const baseSaleSchema = {

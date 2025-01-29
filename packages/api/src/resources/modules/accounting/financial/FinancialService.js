@@ -1,14 +1,15 @@
 import usecase from '../../../../core/use_cases/financial/GenerateFinancialReport.js';
 
 export default class FinancialService {
-  constructor({ repository, sales, stockAudits, investments, expenses, deductions }) {
+  constructor({ repository, sale, deduction, expense, purchase, product, investment }) {
     this.services = {
       repository,
-      sales,
-      stockAudits,
-      investments,
-      expenses,
-      deductions,
+      sale,
+      investment,
+      expense,
+      deduction,
+      purchase,
+      product,
     };
   }
 
