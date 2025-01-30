@@ -4,19 +4,19 @@ export default class BillRepository {
   }
 
   async createBill(data) {
-    return await this.orderModel.createOrder(data);
+    return await this.model.createBill(data);
   }
 
-  async bulkCreate(data) {
-    return await this.orderModel.bulkCreate(data);
+  async bulkCreateBills(data) {
+    return await this.model.bulkCreate(data);
   }
 
-  async updateBillProducts(ownerId, finalProducts, totalAmount) {
-    return await this.orderModel.updateOrderProducts(ownerId, finalProducts, totalAmount);
+  async updateBillProducts(ownerId, billNumber, updatedProducts) {
+    return await this.model.updateBillProducts(ownerId, billNumber, updatedProducts);
   }
 
-  async listProductsByOrder(orderNumber) {
-    const products = await this.orderModel.listProductsByOrder(orderNumber);
+  async getProductsByBill(ownerId, billNumber) {
+    const products = await this.model.getProductsByBill(ownerId, billNumber);
     return products;
   }
 }

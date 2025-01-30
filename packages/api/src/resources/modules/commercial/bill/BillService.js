@@ -3,7 +3,20 @@ export default class BillService {
     this.repository = repository;
   }
 
-  async updateOrderProducts(orderNumber, updateOrderProductsFields) {}
+  async createBill(data) {
+    return await this.repository.createBill(data);
+  }
 
-  async listProductsByOrder(orderNumber) {}
+  async bulkCreateBills(data) {
+    return await this.repository.bulkCreate(data);
+  }
+
+  async updateBillProducts(ownerId, billNumber, updatedProducts) {
+    return await this.repository.updateBillProducts(ownerId, billNumber, updatedProducts);
+  }
+
+  async getProductsByBill(ownerId, billNumber) {
+    const products = await this.repository.getProductsByBill(ownerId, billNumber);
+    return products;
+  }
 }
