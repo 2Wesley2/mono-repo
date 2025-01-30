@@ -23,10 +23,10 @@ import ProductRepository from './logistics/product/ProductRepository.js';
 import ProductService from './logistics/product/ProductService.js';
 import ProductController from './logistics/product/ProductController.js';
 
-import OrderModel from './order/OrderModel.js';
-import OrderRepository from './order/OrderRepository.js';
-import OrderService from './order/OrderService.js';
-import OrderController from './order/OrderController.js';
+import OrderModel from './commercial/bill/BillModel.js';
+import OrderRepository from './commercial/bill/BillRepository.js';
+import OrderService from './commercial/bill/BillService.js';
+import OrderController from './commercial/bill/BillController.js';
 
 import EmployeeModel from './humanResources/employee/EmployeeModel.js';
 import EmployeeRepository from './humanResources/employee/EmployeeRepository.js';

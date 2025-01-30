@@ -1,18 +1,4 @@
-import debug from '../../../../debug/index.js';
-import Database from '../../../../core/infrastructure/database/index.js';
-
-/**
- * Repositório para manipulação de produtos no banco de dados.
- *
- * @class ProductRepository
- */
-
-class ProductRepository {
-  /**
-   * Cria uma instância de ProductRepository.
-   *
-   * @param {ProductModel} model - Modelo de dados para operações do repositório.
-   */
+export default class ProductRepository {
   constructor(model) {
     this.model = model;
   }
@@ -25,25 +11,15 @@ class ProductRepository {
     return await this.model.bulkCreate(productList);
   }
 
-  async getProductsByIds(ids) {
-    return await this.model.getProductsByIds(ids);
+  async getProductsCategories(ownerId) {
+    return await this.model.getProductsCategories(ownerId);
   }
 
-  async searchProducts(q) {
-    return await this.model.searchProducts(q);
-  }
-
-  async findByCategory(category) {
-    return await this.model.findByCategory(category);
-  }
-
-  async updateProduct(id, data) {
-    return await this.model.updateProduct(id, data);
+  async searchProducts(ownerId, q) {
+    return await this.model.searchProducts(ownerId, q);
   }
 
   async deleteProduct(id) {
     return await this.model.deleteProduct(id);
   }
 }
-
-export default ProductRepository;

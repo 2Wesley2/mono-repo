@@ -1,8 +1,10 @@
 import Model from '../../../../core/infrastructure/components/base/Model.js';
 import { PRODUCT, OWNER, SALE, PURCHASE } from '../../../collections/index.js';
+import product from '#src/core/entities/domain/product/Product.js';
 
+const CATEGORIES = Object.freeze(['REFEIÇÕES', 'GERAL', 'BEBIDAS', 'SALGADOS', 'LANCHES']);
 const productSchema = {
-  ownerID: { type: Model.objectIdType, ref: OWNER, required: true },
+  ownerId: { type: Model.objectIdType, ref: OWNER, required: true },
   barcode: { type: String, unique: true, required: true },
   sku: { type: String, unique: true, required: true },
   name: { type: String, required: true },
@@ -21,12 +23,12 @@ const productSchema = {
       message: 'Quantity cannot be negative for "ready_to_sell" products',
     },
   },
-  category: { type: String },
+  category: { type: String, enum: CATEGORIES },
   sales: [{ type: Model.objectIdType, ref: SALE }],
   purchases: [{ type: Model.objectIdType, ref: PURCHASE }],
 };
 
-class ProductModel extends Model {
+export class ProductModel extends Model {
   constructor(schema = {}, modelName = PRODUCT, options = {}, middlewares = []) {
     const combinedSchema = { ...productSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
@@ -40,25 +42,17 @@ class ProductModel extends Model {
     return await this.model.insertMany(productList);
   }
 
-  async findByCategory(category) {
-    return await this.model.find({ category });
+  async getProductsCategories(ownerId) {
+    const { filter, projection } = product.filterByCategories(ownerId);
+    return await this.model.find(filter, projection);
   }
 
-  async getProductsByIds(ids) {
-    return await this.model.find({ _id: { $in: ids } });
-  }
-
-  async searchProducts(q) {
-    return await this.model.find({ name: { $regex: `^${q}`, $options: 'i' } });
-  }
-
-  async updateProduct(id, data) {
-    return await this.model.findByIdAndUpdate(id, data, { new: true });
+  async searchProducts(ownerId, q) {
+    const { filter } = product.filterBySearch(ownerId, q);
+    return await this.model.find(filter);
   }
 
   async deleteProduct(id) {
     return await this.model.findByIdAndDelete(id);
   }
 }
-
-export default ProductModel;

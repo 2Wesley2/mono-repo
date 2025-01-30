@@ -108,32 +108,32 @@ class GenerateFinancialReport {
     return metrics.costsAndExpenses.calculateCMV(initialStock, finalStock, purchases);
   }
 
-  static async reportGrossRevenue(startDate, endDate, services) {
-    const salesValues = await this.getSalesValues(startDate, endDate, services);
+  static async reportGrossRevenue(startDate, endDate, sale) {
+    const salesValues = await this.getSalesValues(startDate, endDate, sale);
     return metrics.revenues.calculateGrossRevenue(salesValues);
   }
 
   //Handle Services
-  static async reportDeductionsValue(startDate, endDate, { deduction }) {
+  static async reportDeductionsValue(startDate, endDate, deduction) {
     return await deduction.aggregateDeductionsValueByPeriod(startDate, endDate);
   }
-  static async reportTotalExpensesValue(startDate, endDate, { expense }) {
+  static async reportTotalExpensesValue(startDate, endDate, expense) {
     return await expense.aggregateExpensesValueByPeriod(startDate, endDate);
   }
 
-  static async getPurchasesValue(startDate, endDate, { purchase }) {
+  static async getPurchasesValue(startDate, endDate, purchase) {
     return await purchase.aggregatePurchasesValueByPeriod(startDate, endDate);
   }
 
-  static async aggregateStockValueByDate(date, { product }) {
+  static async aggregateStockValueByDate(date, product) {
     return await product.aggregateStockValueAtDate(date);
   }
 
-  static async getTotalSales(startDate, endDate, { sale }) {
+  static async getTotalSales(startDate, endDate, sale) {
     return await sale.countSalesByPeriod(startDate, endDate);
   }
 
-  static async getSalesValues(startDate, endDate, { sale }) {
+  static async getSalesValues(startDate, endDate, sale) {
     return await sale.getSalesValuesByPeriod(startDate, endDate);
   }
 }
