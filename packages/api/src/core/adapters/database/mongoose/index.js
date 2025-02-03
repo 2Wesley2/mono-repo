@@ -75,4 +75,14 @@ export default {
    * console.log(isValid); // true
    */
   isValidObjectId: (id) => Database.isValidObjectId(id),
+
+  /**
+   * Obtém o tipo Mixed do Mongoose.
+   *
+   * @returns {mongoose.Schema.Types.Mixed} - Tipo Mixed do Mongoose.
+   * @example
+   * import db from '../database/index.js';
+   * const Mixed = db.getMixedType();
+   */
+  getMixedType: () => Database.getMixedType(),
 };

@@ -5,6 +5,14 @@ import loaders from '../../../loaders/index.js';
  * Classe base para criação de modelos Mongoose com métodos personalizados.
  */
 export default class Model {
+  /**
+   * Cria uma instância do modelo.
+   * @param {Object} schema - Definição do schema do modelo.
+   * @param {string} modelName - Nome do modelo.
+   * @param {Object} [options={}] - Opções adicionais para o schema.
+   * @param {Array<{type: string, event: string, fn: Function}>} [middlewares=[]] - Middlewares a serem aplicados.
+   * @throws {Error} Lança erro se o schema estiver vazio.
+   */
   constructor(schema = {}, modelName, options = {}, middlewares = []) {
     if (!Object.keys(schema).length) {
       throw new Error('O esquema fornecido não pode estar vazio.');
@@ -18,17 +26,29 @@ export default class Model {
     this.attachCustomMethods();
   }
 
+  /**
+   * Valida se o ID fornecido é um ObjectId válido.
+   * @param {string} id - O ID a ser validado.
+   * @returns {boolean} - True se o ID for válido, caso contrário, false.
+   */
+  static isValidObjectId(id) {
+    return loaders.mongoose.isValidObjectId(id);
+  }
+
+  /**
+   * @returns {mongoose.Schema.Types} - Os tipos disponíveis no Mongoose.
+   */
   static get getTypes() {
     return loaders.mongoose.getTypes();
   }
 
   /**
-   * @type {mongoose.Schema.Types.ObjectId}
-   * O tipo ObjectId do Mongoose.
+   * @returns {mongoose.Schema.Types.ObjectId} - O tipo ObjectId do Mongoose.
    */
   static get objectIdType() {
     return loaders.mongoose.getObjectIdType();
   }
+
   /**
    * Anexa métodos personalizados à instância do modelo.
    * @throws {Error} Lança um erro se um método tentar sobrescrever métodos padrão do Mongoose.

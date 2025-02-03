@@ -33,10 +33,10 @@ import EmployeeRepository from './humanResources/employee/EmployeeRepository.js'
 import EmployeeService from './humanResources/employee/EmployeeService.js';
 import EmployeeController from './humanResources/employee/EmployeeController.js';
 
-import RewardModel from './reward/RewardModel.js';
-import RewardRepository from './reward/RewardRepository.js';
-import RewardService from './reward/RewardService.js';
-import RewardController from './reward/RewardController.js';
+import RewardModel from './cashback/reward/model/RewardModel.js';
+import RewardRepository from './cashback/reward/RewardRepository.js';
+import RewardService from './cashback/reward/RewardService.js';
+import RewardController from './cashback/reward/RewardController.js';
 
 const ownerUserModel = new OwnerUserModel();
 const ownerUserRepository = new OwnerUserRepository(ownerUserModel);

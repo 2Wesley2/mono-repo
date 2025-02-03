@@ -30,3 +30,5 @@ export const PURCHASE = 'Purchase';
 export const ADJUSTMENT = 'Adjustment';
 export const SUPPLIER = 'Supplier';
 export const BILL = 'Bill';
+export const CREDIT_BALANCE = 'CreditBalance';
+export const RESTRICT_CREDIT_BALANCE = 'RestrictCreditBalance';

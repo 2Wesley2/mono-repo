@@ -2,6 +2,14 @@ import mongoose from 'mongoose';
 import config from '../../../config/index.js';
 
 export default class Database {
+  /**
+   * Adiciona um middleware ao schema do Mongoose.
+   * @param {mongoose.Schema} schema - Schema Mongoose válido.
+   * @param {string} type - O tipo de middleware ("pre" ou "post").
+   * @param {string} event - O evento no qual o middleware será aplicado.
+   * @param {Function} fn - Função middleware a ser executada.
+   * @throws {Error} Lança erro se os argumentos não forem válidos.
+   */
   static addMiddleware(schema, type, event, fn) {
     if (!schema || !(schema instanceof mongoose.Schema)) {
       throw new Error('O primeiro argumento deve ser um schema Mongoose válido.');
@@ -16,6 +24,11 @@ export default class Database {
     schema[type](event, fn);
   }
 
+  /**
+   * Conecta ao banco de dados utilizando as configurações definidas.
+   * @param {string} [dbName=config.dbName] - Nome do banco de dados.
+   * @returns {Promise<void>} - Uma Promise que é resolvida quando a conexão é bem-sucedida.
+   */
   static async connect(dbName = config.dbName) {
     let dbUri;
     const options = {
@@ -59,6 +72,10 @@ export default class Database {
     }
   }
 
+  /**
+   * Encerra a conexão com o banco de dados.
+   * @returns {Promise<void>} - Uma Promise que é resolvida quando a conexão é encerrada.
+   */
   static async disconnect() {
     try {
       await mongoose.connection.close();
@@ -68,6 +85,14 @@ export default class Database {
     }
   }
 
+  /**
+   * Configura um schema Mongoose com opções e middlewares.
+   * @param {Object} params - Parâmetros de configuração.
+   * @param {Object} params.schema - Definição do schema.
+   * @param {Object} [params.options={}] - Opções para o schema.
+   * @param {Array<{type: string, event: string, fn: Function}>} [params.middlewares=[]] - Middlewares a serem aplicados.
+   * @returns {mongoose.Schema} - O schema configurado.
+   */
   static configSchema({ schema, options = {}, middlewares = [] }) {
     const newOptions = { timestamps: true, ...options };
     const newSchema = new mongoose.Schema(schema, newOptions);
@@ -77,6 +102,16 @@ export default class Database {
     return newSchema;
   }
 
+  /**
+   * Registra um modelo Mongoose a partir do schema fornecido.
+   * @param {Object} params - Parâmetros para registro do modelo.
+   * @param {Object} params.schema - Definição do schema.
+   * @param {string} params.modelName - Nome do modelo.
+   * @param {Object} [params.options={}] - Opções adicionais para o schema.
+   * @param {Array<{type: string, event: string, fn: Function}>} [params.middlewares=[]] - Middlewares a serem aplicados.
+   * @returns {mongoose.Model} - O modelo registrado.
+   * @throws {Error} Lança erro se o schema ou modelName não forem válidos.
+   */
   static registerModel({ schema, modelName, options = {}, middlewares = [] }) {
     if (!schema || typeof schema !== 'object') {
       throw new Error('Schema inválido ou não fornecido.');
@@ -96,14 +131,34 @@ export default class Database {
     return model;
   }
 
+  /**
+   * @returns {mongoose.Schema.Types.ObjectId} - O tipo ObjectId do Mongoose.
+   */
   static get ObjectIdType() {
     return mongoose.Schema.Types.ObjectId;
   }
 
+  /**
+   * @returns {mongoose.Schema.Types} - Tipos disponíveis no Mongoose.
+   */
   static get Types() {
     return mongoose.Schema.Types;
   }
 
+  /**
+   * Obtém o tipo Mixed do Mongoose.
+   * @returns {mongoose.Schema.Types.Mixed} - O tipo Mixed do Mongoose.
+   */
+
+  static get MixedType() {
+    return mongoose.Schema.Types.Mixed;
+  }
+
+  /**
+   * Valida se um ID é um ObjectId válido.
+   * @param {string} id - O ID a ser validado.
+   * @returns {boolean} - True se for válido, caso contrário false.
+   */
   static isValidObjectId(id) {
     return mongoose.Types.ObjectId.isValid(id);
   }
