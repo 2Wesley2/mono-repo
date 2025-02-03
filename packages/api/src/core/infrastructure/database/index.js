@@ -162,4 +162,19 @@ export default class Database {
   static isValidObjectId(id) {
     return mongoose.Types.ObjectId.isValid(id);
   }
+
+  /**
+   * Converte o valor fornecido para um mongoose.Types.ObjectId, se possível.
+   *
+   * @param {*} value - Valor que deverá ser convertido para ObjectId.
+   * @returns {mongoose.Types.ObjectId} - O ObjectId convertido.
+   * @throws {Error} - Caso o valor não seja convertido para um ObjectId válido.
+   */
+  static toObjectId(value) {
+    if (mongoose.Types.ObjectId.isValid(value)) {
+      // Se já for um ObjectId, ou se for uma string válida, cria e retorna uma nova instância.
+      return new mongoose.Types.ObjectId(String(value));
+    }
+    throw new Error(`O valor fornecido (${value}) não é um ObjectId válido.`);
+  }
 }

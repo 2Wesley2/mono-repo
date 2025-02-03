@@ -50,6 +50,17 @@ export default class Model {
   }
 
   /**
+   * Obtém o tipo Mixed do Mongoose.
+   *
+   * @returns {mongoose.Schema.Types.Mixed} - Tipo Mixed do Mongoose.
+   * @example
+   * const Mixed = Model.getMixedType();
+   */
+  static get getMixedType() {
+    return loaders.mongoose.getMixedType();
+  }
+
+  /**
    * Anexa métodos personalizados à instância do modelo.
    * @throws {Error} Lança um erro se um método tentar sobrescrever métodos padrão do Mongoose.
    */

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Database from '../../../infrastructure/database/index.js';
 
 /**
@@ -85,4 +86,6 @@ export default {
    * const Mixed = db.getMixedType();
    */
   getMixedType: () => Database.getMixedType(),
+
+  toObjectId: (...args) => Database.toObjectId(...args),
 };

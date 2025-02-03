@@ -1,4 +1,5 @@
 import Model from '#src/core/infrastructure/components/base/Model.js';
+import Cashback from '#src/core/entities/domain/cashback/Cashback';
 import { CASHBACK, OWNER, PRODUCT } from '#src/resources/collections/index.js';
 
 const cashbackSchema = {
@@ -8,22 +9,16 @@ const cashbackSchema = {
     creditOfConsumption: {
       enabled: { type: Boolean, default: false },
       generationCondition: {
-        type: mongoose.Schema.Types.Mixed,
+        type: Model.getMixedType,
         required: function () {
-          return this.config && this.config.creditOfConsumption && this.config.creditOfConsumption.enabled;
+          return Cashback.generationConditionRequired.call(this);
+        },
+        set: function (value) {
+          return Cashback.generationConditionSetter.call(this, value);
         },
         validate: {
           validator: function (value) {
-            if (!this.config.creditOfConsumption.enabled) return true;
-            if (typeof value === 'number') {
-              return value > 0;
-            }
-            if (Array.isArray(value)) {
-              if (value.length === 0) return false;
-              return value.every((id) => Model.isValidObjectId(id));
-            }
-
-            return false;
+            return Cashback.generationConditionValidator.call(this, value);
           },
           message: (props) =>
             `O campo generationCondition deve ser um número positivo ou uma lista não vazia de ObjectId válidos referenciando a collection ${PRODUCT}.`,
