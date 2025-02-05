@@ -10,11 +10,9 @@ class CustomerService {
    * Cria uma instância de CustomerService.
    *
    * @param {Object} repository - Repositório para manipulação de dados de clientes.
-   * @param {Object} rewardService - Serviço para manipulação de recompensas.
    */
-  constructor(repository, rewardService) {
+  constructor(repository) {
     this.repository = repository;
-    this.rewardService = rewardService;
   }
 
   /**
@@ -29,10 +27,7 @@ class CustomerService {
   async createCustomer(customerData) {
     try {
       const newCustomer = await this.repository.createCustomer(customerData);
-      const newReward = await this.rewardService.createReward(newCustomer._id);
-      const updatedCustomer = await this.repository.updateCustomer(newCustomer._id, { rewards: newReward._id });
-      debug.logger.info('Serviço: Novo Cliente criado com sucesso', { customerData, updatedCustomer });
-      return updatedCustomer;
+      return newCustomer;
     } catch (error) {
       debug.logger.error('Serviço: Erro ao criar Cliente', { customerData, error });
       throw error;
@@ -100,20 +95,6 @@ class CustomerService {
    * @example
    * const customerWithRewards = await customerService.getCustomerWithRewards('60d21b4667d0d8992e610c85');
    */
-  async getCustomerWithRewards(customerId) {
-    try {
-      const customer = await this.repository.getCustomerById(customerId);
-      if (!customer) {
-        throw new Error('Cliente não encontrado');
-      }
-
-      const rewards = await this.rewardService.getRewardByCustomerId(customerId);
-      return { customer, rewards };
-    } catch (error) {
-      debug.logger.error('Serviço: Erro ao buscar cliente e recompensas', { customerId, error });
-      throw error;
-    }
-  }
 }
 
 export default CustomerService;

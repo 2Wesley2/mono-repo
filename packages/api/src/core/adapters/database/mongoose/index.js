@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Database from '../../../infrastructure/database/index.js';
+import Database from '../../../infrastructure/frameworks/database/index.js';
 
 /**
  * Centraliza a exportação de métodos e getters da classe Database.

@@ -1,14 +1,11 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const baseDir = process.cwd();
 const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test', 'development'];
 
-function findEnvFile(startDir, fileName = '.env') {
+const findEnvFile = (startDir, fileName = '.env') => {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
     const possiblePath = path.join(dir, fileName);
@@ -18,12 +15,11 @@ function findEnvFile(startDir, fileName = '.env') {
     dir = path.dirname(dir);
   }
   return null;
-}
-
+};
 // Busca o caminho do arquivo .env ou lança um erro se não encontrar
 const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
-  ? findEnvFile(__dirname, `.env.${process.env.NODE_ENV}`) || findEnvFile(__dirname)
-  : findEnvFile(__dirname);
+  ? findEnvFile(baseDir, `.env.${process.env.NODE_ENV}`) || findEnvFile(baseDir)
+  : findEnvFile(baseDir);
 
 if (!envPath) {
   throw new Error('env.js: Arquivo de configuração .env não encontrado.');

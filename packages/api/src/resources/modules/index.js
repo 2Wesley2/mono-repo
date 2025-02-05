@@ -3,16 +3,6 @@ import OwnerUserRepository from './account/user/owner/OwnerUserRepository.js';
 import OwnerUserService from './account/user/owner/OwnerUserService.js';
 import OwnerUserController from './account/user/owner/OwnerUserController.js';
 
-import FinancialRepository from './accounting/financial/FinancialRepository.js';
-import FinancialService from './accounting/financial/FinancialService.js';
-import FinancialModel from './accounting/financial/FinancialModel.js';
-import GenerateFinancialReport from '../../core/use_cases/financial/GenerateFinancialReport.js';
-
-import CalcRefModel from './calcRef/CalcRefModel.js';
-import CalcRefRepository from './calcRef/CalcRefRepository.js';
-import CalcRefService from './calcRef/CalcRefService.js';
-import CalcRefController from './calcRef/CalcRefController.js';
-
 import CustomerModel from './commercial/customer/CustomerModel.js';
 import CustomerRepository from './commercial/customer/CustomerRepository.js';
 import CustomerService from './commercial/customer/CustomerService.js';
@@ -33,29 +23,14 @@ import EmployeeRepository from './humanResources/employee/EmployeeRepository.js'
 import EmployeeService from './humanResources/employee/EmployeeService.js';
 import EmployeeController from './humanResources/employee/EmployeeController.js';
 
-import RewardModel from './cashback/reward/model/RewardModel.js';
-import RewardRepository from './cashback/reward/RewardRepository.js';
-import RewardService from './cashback/reward/RewardService.js';
-import RewardController from './cashback/reward/RewardController.js';
-
 const ownerUserModel = new OwnerUserModel();
 const ownerUserRepository = new OwnerUserRepository(ownerUserModel);
 const ownerUserService = new OwnerUserService(ownerUserRepository);
 const ownerUserController = new OwnerUserController(ownerUserService);
 
-const calcRefModel = new CalcRefModel();
-const calcRefRepository = new CalcRefRepository(calcRefModel);
-const calcRefService = new CalcRefService(calcRefRepository);
-const calcRefController = new CalcRefController(calcRefService);
-
-const rewardModel = new RewardModel();
-const rewardRepository = new RewardRepository(rewardModel);
-const rewardService = new RewardService(rewardRepository, calcRefModel);
-const rewardController = new RewardController(rewardService);
-
 const customerModel = new CustomerModel();
 const customerRepository = new CustomerRepository(customerModel);
-const customerService = new CustomerService(customerRepository, rewardModel);
+const customerService = new CustomerService(customerRepository);
 const customerController = new CustomerController(customerService);
 
 const productModel = new ProductModel();
@@ -81,12 +56,4 @@ const employeeController = new EmployeeController(employeeService);
 //const financialRepository = new FinancialRepository(financialModel);
 //const financialService = new FinancialService(financialRepository, useCases.financial);
 
-export {
-  customerController,
-  employeeController,
-  productController,
-  orderController,
-  rewardController,
-  calcRefController,
-  ownerUserController,
-};
+export { customerController, employeeController, productController, orderController, ownerUserController };

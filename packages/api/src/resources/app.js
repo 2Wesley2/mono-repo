@@ -14,8 +14,6 @@ import {
   employeeController,
   productController,
   orderController,
-  rewardController,
-  calcRefController,
   ownerUserController,
 } from '../resources/modules/index.js';
 
@@ -94,8 +92,6 @@ export default class App {
       this.app.use('/', ownerUserController.getRouter());
       this.app.use('/api/product', productController.getRouter());
       this.app.use('/api/order', orderController.getRouter());
-      this.app.use('/api/reward', rewardController.getRouter());
-      this.app.use('/api/calcRef', calcRefController.getRouter());
     } catch (error) {
       throw error;
     }

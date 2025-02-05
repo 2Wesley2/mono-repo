@@ -28,7 +28,7 @@ const productSchema = {
   purchases: [{ type: Model.objectIdType, ref: PURCHASE }],
 };
 
-export class ProductModel extends Model {
+export default class ProductModel extends Model {
   constructor(schema = {}, modelName = PRODUCT, options = {}, middlewares = []) {
     const combinedSchema = { ...productSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
