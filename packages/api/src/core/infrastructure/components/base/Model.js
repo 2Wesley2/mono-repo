@@ -26,6 +26,10 @@ export default class Model {
     this.attachCustomMethods();
   }
 
+  static analyzeObject(obj) {
+    return loaders.mongoose.analyzeObject(obj);
+  }
+
   /**
    * Valida se o ID fornecido é um ObjectId válido.
    * @param {string} id - O ID a ser validado.

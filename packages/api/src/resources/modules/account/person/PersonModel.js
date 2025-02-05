@@ -1,7 +1,7 @@
 import Model from '#src/core/infrastructure/components/base/Model.js';
-import user from '#core/entities/domain/user/User.js';
 import auth from '#core/adapters/auth/authentication/index.js';
 import { InvalidRequestError } from '#src/errors/Exceptions.js';
+import { convertDatesToStrings } from '#src/helpers/stringHelper.js';
 
 const personSchema = {
   cpf: { type: String, required: true, unique: true },
@@ -29,6 +29,10 @@ export default class PersonModel extends Model {
     if (!created) {
       throw new InvalidRequestError();
     }
-    return created;
+    const plainObj = created.toObject();
+    plainObj._id = plainObj._id.toString();
+    const analise = Model.analyzeObject(plainObj);
+    console.log(analise);
+    return plainObj;
   }
 }

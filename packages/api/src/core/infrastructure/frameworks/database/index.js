@@ -57,14 +57,10 @@ export default class Database {
 
       mongoose.connection.on('error', (err) => {
         console.error('Erro na conexão com o MongoDB:', err);
-        setTimeout(() => {
-          console.log('Tentando reconectar...');
-          mongoose.connect(dbUri, options).catch(console.error);
-        }, 5000);
       });
 
       mongoose.connection.on('disconnected', () => {
-        console.warn('Mongoose desconectado.');
+        console.log('Mongoose desconectado.');
       });
     } catch (error) {
       console.error(`Falha ao conectar ao banco ${dbName}:`, error.message);
@@ -176,5 +172,62 @@ export default class Database {
       return new mongoose.Types.ObjectId(String(value));
     }
     throw new Error(`O valor fornecido (${value}) não é um ObjectId válido.`);
+  }
+
+  /**
+   * Analisa um objeto e retorna um JSON com o tipo do objeto e um mapeamento das chaves para os tipos dos valores.
+   * O método utiliza reduce, não utiliza for e os ifs são verificados através da negação.
+   *
+   * @param {*} obj - O objeto a ser analisado.
+   * @returns {string} - JSON.stringify com a estrutura: { tipo: "tipo do objeto", obj: { chaves: tipo } }
+   */
+  static analyzeObject(obj) {
+    if (!!(obj instanceof mongoose.Document)) {
+      const structure = Object.entries(obj).reduce((acc, [key, value]) => {
+        acc[key] = Array.isArray(value) ? 'array' : typeof value;
+        return acc;
+      }, {});
+      return JSON.stringify({ tipo: 'mongoose documento', obj: structure }, null, 2);
+    }
+    if (!!Array.isArray(obj)) {
+      const structure = Object.entries(obj).reduce((acc, [key, value]) => {
+        acc[key] = Array.isArray(value) ? 'array' : typeof value;
+        return acc;
+      }, {});
+      return JSON.stringify({ tipo: 'array', obj: structure }, null, 2);
+    }
+    if (!!(obj !== null && typeof obj === 'object')) {
+      const structure = Object.entries(obj).reduce((acc, [key, value]) => {
+        acc[key] = Array.isArray(value) ? 'array' : typeof value;
+        return acc;
+      }, {});
+      return JSON.stringify({ tipo: 'objeto comum', obj: structure }, null, 2);
+    }
+    return JSON.stringify({ tipo: typeof obj, obj: {} }, null, 2);
+  }
+
+  /**
+   * Exclui o banco de dados com o nome fornecido.
+   * @param {string} dbName - Nome do banco de dados a ser excluído.
+   * @returns {Promise<void>} - Uma Promise que é resolvida quando o banco é excluído com sucesso.
+   * @throws {Error} - Lança erro caso a exclusão falhe ou não haja conexão ativa.
+   */
+  static async dropDatabase(dbName) {
+    if (typeof dbName !== 'string' || !dbName) {
+      throw new Error('O nome do banco de dados deve ser uma string válida.');
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('Não há conexão ativa com o MongoDB.');
+    }
+
+    try {
+      const dbConnection = mongoose.connection.useDb(dbName);
+      await dbConnection.dropDatabase();
+      console.log(`Banco de dados "${dbName}" excluído com sucesso.`);
+    } catch (error) {
+      console.error(`Erro ao excluir o banco de dados "${dbName}":`, error);
+      throw error;
+    }
   }
 }

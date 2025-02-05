@@ -88,4 +88,10 @@ export default {
   getMixedType: () => Database.getMixedType(),
 
   toObjectId: (...args) => Database.toObjectId(...args),
+
+  /**
+   * Analisa um objeto e retorna um JSON com o tipo do objeto e um mapeamento das chaves para os tipos dos valores.
+   */
+  analyzeObject: (...args) => Database.analyzeObject(...args),
+  dropDatabase: (...args) => Database.dropDatabase(...args),
 };
