@@ -5,6 +5,19 @@ import fs from 'fs';
 const baseDir = process.cwd();
 const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test', 'development'];
 
+/**
+ * Procura recursivamente um arquivo de ambiente a partir do diretório especificado.
+ *
+ * @param {string} startDir - Diretório inicial para a busca.
+ * @param {string} [fileName='.env'] - Nome do arquivo de ambiente a ser procurado.
+ * @returns {string|null} O caminho completo para o arquivo encontrado ou null se não encontrado.
+ *
+ * @example
+ * const envFile = findEnvFile(process.cwd(), '.env.development');
+ * if (envFile) {
+ *   console.log('Arquivo encontrado:', envFile);
+ * }
+ */
 const findEnvFile = (startDir, fileName = '.env') => {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
@@ -16,7 +29,8 @@ const findEnvFile = (startDir, fileName = '.env') => {
   }
   return null;
 };
-// Busca o caminho do arquivo .env ou lança um erro se não encontrar
+
+// Determina o caminho do arquivo .env com base na variável de ambiente NODE_ENV.
 const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
   ? findEnvFile(baseDir, `.env.${process.env.NODE_ENV}`) || findEnvFile(baseDir)
   : findEnvFile(baseDir);
@@ -27,6 +41,7 @@ if (!envPath) {
 
 dotenv.config({ path: envPath });
 
+// Variáveis de ambiente obrigatórias
 const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
 
 requiredEnv.forEach((envVar) => {

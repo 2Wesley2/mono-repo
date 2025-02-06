@@ -1,41 +1,18 @@
 import loaders from '#src/core/loaders/index.js';
 
 export default class Cashback {
-  /**
-   * Valida que se a funcionalidade de crédito de consumo estiver habilitada,
-   * então ao menos uma das propriedades (ranges ou products) deve ser definida.
-   * Caso alguma delas esteja definida, deve conter ao menos um item.
-   *
-   * @returns {boolean} - True se a condição for satisfeita, caso contrário false.
-   */
-  static validateGenerationCondition() {
-    // Se a funcionalidade não estiver habilitada, a validação passa.
-    if (!this.config.reward.creditOfConsumption.enabled) return true;
-
-    const gen = this.config.reward.creditOfConsumption.generationCondition || {};
+  static validateGenerationCondition(context) {
+    if (!context.enabled) return true;
+    const gen = context.generationCondition || {};
     const hasRanges = Array.isArray(gen.ranges) && gen.ranges.length > 0;
     const hasProducts = Array.isArray(gen.products) && gen.products.length > 0;
-
-    // É obrigatório que pelo menos um esteja definido (ranges, products ou ambos)
     return hasRanges || hasProducts;
   }
 
-  /**
-   * Valida se o array de products é um array não vazio e todos os itens são ObjectId válidos.
-   *
-   * @param {*} value - Valor a ser validado.
-   * @returns {boolean} - True se for válido, caso contrário false.
-   */
   static validateProductsArray(value) {
-    return Array.isArray(value) ? value.length > 0 && value.every((id) => loaders.mongoose.isValidObjectId(id)) : true;
+    return Array.isArray(value) && value.every((id) => loaders.mongoose.isValidObjectId(id));
   }
 
-  /**
-   * Valida que, para cashback do tipo reward, ao menos uma das configurações
-   * (Crédito de Consumo, Conversão ou Benefício Exclusivo) esteja habilitada.
-   *
-   * @returns {boolean} - True se a configuração estiver correta; caso contrário, false.
-   */
   static validateRewardConfiguration() {
     if (this.type !== 'reward') return true;
     const reward = this.config?.reward;
@@ -46,56 +23,101 @@ export default class Cashback {
     );
   }
 
-  /**
-   * Valida que, para cashback do tipo monetary, a configuração esteja habilitada.
-   *
-   * @returns {boolean} - True se estiver habilitada; caso contrário, false.
-   */
   static validateMonetaryConfiguration() {
     if (this.type !== 'monetary') return true;
     return this.config?.monetary?.enabled;
   }
 
-  /**
-   * Valida que o valor máximo da faixa seja maior que o valor mínimo.
-   *
-   * @param {*} value - Valor máximo da faixa.
-   * @returns {boolean} - True se maxValue > minValue.
-   */
   static validateRangeMaxGreaterThanMin(value) {
-    // 'this' é o objeto da faixa, onde this.minValue está disponível.
     return value > this.minValue;
   }
 
-  /**
-   * Valida as condições de temporalidade:
-   * Se expirationDate estiver definida (ou seja, for truthy), usagePeriods não deve conter nenhum período,
-   * e vice-versa.
-   *
-   * @param {Object} temporalValidity - Objeto contendo expirationDate e usagePeriods.
-   * @returns {boolean} - True se a condição for satisfeita; caso contrário, false.
-   */
-  static validateTemporalValidity(temporalValidity) {
-    const { expirationDate, usagePeriods } = temporalValidity || {};
-    // Se ambos estiverem definidos (expirationDate existe e usagePeriods possui ao menos um período), invalida.
+  static validateTemporalValidity(context) {
+    const { expirationDate, usagePeriods } = context || {};
     if (expirationDate && Array.isArray(usagePeriods) && usagePeriods.length > 0) {
       return false;
     }
     return true;
   }
 
-  /**
-   * Valida as condições de uso:
-   * Se mode for 'integral', maxPercentage deve ser exatamente 100.
-   * Se mode for 'partial', maxPercentage não pode ser 100.
-   *
-   * @param {Object} usage - Objeto contendo mode e maxPercentage.
-   * @returns {boolean} - True se a condição for satisfeita; caso contrário, false.
-   */
-  static validateUsage(usage) {
-    const { mode, maxPercentage } = usage || {};
+  static validateUsage(context) {
+    const { mode, maxPercentage } = context;
     if (mode === 'integral' && maxPercentage !== 100) return false;
     if (mode === 'partial' && maxPercentage === 100) return false;
     return true;
+  }
+
+  // ─── MÉTODOS MIDDLEWARE ───
+
+  /**
+   * Middleware para validar a configuração de geração de crédito.
+   */
+  static rewardCreditGenerationMiddleware(next) {
+    if (this.creditOfConsumption && this.creditOfConsumption.enabled) {
+      if (!Cashback.validateGenerationCondition(this.creditOfConsumption)) {
+        return next(new Error('When enabled, at least one range or product must be defined for credit generation.'));
+      }
+    }
+    next();
+  }
+
+  /**
+   * Middleware para validar a temporalidade da validade.
+   */
+  static rewardTemporalValidityMiddleware(next) {
+    if (this.usageConditions && this.usageConditions.temporalValidity) {
+      const { expirationDate, usagePeriods } = this.usageConditions.temporalValidity;
+      if (expirationDate && Array.isArray(usagePeriods) && usagePeriods.length > 0) {
+        return next(new Error('Either expirationDate or usagePeriods must be defined exclusively'));
+      }
+    }
+    next();
+  }
+
+  /**
+   * Middleware para validar a configuração do uso.
+   */
+  static rewardUsageMiddleware(next) {
+    if (this.usageConditions && this.usageConditions.usage) {
+      const { mode, maxPercentage } = this.usageConditions.usage;
+      if (mode === 'integral' && maxPercentage !== 100) {
+        return next(
+          new Error(
+            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.',
+          ),
+        );
+      }
+      if (mode === 'partial' && maxPercentage === 100) {
+        return next(
+          new Error(
+            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.',
+          ),
+        );
+      }
+    }
+    next();
+  }
+
+  /**
+   * Middleware para validar a configuração geral do reward.
+   */
+  static rewardConfigurationMiddleware(next) {
+    if (this.type === 'reward') {
+      const reward = this.config && this.config.reward;
+      if (
+        !(
+          (reward && reward.creditOfConsumption && reward.creditOfConsumption.enabled) ||
+          (reward && reward.conversion && reward.conversion.enabled) ||
+          (reward && reward.exclusiveBenefit && reward.exclusiveBenefit.enabled)
+        )
+      ) {
+        return next(
+          new Error(
+            'For reward cashback, at least one configuration (Consumption Credit, Conversion or Exclusive Benefit) must be enabled.',
+          ),
+        );
+      }
+    }
+    next();
   }
 }

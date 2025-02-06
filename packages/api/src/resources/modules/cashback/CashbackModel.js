@@ -14,8 +14,4 @@ export default class CashbackModel extends Model {
     const combinedSchema = { ...cashbackSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
   }
-
-  isClientEligible(clientData, config) {
-    throw new Error("Método abstrato 'isClientEligible' deve ser implementado pela classe derivada.");
-  }
 }

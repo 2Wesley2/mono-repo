@@ -77,7 +77,6 @@ describe('Testes do OwnerUserController', () => {
     {
       /*await loaders.mongoose.dropDatabase('system_test');*/
     }
-    await loaders.mongoose.dropDatabase('system_test');
     await loaders.mongoose.disconnect();
   });
 });
