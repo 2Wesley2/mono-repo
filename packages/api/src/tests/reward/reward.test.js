@@ -75,6 +75,27 @@ describe('Testes da RewardModel', () => {
       expect(createdDoc.config.reward.usageConditions.usage.maxPercentage).toBe(100);
     });
 
+    test('deve lançar erro ao tentar criar um documento válido para um ownerId que já existe', async () => {
+      const newConfigData = {
+        creditOfConsumption: {
+          generationCondition: {},
+        },
+        usageConditions: {
+          temporalValidity: { usagePeriods: [] },
+          progressiveAccumulation: { enabled: false },
+          usage: {},
+        },
+      };
+
+      // Cria a configuração pela primeira vez.
+      await rewardModel.createConfig(ownerId, newConfigData);
+
+      // Tenta criar novamente para o mesmo ownerId e espera que seja lançado um erro.
+      await expect(rewardModel.createConfig(ownerId, newConfigData)).rejects.toThrow(
+        `Já existe uma configuração para o ownerId ${ownerId}.`,
+      );
+    });
+
     test('deve lançar erro ao tentar criar uma configuração para um owner que já possui configuração', async () => {
       const newConfigData = {
         creditOfConsumption: {
