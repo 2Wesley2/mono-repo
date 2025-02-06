@@ -1,5 +1,5 @@
 import Model from '../../../../core/infrastructure/components/base/Model.js';
-import { PRODUCT, OWNER, SALE, PURCHASE } from '../../../collections/index.js';
+import { PRODUCT, OWNER } from '../../../collections/index.js';
 import product from '#src/core/entities/domain/product/Product.js';
 
 const CATEGORIES = Object.freeze(['REFEIÇÕES', 'GERAL', 'BEBIDAS', 'SALGADOS', 'LANCHES']);
@@ -24,8 +24,6 @@ const productSchema = {
     },
   },
   category: { type: String, enum: CATEGORIES },
-  sales: [{ type: Model.objectIdType, ref: SALE }],
-  purchases: [{ type: Model.objectIdType, ref: PURCHASE }],
 };
 
 export default class ProductModel extends Model {
@@ -35,7 +33,13 @@ export default class ProductModel extends Model {
   }
 
   async createProduct(data) {
-    return await this.model.create(data);
+    const newProduct = await this.model.create(data);
+    const plainObj = newProduct.toObject();
+    plainObj._id = plainObj._id.toString();
+    plainObj.ownerId = plainObj.ownerId.toString();
+    const analise = Model.analyzeObject(plainObj);
+    console.log(analise);
+    return plainObj;
   }
 
   async bulkCreate(productList) {
