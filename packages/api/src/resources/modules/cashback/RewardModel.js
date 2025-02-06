@@ -42,12 +42,9 @@ const rewardSchemaFields = {
         type: [CashbackModel.objectIdType],
         ref: PRODUCT,
         required: false,
+        default: [],
       },
     },
-  },
-  _validateRewardConfig: {
-    type: Boolean,
-    default: true,
   },
   usageConditions: {
     temporalValidity: { type: temporalValiditySchema },
@@ -82,14 +79,34 @@ export default class RewardModel extends CashbackModel {
   }
 
   /**
-   * Atualiza a configuração do cashback do tipo reward para um determinado owner.
+   * Cria a configuração do cashback do tipo "reward" para um determinado proprietário.
    *
-   * @param {String} ownerId - ID do proprietário do cashback.
-   * @param {Object} configData - Dados que deverão ser atribuídos à configuração reward.
-   * @returns {Promise<Object>} - Documento atualizado.
-   * @throws {Error} - Caso nenhum documento seja encontrado ou ocorra algum erro na atualização.
+   * @param {String} ownerId - O ID do proprietário do cashback.
+   * @param {Object} configData - Os dados que deverão ser atribuídos à configuração "reward".
+   * @returns {Promise<Object>} Uma Promise que resolve com o documento criado.
+   * @throws {Error} Caso já exista um documento para o ownerId.
    */
-  async setConfig(ownerId, configData) {
+  async createConfig(ownerId, configData) {
+    const doc = await this.model.findOne({ ownerId, type: 'reward' });
+    if (doc) {
+      throw new Error(`Já existe uma configuração para o ownerId ${ownerId}.`);
+    }
+    return await this.model.create({
+      ownerId,
+      type: 'reward',
+      config: { reward: configData },
+    });
+  }
+
+  /**
+   * Atualiza a configuração do cashback do tipo "reward" para um determinado proprietário.
+   *
+   * @param {String} ownerId - O ID do proprietário do cashback.
+   * @param {Object} configData - Os dados que deverão ser atribuídos à configuração "reward".
+   * @returns {Promise<Object>} Uma Promise que resolve com o documento atualizado.
+   * @throws {Error} Caso não exista um documento para o ownerId.
+   */
+  async updateConfig(ownerId, configData) {
     const doc = await this.model.findOne({ ownerId, type: 'reward' });
     if (!doc) {
       throw new Error(`Nenhum cashback reward encontrado para o ownerId ${ownerId}.`);

@@ -10,7 +10,7 @@ let rewardModel;
 describe('Testes da RewardModel', () => {
   beforeAll(async () => {
     await loaders.mongoose.init();
-    // Criamos a instância sem custom schema, usando o default que já possui creditOfConsumption e usageConditions.
+    // Instância sem schema customizado, usando o default que já possui creditOfConsumption e usageConditions.
     rewardModel = new RewardModel();
   });
 
@@ -20,57 +20,94 @@ describe('Testes da RewardModel', () => {
     await loaders.mongoose.disconnect();
   });
 
-  describe('Teste do método setConfig', () => {
-    beforeAll(async () => {
-      // Insere um documento inicial do cashback do tipo 'reward' para o owner existente
-      await rewardModel.model.create({
-        ownerId,
-        type: 'reward',
-        config: {
-          reward: {
-            // Para satisfazer a validação de rewardConfiguration,
-            // pelo menos uma das configurações deve estar habilitada.
-            creditOfConsumption: {
-              enabled: false, // inicialmente desabilitado
-              generationCondition: {
-                ranges: [
-                  {
-                    minValue: 5,
-                    maxValue: 10,
-                    creditValue: 2,
-                  },
-                ],
-                products: [],
-                _validateGenerationCondition: true,
-              },
-              _validateRewardConfig: true,
-            },
-            // Adicionando as outras configurações:
-            conversion: {
-              enabled: false,
-              // Outras propriedades específicas podem ser adicionadas se necessário
-            },
-            exclusiveBenefit: {
-              enabled: false,
-              // Outras propriedades específicas podem ser adicionadas se necessário
-            },
-            // Uso de condições
-            usageConditions: {
-              temporalValidity: {
-                // Configuração válida: apenas expirationDate definida
-                expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                usagePeriods: [],
-              },
-              progressiveAccumulation: {
-                enabled: false,
-                maxBalance: 0,
-              },
-              usage: {
-                mode: 'integral',
-                maxPercentage: 100,
-              },
-            },
+  describe('Criação da configuração (createConfig)', () => {
+    beforeEach(async () => {
+      // Limpa os documentos antes de cada teste deste grupo.
+      await rewardModel.model.deleteMany({});
+    });
+
+    test('deve criar um documento novo com o ownerId completamente default', async () => {
+      const newConfigData = {
+        creditOfConsumption: {
+          generationCondition: {},
+        },
+        usageConditions: {
+          temporalValidity: {
+            usagePeriods: [],
           },
+          progressiveAccumulation: {
+            enabled: false,
+          },
+          usage: {},
+        },
+      };
+      const createdDoc = await rewardModel.createConfig(ownerId, newConfigData);
+      expect(createdDoc.ownerId).toBeDefined();
+      expect(createdDoc.type).toBe('reward');
+
+      // Valida a existência da configuração reward
+      expect(createdDoc.config).toBeDefined();
+      expect(createdDoc.config.reward).toBeDefined();
+
+      // Valida a configuração padrão de creditOfConsumption
+      expect(createdDoc.config.reward.creditOfConsumption).toBeDefined();
+      expect(createdDoc.config.reward.creditOfConsumption.enabled).toBe(false);
+      expect(createdDoc.config.reward.creditOfConsumption.generationCondition).toBeDefined();
+      expect(createdDoc.config.reward.creditOfConsumption.generationCondition.ranges).toEqual([]);
+      expect(createdDoc.config.reward.creditOfConsumption.generationCondition.products).toEqual([]);
+
+      // Valida a configuração padrão de usageConditions
+      expect(createdDoc.config.reward.usageConditions).toBeDefined();
+
+      // Valida o subcampo temporalValidity
+      expect(createdDoc.config.reward.usageConditions.temporalValidity).toBeDefined();
+      expect(createdDoc.config.reward.usageConditions.temporalValidity.expirationDate).toBeUndefined();
+      expect(createdDoc.config.reward.usageConditions.temporalValidity.usagePeriods).toEqual([]);
+
+      // Valida a configuração padrão de progressiveAccumulation
+      expect(createdDoc.config.reward.usageConditions.progressiveAccumulation).toBeDefined();
+      expect(createdDoc.config.reward.usageConditions.progressiveAccumulation.enabled).toBe(false);
+      expect(createdDoc.config.reward.usageConditions.progressiveAccumulation.maxBalance).toBeUndefined();
+
+      // Valida a configuração padrão de usage (modo e maxPercentage)
+      expect(createdDoc.config.reward.usageConditions.usage).toBeDefined();
+      expect(createdDoc.config.reward.usageConditions.usage.mode).toBe('integral');
+      expect(createdDoc.config.reward.usageConditions.usage.maxPercentage).toBe(100);
+    });
+
+    test('deve lançar erro ao tentar criar uma configuração para um owner que já possui configuração', async () => {
+      const newConfigData = {
+        creditOfConsumption: {
+          generationCondition: {},
+        },
+        usageConditions: {
+          temporalValidity: { usagePeriods: [] },
+          progressiveAccumulation: { enabled: false },
+          usage: {},
+        },
+      };
+
+      // Cria a configuração pela primeira vez
+      await rewardModel.createConfig(ownerId, newConfigData);
+
+      // Tenta criar novamente para o mesmo owner e espera erro
+      await expect(rewardModel.createConfig(ownerId, newConfigData)).rejects.toThrow(
+        `Já existe uma configuração para o ownerId ${ownerId}.`,
+      );
+    });
+  });
+
+  describe('Atualização da configuração (updateConfig)', () => {
+    beforeEach(async () => {
+      // Limpa os documentos antes de cada teste deste grupo.
+      await rewardModel.model.deleteMany({});
+      // Cria um documento padrão para o ownerId usado
+      await rewardModel.createConfig(ownerId, {
+        creditOfConsumption: { generationCondition: {} },
+        usageConditions: {
+          temporalValidity: { usagePeriods: [] },
+          progressiveAccumulation: { enabled: false },
+          usage: {},
         },
       });
     });
@@ -88,18 +125,8 @@ describe('Testes da RewardModel', () => {
               },
             ],
             products: [new mongoose.Types.ObjectId()],
-            _validateGenerationCondition: true,
           },
-          _validateRewardConfig: true,
         },
-        // Ativando também outra configuração (por exemplo, conversão) para garantir a regra de validação de rewardConfiguration.
-        conversion: {
-          enabled: false,
-        },
-        exclusiveBenefit: {
-          enabled: false,
-        },
-        // Manutenção das condições de uso válidas:
         usageConditions: {
           temporalValidity: {
             expirationDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
@@ -116,14 +143,12 @@ describe('Testes da RewardModel', () => {
         },
       };
 
-      const updatedDoc = await rewardModel.setConfig(ownerId, newConfigData);
-
+      const updatedDoc = await rewardModel.updateConfig(ownerId, newConfigData);
       expect(updatedDoc.config.reward.creditOfConsumption.enabled).toBe(true);
       expect(updatedDoc.config.reward.creditOfConsumption.generationCondition.ranges).toHaveLength(1);
       expect(updatedDoc.config.reward.creditOfConsumption.generationCondition.ranges[0].minValue).toBe(10);
       expect(updatedDoc.config.reward.creditOfConsumption.generationCondition.ranges[0].maxValue).toBe(20);
       expect(updatedDoc.config.reward.creditOfConsumption.generationCondition.ranges[0].creditValue).toBe(5);
-      // Validação do uso: modo integral com maxPercentage 100
       expect(updatedDoc.config.reward.usageConditions.usage.mode).toBe('integral');
       expect(updatedDoc.config.reward.usageConditions.usage.maxPercentage).toBe(100);
     });
@@ -142,9 +167,7 @@ describe('Testes da RewardModel', () => {
               },
             ],
             products: [],
-            _validateGenerationCondition: true,
           },
-          _validateRewardConfig: true,
         },
         conversion: {
           enabled: false,
@@ -168,213 +191,191 @@ describe('Testes da RewardModel', () => {
         },
       };
 
-      await expect(rewardModel.setConfig(invalidOwnerId, newConfigData)).rejects.toThrowError(
+      await expect(rewardModel.updateConfig(invalidOwnerId, newConfigData)).rejects.toThrow(
         `Nenhum cashback reward encontrado para o ownerId ${invalidOwnerId}.`,
       );
     });
   });
 
-  describe('Validações do schema na criação do documento', () => {
-    // Antes de cada teste, limpa a coleção para não interferir com documentos anteriores
+  describe('Validações do schema na criação do documento (usando updateConfig)', () => {
     beforeEach(async () => {
+      // Limpa e cria um documento para o ownerId usado
       await rewardModel.model.deleteMany({});
-    });
-
-    test('deve criar documento válido com todas as configurações corretamente definidas', async () => {
-      const doc = await rewardModel.model.create({
-        ownerId,
-        type: 'reward',
-        config: {
-          reward: {
-            creditOfConsumption: {
-              enabled: true,
-              generationCondition: {
-                ranges: [
-                  {
-                    minValue: 5,
-                    maxValue: 15,
-                    creditValue: 3,
-                  },
-                ],
-                products: [new mongoose.Types.ObjectId()],
-                _validateGenerationCondition: true,
-              },
-              _validateRewardConfig: true,
-            },
-            // Ativando apenas uma das configurações satisfaz a regra de validação de rewardConfiguration.
-            conversion: {
-              enabled: false,
-            },
-            exclusiveBenefit: {
-              enabled: false,
-            },
-            usageConditions: {
-              temporalValidity: {
-                // Configuração válida: somente expirationDate definida
-                expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                usagePeriods: [],
-              },
-              progressiveAccumulation: {
-                enabled: true,
-                maxBalance: 200,
-              },
-              usage: {
-                mode: 'partial',
-                maxPercentage: 50,
-              },
-            },
-          },
+      await rewardModel.createConfig(ownerId, {
+        creditOfConsumption: { generationCondition: {} },
+        usageConditions: {
+          temporalValidity: { usagePeriods: [] },
+          progressiveAccumulation: { enabled: false },
+          usage: {},
         },
       });
+    });
 
-      expect(doc).toBeDefined();
-      expect(doc.config.reward.creditOfConsumption.enabled).toBe(true);
+    test('deve atualizar documento válido com todas as configurações corretamente definidas', async () => {
+      const newConfigData = {
+        creditOfConsumption: {
+          enabled: true,
+          generationCondition: {
+            ranges: [
+              {
+                minValue: 5,
+                maxValue: 15,
+                creditValue: 3,
+              },
+            ],
+            products: [new mongoose.Types.ObjectId()],
+          },
+        },
+        conversion: {
+          enabled: false,
+        },
+        exclusiveBenefit: {
+          enabled: false,
+        },
+        usageConditions: {
+          temporalValidity: {
+            expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            usagePeriods: [],
+          },
+          progressiveAccumulation: {
+            enabled: true,
+            maxBalance: 200,
+          },
+          usage: {
+            mode: 'partial',
+            maxPercentage: 50,
+          },
+        },
+      };
+
+      const updatedDoc = await rewardModel.updateConfig(ownerId, newConfigData);
+      expect(updatedDoc).toBeDefined();
+      expect(updatedDoc.config.reward.creditOfConsumption.enabled).toBe(true);
     });
 
     test('deve falhar validação quando creditOfConsumption estiver habilitado mas generationCondition não possuir ranges nem products', async () => {
-      await expect(
-        rewardModel.model.create({
-          ownerId,
-          type: 'reward',
-          config: {
-            reward: {
-              creditOfConsumption: {
-                enabled: true,
-                generationCondition: {
-                  ranges: [], // vazio
-                  products: [], // vazio
-                  _validateGenerationCondition: true,
-                },
-                _validateRewardConfig: true,
-              },
-              conversion: {
-                enabled: false,
-              },
-              exclusiveBenefit: {
-                enabled: false,
-              },
-              usageConditions: {
-                temporalValidity: {
-                  expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                  usagePeriods: [],
-                },
-                progressiveAccumulation: {
-                  enabled: true,
-                  maxBalance: 200,
-                },
-                usage: {
-                  mode: 'partial',
-                  maxPercentage: 50,
-                },
-              },
-            },
+      const newConfigData = {
+        creditOfConsumption: {
+          enabled: true,
+          generationCondition: {
+            ranges: [],
+            products: [],
           },
-        }),
-      ).rejects.toThrow(/When enabled, at least one range or product must be defined for credit generation/);
+        },
+        conversion: {
+          enabled: false,
+        },
+        exclusiveBenefit: {
+          enabled: false,
+        },
+        usageConditions: {
+          temporalValidity: {
+            expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            usagePeriods: [],
+          },
+          progressiveAccumulation: {
+            enabled: true,
+            maxBalance: 200,
+          },
+          usage: {
+            mode: 'partial',
+            maxPercentage: 50,
+          },
+        },
+      };
+
+      await expect(rewardModel.updateConfig(ownerId, newConfigData)).rejects.toThrow(
+        /When enabled, at least one range or product must be defined for credit generation/,
+      );
     });
 
     test('deve falhar validação quando usage.mode é "integral" mas maxPercentage não é 100', async () => {
-      await expect(
-        rewardModel.model.create({
-          ownerId,
-          type: 'reward',
-          config: {
-            reward: {
-              creditOfConsumption: {
-                // Para satisfazer o validateRewardConfiguration, habilitamos pelo menos uma configuração.
-                enabled: true,
-                generationCondition: {
-                  ranges: [
-                    {
-                      minValue: 5,
-                      maxValue: 15,
-                      creditValue: 3,
-                    },
-                  ],
-                  products: [new mongoose.Types.ObjectId()],
-                  _validateGenerationCondition: true,
-                },
-                _validateRewardConfig: true,
+      const newConfigData = {
+        creditOfConsumption: {
+          enabled: true,
+          generationCondition: {
+            ranges: [
+              {
+                minValue: 5,
+                maxValue: 15,
+                creditValue: 3,
               },
-              conversion: {
-                enabled: false,
-              },
-              exclusiveBenefit: {
-                enabled: false,
-              },
-              usageConditions: {
-                temporalValidity: {
-                  expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                  usagePeriods: [],
-                },
-                progressiveAccumulation: {
-                  enabled: false,
-                  maxBalance: 0,
-                },
-                usage: {
-                  mode: 'integral',
-                  maxPercentage: 90, // incorreto para mode "integral"
-                },
-              },
-            },
+            ],
+            products: [new mongoose.Types.ObjectId()],
           },
-        }),
-      ).rejects.toThrow(
+        },
+        conversion: {
+          enabled: false,
+        },
+        exclusiveBenefit: {
+          enabled: false,
+        },
+        usageConditions: {
+          temporalValidity: {
+            expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            usagePeriods: [],
+          },
+          progressiveAccumulation: {
+            enabled: false,
+            maxBalance: 0,
+          },
+          usage: {
+            mode: 'integral',
+            maxPercentage: 90, // incorreto para mode "integral"
+          },
+        },
+      };
+
+      await expect(rewardModel.updateConfig(ownerId, newConfigData)).rejects.toThrow(
         /If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100/,
       );
     });
 
     test('deve falhar validação quando temporalValidity tiver expirationDate e usagePeriods definidos simultaneamente', async () => {
-      await expect(
-        rewardModel.model.create({
-          ownerId,
-          type: 'reward',
-          config: {
-            reward: {
-              creditOfConsumption: {
-                enabled: true,
-                generationCondition: {
-                  ranges: [
-                    {
-                      minValue: 5,
-                      maxValue: 15,
-                      creditValue: 3,
-                    },
-                  ],
-                  products: [new mongoose.Types.ObjectId()],
-                  _validateGenerationCondition: true,
-                },
-                _validateRewardConfig: true,
+      const newConfigData = {
+        creditOfConsumption: {
+          enabled: true,
+          generationCondition: {
+            ranges: [
+              {
+                minValue: 5,
+                maxValue: 15,
+                creditValue: 3,
               },
-              conversion: {
-                enabled: false,
-              },
-              exclusiveBenefit: {
-                enabled: false,
-              },
-              usageConditions: {
-                temporalValidity: {
-                  expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                  usagePeriods: [
-                    {
-                      start: new Date(),
-                      end: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-                    },
-                  ],
-                },
-                progressiveAccumulation: {
-                  enabled: false,
-                  maxBalance: 0,
-                },
-                usage: {
-                  mode: 'partial',
-                  maxPercentage: 50,
-                },
-              },
-            },
+            ],
+            products: [new mongoose.Types.ObjectId()],
           },
-        }),
-      ).rejects.toThrow(/Either expirationDate or usagePeriods must be defined exclusively/);
+        },
+        conversion: {
+          enabled: false,
+        },
+        exclusiveBenefit: {
+          enabled: false,
+        },
+        usageConditions: {
+          temporalValidity: {
+            expirationDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            usagePeriods: [
+              {
+                start: new Date(),
+                end: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+              },
+            ],
+          },
+          progressiveAccumulation: {
+            enabled: false,
+            maxBalance: 0,
+          },
+          usage: {
+            mode: 'partial',
+            maxPercentage: 50,
+          },
+        },
+      };
+
+      await expect(rewardModel.updateConfig(ownerId, newConfigData)).rejects.toThrow(
+        /Either expirationDate or usagePeriods must be defined exclusively/,
+      );
     });
   });
 });
