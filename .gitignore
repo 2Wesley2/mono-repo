@@ -1,8 +1,8 @@
 # Dependency directories
-node_modules/
-dist
+**/node_modules/
+**/dist/
 
-ignore/
+**/ignore/
 
 # dotenv environment variables file
 .env
@@ -11,5 +11,4 @@ ignore/
 .env.production
 .nx/cache
 .nx/
-.vscode/
 logs/

@@ -4,27 +4,34 @@
   "main": "index.js",
   "repository": "https://github.com/2Wesley2/mono-repo.git",
   "author": "2Wesley2 <wesley.fer.almeida98@gmail.com>",
+  "type": "module",
   "license": "MIT",
   "private": true,
   "scripts": {
     "audit:all": "lerna exec -- yarn audit",
-    "dev":"concurrently \"yarn workspace api dev\" \"yarn workspace frontend dev\""
+    "dev": "concurrently \"yarn workspace api dev\" \"yarn workspace ui start\"",
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "clean": "lerna clean",
+    "start": "lerna run start",
+    "format": "prettier --write . && eslint --fix ."
   },
   "workspaces": [
     "packages/api",
-    "packages/frontend"
+    "packages/ui"
   ],
   "dependencies": {},
   "devDependencies": {
     "@nrwl/workspace": "^19.5.7",
     "concurrently": "^9.1.0",
-    "lerna": "^8.1.8"
+    "lerna": "^8.1.8",
+    "eslint": "^9.19.0",
+    "prettier": "^3.4.2"
   },
   "resolutions": {
     "micromatch": "^4.0.8",
     "openapi-types": "^7.0.0",
     "glob": "^9.3.5",
-    "axios": "^1.5.0",
     "@humanwhocodes/config-array": "0.13.0",
     "@humanwhocodes/object-schema": "2.0.3",
     "rimraf": "^4.4.1",

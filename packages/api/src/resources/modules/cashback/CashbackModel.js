@@ -5,8 +5,8 @@ const cashbackSchema = {
   ownerId: { type: Model.objectIdType, ref: OWNER, required: true, unique: true },
   type: { type: String, enum: ['reward', 'monetary'], required: true },
   config: {
-    reward: {},
-  },
+    reward: {}
+  }
 };
 
 export default class CashbackModel extends Model {

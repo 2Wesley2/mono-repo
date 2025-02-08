@@ -10,6 +10,16 @@ export default class BillController extends Controller {
   initializeCustomRoutes() {
     this.router.get('/:orderNumber/products', this.listProductsByOrder.bind(this));
     this.router.put('/:orderNumber/order', this.updateOrderProducts.bind(this));
+    this.router.post('/', this.createBill.bind(this));
+  }
+
+  async createBill(req, res, next) {
+    try {
+      const bill = await this.service.createBill(req.body);
+      return res.status(201).json(bill);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async listProductsByOrder(req, res, next) {

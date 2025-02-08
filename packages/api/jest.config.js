@@ -1,8 +1,8 @@
 export default {
   testEnvironment: 'node',
   transform: {
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.js$': 'babel-jest'
   },
   setupFiles: ['./jest.setup.js'],
-  transformIgnorePatterns: ['/node_modules/'],
+  transformIgnorePatterns: ['/node_modules/']
 };

@@ -1,8 +1,3 @@
 {
-  "singleQuote": true,
-  "printWidth": 120,
-  "tabWidth": 2,
-  "bracketSpacing": true,
-  "proseWrap": "preserve",
-  "endOfLine": "lf"
+  "extends": "../../.prettierrc"
 }

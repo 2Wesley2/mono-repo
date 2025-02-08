@@ -51,4 +51,21 @@ module.exports = [
       'prettier/prettier': 'error',
     },
   },
+   // Regras do TypeScript
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+    },
+  },
 ];
