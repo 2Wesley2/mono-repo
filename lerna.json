@@ -1,5 +1,15 @@
 {
-  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "version": "0.0.0",
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "packages": ["packages/*"],
+  "command": {
+    "publish": {
+      "ignoreChanges": ["*.md"]
+    },
+    "bootstrap": {
+      "hoist": true
+    }
+  },
+  "loglevel": "silly"
 }
