@@ -1,0 +1,56 @@
+.mainContent-dash {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.row-page {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .row-page {
+    flex-direction: column;
+  }
+
+  .mainContent-dash {
+    padding: 1rem;
+  }
+}
+
+/* Table styles */
+.min-w-full {
+  min-width: 100%;
+}
+
+/* Button styles */
+.bg-blue-500 {
+  background-color: var(--mid-blue);
+}
+
+.hover\:bg-blue-600:hover {
+  background-color: var(--ligth-blue);
+}
+
+/* Form styles */
+.bg-white {
+  background-color: #ffffff;
+}
+
+.border-gray-300 {
+  border-color: #e2e8f0;
+}
+
+/* Icon colors */
+.text-gray-400 {
+  color: #a0aec0;
+}
+
+.hover\:text-purple-500:hover {
+  color: var(--mid-blue);
+}
+
+.hover\:text-red-500:hover {
+  color: #f56565;
+}
+

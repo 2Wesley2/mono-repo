@@ -1,0 +1,63 @@
+.mainContent-dash {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.greetingContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pointsContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f4f4f5;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.pointsLabel {
+  color: #71717a;
+  font-size: 0.875rem;
+}
+
+.pointsValue {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.bannerImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .row-page {
+    flex-direction: column;
+  }
+
+  .mainContent-dash {
+    padding: 1rem;
+  }
+}
+
+.cardButton {
+  display: flex; /* Flex container */
+  flex-direction: column; /* Elementos alinhados em coluna */
+  align-items: center; /* Centraliza os itens no eixo horizontal */
+  padding: 1.5rem; /* Espaçamento interno (24px) */
+  background-color: #ffffff; /* Cor de fundo branca */
+  border-radius: 0.5rem; /* Bordas arredondadas (8px) */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra leve */
+  transition: box-shadow 0.2s ease-in-out; /* Transição suave para hover */
+  cursor: pointer; /* Muda o cursor para o de clique */
+}
+
+.cardButton:hover {
+  box-shadow: 0 4px 6px rgba(0.1, 0.1, 0.1, 0.3); /* Sombra maior no hover */
+  background-color: var(--ligth-blue);
+}
