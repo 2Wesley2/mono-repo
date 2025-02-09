@@ -12,7 +12,7 @@
     "lint": "lerna run lint",
     "test": "lerna run test",
     "clean": "lerna clean",
-    "start": "lerna run start",
+    "start": "concurrently \"yarn workspace api dev\" \"yarn workspace ui start\"",
     "format": "prettier --write . && eslint --fix .",
     "format:json": "prettier --write '**/*.json'",
     "lint:json": "eslint '**/*.json'",
