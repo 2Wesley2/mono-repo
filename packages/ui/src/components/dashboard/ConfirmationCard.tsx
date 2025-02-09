@@ -1,5 +1,8 @@
 import React from 'react';
-import { useEffect, useRef } from 'react';
+import {
+  // useEffect,
+  useRef
+} from 'react';
 import './ConfirmationCard.css';
 import { Check } from 'lucide-react';
 

@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './NavBar.css';
 import {
-  Briefcase,
+  // Briefcase,
   ChartNoAxesCombined,
   ChevronDown,
   DollarSign,
   IdCard,
-  Mail,
+  // Mail,
   Menu,
   PackageSearch,
   Settings,
   UserCircle,
-  UserCog,
-  Users,
+  //UserCog,
+  //Users,
   Utensils
 } from 'lucide-react';
 

@@ -10,7 +10,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ total, onPaymentComplete 
   const handlePayment = async () => {
     try {
       // Lógica para gerar o deeplink da Getnet
-      const getnetDeeplink = `getnet://payment?amount=${total.toFixed(2)}&method=credit`;
+      //  const getnetDeeplink = `getnet://payment?amount=${total.toFixed(2)}&method=credit`;
 
       // Simula o processo de pagamento
       // Na implementação real, vamos abrir o deeplink e aguardar o retorno

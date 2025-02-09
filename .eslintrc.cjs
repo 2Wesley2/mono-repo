@@ -1,5 +1,4 @@
 const prettierConfig = require('eslint-config-prettier');
-// const prettierPlugin = require('eslint-plugin-prettier'); // Removido porque não é utilizado
 const tsParser = require('@typescript-eslint/parser');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
@@ -41,7 +40,7 @@ module.exports = {
     },
     {
       files: ['**/*.ts'],
-      parser: tsParser,
+      parser: '@typescript-eslint/parser',
       plugins: ['@typescript-eslint', 'prettier'],
       rules: {
         ...tsPlugin.configs.recommended.rules,
@@ -50,7 +49,7 @@ module.exports = {
     },
     {
       files: ['**/*.tsx'],
-      parser: tsParser,
+      parser: '@typescript-eslint/parser',
       plugins: ['@typescript-eslint', 'prettier'],
       rules: {
         ...tsPlugin.configs.recommended.rules,

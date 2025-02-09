@@ -13,7 +13,10 @@ interface Payment {
 }
 
 const FinancePage: React.FC = () => {
-  const [payments, setPayments] = useState<Payment[]>([
+  const [
+    payments
+    // setPayments
+  ] = useState<Payment[]>([
     {
       id: 1,
       date: '04/02/2025',
