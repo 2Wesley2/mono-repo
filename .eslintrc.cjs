@@ -1,13 +1,13 @@
 const prettierConfig = require('eslint-config-prettier');
-const prettierPlugin = require('eslint-plugin-prettier');
+// const prettierPlugin = require('eslint-plugin-prettier'); // Removido porque não é utilizado
 const tsParser = require('@typescript-eslint/parser');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = {
   root: true,
-  parser: '@babel/eslint-parser', // Adicionado para suportar sintaxe moderna
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    requireConfigFile: false // Adicionado para suportar sintaxe moderna
+    requireConfigFile: false
   },
   extends: ['plugin:json/recommended'],
   plugins: ['json'],
@@ -20,9 +20,9 @@ module.exports = {
     },
     {
       files: ['**/*.js'],
-      parser: '@babel/eslint-parser', // Atualizado
+      parser: '@babel/eslint-parser',
       parserOptions: {
-        requireConfigFile: false // Adicionado
+        requireConfigFile: false
       },
       rules: {
         'import/prefer-default-export': 'off',
@@ -33,12 +33,7 @@ module.exports = {
     },
     {
       files: ['**/*.js'],
-      plugins: [], // Corrigido para ser um array vazio
-      rules: {}
-    },
-    {
-      files: ['**/*.js'],
-      plugins: ['prettier'], // Corrigido para ser um array
+      plugins: ['prettier'],
       rules: {
         ...prettierConfig.rules,
         'prettier/prettier': 'error'
@@ -46,18 +41,20 @@ module.exports = {
     },
     {
       files: ['**/*.ts'],
-      parser: '@typescript-eslint/parser', // Adicionado
-      plugins: ['@typescript-eslint'], // Corrigido para ser um array
+      parser: tsParser,
+      plugins: ['@typescript-eslint', 'prettier'],
       rules: {
-        ...tsPlugin.configs.recommended.rules
+        ...tsPlugin.configs.recommended.rules,
+        'prettier/prettier': 'error'
       }
     },
     {
       files: ['**/*.tsx'],
-      parser: '@typescript-eslint/parser',
-      plugins: ['@typescript-eslint'],
+      parser: tsParser,
+      plugins: ['@typescript-eslint', 'prettier'],
       rules: {
-        ...tsPlugin.configs.recommended.rules
+        ...tsPlugin.configs.recommended.rules,
+        'prettier/prettier': 'error'
       }
     }
   ]
