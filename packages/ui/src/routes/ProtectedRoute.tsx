@@ -1,9 +1,18 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { ProtectedRouteProps } from '../types/protected-route';
+import React, { ReactElement } from 'react';
+import { Route, Navigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, isAuthenticated }) => {
-  return isAuthenticated ? element : <Navigate to="/login" />;
+const ProtectedRoute: React.FC<{
+  element: ReactElement;
+  redirectPath?: string;
+}> = ({ element, redirectPath = '/login', ...rest }) => {
+  const { isAuthenticated } = useAuthContext();
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  return <Route {...rest} element={isAuthenticated ? element : <Navigate to={redirectPath} />} />;
 };
 
-export default ProtectedRoute;
+export default React.memo(ProtectedRoute);

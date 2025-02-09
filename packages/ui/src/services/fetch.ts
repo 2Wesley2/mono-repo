@@ -2,14 +2,7 @@ import { RequestParams } from '../types/request-params';
 
 const apiBaseUrl = 'http://localhost:3000';
 
-export async function request({
-  endpoint,
-  method,
-  body,
-  headers,
-  queryParams,
-  ...rest
-}: RequestParams): Promise<object> {
+export async function request<T>({ endpoint, method, body, headers, queryParams, ...rest }: RequestParams): Promise<T> {
   const defaultHeaders = {
     'Content-Type': 'application/json',
     ...headers
@@ -33,7 +26,6 @@ export async function request({
     }
     return await response.json();
   } catch (error) {
-    console.error('EU TENTEEEEEEEI');
     throw error;
   }
 }
