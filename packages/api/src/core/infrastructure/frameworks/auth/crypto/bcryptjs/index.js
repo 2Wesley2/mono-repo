@@ -21,5 +21,5 @@ class BcryptService {
 
 export default {
   hash: (...args) => BcryptService.hash(...args),
-  compare: (...args) => BcryptService.compare(...args),
+  compare: (...args) => BcryptService.compare(...args)
 };

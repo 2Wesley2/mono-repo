@@ -40,7 +40,7 @@ export default class OwnerUserController extends Controller {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',
-        maxAge: 3600000,
+        maxAge: 3600000
       });
       res.status(200).json({ id: user._id, username: user.username });
     } catch (error) {

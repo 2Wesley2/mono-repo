@@ -4,5 +4,5 @@ export default {
   sub: (...args) => MathOperations.subtractOperation(...args),
   div: (...args) => MathOperations.divisionOperation(...args),
   x: (...args) => MathOperations.multiplicationOperation(...args),
-  pct: (...args) => MathOperations.calculatePercentage(...args),
+  pct: (...args) => MathOperations.calculatePercentage(...args)
 };

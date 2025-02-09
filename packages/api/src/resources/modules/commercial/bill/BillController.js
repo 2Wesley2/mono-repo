@@ -27,7 +27,10 @@ export default class BillController extends Controller {
       let { orderNumber } = req.params;
       orderNumber = parseInt(orderNumber, 10);
       if (isNaN(orderNumber)) {
-        return res.status(400).json({ success: false, message: 'Parâmetro orderNumber deve ser um número válido.' });
+        return res.status(400).json({
+          success: false,
+          message: 'Parâmetro orderNumber deve ser um número válido.'
+        });
       }
       const products = await isPromiseResolved(this.service.listProductsByOrder(orderNumber));
       return res.status(200).json(products);

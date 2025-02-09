@@ -37,5 +37,5 @@ class JsonWebToken {
 export default {
   generate: (...args) => JsonWebToken.generateToken(...args),
   verify: (...args) => JsonWebToken.verifyToken(...args),
-  decode: (...args) => JsonWebToken.decodeToken(...args),
+  decode: (...args) => JsonWebToken.decodeToken(...args)
 };

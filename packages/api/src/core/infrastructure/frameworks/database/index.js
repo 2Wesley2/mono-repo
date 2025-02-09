@@ -46,7 +46,7 @@ export default class Database {
       connectTimeoutMS: 10000,
       socketTimeoutMS: 45000,
       serverSelectionTimeoutMS: 5000,
-      heartbeatFrequencyMS: 10000,
+      heartbeatFrequencyMS: 10000
     };
 
     try {
@@ -178,7 +178,11 @@ export default class Database {
       return mongoose.models[modelName];
     }
     const newOptions = { timestamps: true, ...options };
-    const newSchema = this.configSchema({ schema, options: newOptions, middlewares });
+    const newSchema = this.configSchema({
+      schema,
+      options: newOptions,
+      middlewares
+    });
     const model = mongoose.model(modelName, newSchema);
     return model;
   }

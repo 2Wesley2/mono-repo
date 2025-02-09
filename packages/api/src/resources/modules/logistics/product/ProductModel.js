@@ -10,7 +10,11 @@ const productSchema = {
   name: { type: String, required: true },
   price: { type: Number, required: true },
   costPrice: { type: Number, required: true },
-  type: { type: String, enum: ['ready_to_sell', 'made_in_house'], required: true },
+  type: {
+    type: String,
+    enum: ['ready_to_sell', 'made_in_house'],
+    required: true
+  },
   quantityInStock: {
     type: Number,
     required: function () {
@@ -20,10 +24,10 @@ const productSchema = {
       validator: function (v) {
         return this.type === 'made_in_house' || v >= 0;
       },
-      message: 'Quantity cannot be negative for "ready_to_sell" products',
-    },
+      message: 'Quantity cannot be negative for "ready_to_sell" products'
+    }
   },
-  category: { type: String, enum: CATEGORIES },
+  category: { type: String, enum: CATEGORIES }
 };
 
 export default class ProductModel extends Model {

@@ -15,48 +15,48 @@ function getSubcategoryEnum(category) {
 const expenseSchema = {
   name: {
     type: String,
-    required: true,
+    required: true
   },
   amount: {
     type: Number,
-    required: true,
+    required: true
   },
   category: {
     type: String,
     enum: [...expenseCategories],
-    required: true,
+    required: true
   },
   subcategory: {
     type: String,
     enum: function () {
       return getSubcategoryEnum(this.category);
     },
-    required: true,
+    required: true
   },
   expenseType: {
     type: String,
     enum: [...expenseTypes],
-    required: true,
+    required: true
   },
   ownerID: {
     type: Model.objectIdType,
     ref: OWNER,
-    required: true,
+    required: true
   },
   date: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   paymentMethod: {
-    type: String,
+    type: String
   },
   receipt: {
-    type: String,
+    type: String
   },
   recurring: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 };
 
 export default class ExpenseModel extends Model {
@@ -77,7 +77,7 @@ export default class ExpenseModel extends Model {
     startDate,
     endDate,
     paymentMethod,
-    recurring,
+    recurring
   }) {
     const filter = {
       ...(name && { name: { $regex: name, $options: 'i' } }),
@@ -89,12 +89,12 @@ export default class ExpenseModel extends Model {
         ? {
             date: {
               ...(startDate && { $gte: new Date(startDate) }),
-              ...(endDate && { $lte: new Date(endDate) }),
-            },
+              ...(endDate && { $lte: new Date(endDate) })
+            }
           }
         : {}),
       ...(paymentMethod && { paymentMethod }),
-      ...(recurring !== undefined && { recurring }),
+      ...(recurring !== undefined && { recurring })
     };
 
     return this.model.find(filter);

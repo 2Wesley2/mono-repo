@@ -1,12 +1,8 @@
-import math from "../../../math/index.js";
+import math from '../../../math/index.js';
 
 export default class FinancialMetrics {
   // Receitas
-  static calculateTotalRevenue(
-    salesRevenue,
-    serviceRevenue,
-    otherRevenues = [],
-  ) {
+  static calculateTotalRevenue(salesRevenue, serviceRevenue, otherRevenues = []) {
     const totalOtherRevenues = math.sum(otherRevenues);
     return math.sum([salesRevenue, serviceRevenue, totalOtherRevenues]); // Receita total = Vendas + Serviços + Outras Receitas
   }
@@ -34,15 +30,8 @@ export default class FinancialMetrics {
   }
 
   // Custos e Despesas
-  static calculateCMV(
-    initialCostPriceProductsStock,
-    purchases,
-    finalCostPriceProductsStock,
-  ) {
-    return math.sub(
-      math.sum([initialCostPriceProductsStock, purchases]),
-      finalCostPriceProductsStock,
-    ); // CMV = Estoque inicial + Compras - Estoque final
+  static calculateCMV(initialCostPriceProductsStock, purchases, finalCostPriceProductsStock) {
+    return math.sub(math.sum([initialCostPriceProductsStock, purchases]), finalCostPriceProductsStock); // CMV = Estoque inicial + Compras - Estoque final
   }
 
   static calculateOperationalExpenses([expenses]) {

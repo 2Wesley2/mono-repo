@@ -11,19 +11,23 @@ const billSchema = {
       validator: async function (value) {
         const exists = await this.constructor.exists({
           ownerId: this.ownerId,
-          billNumber: value,
+          billNumber: value
         });
         return !exists;
       },
-      message: 'Cada Owner deve ter números de Bill únicos.',
-    },
+      message: 'Cada Owner deve ter números de Bill únicos.'
+    }
   },
-  status: { type: String, enum: ['Stand By', 'In Progress'], default: 'Stand By' },
+  status: {
+    type: String,
+    enum: ['Stand By', 'In Progress'],
+    default: 'Stand By'
+  },
   amount: {
     type: Number,
     required: true,
     default: 0,
-    validate: { validator: (value) => value >= 0 },
+    validate: { validator: (value) => value >= 0 }
   },
   products: [
     {
@@ -32,10 +36,10 @@ const billSchema = {
         type: Number,
         required: true,
         default: 0,
-        validate: { validator: (v) => v >= 0 },
-      },
-    },
-  ],
+        validate: { validator: (v) => v >= 0 }
+      }
+    }
+  ]
 };
 
 export default class BillModel extends Model {
@@ -52,7 +56,11 @@ export default class BillModel extends Model {
   }
 
   async updateBillProducts(ownerId, billNumber, updatedProducts) {
-    const pipeline = bill.buildUpdateBillPipeline({ ownerId, billNumber, updatedProducts });
+    const pipeline = bill.buildUpdateBillPipeline({
+      ownerId,
+      billNumber,
+      updatedProducts
+    });
     const updatedBill = await this.model.aggregate([...pipeline]);
     return updatedBill;
   }

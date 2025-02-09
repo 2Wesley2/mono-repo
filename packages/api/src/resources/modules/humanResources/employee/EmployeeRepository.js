@@ -22,7 +22,10 @@ class EmployeeRepository {
       debug.logger.info('Repositório: Documento encontrado', { id });
       return document;
     } catch (error) {
-      debug.logger.error('Repositório: Erro ao buscar documento por ID', { id, error });
+      debug.logger.error('Repositório: Erro ao buscar documento por ID', {
+        id,
+        error
+      });
       throw error;
     }
   }
@@ -35,7 +38,7 @@ class EmployeeRepository {
     } catch (error) {
       debug.logger.error('Repositório: Erro ao buscar documentos', {
         filters,
-        error: error && error.message ? error.message : 'Erro desconhecido',
+        error: error && error.message ? error.message : 'Erro desconhecido'
       });
       throw new Error('Erro ao buscar documentos no repositório.');
     }
@@ -44,10 +47,16 @@ class EmployeeRepository {
   async updateEmployee(id, data) {
     try {
       const result = await this.model.updateEmployee(id, data);
-      debug.logger.info('Repositório: Documento atualizado', { id, data: result });
+      debug.logger.info('Repositório: Documento atualizado', {
+        id,
+        data: result
+      });
       return result;
     } catch (error) {
-      debug.logger.error('Repositório: Erro ao atualizar documento', { id, error });
+      debug.logger.error('Repositório: Erro ao atualizar documento', {
+        id,
+        error
+      });
       throw error;
     }
   }
@@ -58,7 +67,10 @@ class EmployeeRepository {
       debug.logger.info('Repositório: Documento deletado', { id });
       return true;
     } catch (error) {
-      debug.logger.error('Repositório: Erro ao deletar documento', { id, error });
+      debug.logger.error('Repositório: Erro ao deletar documento', {
+        id,
+        error
+      });
       throw error;
     }
   }

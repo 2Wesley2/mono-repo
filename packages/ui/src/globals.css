@@ -1,17 +1,17 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --yelow: #EEC643;
-  --bg: #EEF0F2;
-  --blue: #0D21A1;
+  --yelow: #eec643;
+  --bg: #eef0f2;
+  --blue: #0d21a1;
   --dark-blue: #011638;
-  --mid-blue: #022F78;
-  --ligth-blue: #B4BDF9;
+  --mid-blue: #022f78;
+  --ligth-blue: #b4bdf9;
   --black: #141414;
 
   --blue-50: #eff6ff;
@@ -22,7 +22,7 @@
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 @layer utilities {
@@ -54,7 +54,6 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-
 
 @layer utilities {
   .text-balance {
@@ -102,11 +101,13 @@ body {
   padding: 10px 20px; /* Espaçamento interno */
   margin-right: 10px;
   cursor: pointer; /* Mão ao passar o mouse */
-  transition: background-color 0.3s, color 0.3s; /* Transições suaves */
+  transition:
+    background-color 0.3s,
+    color 0.3s; /* Transições suaves */
 }
 
 .btn-login:hover {
-  color: #F5B940; /* Cor do texto ao passar o mouse */
+  color: #f5b940; /* Cor do texto ao passar o mouse */
 }
 
 .btn-register {
@@ -228,12 +229,12 @@ body {
   align-items: center;
 }
 
-.btn-banner{
-	width: 400px;
+.btn-banner {
+  width: 400px;
 }
 
 .banner {
-  background-color: #FFD800;
+  background-color: #ffd800;
   padding: 10px;
   display: flex;
   justify-content: center; /* Distribui o conteúdo igualmente entre os itens */
@@ -249,7 +250,7 @@ body {
 }
 
 .button {
-  background-color: #F5B940; /* cor de fundo */
+  background-color: #f5b940; /* cor de fundo */
   color: black; /* cor do texto */
   font-weight: 400;
   padding: 10px 20px; /* espaçamento interno */
@@ -261,7 +262,7 @@ body {
 }
 
 .button:hover {
-  background-color: #FFB200; /* cor de fundo ao passar o mouse */
+  background-color: #ffb200; /* cor de fundo ao passar o mouse */
 }
 
 .promotion {
@@ -321,7 +322,7 @@ body {
   margin-top: 50px;
 }
 
-footer p{
+footer p {
   color: #171717;
   font-size: x-small;
 }
@@ -383,7 +384,7 @@ p {
   height: 20px;
   background-color: yellowgreen;
 }
-.robo_check{
+.robo_check {
   width: 400px;
   height: 30px;
   color: #171717;
@@ -487,7 +488,7 @@ p {
 }
 
 .userName {
-  background-color: #CCD0D6; /* bg-gray-200 */
+  background-color: #ccd0d6; /* bg-gray-200 */
   border-radius: 9999px; /* rounded-full */
   display: flex;
   justify-content: center; /* Centraliza horizontalmente */
@@ -499,13 +500,13 @@ p {
 .initial {
   font-size: 1.25rem; /* text-xl */
   font-weight: bold; /* font-bold */
-  color: #333E4F;
+  color: #333e4f;
 }
 
 .text {
   font-size: 16;
   font-weight: bold; /* font-bold */
-  color: #333E4F;
+  color: #333e4f;
 }
 
 .greetingContainer {
@@ -643,4 +644,3 @@ p {
     @apply bg-white; /* Use a cor de fundo que desejar */
   }
 }
-

@@ -30,7 +30,7 @@ export default class OwnerUserController extends Controller {
       password,
       cnpj,
       legalName,
-      tradeName,
+      tradeName
     } = req.body;
     try {
       const userData = {
@@ -48,7 +48,7 @@ export default class OwnerUserController extends Controller {
         password,
         cnpj,
         legalName,
-        tradeName,
+        tradeName
       };
       const createdUser = await this.service.signUp({ ...userData });
       return res.status(200).json(createdUser);
@@ -69,7 +69,7 @@ export default class OwnerUserController extends Controller {
         httpOnly: true,
         secure: false,
         sameSite: 'Strict',
-        maxAge: 3600000,
+        maxAge: 3600000
       });
       res.status(200).json('logou');
     } catch (error) {

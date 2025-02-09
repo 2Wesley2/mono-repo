@@ -8,10 +8,10 @@ const purchaseSchema = {
     {
       productId: { type: Model.objectIdType, ref: PRODUCT, required: true },
       quantity: { type: Number, required: true, min: 1 },
-      price: { type: Number, required: true, min: 0 },
-    },
+      price: { type: Number, required: true, min: 0 }
+    }
   ],
-  totalAmount: { type: Number, required: true, min: 0 },
+  totalAmount: { type: Number, required: true, min: 0 }
 };
 
 export default class PurchaseModel extends Model {

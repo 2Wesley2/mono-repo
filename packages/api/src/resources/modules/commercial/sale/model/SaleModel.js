@@ -5,19 +5,19 @@ const baseSaleSchema = {
   ownerId: {
     type: Model.objectIdType,
     required: true,
-    ref: OWNER,
+    ref: OWNER
   },
   items: [
     {
       productId: {
         type: Model.objectIdType,
         ref: PRODUCT,
-        required: true,
+        required: true
       },
-      quantity: { type: Number, validate: { validator: (value) => value > 0 } },
-    },
+      quantity: { type: Number, validate: { validator: (value) => value > 0 } }
+    }
   ],
-  amount: { type: Number, validate: { validator: (value) => value > 0 } },
+  amount: { type: Number, validate: { validator: (value) => value > 0 } }
 };
 
 export default class SaleModel extends Model {

@@ -1,25 +1,24 @@
 declare module 'react-helmet' {
-    import * as React from 'react';
-  
-    export interface HelmetProps {
-      base?: any;
-      bodyAttributes?: any;
-      children?: React.ReactNode;
-      defaultTitle?: string;
-      defer?: boolean;
-      encodeSpecialCharacters?: boolean;
-      htmlAttributes?: any;
-      link?: any[];
-      meta?: any[];
-      noscript?: any[];
-      onChangeClientState?: (newState: any) => void;
-      script?: any[];
-      style?: any[];
-      title?: string;
-      titleAttributes?: any;
-      titleTemplate?: string;
-    }
-  
-    export class Helmet extends React.Component<HelmetProps> {}
+  import * as React from 'react';
+
+  export interface HelmetProps {
+    base?: object;
+    bodyAttributes?: object;
+    children?: React.ReactNode;
+    defaultTitle?: string;
+    defer?: boolean;
+    encodeSpecialCharacters?: boolean;
+    htmlAttributes?: object;
+    link?: Array<object>;
+    meta?: Array<object>;
+    noscript?: Array<object>;
+    onChangeClientState?: (newState: object) => void;
+    script?: Array<object>;
+    style?: Array<object>;
+    title?: string;
+    titleAttributes?: object;
+    titleTemplate?: string;
   }
-  
+
+  export class Helmet extends React.Component<HelmetProps> {}
+}

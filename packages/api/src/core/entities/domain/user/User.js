@@ -10,5 +10,5 @@ class User {
   static async login() {}
 }
 export default {
-  validateRequiredFields: (...args) => User.validateRequiredFields(...args),
+  validateRequiredFields: (...args) => User.validateRequiredFields(...args)
 };

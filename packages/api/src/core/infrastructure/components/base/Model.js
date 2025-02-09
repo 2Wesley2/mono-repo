@@ -170,7 +170,7 @@ export default class Model {
       'toObject', // Converte o documento para um objeto JavaScript
       'toJSON', // Converte o documento para JSON
       'create', // Cria e salva documentos
-      'update', // (descontinuado) Atualiza documentos (não deve ser usado, mas ainda funciona em versões antigas)
+      'update' // (descontinuado) Atualiza documentos (não deve ser usado, mas ainda funciona em versões antigas)
     );
 
     /**
@@ -179,7 +179,7 @@ export default class Model {
      * @type {string[]}
      */
     const customMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(
-      (method) => method !== 'constructor' && typeof this[method] === 'function' && !method.startsWith('_'), // Ignora métodos que começam com "_"
+      (method) => method !== 'constructor' && typeof this[method] === 'function' && !method.startsWith('_') // Ignora métodos que começam com "_"
     );
 
     customMethods.forEach((method) => {

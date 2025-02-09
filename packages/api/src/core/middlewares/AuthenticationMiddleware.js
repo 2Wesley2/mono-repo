@@ -15,4 +15,6 @@ class AuthenticationMiddleware {
     }
   }
 }
-export default { blockIfAuthenticated: (...args) => AuthenticationMiddleware.blockIfAuthenticated(...args) };
+export default {
+  blockIfAuthenticated: (...args) => AuthenticationMiddleware.blockIfAuthenticated(...args)
+};

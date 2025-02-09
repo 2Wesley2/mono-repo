@@ -8,9 +8,9 @@ const discountSchema = {
     {
       type: Model.objectIdType,
       required: true,
-      enum: [...discountsType],
-    },
-  ],
+      enum: [...discountsType]
+    }
+  ]
 };
 
 export default class DiscountModel extends Model {

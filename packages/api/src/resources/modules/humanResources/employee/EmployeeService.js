@@ -38,7 +38,12 @@ class EmployeeService {
     const updatedEmployee = await this.repository.update(id, updateData);
 
     if (!updatedEmployee) {
-      throw new NotFoundError([{ field: 'id', message: 'Funcionário não encontrado para atualização.' }]);
+      throw new NotFoundError([
+        {
+          field: 'id',
+          message: 'Funcionário não encontrado para atualização.'
+        }
+      ]);
     }
 
     return updatedEmployee;

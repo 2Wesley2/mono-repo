@@ -5,7 +5,7 @@ const roleSchema = {
   name: { type: String, required: true, unique: true },
   description: { type: String, required: false },
   ownerId: { type: Model.objectIdType, ref: OWNER, required: true },
-  permissions: [{ type: String, required: true }],
+  permissions: [{ type: String, required: true }]
 };
 
 export default class RoleModel extends Model {

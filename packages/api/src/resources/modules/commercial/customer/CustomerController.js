@@ -70,11 +70,15 @@ class CustomerController extends Controller {
     try {
       const customerData = req.body;
       if (!customerData.name || !customerData.cpf || !customerData.phone) {
-        return res.status(400).json({ message: 'Nome, CPF e Celular são obrigatórios para criar o cliente' });
+        return res.status(400).json({
+          message: 'Nome, CPF e Celular são obrigatórios para criar o cliente'
+        });
       }
 
       const newCustomer = await this.service.createCustomer(customerData);
-      debug.logger.info('Controlador: Cliente criado com sucesso', { customerData });
+      debug.logger.info('Controlador: Cliente criado com sucesso', {
+        customerData
+      });
       res.status(201).json(newCustomer);
     } catch (error) {
       debug.logger.error('Controlador: Erro ao criar cliente', { error });
@@ -109,7 +113,10 @@ class CustomerController extends Controller {
       debug.logger.info('Controlador: Cliente atualizado', { id, updateData });
       res.status(200).json(updatedCustomer);
     } catch (error) {
-      debug.logger.error('Controlador: Erro ao atualizar cliente', { id, error });
+      debug.logger.error('Controlador: Erro ao atualizar cliente', {
+        id,
+        error
+      });
       next(error);
     }
   }

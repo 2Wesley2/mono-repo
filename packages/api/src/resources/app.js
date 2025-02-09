@@ -14,7 +14,7 @@ import {
   employeeController,
   productController,
   orderController,
-  ownerUserController,
+  ownerUserController
 } from '../resources/modules/index.js';
 
 /**
@@ -73,8 +73,8 @@ export default class App {
     this.app.use(
       cors({
         origin: 'http://localhost:3000',
-        credentials: true,
-      }),
+        credentials: true
+      })
     );
     this.app.use(cookieParser());
   }

@@ -6,7 +6,7 @@ const ownerUserSchema = {
   cnpj: { type: String, required: true, unique: true },
   legalName: { type: String, required: true, unique: true },
   tradeName: { type: String },
-  role: { type: String, ref: ROLE, required: true, default: 'owner' },
+  role: { type: String, ref: ROLE, required: true, default: 'owner' }
 };
 
 export default class OwnerUserModel extends UserModel {
@@ -30,7 +30,7 @@ export default class OwnerUserModel extends UserModel {
       id: userLoggedIn._id.toString(),
       name: userLoggedIn.name,
       email: userLoggedIn.email,
-      role: userLoggedIn.role,
+      role: userLoggedIn.role
     };
   }
 

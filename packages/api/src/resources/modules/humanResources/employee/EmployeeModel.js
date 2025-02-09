@@ -6,12 +6,12 @@ const employeeSchema = {
   name: {
     type: String,
     required: [true, 'O nome do funcionário é obrigatório'],
-    trim: true,
+    trim: true
   },
   number: {
     type: Number,
-    required: [true, 'O número do funcionário é obrigatório'],
-  },
+    required: [true, 'O número do funcionário é obrigatório']
+  }
 };
 
 class EmployeeModel extends Model {
@@ -48,7 +48,7 @@ class EmployeeModel extends Model {
     try {
       return await this.model.findByIdAndUpdate(id, data, {
         new: true,
-        runValidators: true,
+        runValidators: true
       });
     } catch (error) {
       throw new Error('Erro ao atualizar o funcionário: ' + error.message);

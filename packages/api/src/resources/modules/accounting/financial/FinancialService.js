@@ -9,7 +9,7 @@ export default class FinancialService {
       expense,
       deduction,
       purchase,
-      product,
+      product
     };
   }
 

@@ -32,7 +32,7 @@ export default class FinancialRepository {
       taxProvisions,
       participations,
       roi,
-      percentageROI,
+      percentageROI
     } = metrics;
 
     const report = {
@@ -42,35 +42,35 @@ export default class FinancialRepository {
         netRevenue,
         averageTicket,
         totalSales,
-        conversionRate,
+        conversionRate
       },
       profitMetrics: {
         netProfit,
         grossProfit,
-        finalNetIncome,
+        finalNetIncome
       },
       expenseMetrics: {
         totalExpensesValue,
         cmv,
         purchasesValue,
-        deductions,
+        deductions
       },
       marginMetrics: {
-        grossMargin,
+        grossMargin
       },
       operationalMetrics: {
         operationalResult,
         nonOperationalResult,
-        beforeTaxProfit,
+        beforeTaxProfit
       },
       taxMetrics: {
         taxProvisions,
-        participations,
+        participations
       },
       roiMetrics: {
         roi,
-        percentageROI,
-      },
+        percentageROI
+      }
     };
 
     return await this.model.saveReport(report);

@@ -17,7 +17,7 @@ export default class StockRepository {
           productId: product._id.toString(),
           productName: product.name,
           quantity,
-          price: product.price || 0,
+          price: product.price || 0
         }));
 
         const quantityProducts = products.reduce((acc, p) => acc + p.quantity, 0);
@@ -56,13 +56,13 @@ export default class StockRepository {
       const stockSummary = {
         products: combinedProducts,
         quantityProducts: totalQuantity,
-        valueTotal: totalValue,
+        valueTotal: totalValue
       };
 
       return {
         backStock: backStockSummary,
         showRoom: showRoomSummary,
-        stock: stockSummary,
+        stock: stockSummary
       };
     } catch (error) {
       throw new Error(`Erro ao gerar resumo do estoque: ${error.message}`);
@@ -77,17 +77,17 @@ const o = {
         productId: '63d2f4471c4e88f9a334d4e7',
         productName: 'Produto A',
         quantity: 13,
-        price: 2,
+        price: 2
       },
       {
         productId: '63d2f4471c4e88f9a334d4e8',
         productName: 'Produto B',
         quantity: 5,
-        price: 2,
-      },
+        price: 2
+      }
     ],
     quantityProducts: 18,
-    valueTotal: 36,
+    valueTotal: 36
   },
   showRoom: {
     products: [
@@ -95,17 +95,17 @@ const o = {
         productId: '63d2f4471c4e88f9a334d4e7',
         productName: 'Produto A',
         quantity: 13,
-        price: 2,
+        price: 2
       },
       {
         productId: '63d2f4471c4e88f9a334d4e8',
         productName: 'Produto B',
         quantity: 5,
-        price: 2,
-      },
+        price: 2
+      }
     ],
     quantityProducts: 18,
-    valueTotal: 36,
+    valueTotal: 36
   },
   stock: {
     products: [
@@ -113,16 +113,16 @@ const o = {
         productId: '63d2f4471c4e88f9a334d4e7',
         productName: 'Produto A',
         quantity: 26,
-        price: 2,
+        price: 2
       },
       {
         productId: '63d2f4471c4e88f9a334d4e8',
         productName: 'Produto B',
         quantity: 10,
-        price: 2,
-      },
+        price: 2
+      }
     ],
     quantityProducts: 36,
-    valueTotal: 72,
-  },
+    valueTotal: 72
+  }
 };

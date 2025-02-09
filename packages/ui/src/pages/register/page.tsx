@@ -6,7 +6,7 @@ import React from 'react';
 
 const Register = () => {
   return (
-    <div className='flex flex-col gap-10'>      
+    <div className="flex flex-col gap-10">
       {/* <Banner /> */}
       <Header />
       <MainContent />

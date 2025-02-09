@@ -1,0 +1,20 @@
+module.exports = {
+  singleQuote: true,
+  printWidth: 120,
+  tabWidth: 2,
+  trailingComma: 'none',
+  bracketSpacing: true,
+  proseWrap: 'preserve',
+  endOfLine: 'lf',
+  overrides: [
+    {
+      files: '*.json',
+      options: {
+        parser: 'json',
+        tabWidth: 2,
+        trailingComma: 'none',
+        bracketSpacing: true
+      }
+    }
+  ]
+};

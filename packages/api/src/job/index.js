@@ -20,7 +20,7 @@ export default class CronJobManager {
 
     const job = cron.schedule(schedule, task, {
       scheduled: true,
-      timezone: 'America/Sao_Paulo',
+      timezone: 'America/Sao_Paulo'
     });
 
     this.jobs[jobName] = job;

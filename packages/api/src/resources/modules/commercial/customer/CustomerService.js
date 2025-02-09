@@ -29,7 +29,10 @@ class CustomerService {
       const newCustomer = await this.repository.createCustomer(customerData);
       return newCustomer;
     } catch (error) {
-      debug.logger.error('Serviço: Erro ao criar Cliente', { customerData, error });
+      debug.logger.error('Serviço: Erro ao criar Cliente', {
+        customerData,
+        error
+      });
       throw error;
     }
   }

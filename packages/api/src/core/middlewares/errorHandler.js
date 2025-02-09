@@ -37,7 +37,7 @@ export default (err, _req, res, _next) => {
       statusCode,
       message,
       ...(details && { details }),
-      stack: err.stack,
+      stack: err.stack
     });
   } else {
     console.error(err.message);
@@ -45,7 +45,7 @@ export default (err, _req, res, _next) => {
       status: 'error',
       statusCode,
       message,
-      ...(details && { details }),
+      ...(details && { details })
     });
   }
 };

@@ -5,7 +5,12 @@ import { UnauthorizedError, InvalidRequestError } from '#src/errors/Exceptions.j
 
 const employeeUserSchema = {
   ownerID: { type: UserModel.objectIdType, ref: OWNER, required: true },
-  role: { type: UserModel.objectIdType, ref: ROLE, required: true, default: EMPLOYEE },
+  role: {
+    type: UserModel.objectIdType,
+    ref: ROLE,
+    required: true,
+    default: EMPLOYEE
+  }
 };
 
 export default class EmployeeUserModel extends UserModel {
@@ -26,9 +31,9 @@ export default class EmployeeUserModel extends UserModel {
       throw new Error('Employee não encontrado ou não pertence ao Owner.');
     }
     const updatePayload = employee.createRoleUpdatePayload(roleId);
-    const updatedEmployee = await db
-      .collection(EMPLOYEE)
-      .findOneAndUpdate({ _id: employeeId }, updatePayload, { returnDocument: 'after' });
+    const updatedEmployee = await db.collection(EMPLOYEE).findOneAndUpdate({ _id: employeeId }, updatePayload, {
+      returnDocument: 'after'
+    });
 
     return updatedEmployee.value;
   }
@@ -56,7 +61,7 @@ export default class EmployeeUserModel extends UserModel {
     return {
       name: userLoggedIn.name,
       email: userLoggedIn.email,
-      role: userLoggedIn.role,
+      role: userLoggedIn.role
     };
   }
 }

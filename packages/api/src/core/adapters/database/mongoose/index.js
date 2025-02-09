@@ -135,5 +135,5 @@ export default {
    * @param {...*} args - Argumentos a serem passados para a criação do sub-schema.
    * @returns {mongoose.Schema} O sub-schema criado.
    */
-  subSchema: (...args) => Database.subSchema(...args),
+  subSchema: (...args) => Database.subSchema(...args)
 };

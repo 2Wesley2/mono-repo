@@ -9,5 +9,5 @@ import env from './env.js';
  * console.log(config.apiPort);
  */
 export default {
-  ...env,
+  ...env
 };

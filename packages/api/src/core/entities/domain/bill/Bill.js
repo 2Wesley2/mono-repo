@@ -8,8 +8,8 @@ class Bill {
         from: 'products',
         localField: 'products.name',
         foreignField: '_id',
-        as: 'matchedProducts',
-      },
+        as: 'matchedProducts'
+      }
     };
   }
 
@@ -18,9 +18,9 @@ class Bill {
       $set: {
         products: updatedProducts.map((newProd) => ({
           name: newProd.name,
-          quantity: newProd.quantity,
-        })),
-      },
+          quantity: newProd.quantity
+        }))
+      }
     };
   }
 
@@ -47,25 +47,27 @@ class Bill {
                                   $filter: {
                                     input: '$matchedProducts',
                                     as: 'prodDetail',
-                                    cond: { $eq: ['$$prodDetail._id', '$$this.name'] },
-                                  },
+                                    cond: {
+                                      $eq: ['$$prodDetail._id', '$$this.name']
+                                    }
+                                  }
                                 },
-                                0,
-                              ],
-                            },
-                          },
+                                0
+                              ]
+                            }
+                          }
                         },
-                        0, // Se não encontrar o produto, assume preço 0
-                      ],
+                        0 // Se não encontrar o produto, assume preço 0
+                      ]
                     },
-                    '$$this.quantity',
-                  ],
-                },
-              ],
-            },
-          },
-        },
-      },
+                    '$$this.quantity'
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
     };
   }
 
@@ -74,8 +76,8 @@ class Bill {
       $merge: {
         into: 'bills',
         whenMatched: 'merge',
-        whenNotMatched: 'fail',
-      },
+        whenNotMatched: 'fail'
+      }
     };
   }
 
@@ -85,7 +87,7 @@ class Bill {
       this.#joinWithProducts(),
       this.#updateProductQuantities(updatedProducts),
       this.#recalculateTotalAmount(),
-      this.#saveUpdatedBill(),
+      this.#saveUpdatedBill()
     ];
   }
 
@@ -96,8 +98,8 @@ class Bill {
         'productDetails.name': 1,
         'productDetails.price': 1,
         'productDetails.category': 1,
-        'products.quantity': 1,
-      },
+        'products.quantity': 1
+      }
     };
   }
 
@@ -108,5 +110,5 @@ class Bill {
 
 export default {
   buildUpdateBillPipeline: (...args) => Bill.buildUpdateBillPipeline(...args),
-  buildFetchProductsPipeline: (...args) => Bill.buildFetchProductsPipeline(...args),
+  buildFetchProductsPipeline: (...args) => Bill.buildFetchProductsPipeline(...args)
 };

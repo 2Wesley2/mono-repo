@@ -3,7 +3,7 @@ import { STOCK_AUDITS, SALE, PURCHASE } from '../../../collections/index.js';
 
 const typesEnum = {
   sale: SALE,
-  purchase: PURCHASE,
+  purchase: PURCHASE
 };
 
 const stockAuditsSchema = {
@@ -14,10 +14,10 @@ const stockAuditsSchema = {
       required: true,
       ref: function () {
         return typesEnum[this.type] || null;
-      },
+      }
     },
-    amount: { type: Number, required: true },
-  },
+    amount: { type: Number, required: true }
+  }
 };
 
 export default class StockAudits extends Model {
@@ -33,10 +33,10 @@ export default class StockAudits extends Model {
         ? {
             createdAt: {
               ...(startDate && { $gte: new Date(startDate) }),
-              ...(endDate && { $lte: new Date(endDate) }),
-            },
+              ...(endDate && { $lte: new Date(endDate) })
+            }
           }
-        : {}),
+        : {})
     };
 
     return this.model.find(filter);
@@ -53,7 +53,7 @@ export default class StockAudits extends Model {
   async agreggatePurchasesValueByPeriod(startDate, endDate) {
     const date = {
       ...(startDate && { startDate }),
-      ...(endDate && { endDate }),
+      ...(endDate && { endDate })
     };
     const auditedPurchasesAtDate = await this.getTypesByDate({ ...date }, typesEnum.purchase);
     const purchaseValeuAtDate = auditedPurchasesAtDate.reduce((amount, doc) => {

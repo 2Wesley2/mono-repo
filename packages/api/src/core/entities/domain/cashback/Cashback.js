@@ -83,15 +83,15 @@ export default class Cashback {
       if (mode === 'integral' && maxPercentage !== 100) {
         return next(
           new Error(
-            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.',
-          ),
+            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.'
+          )
         );
       }
       if (mode === 'partial' && maxPercentage === 100) {
         return next(
           new Error(
-            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.',
-          ),
+            'If usage mode is "integral", maxPercentage must be 100; if "partial", maxPercentage cannot be 100.'
+          )
         );
       }
     }
@@ -113,8 +113,8 @@ export default class Cashback {
       ) {
         return next(
           new Error(
-            'For reward cashback, at least one configuration (Consumption Credit, Conversion or Exclusive Benefit) must be enabled.',
-          ),
+            'For reward cashback, at least one configuration (Consumption Credit, Conversion or Exclusive Benefit) must be enabled.'
+          )
         );
       }
     }

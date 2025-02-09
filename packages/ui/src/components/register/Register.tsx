@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 
@@ -8,13 +8,13 @@ const Register = () => {
     whatsapp: '',
     email: '',
     position: '',
-    employees: '',
+    employees: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -29,7 +29,8 @@ const Register = () => {
       <section className="form-section">
         <h1>Comece Grátis!</h1>
         <p>
-          Teste grátis agora mesmo e comece a fidelizar seus clientes e automatizar o marketing para <strong>aumentar as vendas</strong>.
+          Teste grátis agora mesmo e comece a fidelizar seus clientes e automatizar o marketing para{' '}
+          <strong>aumentar as vendas</strong>.
         </p>
         <form onSubmit={handleSubmit} className="register-form">
           <input
@@ -74,8 +75,10 @@ const Register = () => {
             <option value="200+">Mais de 200</option>
           </select>
           <div className="row">
-            <input className="checkbox" type="checkbox" id="robot-check" required/>
-            <label className="robo_check" htmlFor="robot-check">Não sou um robô</label>
+            <input className="checkbox" type="checkbox" id="robot-check" required />
+            <label className="robo_check" htmlFor="robot-check">
+              Não sou um robô
+            </label>
           </div>
           <button type="submit" className="submit-button">
             Continuar

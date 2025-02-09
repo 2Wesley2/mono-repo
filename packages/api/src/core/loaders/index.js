@@ -15,5 +15,5 @@ import auth from '../adapters/auth/index.js';
 
 export default {
   mongoose,
-  auth,
+  auth
 };

@@ -6,19 +6,19 @@ class GenerateFinancialReport {
 
     const servicesByNetRevenue = {
       sale,
-      deduction,
+      deduction
     };
 
     const servicesByNetProfit = {
       ...servicesByNetRevenue,
-      expense,
+      expense
     };
 
     const servicesByCMV = { purchase, product };
 
     const servicesByGrossMarginAndGrossProfit = {
       ...servicesByNetRevenue,
-      ...servicesByCMV,
+      ...servicesByCMV
     };
 
     const [
@@ -31,7 +31,7 @@ class GenerateFinancialReport {
       netProfit,
       cmv,
       grossMargin,
-      grossProfit,
+      grossProfit
     ] = await Promise.all([
       this.getTotalSales(startDate, endDate, sale),
       this.reportGrossRevenue(startDate, endDate, sale),
@@ -42,7 +42,7 @@ class GenerateFinancialReport {
       this.reportNetProfit(startDate, endDate, servicesByNetProfit),
       this.reportCMV(startDate, endDate, servicesByCMV),
       this.reportGrossMargin(startDate, endDate, servicesByGrossMarginAndGrossProfit),
-      this.reportGrossProfit(startDate, endDate, servicesByGrossMarginAndGrossProfit),
+      this.reportGrossProfit(startDate, endDate, servicesByGrossMarginAndGrossProfit)
     ]);
 
     return {
@@ -55,14 +55,19 @@ class GenerateFinancialReport {
       totalExpensesValue,
       cmv,
       purchasesValue,
-      grossMargin,
+      grossMargin
     };
   }
 
   static async reportNetProfit(startDate, endDate, services) {
     const [netRevenue, totalExpensesValue] = await Promise.all([
-      this.reportNetRevenue(startDate, endDate, { sale: services.sale, deduction: services.deduction }),
-      this.reportTotalExpensesValue(startDate, endDate, { expense: services.expense }),
+      this.reportNetRevenue(startDate, endDate, {
+        sale: services.sale,
+        deduction: services.deduction
+      }),
+      this.reportTotalExpensesValue(startDate, endDate, {
+        expense: services.expense
+      })
     ]);
     return metrics.profits.calculateNetProfit(netRevenue, totalExpensesValue);
   }
@@ -70,7 +75,7 @@ class GenerateFinancialReport {
   static async reportAverageTicket(startDate, endDate, services) {
     const [grossRevenue, totalSales] = await Promise.all([
       this.reportGrossRevenue(startDate, endDate, services),
-      this.getTotalSales(startDate, endDate, services),
+      this.getTotalSales(startDate, endDate, services)
     ]);
     return metrics.marginsAndPerformance.calculateAverageTicket(grossRevenue, totalSales);
   }
@@ -78,7 +83,7 @@ class GenerateFinancialReport {
   static async reportGrossMargin(startDate, endDate, services) {
     const [grossProfit, netRevenue] = await Promise.all([
       this.reportGrossProfit(startDate, endDate, services),
-      this.reportNetRevenue(startDate, endDate, services),
+      this.reportNetRevenue(startDate, endDate, services)
     ]);
     return metrics.marginsAndPerformance.calculateGrossMargin(grossProfit, netRevenue);
   }
@@ -86,7 +91,7 @@ class GenerateFinancialReport {
   static async reportGrossProfit(startDate, endDate, services) {
     const [netRevenue, cmv] = await Promise.all([
       this.reportNetRevenue(startDate, endDate, services),
-      this.reportCMV(startDate, endDate, services),
+      this.reportCMV(startDate, endDate, services)
     ]);
     return metrics.profits.calculateGrossProfit(netRevenue, cmv);
   }
@@ -94,7 +99,9 @@ class GenerateFinancialReport {
   static async reportNetRevenue(startDate, endDate, services) {
     const [grossRevenue, deductions] = await Promise.all([
       this.reportGrossRevenue(startDate, endDate, { sale: services.sale }),
-      this.reportDeductionsValue(startDate, endDate, { deduction: services.deduction }),
+      this.reportDeductionsValue(startDate, endDate, {
+        deduction: services.deduction
+      })
     ]);
     return metrics.revenues.calculateNetRevenue(grossRevenue, deductions);
   }
@@ -103,7 +110,9 @@ class GenerateFinancialReport {
     const [initialStock, finalStock, purchases] = await Promise.all([
       this.aggregateStockValueByDate(startDate, { product: services.product }),
       this.aggregateStockValueByDate(endDate, { product: services.product }),
-      this.getPurchasesValue(startDate, endDate, { purchase: services.purchase }),
+      this.getPurchasesValue(startDate, endDate, {
+        purchase: services.purchase
+      })
     ]);
     return metrics.costsAndExpenses.calculateCMV(initialStock, finalStock, purchases);
   }
@@ -138,5 +147,5 @@ class GenerateFinancialReport {
   }
 }
 export default {
-  reportFinancialMetrics: (...args) => GenerateFinancialReport.reportFinancialMetrics(...args),
+  reportFinancialMetrics: (...args) => GenerateFinancialReport.reportFinancialMetrics(...args)
 };

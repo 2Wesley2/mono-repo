@@ -6,13 +6,13 @@ const tradeDiscountSchema = {
   percentage: {
     type: Number,
     required: true,
-    validate: { validator: (value) => value > 0 && value <= 100 },
+    validate: { validator: (value) => value > 0 && value <= 100 }
   },
   description: {
     type: String,
     required: false,
-    maxlength: 255,
-  },
+    maxlength: 255
+  }
 };
 
 export class TradeDiscountModel extends Model {

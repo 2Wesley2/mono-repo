@@ -7,9 +7,9 @@ class Employee {
           from: 'roles',
           localField: 'role',
           foreignField: '_id',
-          as: 'roleDetails',
-        },
-      },
+          as: 'roleDetails'
+        }
+      }
     ];
   }
 
@@ -20,5 +20,5 @@ class Employee {
 
 export default {
   getEmployeeValidationPipeline: (...args) => Employee.getEmployeeValidationPipeline(...args),
-  createRoleUpdatePayload: (...args) => Employee.createRoleUpdatePayload(...args),
+  createRoleUpdatePayload: (...args) => Employee.createRoleUpdatePayload(...args)
 };

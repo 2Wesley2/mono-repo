@@ -5,7 +5,7 @@ const refTypes = {
   TAXES: TAXE,
   RETURN: RETURN,
   DISCOUNT: DISCOUNT,
-  ALLOWANCE: ALLOWANCE,
+  ALLOWANCE: ALLOWANCE
 };
 
 const deductionSchema = {
@@ -15,9 +15,9 @@ const deductionSchema = {
       required: true,
       ref: function () {
         return refTypes[this.type] || null;
-      },
-    },
-  ],
+      }
+    }
+  ]
 };
 
 export default class DeductionModel extends Model {

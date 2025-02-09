@@ -9,7 +9,7 @@ export default class UserPayload {
     if (typeof payload !== 'object' || Array.isArray(payload)) {
       throw new UnprocessableEntityError(
         [{ field: 'payload', message: 'Payload must be a non-array object' }],
-        'Invalid payload format',
+        'Invalid payload format'
       );
     }
 
@@ -18,14 +18,14 @@ export default class UserPayload {
     if (!id || typeof id !== 'string') {
       throw new InvalidRequestError(
         [{ field: 'id', message: 'ID is required and must be a string' }],
-        'Invalid or missing ID in payload',
+        'Invalid or missing ID in payload'
       );
     }
 
     if (!role || typeof role !== 'string') {
       throw new InvalidRequestError(
         [{ field: 'role', message: 'Role is required and must be a string' }],
-        'Invalid or missing role in payload',
+        'Invalid or missing role in payload'
       );
     }
   }

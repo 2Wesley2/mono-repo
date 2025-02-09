@@ -40,34 +40,42 @@ class Logger {
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       winston.format.printf(({ timestamp, level, message, stack }) => {
         return `${timestamp} ${level}: ${stack || message}`;
-      }),
+      })
     );
 
     const prodFormat = winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      winston.format.json(),
+      winston.format.json()
     );
 
     const transports = [
       new winston.transports.Console({
-        format: config.nodeEnv === 'development' ? devFormat : prodFormat,
+        format: config.nodeEnv === 'development' ? devFormat : prodFormat
       }),
       new winston.transports.File({
         filename: path.join(logDir, 'error.log'),
         level: 'error',
-        format: prodFormat,
+        format: prodFormat
       }),
       new winston.transports.File({
         filename: path.join(logDir, 'combined.log'),
-        format: prodFormat,
-      }),
+        format: prodFormat
+      })
     ];
 
     this.logger = winston.createLogger({
       level: config.nodeEnv === 'development' ? 'debug' : 'info',
       transports,
-      exceptionHandlers: [new winston.transports.File({ filename: path.join(logDir, 'exceptions.log') })],
-      rejectionHandlers: [new winston.transports.File({ filename: path.join(logDir, 'rejections.log') })],
+      exceptionHandlers: [
+        new winston.transports.File({
+          filename: path.join(logDir, 'exceptions.log')
+        })
+      ],
+      rejectionHandlers: [
+        new winston.transports.File({
+          filename: path.join(logDir, 'rejections.log')
+        })
+      ]
     });
     this.logger.superdebug = this.superdebug.bind(this);
   }
@@ -78,7 +86,7 @@ class Logger {
         message,
         type: data === null ? 'null' : 'undefined',
         data,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       this.logger.debug(logObject);
@@ -91,14 +99,18 @@ class Logger {
         message,
         type: data.inspectType(),
         data: data.truncate(500), // Exibição truncada no console
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       // Log para o console
       this.logger.debug(logObject);
 
       // Salvar o objeto completo em arquivo
-      this.saveLogToFile({ message, fullData: data, timestamp: logObject.timestamp });
+      this.saveLogToFile({
+        message,
+        fullData: data,
+        timestamp: logObject.timestamp
+      });
     } catch (error) {
       this.logger.error(`Erro ao processar log no superdebug: ${error.message}`);
     }

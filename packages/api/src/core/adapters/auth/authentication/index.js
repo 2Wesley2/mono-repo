@@ -40,5 +40,5 @@ export default {
   hash: (...args) => Authentication.hash(...args),
   generateToken: (...args) => Authentication.generateToken(...args),
   isAuthenticate: (...args) => Authentication.isAuthenticate(...args),
-  decodeToken: (...args) => Authentication.decodeToken(...args),
+  decodeToken: (...args) => Authentication.decodeToken(...args)
 };

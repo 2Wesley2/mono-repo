@@ -1,18 +1,13 @@
 export interface ComandaItem {
-	id: number;
-	name: string;
-	price: number;
-	quantity: number;
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 export interface Comanda {
-	id: number;
-	items: ComandaItem[];
+  id: number;
+  items: ComandaItem[];
 }
 
-export type Category =
-	| "REFEIÇÕES"
-	| "GERAL"
-	| "BEBIDAS"
-	| "SALGADOS"
-	| "LANCHES";
+export type Category = 'REFEIÇÕES' | 'GERAL' | 'BEBIDAS' | 'SALGADOS' | 'LANCHES';

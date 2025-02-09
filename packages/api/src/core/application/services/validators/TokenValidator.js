@@ -9,5 +9,5 @@ class TokenValidator {
   }
 }
 export default {
-  validate: (...args) => TokenValidator.validate(...args),
+  validate: (...args) => TokenValidator.validate(...args)
 };

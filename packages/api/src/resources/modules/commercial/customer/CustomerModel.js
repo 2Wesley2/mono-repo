@@ -19,7 +19,7 @@ const customerSchema = {
   email: { type: String, unique: true },
   phone: { type: String, unique: true, required: true },
   rewards: { type: Model.objectIdType, ref: REWARD, unique: true },
-  lifetimeValue: { type: Number, default: 0 },
+  lifetimeValue: { type: Number, default: 0 }
 };
 
 /**

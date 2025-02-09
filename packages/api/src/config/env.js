@@ -1,14 +1,9 @@
-import dotenv from "dotenv";
-import path from "path";
-import fs from "fs";
+import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 const baseDir = process.cwd();
-const ENVIRONMENTS_WITH_FILES = [
-  "production",
-  "staging",
-  "test",
-  "development",
-];
+const ENVIRONMENTS_WITH_FILES = ['production', 'staging', 'test', 'development'];
 
 /**
  * Procura recursivamente um arquivo de ambiente a partir do diretório especificado.
@@ -23,7 +18,7 @@ const ENVIRONMENTS_WITH_FILES = [
  *   console.log('Arquivo encontrado:', envFile);
  * }
  */
-const findEnvFile = (startDir, fileName = ".env") => {
+const findEnvFile = (startDir, fileName = '.env') => {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
     const possiblePath = path.join(dir, fileName);
@@ -41,13 +36,13 @@ const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
   : findEnvFile(baseDir);
 
 if (!envPath) {
-  throw new Error("env.js: Arquivo de configuração .env não encontrado.");
+  throw new Error('env.js: Arquivo de configuração .env não encontrado.');
 }
 
 dotenv.config({ path: envPath });
 
 // Variáveis de ambiente obrigatórias
-const requiredEnv = ["PORT", "DB_HOST", "DB_NAME", "JWT_SECRET"];
+const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
 
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
@@ -72,7 +67,7 @@ const {
   EMAIL_HOST,
   EMAIL_PORT,
   EMAIL_USER,
-  EMAIL_PASSWORD,
+  EMAIL_PASSWORD
 } = process.env;
 
 export default {
@@ -91,5 +86,5 @@ export default {
   emailHost: EMAIL_HOST,
   emailPort: Number(EMAIL_PORT),
   emailUser: EMAIL_USER,
-  emailPassword: EMAIL_PASSWORD,
+  emailPassword: EMAIL_PASSWORD
 };

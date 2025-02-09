@@ -7,12 +7,12 @@ const allowanceSchema = {
   amount: {
     type: Number,
     required: true,
-    validate: { validator: (value) => value > 0 },
+    validate: { validator: (value) => value > 0 }
   },
   reason: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 };
 
 export class AllowanceModel extends Model {

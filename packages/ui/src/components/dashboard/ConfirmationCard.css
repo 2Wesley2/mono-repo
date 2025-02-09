@@ -1,92 +1,92 @@
 .overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;
-	backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
 }
 
 .modal {
-	background-color: white;
-	border-radius: 16px;
-	padding: 2rem;
-	width: 90%;
-	max-width: 400px;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1.5rem;
+  background-color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .iconWrapper {
-	background-color: #0066cc55;
-	border-radius: 50%;
-	width: 80px;
-	height: 80px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  background-color: #0066cc55;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.check{
-	size: 32px;
-	color: #0066cc;
+.check {
+  size: 32px;
+  color: #0066cc;
 }
 
 .confirm-title {
-	font-size: 1.5rem;
-	color: #007bff;
-	margin-bottom: 1.5rem;
-	font-weight: 600;
-	margin: 0;
+  font-size: 1.5rem;
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .text {
-	color: #666;
-	font-size: 1rem;
-	margin: 0;
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .btnGroup {
-	display: flex;
-	gap: 1rem;
-	width: 100%;
-	margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .button {
-	flex: 1;
-	padding: 0.75rem 1.5rem;
-	border-radius: 8px;
-	font-size: 1rem;
-	font-weight: 500;
-	cursor: pointer;
-	transition: all 0.2s ease;
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .buttonPrimary {
-	background-color: #0056b3;
-	color: white;
-	border: none;
+  background-color: #0056b3;
+  color: white;
+  border: none;
 }
 
 .buttonPrimary:hover {
-	background-color: #004085;
+  background-color: #004085;
 }
 
 .buttonSecondary {
-	background-color: transparent;
-	color: #0056b3;
-	border: 2px solid #004085;
+  background-color: transparent;
+  color: #0056b3;
+  border: 2px solid #004085;
 }
 
 .buttonSecondary:hover {
-	background-color: #f8e7ff;
+  background-color: #f8e7ff;
 }

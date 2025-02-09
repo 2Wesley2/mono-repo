@@ -5,7 +5,7 @@ import { UnauthorizedError, InvalidRequestError } from '#src/errors/Exceptions.j
 
 const userSchema = {
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true }
 };
 
 export default class UserModel extends PersonModel {
@@ -21,12 +21,15 @@ export default class UserModel extends PersonModel {
   }
 
   async login({ email, password }) {
-    const areCredentialsValid = user.validateRequiredFields({ email, password });
+    const areCredentialsValid = user.validateRequiredFields({
+      email,
+      password
+    });
     const userRecord = await this.getUserByEmail(email);
 
     const passwordComparison = {
       password: password,
-      hashedPassword: userRecord.password,
+      hashedPassword: userRecord.password
     };
 
     const isPasswordValid = areCredentialsValid ? await auth.authenticate(passwordComparison) : null;

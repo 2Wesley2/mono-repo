@@ -9,5 +9,5 @@ class SecretKeyValidator {
   }
 }
 export default {
-  validate: (...args) => SecretKeyValidator.validate(...args),
+  validate: (...args) => SecretKeyValidator.validate(...args)
 };
