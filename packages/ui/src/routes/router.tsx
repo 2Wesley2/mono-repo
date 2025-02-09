@@ -1,9 +1,8 @@
-// src/router.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import HomePage from '../pages/landing/landing'; // Página inicial
+//import Header from '../components/Header';
+//import Footer from '../components/Footer';
+import HomePage from '../pages/landing/landing';
 import Register from '../pages/register/page';
 import DashboardPage from '../pages/dashboard/Dashboard';
 import { ComandaControlPage } from '../pages/ComandaControl/ComandaControl';

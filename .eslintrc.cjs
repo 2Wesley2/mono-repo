@@ -5,6 +5,10 @@ const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = {
   root: true,
+  parser: '@babel/eslint-parser', // Adicionado para suportar sintaxe moderna
+  parserOptions: {
+    requireConfigFile: false // Adicionado para suportar sintaxe moderna
+  },
   extends: ['plugin:json/recommended'],
   plugins: ['json'],
   overrides: [
@@ -44,6 +48,14 @@ module.exports = {
       files: ['**/*.ts'],
       parser: '@typescript-eslint/parser', // Adicionado
       plugins: ['@typescript-eslint'], // Corrigido para ser um array
+      rules: {
+        ...tsPlugin.configs.recommended.rules
+      }
+    },
+    {
+      files: ['**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
       rules: {
         ...tsPlugin.configs.recommended.rules
       }
