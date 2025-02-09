@@ -7,8 +7,11 @@
       "ignoreChanges": ["*.md"]
     },
     "bootstrap": {
-      "hoist": true,
-      "npmClientArgs": ["--no-package-lock"]
+      "hoist": true
+    },
+    "run": {
+      "stream": true,
+      "npmClientArgs": ["--loader", "ts-node/esm", "--loader", "tsconfig-paths/register"]
     }
   },
   "loglevel": "silly"

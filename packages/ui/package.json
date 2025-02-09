@@ -10,7 +10,8 @@
     "eject": "react-scripts eject",
     "format": "prettier --write .",
     "lint": "eslint . --fix",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test-fetch": "node --loader ts-node/esm --experimental-specifier-resolution=node --loader tsconfig-paths/register src/services/test-fetch.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
@@ -40,7 +41,9 @@
     "next": "^15.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.0"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.0.0"
   },
   "browserslist": {
     "production": [">0.2%", "not dead", "not op_mini all"],
