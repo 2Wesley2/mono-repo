@@ -5,6 +5,10 @@ export default class OwnerUserService {
     this.repository = repository;
   }
 
+  validateSession(token) {
+    return this.repository.validateSession(token);
+  }
+
   async signUp(userData) {
     return await this.repository.signUp(userData);
   }

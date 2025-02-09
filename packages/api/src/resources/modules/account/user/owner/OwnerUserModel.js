@@ -15,6 +15,9 @@ export default class OwnerUserModel extends UserModel {
     super(combinedSchema, modelName, options, middlewares);
   }
 
+  validateSession(token) {
+    return super.validateSession(token);
+  }
   async signUp(userData) {
     const roleOwner = { role: 'owner' };
     const combinedData = { ...userData, ...roleOwner };
@@ -44,7 +47,6 @@ export default class OwnerUserModel extends UserModel {
       const user = await this.model.findById(userID).populate('role');
       return user.role._id;
     } catch (error) {
-      console.error(`[OwnerUser] Erro ao buscar role para userID: ${userID}\n ${error.message}`);
       throw error;
     }
   }

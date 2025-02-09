@@ -9,9 +9,23 @@ export default class OwnerUserController extends Controller {
   }
 
   initializeCustomRoutes() {
+    this.router.get('validate-session', this.validateSession.bind(this));
     this.router.post('/login', this.login.bind(this));
     this.router.post('/logout', this.logout.bind(this));
     this.router.post('/signup', this.signUp.bind(this));
+  }
+
+  validateSession(req, res, next) {
+    try {
+      const { token } = req.cookies;
+      const isValidSesseion = this.service.validateSession(token);
+      if (!isValidSesseion) {
+        throw new UnauthorizedError();
+      }
+      res.status(200).json(isValidSesseion);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async signUp(req, res, next) {

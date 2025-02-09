@@ -1,7 +1,8 @@
 import PersonModel from '../../person/PersonModel.js';
 import user from '#core/entities/domain/user/User.js';
-import auth from '#core/adapters/auth/authentication/index.js';
+import auth from '#core/adapters/auth/index.js';
 import { UnauthorizedError, InvalidRequestError } from '#src/errors/Exceptions.js';
+import logger from '#src/debug/logger.js';
 
 const userSchema = {
   email: { type: String, required: true, unique: true },
@@ -14,8 +15,20 @@ export default class UserModel extends PersonModel {
     super(combinedSchema, modelName, options, middlewares);
   }
 
+  validateSession(token) {
+    try {
+      const decoded = auth.authentication.isAuthenticate(token);
+      if (!decoded) {
+        throw new UnauthorizedError();
+      }
+      return { loggedIn: true };
+    } catch (error) {
+      return { loggedIn: false };
+    }
+  }
+
   async signUp(userData) {
-    const hashedPassword = await auth.hash(userData.password);
+    const hashedPassword = await auth.authentication.hash(userData.password);
     userData.password = hashedPassword;
     return await super.signUp(userData);
   }
@@ -32,7 +45,7 @@ export default class UserModel extends PersonModel {
       hashedPassword: userRecord.password
     };
 
-    const isPasswordValid = areCredentialsValid ? await auth.authenticate(passwordComparison) : null;
+    const isPasswordValid = areCredentialsValid ? await auth.authentication.authenticate(passwordComparison) : null;
 
     if (!userRecord || !isPasswordValid) {
       throw new UnauthorizedError();

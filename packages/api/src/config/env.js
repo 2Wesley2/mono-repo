@@ -30,7 +30,6 @@ const findEnvFile = (startDir, fileName = '.env') => {
   return null;
 };
 
-// Determina o caminho do arquivo .env com base na variável de ambiente NODE_ENV.
 const envPath = ENVIRONMENTS_WITH_FILES.includes(process.env.NODE_ENV)
   ? findEnvFile(baseDir, `.env.${process.env.NODE_ENV}`) || findEnvFile(baseDir)
   : findEnvFile(baseDir);
@@ -41,7 +40,6 @@ if (!envPath) {
 
 dotenv.config({ path: envPath });
 
-// Variáveis de ambiente obrigatórias
 const requiredEnv = ['PORT', 'DB_HOST', 'DB_NAME', 'JWT_SECRET'];
 
 requiredEnv.forEach((envVar) => {

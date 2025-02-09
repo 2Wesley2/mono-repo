@@ -7,6 +7,10 @@ export default class OwnerUserRepository {
     this.model = model;
   }
 
+  validateSession(token) {
+    return this.model.validateSession(token);
+  }
+
   async signUp(userData) {
     return await this.model.signUp(userData);
   }
