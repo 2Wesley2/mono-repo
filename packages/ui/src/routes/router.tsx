@@ -12,6 +12,7 @@ import FinancePage from '../pages/Finance/finance';
 import LoginPage from '../pages/login/page';
 import { AuthContextProvider } from '../context/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import { CashbackConfigPage } from '../pages/CashbackConfig/CashbackConfig';
 
 const AppRouter = () => {
   return (
@@ -22,6 +23,7 @@ const AppRouter = () => {
           <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/cashback/config" element={<CashbackConfigPage />} />
           <Route path="/comandas" element={<ProtectedRoute element={<ComandaControlPage />} />} />
           <Route path="/products" element={<ProtectedRoute element={<ProductListPage />} />} />
           <Route path="/employee" element={<ProtectedRoute element={<EmployeeListPage />} />} />
