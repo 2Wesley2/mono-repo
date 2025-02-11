@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import NavBar from '../../components/NavBar/NavBar';
 import { ToggleButton } from '../../components/cashback/ToggleButton';
 import { Tabs } from '../../components/cashback/Tabs';
-import { TierList } from '../../components/cashback/TierList';
+import { TierListUI } from '../../components/cashback/TierList';
 
 export const CashbackConfigPage: React.FC = () => {
   const [tiers, setTiers] = useState([{ id: 1, minValue: 0, creditValue: 0 }]);
 
   const tabs = [
-    { label: 'Geração', content: <TierList tiers={tiers} setTiers={setTiers} /> },
+    { label: 'Geração', content: <TierListUI tiers={tiers} setTiers={setTiers} /> },
     { label: 'Condição', content: <p>Conteúdo do Condição</p> }
   ];
 
