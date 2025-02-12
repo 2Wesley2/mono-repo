@@ -7,22 +7,20 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "audit:all": "lerna exec -- yarn audit",
-    "dev": "concurrently \"yarn workspace api dev\" \"yarn workspace ui start\"",
+    "audit:all": "lerna exec -- npm audit",
+    "dev": "concurrently \"npm run --workspace api dev\" \"npm run --workspace ui start\"",
     "lint": "lerna run lint",
     "test": "lerna run test",
     "clean": "lerna clean",
-    "start": "concurrently \"yarn workspace api dev\" \"yarn workspace ui start\"",
+    "start": "concurrently \"npm run --workspace api dev\" \"npm run --workspace ui start\"",
     "format": "prettier --write . && eslint --fix .",
     "format:json": "prettier --write '**/*.json'",
     "lint:json": "eslint '**/*.json'",
-    "format:all": "lerna exec --concurrency 1 -- yarn format",
-    "lint:all": "lerna exec --concurrency 1 -- yarn lint",
-    "format-and-lint:all": "lerna exec --concurrency 1 -- yarn format && lerna exec --concurrency 1 -- yarn lint",
-    "bootstrap:yarn": "lerna bootstrap --npm-client yarn",
+    "format:all": "lerna exec --concurrency 1 -- npm run format",
+    "lint:all": "lerna exec --concurrency 1 -- npm run lint",
+    "format-and-lint:all": "lerna exec --concurrency 1 -- npm run format && lerna exec --concurrency 1 -- npm run lint",
     "bootstrap:npm": "lerna bootstrap --npm-client npm",
-    "clean:yarn": "lerna clean && yarn install",
-    "clean:npm": "lerna clean && npm install",
+    "clean:npm": "lerna clean && npm ci",
     "test-fetch": "node --loader ts-node/esm --loader tsconfig-paths/register packages/ui/src/services/test-fetch.ts"
   },
   "workspaces": ["packages/api", "packages/ui"],
@@ -71,15 +69,10 @@
     "ts-prune": "^0.10.3",
     "typescript": "^5.7.3"
   },
-  "resolutions": {
-    "@humanwhocodes/config-array": "0.13.0",
-    "@humanwhocodes/object-schema": "2.0.3",
-    "glob": "^9.3.5",
-    "micromatch": "^4.0.8",
-    "nth-check": ">=2.0.1",
-    "openapi-types": "^7.0.0",
-    "postcss": ">=8.4.31",
-    "rimraf": "^4.4.1",
-    "z-schema": "^5.0.1"
+  "overrides": {
+    "nth-check": "2.0.1",
+    "resolve-url-loader": {
+      "postcss": "8.4.31"
+    }
   }
 }

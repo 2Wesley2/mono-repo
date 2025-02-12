@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
-import * as React from 'react';
 
 const tabButtonVariants = cva('inline-block p-4 border-b-2 rounded-t-lg w-full', {
   variants: {
@@ -14,7 +14,7 @@ const tabButtonVariants = cva('inline-block p-4 border-b-2 rounded-t-lg w-full',
   }
 });
 
-const tabPanelVariants = cva('p-4 rounded-lg bg-gray-50 dark:bg-gray-800', {
+const tabPanelVariants = cva('p-4 rounded-lg bg-white', {
   variants: {
     active: {
       true: 'block',

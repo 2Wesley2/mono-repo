@@ -7,8 +7,8 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const tabWidth = `${100 / tabs.length}%`;
 
   return (
-    <div>
-      <nav className="mb-4 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full min-h-0 ">
+      <nav className="mb-4 border-b">
         <ul className="flex flex-row -mb-px text-sm font-medium text-center" role="tablist">
           {tabs.map((tab, index) => (
             <li key={index} className="me-2" role="presentation" style={{ width: tabWidth }}>
@@ -25,7 +25,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ))}
         </ul>
       </nav>
-      <div>
+      <div className="flex-1 min-h-0 overflow-y-auto w-1/2 scrollbar-tabs p-[1%]">
         {tabs.map((tab, index) => (
           <TabPanel key={index} active={activeTab === index} role="tabpanel" aria-labelledby={`tab-${index}`}>
             {tab.content}
