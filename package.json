@@ -23,13 +23,17 @@
     "clean:npm": "lerna clean && npm ci",
     "test-fetch": "node --loader ts-node/esm --loader tsconfig-paths/register packages/ui/src/services/test-fetch.ts"
   },
-  "workspaces": ["packages/api", "packages/ui"],
+  "workspaces": [
+    "packages/api",
+    "packages/ui"
+  ],
   "dependencies": {
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.21.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-syntax-flow": "^7.14.5",
     "@babel/plugin-transform-react-jsx": "^7.14.9",
     "@babel/preset-env": "^7.26.7",
@@ -70,6 +74,8 @@
     "typescript": "^5.7.3"
   },
   "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "nth-check": "2.0.1",
     "resolve-url-loader": {
       "postcss": "8.4.31"
