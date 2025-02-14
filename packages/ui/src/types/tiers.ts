@@ -1,5 +1,5 @@
 export interface Tier {
-  id: number;
+  id: string; // alterado de number para string
   minValue: number;
   creditValue: number;
 }
@@ -9,9 +9,18 @@ export interface TierListProps {
   setTiers: React.Dispatch<React.SetStateAction<Tier[]>>;
 }
 
+export interface TierFieldProps {
+  label: string;
+  fieldId: string;
+  value: number;
+  editing: boolean;
+  onChange: (value: number) => void;
+  className?: string;
+}
+
 export interface TierListPropsUI {
   tiers: Tier[];
-  editingTier: { [id: number]: boolean };
-  onToggleEditing: (id: number) => void;
-  onChange: (id: number, field: string, value: number) => void;
+  editingTier: { [id: string]: boolean };
+  onToggleEditing: (id: string) => void;
+  onChange: (id: string, field: string, value: number) => void;
 }

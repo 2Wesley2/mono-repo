@@ -3,13 +3,13 @@ import { TierList } from '../../ui/tierList';
 import { TierListProps } from '../../types/tiers';
 
 export const TierListUI: React.FC<TierListProps> = ({ tiers, setTiers }) => {
-  const [editingTier, setEditingTier] = useState<{ [id: number]: boolean }>({});
+  const [editingTier, setEditingTier] = useState<{ [id: string]: boolean }>({}); // alterado para string
 
-  const handleInputChange = (id: number, field: string, value: number) => {
+  const handleInputChange = (id: string, field: string, value: number) => {
     setTiers((prevTiers) => prevTiers.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier)));
   };
 
-  const toggleEditingTier = (id: number) => {
+  const toggleEditingTier = (id: string) => {
     setEditingTier((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 

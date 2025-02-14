@@ -6,7 +6,7 @@ import { TierListUI } from '../../components/cashback/TierList';
 import { Tier } from '../../types/tiers';
 
 const mockedTiers: Tier[] = Array.from({ length: 50 }, (_, index) => ({
-  id: index + 1,
+  id: String(index + 1),
   minValue: index * 100,
   creditValue: (index + 1) * 5
 }));

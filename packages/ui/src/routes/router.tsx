@@ -11,7 +11,7 @@ import SettingsPage from '../pages/Settings/settings';
 import FinancePage from '../pages/Finance/finance';
 import LoginPage from '../pages/login/page';
 import { AuthContextProvider } from '../context/AuthContext';
-import ProtectedRoute from './ProtectedRoute';
+// import ProtectedRoute from './ProtectedRoute';
 import { CashbackConfigPage } from '../pages/CashbackConfig/CashbackConfig';
 
 const AppRouter = () => {
@@ -20,16 +20,16 @@ const AppRouter = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/cashback/config" element={<CashbackConfigPage />} />
-          <Route path="/comandas" element={<ProtectedRoute element={<ComandaControlPage />} />} />
-          <Route path="/products" element={<ProtectedRoute element={<ProductListPage />} />} />
-          <Route path="/employee" element={<ProtectedRoute element={<EmployeeListPage />} />} />
-          <Route path="/clients" element={<ProtectedRoute element={<ClientPage />} />} />
-          <Route path="/finance" element={<ProtectedRoute element={<FinancePage />} />} />
-          <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} />} />
+          <Route path="/comandas" element={<ComandaControlPage />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/employee" element={<EmployeeListPage />} />
+          <Route path="/clients" element={<ClientPage />} />
+          <Route path="/finance" element={<FinancePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </Router>
     </AuthContextProvider>
