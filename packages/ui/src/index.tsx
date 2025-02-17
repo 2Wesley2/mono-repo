@@ -4,7 +4,8 @@ import './globals.css';
 import AppRouter from './routes/router';
 
 document.documentElement.lang = 'pt-br';
-const root = ReactDOM.createRoot(document.body! as HTMLBodyElement);
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <React.StrictMode>

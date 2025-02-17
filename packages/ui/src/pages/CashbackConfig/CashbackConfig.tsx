@@ -1,21 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NavBar from '../../components/NavBar/NavBar';
 import { ToggleButton } from '../../components/cashback/ToggleButton';
 import { Tabs } from '../../components/cashback/Tabs';
-import { TierListUI } from '../../components/cashback/TierList';
-import { Tier } from '../../types/tiers';
-
-const mockedTiers: Tier[] = Array.from({ length: 50 }, (_, index) => ({
-  id: String(index + 1),
-  minValue: index * 100,
-  creditValue: (index + 1) * 5
-}));
+import { TierList } from '../../components/TierList';
 
 export const CashbackConfigPage: React.FC = () => {
-  const [tiers, setTiers] = useState(mockedTiers);
-
   const tabs = [
-    { label: 'Geração', content: <TierListUI tiers={tiers} setTiers={setTiers} /> },
+    { label: 'Geração', content: <TierList /> },
     { label: 'Utilização', content: <p>Conteúdo do Condição</p> }
   ];
 
