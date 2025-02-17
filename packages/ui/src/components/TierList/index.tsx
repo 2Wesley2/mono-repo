@@ -50,14 +50,12 @@ export const TierList = () => {
             key={tier.id + '-min'}
             value={tier.minValue}
             editing={isEditing}
-            onClick={() => handleEdit(tier.id)}
             onChange={handleChange(tier.id, 'minValue')}
           />
           <TierCard.ToggleInput
             key={tier.id + '-credit'}
             value={tier.creditValue}
             editing={isEditing}
-            onClick={() => handleEdit(tier.id)}
             onChange={handleChange(tier.id, 'creditValue')}
           />
         </TierCard.Root>

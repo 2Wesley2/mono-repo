@@ -1,44 +1,43 @@
-import React, { MouseEvent, ChangeEventHandler } from 'react';
+import React, { MouseEvent, ChangeEventHandler, useCallback } from 'react';
 import { SxProps, Theme, Typography, TextField } from '@mui/material';
 import { TierItem } from '../../ui/tier';
 
+type OnClickHandler = (e: MouseEvent<HTMLButtonElement>) => void;
 interface TierCardRootProps {
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   children?: React.ReactNode;
   editing?: boolean;
   label?: string;
   sx?: SxProps<Theme>;
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const TierCardRoot: React.FC<TierCardRootProps> = (props) => {
   const { children, label, sx, onClick } = props;
+  const handleIconClick = useCallback<OnClickHandler>(
+    (e) => {
+      onClick(e);
+    },
+    [onClick]
+  );
   return (
     <TierItem.Root sx={sx}>
       <Typography>Faixa {label}</Typography>
-      <TierItem.IconEdit
-        onClick={(e) => {
-          console.log('Clique no IconEdit:', e);
-          onClick(e);
-        }}
-      />
+      <TierItem.IconEdit onClick={handleIconClick} />
       {children}
     </TierItem.Root>
   );
 };
 
 interface TierToggleInputProps {
-  onClick: (e: MouseEvent<HTMLElement>) => void;
   onChange: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
   value: string | number;
   editing?: boolean;
 }
 
 const TierToggleInput: React.FC<TierToggleInputProps> = (props) => {
-  const { onClick, onChange, value, editing } = props;
+  const { onChange, value, editing } = props;
   return (
-    <div onClick={(e) => onClick(e)}>
-      {editing ? <TextField value={value} onChange={(e) => onChange(e)} /> : <Typography>{value}</Typography>}
-    </div>
+    <div>{editing ? <TextField value={value} onChange={(e) => onChange(e)} /> : <Typography>{value}</Typography>}</div>
   );
 };
 
