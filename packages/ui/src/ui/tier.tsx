@@ -1,24 +1,24 @@
 import React, { MouseEvent, FC, memo, useCallback } from 'react';
-import { SxProps, Theme, IconButton, Paper, ListItem } from '@mui/material';
+import { IconButton, Paper, ListItem } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
+import { TierItemRootProps, TierIconEditProps, OnClickHandler, TierItemComponents } from '../types/tier';
 
-interface TierItemRootProps {
-  children: React.ReactNode;
-  sx?: SxProps<Theme>;
-}
+const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
+  const { children, sx } = props;
+  return (
+    <ListItem>
+      <Paper elevation={1} tabIndex={0} role="group" sx={sx}>
+        {children}
+      </Paper>
+    </ListItem>
+  );
+});
 
-const TierItemRoot: FC<TierItemRootProps> = memo(({ children, sx }) => (
-  <ListItem>
-    <Paper elevation={1} tabIndex={0} role="group" sx={sx}>
-      {children}
-    </Paper>
-  </ListItem>
-));
 TierItemRoot.displayName = 'TierItemRoot';
 
-type OnClickHandler = (e: MouseEvent<HTMLButtonElement>) => void;
-const TierIconEdit: FC<{ onClick: OnClickHandler }> = memo(({ onClick }) => {
-  const handleClick = useCallback(
+const TierIconEdit: FC<TierIconEditProps> = memo((props) => {
+  const { onClick } = props;
+  const handleClick: OnClickHandler = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       onClick(e);
     },
@@ -31,14 +31,10 @@ const TierIconEdit: FC<{ onClick: OnClickHandler }> = memo(({ onClick }) => {
     </IconButton>
   );
 });
+
 TierIconEdit.displayName = 'TierIconEdit';
 
-type TierItemInterface = {
-  Root: FC<TierItemRootProps>;
-  IconEdit: FC<{ onClick: OnClickHandler }>;
-};
-
-export const TierItem: TierItemInterface = {
+export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
   IconEdit: TierIconEdit
 } as const;

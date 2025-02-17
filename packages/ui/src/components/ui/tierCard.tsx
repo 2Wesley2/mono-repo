@@ -1,19 +1,9 @@
-import React, { MouseEvent, useCallback, FC, memo } from 'react';
-import { SxProps, Theme, Typography, TextField } from '@mui/material';
+import React, { useCallback, FC, memo } from 'react';
+import { Typography, TextField } from '@mui/material';
 import { TierItem } from '../../ui/tier';
+import { TierCardRootProps, OnClickHandler, TierToggleInputProps, TierCardComponents } from '../../types/tier';
 
-type InputChangeHandler = React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
-type OnClickHandler = (e: MouseEvent<HTMLButtonElement>) => void;
-
-interface TierCardRootProps {
-  onClick: OnClickHandler;
-  children?: React.ReactNode;
-  editing?: boolean;
-  label?: string;
-  sx?: SxProps<Theme>;
-}
-
-const TierCardRootComponent: FC<TierCardRootProps> = (props) => {
+const TierCardRoot: FC<TierCardRootProps> = memo((props) => {
   const { children, label, sx, onClick } = props;
   const handleIconClick: OnClickHandler = useCallback(
     (e) => {
@@ -28,31 +18,18 @@ const TierCardRootComponent: FC<TierCardRootProps> = (props) => {
       {children}
     </TierItem.Root>
   );
-};
+});
 
-const MemoizedTierCardRoot = memo(TierCardRootComponent);
-MemoizedTierCardRoot.displayName = 'TierCardRootComponent';
+TierCardRoot.displayName = 'TierCardRoot';
 
-interface TierToggleInputProps {
-  onChange: InputChangeHandler;
-  value: string | number;
-  editing?: boolean;
-}
-
-const TierToggleInputComponent: FC<TierToggleInputProps> = (props) => {
+const TierToggleInput: FC<TierToggleInputProps> = memo((props) => {
   const { onChange, value, editing } = props;
   return editing ? <TextField value={value} onChange={(e) => onChange(e)} /> : <Typography>{value}</Typography>;
-};
+});
 
-const MemoizedTierToggleInput = memo(TierToggleInputComponent);
-MemoizedTierToggleInput.displayName = 'TierToggleInputComponent';
-
-type TierCardComponents = {
-  Root: FC<TierCardRootProps>;
-  ToggleInput: FC<TierToggleInputProps>;
-};
+TierToggleInput.displayName = 'TierToggleInput';
 
 export const TierCard: TierCardComponents = {
-  Root: MemoizedTierCardRoot,
-  ToggleInput: MemoizedTierToggleInput
+  Root: TierCardRoot,
+  ToggleInput: TierToggleInput
 } as const;

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, ChangeEvent, useCallback, memo, FC } from 'react';
+import React, { useState, useEffect, useMemo, Dispatch, SetStateAction, useCallback, memo, FC } from 'react';
 import { List } from '@mui/material';
-import { Tier } from '../../types/tier';
+import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
 import { TierCard } from '../ui/tierCard';
 
 const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
@@ -10,15 +10,10 @@ const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
 }));
 type EditingId = string | null;
 type HandleEdit = (id: string) => void;
-type SetTiers = React.Dispatch<React.SetStateAction<Tier[]>>;
-type SetEditingId = React.Dispatch<React.SetStateAction<string | null>>;
-type IHandleChange = <K extends keyof Omit<Tier, 'id'>>(
-  id: string,
-  field: K
-) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-type TierChangePayload<K extends keyof Omit<Tier, 'id'>> = { id: string } & Required<Pick<Tier, K>>;
+type SetTiers = Dispatch<SetStateAction<Tier[]>>;
+type SetEditingId = Dispatch<SetStateAction<EditingId>>;
 
-const TierListComponent: FC = () => {
+export const TierList: FC = memo(() => {
   const [tiers, setTiers]: [Tier[], SetTiers] = useState<Tier[]>([]);
   const [editingId, setEditingId]: [EditingId, SetEditingId] = useState<EditingId>(null);
 
@@ -73,6 +68,5 @@ const TierListComponent: FC = () => {
   }, [tiers, editingId, handleEdit, handleChange]);
 
   return <List>{cards}</List>;
-};
-TierListComponent.displayName = 'TierListComponent';
-export const TierList = memo(TierListComponent);
+});
+TierList.displayName = 'TierList';
