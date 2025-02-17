@@ -3,13 +3,27 @@ import { IconButton, Paper, ListItem } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { TierItemRootProps, TierIconEditProps, OnClickHandler, TierItemComponents } from '../types/tier';
 
+const styles = {
+  ListItem: {
+    display: 'flex',
+    width: '100%'
+  }
+};
+
 const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
   const { children, sx } = props;
   return (
-    <ListItem>
-      <Paper elevation={1} tabIndex={0} role="group" sx={sx}>
-        {children}
-      </Paper>
+    <ListItem
+      component={Paper}
+      tabIndex={0}
+      role="group"
+      square={true}
+      disableGutters={false}
+      divider={true}
+      variant="outlined"
+      sx={{ ...sx, ...styles.ListItem }}
+    >
+      {children}
     </ListItem>
   );
 });
@@ -17,7 +31,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
 TierItemRoot.displayName = 'TierItemRoot';
 
 const TierIconEdit: FC<TierIconEditProps> = memo((props) => {
-  const { onClick } = props;
+  const { onClick, sx } = props;
   const handleClick: OnClickHandler = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       onClick(e);
@@ -26,7 +40,7 @@ const TierIconEdit: FC<TierIconEditProps> = memo((props) => {
   );
 
   return (
-    <IconButton onClick={handleClick}>
+    <IconButton sx={{ ...sx }} edge={false} disableFocusRipple={true} onClick={handleClick}>
       <EditIcon />
     </IconButton>
   );

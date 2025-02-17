@@ -1,6 +1,5 @@
 import { ReactNode, FC, MouseEvent, ChangeEventHandler, ChangeEvent } from 'react';
 import { SxProps, Theme } from '@mui/material';
-
 export interface Tier {
   id: string;
   minValue: number;
@@ -22,7 +21,6 @@ export interface TierCardRootProps {
   children?: ReactNode;
   editing?: boolean;
   label?: string;
-  sx?: SxProps<Theme>;
 }
 
 export interface TierToggleInputProps {
@@ -38,6 +36,7 @@ export interface TierItemRootProps {
 
 export interface TierIconEditProps {
   onClick: OnClickHandler;
+  sx?: SxProps<Theme>;
 }
 
 export interface TierItemComponents {

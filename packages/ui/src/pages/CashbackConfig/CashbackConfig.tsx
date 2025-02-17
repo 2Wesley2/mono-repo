@@ -14,9 +14,7 @@ export const CashbackConfigPage: React.FC = () => {
     <div className="flex flex-row min-h-screen max-h-screen bg-background text-foreground">
       <NavBar />
       <main className="flex flex-col flex-1 w-full text-foreground">
-        <header className="w-full flex justify-center p-4">
-          <h1 className="text-4xl font-normal uppercase mb-4">Configuração de Cashback</h1>
-        </header>
+        <header className="w-full flex justify-center p-4"></header>
         <div className="container mx-auto p-4">
           <ToggleButton label="Cashback" />
         </div>
