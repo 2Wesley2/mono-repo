@@ -1,19 +1,21 @@
-import React, { MouseEvent, ChangeEventHandler, useCallback } from 'react';
+import React, { MouseEvent, useCallback, FC, memo } from 'react';
 import { SxProps, Theme, Typography, TextField } from '@mui/material';
 import { TierItem } from '../../ui/tier';
 
+type InputChangeHandler = React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
 type OnClickHandler = (e: MouseEvent<HTMLButtonElement>) => void;
+
 interface TierCardRootProps {
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClick: OnClickHandler;
   children?: React.ReactNode;
   editing?: boolean;
   label?: string;
   sx?: SxProps<Theme>;
 }
 
-const TierCardRoot: React.FC<TierCardRootProps> = (props) => {
+const TierCardRootComponent: FC<TierCardRootProps> = (props) => {
   const { children, label, sx, onClick } = props;
-  const handleIconClick = useCallback<OnClickHandler>(
+  const handleIconClick: OnClickHandler = useCallback(
     (e) => {
       onClick(e);
     },
@@ -28,20 +30,29 @@ const TierCardRoot: React.FC<TierCardRootProps> = (props) => {
   );
 };
 
+const MemoizedTierCardRoot = memo(TierCardRootComponent);
+MemoizedTierCardRoot.displayName = 'TierCardRootComponent';
+
 interface TierToggleInputProps {
-  onChange: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
+  onChange: InputChangeHandler;
   value: string | number;
   editing?: boolean;
 }
 
-const TierToggleInput: React.FC<TierToggleInputProps> = (props) => {
+const TierToggleInputComponent: FC<TierToggleInputProps> = (props) => {
   const { onChange, value, editing } = props;
-  return (
-    <div>{editing ? <TextField value={value} onChange={(e) => onChange(e)} /> : <Typography>{value}</Typography>}</div>
-  );
+  return editing ? <TextField value={value} onChange={(e) => onChange(e)} /> : <Typography>{value}</Typography>;
 };
 
-export const TierCard = {
-  Root: TierCardRoot,
-  ToggleInput: TierToggleInput
+const MemoizedTierToggleInput = memo(TierToggleInputComponent);
+MemoizedTierToggleInput.displayName = 'TierToggleInputComponent';
+
+type TierCardComponents = {
+  Root: FC<TierCardRootProps>;
+  ToggleInput: FC<TierToggleInputProps>;
+};
+
+export const TierCard: TierCardComponents = {
+  Root: MemoizedTierCardRoot,
+  ToggleInput: MemoizedTierToggleInput
 } as const;

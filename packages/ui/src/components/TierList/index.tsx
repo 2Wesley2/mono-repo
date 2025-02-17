@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
+import React, { useState, useEffect, useMemo, ChangeEvent, useCallback, memo, FC } from 'react';
 import { List } from '@mui/material';
 import { Tier } from '../../types/tier';
 import { TierCard } from '../ui/tierCard';
@@ -8,40 +8,49 @@ const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
   minValue: index * 100,
   creditValue: (index + 1) * 5
 }));
-
+type EditingId = string | null;
+type HandleEdit = (id: string) => void;
+type SetTiers = React.Dispatch<React.SetStateAction<Tier[]>>;
+type SetEditingId = React.Dispatch<React.SetStateAction<string | null>>;
 type IHandleChange = <K extends keyof Omit<Tier, 'id'>>(
   id: string,
   field: K
 ) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-
 type TierChangePayload<K extends keyof Omit<Tier, 'id'>> = { id: string } & Required<Pick<Tier, K>>;
 
-export const TierList = () => {
-  const [tiers, setTiers] = useState<Tier[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+const TierListComponent: FC = () => {
+  const [tiers, setTiers]: [Tier[], SetTiers] = useState<Tier[]>([]);
+  const [editingId, setEditingId]: [EditingId, SetEditingId] = useState<EditingId>(null);
 
-  const handleEdit = (id: string) => {
-    setEditingId((prev) => (prev === id ? null : id));
-  };
+  const handleEdit: HandleEdit = useCallback(
+    (id: string): void => {
+      setEditingId((prev) => (prev === id ? null : id));
+    },
+    [setEditingId]
+  );
 
-  const handleChange: IHandleChange = (id, field) => (e) => {
-    const inputValue = e.target.value;
-    const newValue = isNaN(Number(inputValue)) ? inputValue : Number(inputValue);
-    const change: TierChangePayload<typeof field> = {
-      id,
-      [field]: newValue
-    } as TierChangePayload<typeof field>;
+  const handleChange: IHandleChange = useCallback(
+    (id, field) =>
+      (e): void => {
+        const inputValue = e.target.value;
+        const newValue = isNaN(Number(inputValue)) ? inputValue : Number(inputValue);
+        const change: TierChangePayload<typeof field> = {
+          id,
+          [field]: newValue
+        } as TierChangePayload<typeof field>;
 
-    setTiers((prevTiers) => prevTiers.map((tier) => (tier.id === id ? { ...tier, ...change } : tier)));
-  };
+        setTiers((prevTiers) => prevTiers.map((tier) => (tier.id === id ? { ...tier, ...change } : tier)));
+      },
+    [setTiers]
+  );
 
   useEffect(() => {
     setTimeout(() => {
       setTiers(mockedTiers);
-    }, 1000);
+    });
   }, []);
 
-  const cards = useMemo(() => {
+  const cards: JSX.Element[] = useMemo(() => {
     return tiers.map((tier) => {
       const isEditing = editingId === tier.id;
       return (
@@ -61,7 +70,9 @@ export const TierList = () => {
         </TierCard.Root>
       );
     });
-  }, [tiers, editingId]);
+  }, [tiers, editingId, handleEdit, handleChange]);
 
   return <List>{cards}</List>;
 };
+TierListComponent.displayName = 'TierListComponent';
+export const TierList = memo(TierListComponent);
