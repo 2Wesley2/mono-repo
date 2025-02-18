@@ -35,7 +35,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
       disableGutters={false}
       divider={true}
       variant="outlined"
-      sx={{ ...(styles.TierItemRoot as Styles).ListItem, ...(sx as Styles) }}
+      sx={{ ...((styles.TierItemRoot as Styles).ListItem as Styles), ...(sx as Styles) }}
     >
       {children}
     </ListItem>
@@ -46,9 +46,12 @@ TierItemRoot.displayName = 'TierItemRoot';
 const TierItemDetails: FC<TierItemDetailsProps> = memo((props: TierItemDetailsProps) => {
   const { title, value, sxTitle, sxValue } = props;
   return (
-    <Typography sx={{ ...(styles.TierItemDetails as Styles).Typography, ...(sxValue as Styles) }}>
+    <Typography sx={{ ...((styles.TierItemDetails as Styles).Typography as Styles), ...(sxValue as Styles) }}>
       {title && (
-        <Typography variant="subtitle2" sx={{ ...styles.Typography, ...(sxTitle as Styles) }}>
+        <Typography
+          variant="subtitle2"
+          sx={{ ...((styles.TierItemDetails as Styles).Typography as Styles), ...(sxTitle as Styles) }}
+        >
           {title}
         </Typography>
       )}
@@ -69,7 +72,7 @@ const TierIconEdit: FC<TierIconEditProps> = memo((props: TierIconEditProps) => {
   );
 
   return (
-    <IconButton sx={{ ...sx }} edge={false} disableFocusRipple={true} onClick={handleClick}>
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple={true} onClick={handleClick}>
       <EditIcon />
     </IconButton>
   );

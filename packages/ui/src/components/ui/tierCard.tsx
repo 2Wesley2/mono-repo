@@ -5,7 +5,7 @@ import { Styles } from '../../types/style';
 import { TierCardRootProps, OnClickHandler, TierToggleInputProps, TierCardComponents } from '../../types/tier';
 
 const styles: Styles = {
-  TierItemRoot: {
+  TierCardRoot: {
     Root: { flexDirection: 'column' },
     Box: {
       display: 'flex',
@@ -17,8 +17,8 @@ const styles: Styles = {
   TierToggleInput: {
     Box: {
       display: 'flex',
-      flexDirection: 'column',
-      gap: 1.2
+      width: '100%',
+      gap: '1rem'
     }
   }
 };
@@ -32,8 +32,8 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
     [onClick]
   );
   return (
-    <TierItem.Root sx={{ ...(styles.TierItemRoot as Styles).Root, ...(sxRoot as Styles) }}>
-      <Box sx={{ ...styles.Box, ...(sxBox as Styles) }}>
+    <TierItem.Root sx={{ ...((styles.TierCardRoot as Styles).Root as Styles), ...(sxRoot as Styles) }}>
+      <Box sx={{ ...((styles.TierCardRoot as Styles).Box as Styles), ...(sxBox as Styles) }}>
         <Typography>Faixa {label}</Typography>
         <TierItem.IconEdit onClick={handleIconClick} />
       </Box>
@@ -45,9 +45,9 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
 TierCardRoot.displayName = 'TierCardRoot';
 
 const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputProps) => {
-  const { onChange, value, editing, title, label } = props;
+  const { onChange, value, editing, title, label, sxBox } = props;
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
+    <Box sx={{ ...((styles.TierToggleInput as Styles).Box as Styles), ...(sxBox as Styles) }}>
       {editing ? (
         <TextField label={label} value={value} onChange={(e) => onChange(e)} fullWidth={true} />
       ) : (
