@@ -1,8 +1,10 @@
 import React, { useCallback, FC, memo } from 'react';
 import { Typography, TextField, Box } from '@mui/material';
 import { TierItem } from '../../ui/tier';
+import { Styles } from '../../types/style';
 import { TierCardRootProps, OnClickHandler, TierToggleInputProps, TierCardComponents } from '../../types/tier';
-const styles = {
+
+const styles: Styles = {
   Typography: {
     width: '100%'
   },

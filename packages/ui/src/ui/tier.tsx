@@ -2,8 +2,9 @@ import React, { MouseEvent, FC, memo, useCallback } from 'react';
 import { IconButton, Paper, ListItem } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { TierItemRootProps, TierIconEditProps, OnClickHandler, TierItemComponents } from '../types/tier';
+import { Styles } from '../types/style';
 
-const styles = {
+const styles: Styles = {
   ListItem: {
     display: 'flex',
     width: '100%'
@@ -11,7 +12,7 @@ const styles = {
 };
 
 const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
-  const { children, sx } = props;
+  const { children, sx = {} } = props;
   return (
     <ListItem
       component={Paper}
@@ -21,7 +22,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
       disableGutters={false}
       divider={true}
       variant="outlined"
-      sx={{ ...sx, ...styles.ListItem }}
+      sx={{ ...styles.ListItem, ...(sx as object) }}
     >
       {children}
     </ListItem>
