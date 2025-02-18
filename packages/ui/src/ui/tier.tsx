@@ -35,7 +35,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
       disableGutters={false}
       divider={true}
       variant="outlined"
-      sx={{ ...(styles.ListItem as Styles).ListItem, ...(sx as Styles) }}
+      sx={{ ...(styles.TierItemRoot as Styles).ListItem, ...(sx as Styles) }}
     >
       {children}
     </ListItem>
