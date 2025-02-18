@@ -34,7 +34,9 @@ export const TierList: FC = memo(() => {
           [field]: newValue
         } as TierChangePayload<typeof field>;
 
-        setTiers((prevTiers) => prevTiers.map((tier) => (tier.id === id ? { ...tier, ...change } : tier)));
+        setTiers((prevTiers: Tier[]) =>
+          prevTiers.map((tier: Tier) => (tier.id === id ? { ...tier, ...change } : tier))
+        );
       },
     [setTiers]
   );
@@ -46,18 +48,24 @@ export const TierList: FC = memo(() => {
   }, []);
 
   const cards: JSX.Element[] = useMemo(() => {
-    return tiers.map((tier) => {
-      const isEditing = editingId === tier.id;
+    return tiers.map((tier: Tier) => {
+      const isEditing: boolean = editingId === tier.id;
+      const minValue: string = 'Valor mínimo';
+      const creditValue: string = 'Crédito';
       return (
         <TierCard.Root key={tier.id} label={tier.id} editing={isEditing} onClick={() => handleEdit(tier.id)}>
           <TierCard.ToggleInput
             key={tier.id + '-min'}
+            title={minValue}
+            label={minValue}
             value={tier.minValue}
             editing={isEditing}
             onChange={handleChange(tier.id, 'minValue')}
           />
           <TierCard.ToggleInput
             key={tier.id + '-credit'}
+            title={creditValue}
+            label={creditValue}
             value={tier.creditValue}
             editing={isEditing}
             onChange={handleChange(tier.id, 'creditValue')}

@@ -5,22 +5,26 @@ import { Styles } from '../../types/style';
 import { TierCardRootProps, OnClickHandler, TierToggleInputProps, TierCardComponents } from '../../types/tier';
 
 const styles: Styles = {
-  Typography: {
-    width: '100%'
-  },
-  Box: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between'
-  },
   TierItemRoot: {
-    flexDirection: 'column'
+    Root: { flexDirection: 'column' },
+    Box: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-between'
+    }
+  },
+  TierToggleInput: {
+    Box: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1.2
+    }
   }
 };
 
-const TierCardRoot: FC<TierCardRootProps> = memo((props) => {
-  const { children, label, onClick } = props;
+const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
+  const { children, label, onClick, sxRoot, sxBox } = props;
   const handleIconClick: OnClickHandler = useCallback(
     (e) => {
       onClick(e);
@@ -28,8 +32,8 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props) => {
     [onClick]
   );
   return (
-    <TierItem.Root sx={{ ...styles.TierItemRoot }}>
-      <Box sx={{ ...styles.Box }}>
+    <TierItem.Root sx={{ ...(styles.TierItemRoot as Styles).Root, ...(sxRoot as Styles) }}>
+      <Box sx={{ ...styles.Box, ...(sxBox as Styles) }}>
         <Typography>Faixa {label}</Typography>
         <TierItem.IconEdit onClick={handleIconClick} />
       </Box>
@@ -40,12 +44,16 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props) => {
 
 TierCardRoot.displayName = 'TierCardRoot';
 
-const TierToggleInput: FC<TierToggleInputProps> = memo((props) => {
-  const { onChange, value, editing } = props;
-  return editing ? (
-    <TextField value={value} onChange={(e) => onChange(e)} fullWidth={true} />
-  ) : (
-    <Typography sx={{ ...styles.Typography }}>{value}</Typography>
+const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputProps) => {
+  const { onChange, value, editing, title, label } = props;
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
+      {editing ? (
+        <TextField label={label} value={value} onChange={(e) => onChange(e)} fullWidth={true} />
+      ) : (
+        <TierItem.Details title={title} value={value} />
+      )}
+    </Box>
   );
 });
 

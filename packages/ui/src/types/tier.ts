@@ -17,8 +17,10 @@ export type IHandleChange = <K extends keyof Omit<Tier, 'id'>>(
 export type TierChangePayload<K extends keyof Omit<Tier, 'id'>> = { id: string } & Required<Pick<Tier, K>>;
 
 export interface TierCardRootProps {
-  onClick: OnClickHandler;
   children?: ReactNode;
+  onClick: OnClickHandler;
+  sxRoot?: SxProps<Theme>;
+  sxBox?: SxProps<Theme>;
   editing?: boolean;
   label?: string;
 }
@@ -27,11 +29,20 @@ export interface TierToggleInputProps {
   onChange: InputChangeHandler;
   value: string | number;
   editing?: boolean;
+  title?: string;
+  label?: string;
 }
 
 export interface TierItemRootProps {
   children: ReactNode;
   sx?: SxProps<Theme>;
+}
+
+export interface TierItemDetailsProps {
+  title?: string;
+  value: string | number;
+  sxTitle?: SxProps<Theme>;
+  sxValue?: SxProps<Theme>;
 }
 
 export interface TierIconEditProps {
@@ -41,6 +52,7 @@ export interface TierIconEditProps {
 
 export interface TierItemComponents {
   Root: FC<TierItemRootProps>;
+  Details: FC<TierItemDetailsProps>;
   IconEdit: FC<TierIconEditProps>;
 }
 

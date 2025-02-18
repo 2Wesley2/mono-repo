@@ -1,18 +1,31 @@
 import React, { MouseEvent, FC, memo, useCallback } from 'react';
-import { IconButton, Paper, ListItem } from '@mui/material';
+import { IconButton, Paper, ListItem, Typography } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
-import { TierItemRootProps, TierIconEditProps, OnClickHandler, TierItemComponents } from '../types/tier';
+import {
+  TierItemRootProps,
+  TierIconEditProps,
+  OnClickHandler,
+  TierItemDetailsProps,
+  TierItemComponents
+} from '../types/tier';
 import { Styles } from '../types/style';
 
 const styles: Styles = {
-  ListItem: {
-    display: 'flex',
-    width: '100%'
+  TierItemRoot: {
+    ListItem: {
+      display: 'flex',
+      width: '100%'
+    }
+  },
+  TierItemDetails: {
+    Typography: {
+      width: '100%'
+    }
   }
 };
 
-const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
-  const { children, sx = {} } = props;
+const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
+  const { children, sx } = props;
   return (
     <ListItem
       component={Paper}
@@ -22,7 +35,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
       disableGutters={false}
       divider={true}
       variant="outlined"
-      sx={{ ...styles.ListItem, ...(sx as object) }}
+      sx={{ ...(styles.ListItem as Styles).ListItem, ...(sx as Styles) }}
     >
       {children}
     </ListItem>
@@ -30,8 +43,23 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props) => {
 });
 
 TierItemRoot.displayName = 'TierItemRoot';
+const TierItemDetails: FC<TierItemDetailsProps> = memo((props: TierItemDetailsProps) => {
+  const { title, value, sxTitle, sxValue } = props;
+  return (
+    <Typography sx={{ ...(styles.TierItemDetails as Styles).Typography, ...(sxValue as Styles) }}>
+      {title && (
+        <Typography variant="subtitle2" sx={{ ...styles.Typography, ...(sxTitle as Styles) }}>
+          {title}
+        </Typography>
+      )}
+      {value}
+    </Typography>
+  );
+});
 
-const TierIconEdit: FC<TierIconEditProps> = memo((props) => {
+TierItemDetails.displayName = 'TierItemDetails';
+
+const TierIconEdit: FC<TierIconEditProps> = memo((props: TierIconEditProps) => {
   const { onClick, sx } = props;
   const handleClick: OnClickHandler = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -51,5 +79,6 @@ TierIconEdit.displayName = 'TierIconEdit';
 
 export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
+  Details: TierItemDetails,
   IconEdit: TierIconEdit
 } as const;
