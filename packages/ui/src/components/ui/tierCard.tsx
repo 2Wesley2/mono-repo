@@ -2,11 +2,19 @@ import React, { useCallback, FC, memo } from 'react';
 import { Typography, TextField, Box } from '@mui/material';
 import { TierItem } from '../../ui/tier';
 import { Styles } from '../../types/style';
-import { TierCardRootProps, OnClickHandler, TierToggleInputProps, TierCardComponents } from '../../types/tier';
+import {
+  TierCardRootProps,
+  TierHeaderProps,
+  OnClickHandler,
+  TierToggleInputProps,
+  TierCardComponents
+} from '../../types/tier';
 
 const styles: Styles = {
   TierCardRoot: {
-    Root: { flexDirection: 'column' },
+    Root: { flexDirection: 'column' }
+  },
+  TierHeader: {
     Box: {
       display: 'flex',
       flexDirection: 'row',
@@ -24,7 +32,18 @@ const styles: Styles = {
 };
 
 const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
-  const { children, label, onClick, sxRoot, sxBox } = props;
+  const { children, sx } = props;
+  return (
+    <TierItem.Root sx={{ ...((styles.TierCardRoot as Styles).Root as Styles), ...(sx as Styles) }}>
+      {children}
+    </TierItem.Root>
+  );
+});
+
+TierCardRoot.displayName = 'TierCardRoot';
+
+const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
+  const { title, onClick, sx } = props;
   const handleIconClick: OnClickHandler = useCallback(
     (e) => {
       onClick(e);
@@ -32,17 +51,14 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
     [onClick]
   );
   return (
-    <TierItem.Root sx={{ ...((styles.TierCardRoot as Styles).Root as Styles), ...(sxRoot as Styles) }}>
-      <Box sx={{ ...((styles.TierCardRoot as Styles).Box as Styles), ...(sxBox as Styles) }}>
-        <Typography>Faixa {label}</Typography>
-        <TierItem.IconEdit onClick={handleIconClick} />
-      </Box>
-      {children}
-    </TierItem.Root>
+    <Box sx={{ ...((styles.TierHeader as Styles).Box as Styles), ...(sx as Styles) }}>
+      <Typography>Faixa {title}</Typography>
+      <TierItem.IconEdit onClick={handleIconClick} />
+    </Box>
   );
 });
 
-TierCardRoot.displayName = 'TierCardRoot';
+TierHeader.displayName = 'TierHeader';
 
 const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputProps) => {
   const { onChange, value, editing, title, label, sxBox } = props;
@@ -61,5 +77,6 @@ TierToggleInput.displayName = 'TierToggleInput';
 
 export const TierCard: TierCardComponents = {
   Root: TierCardRoot,
+  Header: TierHeader,
   ToggleInput: TierToggleInput
 } as const;

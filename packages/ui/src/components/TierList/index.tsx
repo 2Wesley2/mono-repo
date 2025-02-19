@@ -53,7 +53,8 @@ export const TierList: FC = memo(() => {
       const minValue: string = 'Valor mínimo';
       const creditValue: string = 'Crédito';
       return (
-        <TierCard.Root key={tier.id} label={tier.id} editing={isEditing} onClick={() => handleEdit(tier.id)}>
+        <TierCard.Root key={tier.id}>
+          <TierCard.Header title={tier.id} onClick={() => handleEdit(tier.id)} />
           <TierCard.ToggleInput
             key={tier.id + '-min'}
             title={minValue}
