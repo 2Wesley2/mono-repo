@@ -21,7 +21,7 @@ export const TierList: FC = memo(() => {
     (id: string): void => {
       setEditingId((prev) => (prev === id ? null : id));
     },
-    [setEditingId]
+    [setEditingId as SetEditingId]
   );
 
   const handleChange: IHandleChange = useCallback(
@@ -38,7 +38,7 @@ export const TierList: FC = memo(() => {
           prevTiers.map((tier: Tier) => (tier.id === id ? { ...tier, ...change } : tier))
         );
       },
-    [setTiers]
+    [setTiers as SetTiers]
   );
 
   useEffect(() => {
@@ -72,10 +72,11 @@ export const TierList: FC = memo(() => {
             onChange={handleChange(tier.id, 'creditValue')}
           />
         </TierCard.Root>
-      );
+      ) as JSX.Element;
     });
   }, [tiers, editingId, handleEdit, handleChange]);
 
-  return <List>{cards}</List>;
+  return (<List>{cards}</List>) as JSX.Element;
 });
+
 TierList.displayName = 'TierList';

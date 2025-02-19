@@ -37,7 +37,7 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
     <TierItem.Root sx={{ ...((styles.TierCardRoot as Styles).Root as Styles), ...(sx as Styles) }}>
       {children}
     </TierItem.Root>
-  );
+  ) as JSX.Element;
 });
 
 TierCardRoot.displayName = 'TierCardRoot';
@@ -55,7 +55,7 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
       <Typography>Faixa {title}</Typography>
       <TierItem.IconEdit onClick={handleIconClick} />
     </Box>
-  );
+  ) as JSX.Element;
 });
 
 TierHeader.displayName = 'TierHeader';
@@ -70,7 +70,7 @@ const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputPr
         <TierItem.Details title={title} value={value} />
       )}
     </Box>
-  );
+  ) as JSX.Element;
 });
 
 TierToggleInput.displayName = 'TierToggleInput';

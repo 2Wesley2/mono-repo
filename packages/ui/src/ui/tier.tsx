@@ -15,14 +15,14 @@ const styles: Styles = {
     ListItem: {
       display: 'flex',
       width: '100%'
-    }
+    } as Styles
   },
   TierItemDetails: {
     Typography: {
       width: '100%'
-    }
-  }
-};
+    } as Styles
+  } as Styles
+} as Styles;
 
 const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
   const { children, sx } = props;
@@ -39,7 +39,7 @@ const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
     >
       {children}
     </ListItem>
-  );
+  ) as JSX.Element;
 });
 
 TierItemRoot.displayName = 'TierItemRoot';
@@ -57,7 +57,7 @@ const TierItemDetails: FC<TierItemDetailsProps> = memo((props: TierItemDetailsPr
       )}
       {value}
     </Typography>
-  );
+  ) as JSX.Element;
 });
 
 TierItemDetails.displayName = 'TierItemDetails';
@@ -75,7 +75,7 @@ const TierIconEdit: FC<TierIconEditProps> = memo((props: TierIconEditProps) => {
     <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple={true} onClick={handleClick}>
       <EditIcon />
     </IconButton>
-  );
+  ) as JSX.Element;
 });
 
 TierIconEdit.displayName = 'TierIconEdit';
