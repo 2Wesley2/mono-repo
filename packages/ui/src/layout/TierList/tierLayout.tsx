@@ -40,6 +40,16 @@ export const TierList: FC = memo(() => {
     [setEditingId as SetEditingId]
   );
 
+  const handleDelete: HandleEdit = useCallback(
+    (id: string): void => {
+      setTiers((prevTiers: Tier[]) => prevTiers.filter((tier: Tier) => tier.id !== id));
+      if (editingId === id) {
+        setEditingId(null);
+      }
+    },
+    [editingId]
+  );
+
   const handleChange: IHandleChange = useCallback(
     (id, field) =>
       (e): void => {
@@ -70,7 +80,7 @@ export const TierList: FC = memo(() => {
       const creditValue: string = 'Crédito';
       return (
         <TierCard.Root key={tier.id}>
-          <TierCard.Header title={tier.id} onClick={() => handleEdit(tier.id)} />
+          <TierCard.Header title={tier.id} onEdit={() => handleEdit(tier.id)} onDelete={() => handleDelete(tier.id)} />
           <Box sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
             <TierCard.ToggleInput
               key={tier.id + '-min'}

@@ -2,13 +2,7 @@ import React, { useCallback, FC, memo } from 'react';
 import { Typography, TextField, Box } from '@mui/material';
 import { TierItem } from '../../ui/tierBase';
 import { Styles } from '../../types/style';
-import {
-  TierCardRootProps,
-  TierHeaderProps,
-  OnClickHandler,
-  TierToggleInputProps,
-  TierCardComponents
-} from '../../types/tier';
+import { TierCardRootProps, TierHeaderProps, TierToggleInputProps, TierCardComponents } from '../../types/tier';
 
 const styles: Styles = {
   TierCardRoot: {
@@ -36,17 +30,26 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
 TierCardRoot.displayName = 'TierCardRoot' as string;
 
 const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
-  const { title, onClick, sx } = props;
-  const handleIconClick: OnClickHandler = useCallback(
-    (e) => {
-      onClick(e);
+  const { title, onEdit, onDelete, sx } = props;
+  const handleIconClick = useCallback(
+    (_e: React.MouseEvent<HTMLButtonElement>) => {
+      onEdit();
     },
-    [onClick]
+    [onEdit]
   );
+
+  const handleDeleteClick = useCallback(
+    (_e: React.MouseEvent<HTMLButtonElement>) => {
+      onDelete();
+    },
+    [onDelete]
+  );
+
   return (
     <Box sx={{ ...((styles.TierHeader as Styles).Box as Styles), ...(sx as Styles) }}>
       <Typography>Faixa {title}</Typography>
       <TierItem.IconEdit onClick={handleIconClick} />
+      <TierItem.IconDelete onClick={handleDeleteClick} />
     </Box>
   ) as JSX.Element;
 });

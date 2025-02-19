@@ -102,5 +102,5 @@ export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
   Details: TierItemDetails,
   IconEdit: TierIconEdit,
-  DeleteIcon: TierIconDelete
+  IconDelete: TierIconDelete
 } as const;

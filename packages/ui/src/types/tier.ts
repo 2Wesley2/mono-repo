@@ -22,7 +22,8 @@ export interface TierCardRootProps {
 }
 
 export interface TierHeaderProps {
-  onClick: OnClickHandler;
+  onEdit: () => void;
+  onDelete: () => void;
   title?: string;
   sx?: SxProps<Theme>;
 }
@@ -60,7 +61,7 @@ export interface TierItemComponents {
   Root: FC<TierItemRootProps>;
   Details: FC<TierItemDetailsProps>;
   IconEdit: FC<TierIconEditProps>;
-  DeleteIcon: FC<TierIconDeleteProps>;
+  IconDelete: FC<TierIconDeleteProps>;
 }
 
 export interface TierCardComponents {
