@@ -1,12 +1,13 @@
 import React, { MouseEvent, FC, memo, useCallback } from 'react';
 import { IconButton, Paper, ListItem, Typography } from '@mui/material';
-import { Edit as EditIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import {
   TierItemRootProps,
   TierIconEditProps,
   OnClickHandler,
   TierItemDetailsProps,
-  TierItemComponents
+  TierItemComponents,
+  TierIconDeleteProps
 } from '../types/tier';
 import { Styles } from '../types/style';
 
@@ -79,8 +80,27 @@ const TierIconEdit: FC<TierIconEditProps> = memo((props: TierIconEditProps) => {
 
 TierIconEdit.displayName = 'TierIconEdit';
 
+const TierIconDelete: FC<TierIconDeleteProps> = memo((props: TierIconDeleteProps) => {
+  const { onClick, sx } = props;
+  const handleClick: OnClickHandler = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      onClick(e);
+    },
+    [onClick]
+  );
+
+  return (
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple onClick={handleClick}>
+      <DeleteIcon />
+    </IconButton>
+  ) as JSX.Element;
+});
+
+TierIconDelete.displayName = 'TierIconDelete';
+
 export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
   Details: TierItemDetails,
-  IconEdit: TierIconEdit
+  IconEdit: TierIconEdit,
+  DeleteIcon: TierIconDelete
 } as const;
