@@ -79,4 +79,4 @@ export const TierList: FC = memo(() => {
   return (<List>{cards}</List>) as JSX.Element;
 });
 
-TierList.displayName = 'TierList';
+TierList.displayName = 'TierList' as string;

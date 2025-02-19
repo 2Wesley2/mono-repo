@@ -13,23 +13,23 @@ import {
 const styles: Styles = {
   TierCardRoot: {
     Root: { flexDirection: 'column' }
-  },
+  } as Styles,
   TierHeader: {
     Box: {
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
       justifyContent: 'space-between'
-    }
-  },
+    } as Styles
+  } as Styles,
   TierToggleInput: {
     Box: {
       display: 'flex',
       width: '100%',
       gap: '1rem'
-    }
-  }
-};
+    } as Styles
+  } as Styles
+} as Styles;
 
 const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
   const { children, sx } = props;
@@ -40,7 +40,7 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
   ) as JSX.Element;
 });
 
-TierCardRoot.displayName = 'TierCardRoot';
+TierCardRoot.displayName = 'TierCardRoot' as string;
 
 const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
   const { title, onClick, sx } = props;
@@ -58,7 +58,7 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
   ) as JSX.Element;
 });
 
-TierHeader.displayName = 'TierHeader';
+TierHeader.displayName = 'TierHeader' as string;
 
 const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputProps) => {
   const { onChange, value, editing, title, label, sxBox } = props;
@@ -73,7 +73,7 @@ const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputPr
   ) as JSX.Element;
 });
 
-TierToggleInput.displayName = 'TierToggleInput';
+TierToggleInput.displayName = 'TierToggleInput' as string;
 
 export const TierCard: TierCardComponents = {
   Root: TierCardRoot,
