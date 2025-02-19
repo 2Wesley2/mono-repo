@@ -2,7 +2,7 @@ import React from 'react';
 import NavBar from '../../components/NavBar/NavBar';
 import { ToggleButton } from '../../components/cashback/ToggleButton';
 import { Tabs } from '../../components/cashback/Tabs';
-import { TierList } from '../../components/TierList';
+import { TierList } from '../../layout/TierList/tierLayout';
 
 export const CashbackConfigPage: React.FC = () => {
   const tabs = [

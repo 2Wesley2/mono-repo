@@ -1,7 +1,23 @@
 import React, { useState, useEffect, useMemo, Dispatch, SetStateAction, useCallback, memo, FC } from 'react';
-import { List } from '@mui/material';
+import { List, Box } from '@mui/material';
+import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
-import { TierCard } from '../ui/tierCard';
+import { TierCard } from '../../components/ui/tierComponent';
+
+const styles: Styles = {
+  TierList: {
+    Box: {
+      display: 'flex',
+      width: '100%',
+      gap: '1rem'
+    } as Styles,
+    List: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    } as Styles
+  } as Styles
+} as Styles;
 
 const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
   id: String(index + 1),
@@ -55,28 +71,30 @@ export const TierList: FC = memo(() => {
       return (
         <TierCard.Root key={tier.id}>
           <TierCard.Header title={tier.id} onClick={() => handleEdit(tier.id)} />
-          <TierCard.ToggleInput
-            key={tier.id + '-min'}
-            title={minValue}
-            label={minValue}
-            value={tier.minValue}
-            editing={isEditing}
-            onChange={handleChange(tier.id, 'minValue')}
-          />
-          <TierCard.ToggleInput
-            key={tier.id + '-credit'}
-            title={creditValue}
-            label={creditValue}
-            value={tier.creditValue}
-            editing={isEditing}
-            onChange={handleChange(tier.id, 'creditValue')}
-          />
+          <Box sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
+            <TierCard.ToggleInput
+              key={tier.id + '-min'}
+              title={minValue}
+              label={minValue}
+              value={tier.minValue}
+              editing={isEditing}
+              onChange={handleChange(tier.id, 'minValue')}
+            />
+            <TierCard.ToggleInput
+              key={tier.id + '-credit'}
+              title={creditValue}
+              label={creditValue}
+              value={tier.creditValue}
+              editing={isEditing}
+              onChange={handleChange(tier.id, 'creditValue')}
+            />
+          </Box>
         </TierCard.Root>
       ) as JSX.Element;
     });
-  }, [tiers, editingId, handleEdit, handleChange]);
+  }, [tiers as Tier[], editingId as EditingId, handleEdit as HandleEdit, handleChange as IHandleChange]);
 
-  return (<List>{cards}</List>) as JSX.Element;
+  return (<List sx={{ ...((styles.TierList as Styles).List as Styles) }}>{cards}</List>) as JSX.Element;
 });
 
 TierList.displayName = 'TierList' as string;

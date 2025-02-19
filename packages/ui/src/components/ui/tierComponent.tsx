@@ -1,6 +1,6 @@
 import React, { useCallback, FC, memo } from 'react';
 import { Typography, TextField, Box } from '@mui/material';
-import { TierItem } from '../../ui/tier';
+import { TierItem } from '../../ui/tierBase';
 import { Styles } from '../../types/style';
 import {
   TierCardRootProps,
@@ -20,13 +20,6 @@ const styles: Styles = {
       flexDirection: 'row',
       width: '100%',
       justifyContent: 'space-between'
-    } as Styles
-  } as Styles,
-  TierToggleInput: {
-    Box: {
-      display: 'flex',
-      width: '100%',
-      gap: '1rem'
     } as Styles
   } as Styles
 } as Styles;
@@ -61,15 +54,13 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
 TierHeader.displayName = 'TierHeader' as string;
 
 const TierToggleInput: FC<TierToggleInputProps> = memo((props: TierToggleInputProps) => {
-  const { onChange, value, editing, title, label, sxBox } = props;
+  const { onChange, value, editing, title, label } = props;
   return (
-    <Box sx={{ ...((styles.TierToggleInput as Styles).Box as Styles), ...(sxBox as Styles) }}>
-      {editing ? (
-        <TextField label={label} value={value} onChange={(e) => onChange(e)} fullWidth={true} />
-      ) : (
-        <TierItem.Details title={title} value={value} />
-      )}
-    </Box>
+    editing ? (
+      <TextField label={label} value={value} onChange={(e) => onChange(e)} fullWidth={true} />
+    ) : (
+      <TierItem.Details title={title} value={value} />
+    )
   ) as JSX.Element;
 });
 

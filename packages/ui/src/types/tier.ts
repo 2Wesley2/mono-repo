@@ -32,7 +32,6 @@ export interface TierToggleInputProps {
   editing?: boolean;
   title?: string;
   label?: string;
-  sxBox?: SxProps<Theme>;
 }
 
 export interface TierItemRootProps {
