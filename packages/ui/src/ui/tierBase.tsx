@@ -1,13 +1,14 @@
 import React, { MouseEvent, FC, memo, useCallback } from 'react';
 import { IconButton, Paper, ListItem, Typography } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import {
   TierItemRootProps,
   TierIconEditProps,
   OnClickHandler,
   TierItemDetailsProps,
   TierItemComponents,
-  TierIconDeleteProps
+  TierIconDeleteProps,
+  TierIconAddProps
 } from '../types/tier';
 import { Styles } from '../types/style';
 
@@ -16,14 +17,14 @@ const styles: Styles = {
     ListItem: {
       display: 'flex',
       width: '100%'
-    } as Styles
+    }
   },
   TierItemDetails: {
     Typography: {
       width: '100%'
-    } as Styles
-  } as Styles
-} as Styles;
+    }
+  }
+};
 
 const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
   const { children, sx } = props;
@@ -98,9 +99,28 @@ const TierIconDelete: FC<TierIconDeleteProps> = memo((props: TierIconDeleteProps
 
 TierIconDelete.displayName = 'TierIconDelete';
 
+const TierIconAdd: FC<TierIconAddProps> = memo((props: TierIconAddProps) => {
+  const { onClick, sx } = props;
+  const handleClick: OnClickHandler = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      onClick(e);
+    },
+    [onClick]
+  );
+
+  return (
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple onClick={handleClick}>
+      <AddIcon />
+    </IconButton>
+  ) as JSX.Element;
+});
+
+TierIconAdd.displayName = 'TierIconAdd';
+
 export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
   Details: TierItemDetails,
   IconEdit: TierIconEdit,
-  IconDelete: TierIconDelete
+  IconDelete: TierIconDelete,
+  IconAdd: TierIconAdd
 } as const;

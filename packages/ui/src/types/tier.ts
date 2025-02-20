@@ -57,11 +57,17 @@ export interface TierIconDeleteProps {
   sx?: SxProps<Theme>;
 }
 
+export interface TierIconAddProps {
+  onClick: OnClickHandler;
+  sx?: SxProps<Theme>;
+}
+
 export interface TierItemComponents {
   Root: FC<TierItemRootProps>;
   Details: FC<TierItemDetailsProps>;
   IconEdit: FC<TierIconEditProps>;
   IconDelete: FC<TierIconDeleteProps>;
+  IconAdd: FC<TierIconAddProps>;
 }
 
 export interface TierCardComponents {

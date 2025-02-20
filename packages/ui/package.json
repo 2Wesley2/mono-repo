@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "start /HIGH react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -43,20 +43,23 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.0.0"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  },
+  "overrides": {
+    "react-scripts": {
+      "workbox-webpack-plugin": {
+        "workbox-build": {
+          "rollup-plugin-terser": {
+            "serialize-javascript": "^6.0.2"
+          }
+        }
+      }
+    }
   }
 }

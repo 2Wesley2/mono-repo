@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo, Dispatch, SetStateAction, useCallback, memo, FC } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo, FC } from 'react';
 import { List, Box } from '@mui/material';
 import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
 import { TierCard } from '../../components/ui/tierComponent';
+import { TierItem } from '../../ui/tierBase';
 
 const styles: Styles = {
   TierList: {
@@ -10,34 +11,34 @@ const styles: Styles = {
       display: 'flex',
       width: '100%',
       gap: '1rem'
-    } as Styles,
+    },
     List: {
       display: 'flex',
       flexDirection: 'column',
       gap: '1rem'
-    } as Styles
-  } as Styles
-} as Styles;
+    }
+  }
+};
 
 const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
   id: String(index + 1),
   minValue: index * 100,
   creditValue: (index + 1) * 5
 }));
+
 type EditingId = string | null;
 type HandleEdit = (id: string) => void;
-type SetTiers = Dispatch<SetStateAction<Tier[]>>;
-type SetEditingId = Dispatch<SetStateAction<EditingId>>;
+type HandleAdd = () => void;
 
 export const TierList: FC = memo(() => {
-  const [tiers, setTiers]: [Tier[], SetTiers] = useState<Tier[]>([]);
-  const [editingId, setEditingId]: [EditingId, SetEditingId] = useState<EditingId>(null);
+  const [tiers, setTiers] = useState<Tier[]>([]);
+  const [editingId, setEditingId] = useState<EditingId>(null);
 
   const handleEdit: HandleEdit = useCallback(
     (id: string): void => {
       setEditingId((prev) => (prev === id ? null : id));
     },
-    [setEditingId as SetEditingId]
+    [setEditingId]
   );
 
   const handleDelete: HandleEdit = useCallback(
@@ -64,8 +65,15 @@ export const TierList: FC = memo(() => {
           prevTiers.map((tier: Tier) => (tier.id === id ? { ...tier, ...change } : tier))
         );
       },
-    [setTiers as SetTiers]
+    [setTiers]
   );
+
+  const handleAdd: HandleAdd = useCallback((): void => {
+    setTiers((prevTiers: Tier[]) => {
+      const nextId = String(prevTiers.reduce((max, tier) => Math.max(max, Number(tier.id)), 0) + 1);
+      return [...(prevTiers as Tier[]), { id: nextId, minValue: 0, creditValue: 0 } as Tier];
+    });
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -102,9 +110,14 @@ export const TierList: FC = memo(() => {
         </TierCard.Root>
       ) as JSX.Element;
     });
-  }, [tiers as Tier[], editingId as EditingId, handleEdit as HandleEdit, handleChange as IHandleChange]);
+  }, [tiers, editingId, handleEdit, handleChange, handleDelete]);
 
-  return (<List sx={{ ...((styles.TierList as Styles).List as Styles) }}>{cards}</List>) as JSX.Element;
+  return (
+    <List sx={{ ...((styles.TierList as Styles).List as Styles) }}>
+      <TierItem.IconAdd onClick={handleAdd} sx={{ marginBottom: '1rem' }} />
+      {cards}
+    </List>
+  ) as JSX.Element;
 });
 
 TierList.displayName = 'TierList' as string;

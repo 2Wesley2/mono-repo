@@ -7,16 +7,16 @@ import { TierCardRootProps, TierHeaderProps, TierToggleInputProps, TierCardCompo
 const styles: Styles = {
   TierCardRoot: {
     Root: { flexDirection: 'column' }
-  } as Styles,
+  },
   TierHeader: {
     Box: {
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
       justifyContent: 'space-between'
-    } as Styles
-  } as Styles
-} as Styles;
+    }
+  }
+};
 
 const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
   const { children, sx } = props;
@@ -48,8 +48,10 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
   return (
     <Box sx={{ ...((styles.TierHeader as Styles).Box as Styles), ...(sx as Styles) }}>
       <Typography>Faixa {title}</Typography>
-      <TierItem.IconEdit onClick={handleIconClick} />
-      <TierItem.IconDelete onClick={handleDeleteClick} />
+      <Box>
+        <TierItem.IconEdit onClick={handleIconClick} />
+        <TierItem.IconDelete onClick={handleDeleteClick} />
+      </Box>
     </Box>
   ) as JSX.Element;
 });
