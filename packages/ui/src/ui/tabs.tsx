@@ -14,7 +14,7 @@ const tabButtonVariants = cva('inline-block p-4 border-b-2 rounded-t-lg w-full',
   }
 });
 
-const tabPanelVariants = cva('h-full overflow-hidden p-4 rounded-lg bg-white', {
+const tabPanelVariants = cva('h-[100%] overflow-hidden p-2 rounded-lg bg-white', {
   variants: {
     active: {
       true: 'block',

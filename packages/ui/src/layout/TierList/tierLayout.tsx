@@ -21,9 +21,7 @@ const styles: Styles = {
       width: '50%',
       alignItems: 'center',
       gap: '1rem',
-      heighy: '90%',
-      minHeight: 0,
-      maxHeight: '90%',
+      height: '90%',
       overflowY: 'auto',
       padding: '1%'
     },

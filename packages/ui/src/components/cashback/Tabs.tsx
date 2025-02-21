@@ -25,7 +25,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ))}
         </ul>
       </nav>
-      <div className="flex-1">
+      <div className="h-[100%] overflow-hidden">
         {tabs.map((tab, index) => (
           <TabPanel
             className="TABS PANEL"
