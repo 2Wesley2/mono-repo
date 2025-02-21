@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, memo, FC } from 'react';
-import { List, Box } from '@mui/material';
+import { List, Box, Paper } from '@mui/material';
 import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
 import { TierCard } from '../../components/ui/tierComponent';
@@ -7,15 +7,21 @@ import { TierItem } from '../../ui/tierBase';
 
 const styles: Styles = {
   TierList: {
-    Box: {
-      display: 'flex',
-      width: '100%',
-      gap: '1rem'
+    Cards: {
+      Box: {
+        display: 'flex',
+        width: '100%',
+        gap: '1rem'
+      }
     },
     List: {
       display: 'flex',
       flexDirection: 'column',
+      alignItems: 'center',
       gap: '1rem'
+    },
+    Box: {
+      borderRadius: '100%'
     }
   }
 };
@@ -89,7 +95,7 @@ export const TierList: FC = memo(() => {
       return (
         <TierCard.Root key={tier.id}>
           <TierCard.Header title={tier.id} onEdit={() => handleEdit(tier.id)} onDelete={() => handleDelete(tier.id)} />
-          <Box sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
+          <Box sx={{ ...(((styles.TierList as Styles).Cards as Styles).Box as Styles) }}>
             <TierCard.ToggleInput
               key={tier.id + '-min'}
               title={minValue}
@@ -113,8 +119,10 @@ export const TierList: FC = memo(() => {
   }, [tiers, editingId, handleEdit, handleChange, handleDelete]);
 
   return (
-    <List sx={{ ...((styles.TierList as Styles).List as Styles) }}>
-      <TierItem.IconAdd onClick={handleAdd} sx={{ marginBottom: '1rem' }} />
+    <List className="LISTAAAAA" sx={{ ...((styles.TierList as Styles).List as Styles) }}>
+      <Box component={Paper} sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
+        <TierItem.IconAdd onClick={handleAdd} sx={{ ...((styles.TierList as Styles).IconAddMuiClasses as Styles) }} />
+      </Box>
       {cards}
     </List>
   ) as JSX.Element;

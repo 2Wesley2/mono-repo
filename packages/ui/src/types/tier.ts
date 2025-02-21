@@ -62,9 +62,17 @@ export interface TierIconAddProps {
   sx?: SxProps<Theme>;
 }
 
+export interface ModalProps {
+  open: boolean;
+  title?: string;
+  children: ReactNode;
+  onClose: () => void;
+}
+
 export interface TierItemComponents {
   Root: FC<TierItemRootProps>;
   Details: FC<TierItemDetailsProps>;
+  Modal: FC<ModalProps>;
   IconEdit: FC<TierIconEditProps>;
   IconDelete: FC<TierIconDeleteProps>;
   IconAdd: FC<TierIconAddProps>;
