@@ -25,9 +25,15 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ))}
         </ul>
       </nav>
-      <div className="flex-1 min-h-0 overflow-y-auto w-1/2 scrollbar-tabs p-[1%]">
+      <div className="flex-1">
         {tabs.map((tab, index) => (
-          <TabPanel key={index} active={activeTab === index} role="tabpanel" aria-labelledby={`tab-${index}`}>
+          <TabPanel
+            className="TABS PANEL"
+            key={index}
+            active={activeTab === index}
+            role="tabpanel"
+            aria-labelledby={`tab-${index}`}
+          >
             {tab.content}
           </TabPanel>
         ))}

@@ -15,10 +15,17 @@ const styles: Styles = {
       }
     },
     List: {
+      flex: '1 1 0%',
       display: 'flex',
       flexDirection: 'column',
+      width: '50%',
       alignItems: 'center',
-      gap: '1rem'
+      gap: '1rem',
+      heighy: '90%',
+      minHeight: 0,
+      maxHeight: '90%',
+      overflowY: 'auto',
+      padding: '1%'
     },
     Box: {
       borderRadius: '100%'
@@ -119,7 +126,7 @@ export const TierList: FC = memo(() => {
   }, [tiers, editingId, handleEdit, handleChange, handleDelete]);
 
   return (
-    <List className="LISTAAAAA" sx={{ ...((styles.TierList as Styles).List as Styles) }}>
+    <List className="LISTAAAAAAAAAAAAAAAAA" sx={{ ...((styles.TierList as Styles).List as Styles) }}>
       <Box component={Paper} sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
         <TierItem.IconAdd onClick={handleAdd} sx={{ ...((styles.TierList as Styles).IconAddMuiClasses as Styles) }} />
       </Box>
