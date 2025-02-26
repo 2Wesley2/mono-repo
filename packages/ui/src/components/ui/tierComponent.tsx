@@ -24,9 +24,6 @@ const styles: Styles = {
       backdrop: {
         style: { backgroundColor: 'rgba(0, 0, 0, 0.2)' }
       }
-    },
-    BoxModal: {
-      backgroundColor: '#000000'
     }
   }
 };
@@ -85,7 +82,7 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
         open={isModalOpen}
         onClose={handleCloseModal}
       >
-        <Box sx={{ ...((styles.TierHeader as Styles).BoxModal as Styles) }}>{ModalEl}</Box>
+        <>{ModalEl}</>
       </Modal>
     </Box>
   ) as JSX.Element;
