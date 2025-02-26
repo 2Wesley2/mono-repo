@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, memo, FC } from 'react';
-import { List, Box, Paper } from '@mui/material';
+import { List, Box, Paper, Typography, Modal } from '@mui/material';
 import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
-import { TierCard } from '../../components/ui/tierComponent';
+import { TierCard } from '../ui/tierComponent';
 import { TierItem } from '../../ui/tierBase';
 
 const styles: Styles = {
@@ -15,19 +15,15 @@ const styles: Styles = {
       }
     },
     List: {
-      flex: '1 1 0%',
       display: 'flex',
       flexDirection: 'column',
-      width: '50%',
       alignItems: 'center',
-      gap: '1rem',
-      height: '90%',
-      overflowY: 'auto',
-      padding: '1%'
+      gap: '1rem'
     },
     Box: {
       borderRadius: '100%'
-    }
+    },
+    IconAddMuiClasses: {}
   }
 };
 
@@ -44,6 +40,7 @@ type HandleAdd = () => void;
 export const TierList: FC = memo(() => {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [editingId, setEditingId] = useState<EditingId>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleEdit: HandleEdit = useCallback(
     (id: string): void => {
@@ -86,6 +83,10 @@ export const TierList: FC = memo(() => {
     });
   }, []);
 
+  const handleCloseModal = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
       setTiers(mockedTiers);
@@ -99,7 +100,12 @@ export const TierList: FC = memo(() => {
       const creditValue: string = 'Crédito';
       return (
         <TierCard.Root key={tier.id}>
-          <TierCard.Header title={tier.id} onEdit={() => handleEdit(tier.id)} onDelete={() => handleDelete(tier.id)} />
+          <TierCard.Header
+            title={tier.id}
+            onEdit={() => handleEdit(tier.id)}
+            onDelete={() => handleDelete(tier.id)}
+            ModalEl={<Typography>Modal Content for Tier {tier.id}</Typography>}
+          />
           <Box sx={{ ...(((styles.TierList as Styles).Cards as Styles).Box as Styles) }}>
             <TierCard.ToggleInput
               key={tier.id + '-min'}
@@ -124,12 +130,30 @@ export const TierList: FC = memo(() => {
   }, [tiers, editingId, handleEdit, handleChange, handleDelete]);
 
   return (
-    <List className="LISTAAAAAAAAAAAAAAAAA" sx={{ ...((styles.TierList as Styles).List as Styles) }}>
-      <Box component={Paper} sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
-        <TierItem.IconAdd onClick={handleAdd} sx={{ ...((styles.TierList as Styles).IconAddMuiClasses as Styles) }} />
-      </Box>
-      {cards}
-    </List>
+    <>
+      <List sx={{ ...((styles.TierList as Styles).List as Styles), width: '50%' }}>
+        <Box component={Paper} sx={{ ...((styles.TierList as Styles).Box as Styles) }}>
+          <TierItem.IconAdd onClick={handleAdd} sx={{ ...((styles.TierList as Styles).IconAddMuiClasses as Styles) }} />
+        </Box>
+        <Box
+          sx={{
+            ...((styles.TierList as Styles).List as Styles),
+            overflowY: 'auto',
+            width: '100%',
+            minHeight: '0vh',
+            maxHeight: '45vh',
+            boxSizing: 'border-box'
+          }}
+        >
+          {cards}
+        </Box>
+      </List>
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box>
+          <Typography>Conteúdo do Modal</Typography>
+        </Box>
+      </Modal>
+    </>
   ) as JSX.Element;
 });
 

@@ -1,18 +1,19 @@
-import React, { MouseEvent, FC, memo, useCallback, isValidElement } from 'react';
-import { IconButton, Paper, ListItem, Typography } from '@mui/material';
-import MuiModal from '@mui/material/Modal';
+import React, { MouseEvent, FC, memo, cloneElement } from 'react';
+import { IconButton, Paper, ListItem, Typography, Menu, MenuItem } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import {
-  TierItemRootProps,
-  TierIconEditProps,
-  OnClickHandler,
   TierItemDetailsProps,
   TierItemComponents,
-  TierIconDeleteProps,
-  TierIconAddProps,
-  ModalProps
+  TierItemSelectProps,
+  TierMoreOptionsProps,
+  ComponentWithOnClick,
+  ComponentWithChildren
 } from '../types/tier';
 import { Styles } from '../types/style';
+
+type TierIconEditProps = ComponentWithOnClick;
+type TierIconDeleteProps = ComponentWithOnClick;
+type TierIconAddProps = ComponentWithOnClick;
 
 const styles: Styles = {
   TierItemRoot: {
@@ -28,7 +29,7 @@ const styles: Styles = {
   }
 };
 
-const TierItemRoot: FC<TierItemRootProps> = memo((props: TierItemRootProps) => {
+const TierItemRoot: FC<ComponentWithChildren> = memo((props: ComponentWithChildren) => {
   const { children, sx } = props;
   return (
     <ListItem
@@ -66,15 +67,8 @@ TierItemDetails.displayName = 'TierItemDetails';
 
 const TierIconEdit: FC<TierIconEditProps> = memo((props: TierIconEditProps) => {
   const { onClick, sx } = props;
-  const handleClick: OnClickHandler = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
-      onClick(e);
-    },
-    [onClick]
-  );
-
   return (
-    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple={true} onClick={handleClick}>
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple={true} onClick={onClick}>
       <EditIcon />
     </IconButton>
   ) as JSX.Element;
@@ -83,15 +77,8 @@ TierIconEdit.displayName = 'TierIconEdit';
 
 const TierIconDelete: FC<TierIconDeleteProps> = memo((props: TierIconDeleteProps) => {
   const { onClick, sx } = props;
-  const handleClick: OnClickHandler = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
-      onClick(e);
-    },
-    [onClick]
-  );
-
   return (
-    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple onClick={handleClick}>
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} disableFocusRipple onClick={onClick}>
       <DeleteIcon />
     </IconButton>
   ) as JSX.Element;
@@ -100,40 +87,80 @@ TierIconDelete.displayName = 'TierIconDelete';
 
 const TierIconAdd: FC<TierIconAddProps> = memo((props: TierIconAddProps) => {
   const { onClick, sx } = props;
-  const handleClick: OnClickHandler = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
-      onClick(e);
-    },
-    [onClick]
-  );
-
   return (
-    <IconButton sx={{ ...(sx as Styles) }} edge={false} onClick={handleClick}>
+    <IconButton sx={{ ...(sx as Styles) }} edge={false} onClick={onClick}>
       <AddIcon />
     </IconButton>
   ) as JSX.Element;
 });
 TierIconAdd.displayName = 'TierIconAdd';
 
-const Modal: FC<ModalProps> = memo((props: ModalProps) => {
-  const { open, children, onClose } = props;
-  const handleClose: () => void = useCallback(() => {
-    onClose();
-  }, [onClose]);
-
+const TierMoreOptions: FC<TierMoreOptionsProps> = memo((props) => {
+  const { triggerEl, labelTrigger, menuItems = [], anchorEl, onClose, onOpen, sx } = props;
   return (
-    <MuiModal open={open} onClose={handleClose}>
-      {isValidElement(children) ? children : <>{children}</>}
-    </MuiModal>
+    <>
+      {triggerEl ? (
+        cloneElement(triggerEl, { onClick: (event: MouseEvent<HTMLElement>) => onOpen(event) })
+      ) : (
+        <Typography sx={sx} onClick={(event) => onOpen(event as unknown as MouseEvent<HTMLElement>)}>
+          {labelTrigger}
+        </Typography>
+      )}
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={index}
+            onClick={() => {
+              item.onClick();
+              onClose();
+            }}
+          >
+            {item.element || item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   ) as JSX.Element;
 });
-Modal.displayName = 'Modal';
+TierMoreOptions.displayName = 'TierMoreOptions';
+
+const TierItemSelect: FC<TierItemSelectProps> = memo((props: TierItemSelectProps) => {
+  const { options, selected, onSelect, sx, anchorEl, onAnchorChange } = props;
+
+  return (
+    <>
+      <Typography sx={{ ...(sx as Styles) }}>
+        <span onClick={(event: MouseEvent<HTMLSpanElement>) => onAnchorChange(event.currentTarget)}>{selected}</span>
+      </Typography>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => onAnchorChange(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        {options.map((option: string) => (
+          <MenuItem
+            key={option}
+            onClick={() => {
+              onSelect(option);
+              onAnchorChange(null);
+            }}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  ) as JSX.Element;
+});
+TierItemSelect.displayName = 'TierItemSelect';
 
 export const TierItem: TierItemComponents = {
   Root: TierItemRoot,
   Details: TierItemDetails,
-  Modal: Modal,
   IconEdit: TierIconEdit,
   IconDelete: TierIconDelete,
-  IconAdd: TierIconAdd
+  IconAdd: TierIconAdd,
+  Select: TierItemSelect,
+  MoreOptions: TierMoreOptions
 } as const;

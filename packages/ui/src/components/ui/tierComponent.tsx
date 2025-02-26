@@ -1,8 +1,8 @@
-import React, { useCallback, FC, memo } from 'react';
-import { Typography, TextField, Box } from '@mui/material';
+import React, { MouseEvent, FC, memo, useState, useCallback } from 'react';
+import { Typography, TextField, Box, Modal } from '@mui/material';
 import { TierItem } from '../../ui/tierBase';
 import { Styles } from '../../types/style';
-import { TierCardRootProps, TierHeaderProps, TierToggleInputProps, TierCardComponents } from '../../types/tier';
+import { TierHeaderProps, TierToggleInputProps, TierCardComponents, ComponentWithChildren } from '../../types/tier';
 
 const styles: Styles = {
   TierCardRoot: {
@@ -14,11 +14,24 @@ const styles: Styles = {
       flexDirection: 'row',
       width: '100%',
       justifyContent: 'space-between'
+    },
+    Modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    BackdropProps: {
+      backdrop: {
+        style: { backgroundColor: 'rgba(0, 0, 0, 0.2)' }
+      }
+    },
+    BoxModal: {
+      backgroundColor: '#000000'
     }
   }
 };
 
-const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
+const TierCardRoot: FC<ComponentWithChildren> = memo((props: ComponentWithChildren) => {
   const { children, sx } = props;
   return (
     <TierItem.Root sx={{ ...((styles.TierCardRoot as Styles).Root as Styles), ...(sx as Styles) }}>
@@ -30,28 +43,50 @@ const TierCardRoot: FC<TierCardRootProps> = memo((props: TierCardRootProps) => {
 TierCardRoot.displayName = 'TierCardRoot' as string;
 
 const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
-  const { title, onEdit, onDelete, sx } = props;
-  const handleIconClick = useCallback(
-    (_e: React.MouseEvent<HTMLButtonElement>) => {
-      onEdit();
-    },
-    [onEdit]
-  );
+  const { title, onEdit, onDelete, sx, ModalEl } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const handleDeleteClick = useCallback(
-    (_e: React.MouseEvent<HTMLButtonElement>) => {
-      onDelete();
-    },
-    [onDelete]
-  );
+  const handleOpen = useCallback((event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleOpenModal = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalOpen(false);
+  }, []);
 
   return (
     <Box sx={{ ...((styles.TierHeader as Styles).Box as Styles), ...(sx as Styles) }}>
       <Typography>Faixa {title}</Typography>
       <Box>
-        <TierItem.IconEdit onClick={handleIconClick} />
-        <TierItem.IconDelete onClick={handleDeleteClick} />
+        <TierItem.MoreOptions
+          triggerEl={<TierItem.IconEdit />}
+          menuItems={[
+            { label: 'Editar', onClick: onEdit },
+            { label: 'Modal', onClick: handleOpenModal }
+          ]}
+          anchorEl={anchorEl}
+          onOpen={handleOpen}
+          onClose={handleClose}
+        />
+        <TierItem.IconDelete onClick={onDelete} />
       </Box>
+      <Modal
+        sx={{ ...((styles.TierHeader as Styles).Modal as Styles) }}
+        slotProps={{ ...((styles.TierHeader as Styles).BackdropProps as Styles) }}
+        open={isModalOpen}
+        onClose={handleCloseModal}
+      >
+        <Box sx={{ ...((styles.TierHeader as Styles).BoxModal as Styles) }}>{ModalEl}</Box>
+      </Modal>
     </Box>
   ) as JSX.Element;
 });
