@@ -1,4 +1,4 @@
-import { ReactNode, FC, MouseEvent, ChangeEventHandler, ChangeEvent } from 'react';
+import { ReactNode, FC, MouseEvent, ChangeEventHandler, ChangeEvent, SyntheticEvent } from 'react';
 import { SxProps, Theme } from '@mui/material';
 
 export type InputChangeHandler = ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
@@ -7,13 +7,18 @@ export type OnClickHandler = (e: MouseEvent<HTMLButtonElement>) => void;
 export interface Tier {
   id: string;
   minValue: number;
-  creditValue: number;
+  benefitType: 'crédito' | 'recompensa';
+  creditValue?: number;
+  rewardValues?: string[];
 }
 
 export type IHandleChange = <K extends keyof Omit<Tier, 'id'>>(
   id: string,
   field: K
-) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+) => (
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SyntheticEvent,
+  newValue?: string | string[] | null
+) => void;
 
 export type TierChangePayload<K extends keyof Omit<Tier, 'id'>> = { id: string } & Required<Pick<Tier, K>>;
 
@@ -36,7 +41,7 @@ export interface TierHeaderProps {
 
 export interface TierToggleInputProps {
   onChange: InputChangeHandler;
-  value: string | number;
+  value: string | number | string[] | undefined;
   editing?: boolean;
   title?: string;
   label?: string;
@@ -51,7 +56,7 @@ export interface TierCardComponents {
 export interface TierItemDetailsProps {
   title?: string;
   sx?: SxProps<Theme>;
-  value: string | number;
+  value: string | number | string[] | undefined;
   sxValue?: SxProps<Theme>;
   sxTitle?: SxProps<Theme>;
 }

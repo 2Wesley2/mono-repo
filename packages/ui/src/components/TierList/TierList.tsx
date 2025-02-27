@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, memo, FC } from 'react';
-import { List, Box, Paper, Typography } from '@mui/material';
+import { List, Box, Paper, Autocomplete, TextField } from '@mui/material';
 import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
 import { TierCard } from '../ui/tierComponent';
@@ -27,10 +27,14 @@ const styles: Styles = {
   }
 };
 
+const fetchedOptions = ['crédito', 'recompensa'];
+const rewardList = ['Recompensa 1', 'Recompensa 2', 'Recompensa 3'];
+
 const mockedTiers: Tier[] = Array.from({ length: 10 }, (_, index) => ({
   id: String(index + 1),
   minValue: index * 100,
-  creditValue: (index + 1) * 5
+  creditValue: (index + 1) * 5,
+  benefitType: 'crédito'
 }));
 
 type EditingId = string | null;
@@ -40,6 +44,7 @@ type HandleAdd = () => void;
 export const TierList: FC = memo(() => {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [editingId, setEditingId] = useState<EditingId>(null);
+  const [options, setOptions] = useState<string[]>([]);
 
   const handleEdit: HandleEdit = useCallback(
     (id: string): void => {
@@ -61,7 +66,7 @@ export const TierList: FC = memo(() => {
   const handleChange: IHandleChange = useCallback(
     (id, field) =>
       (e): void => {
-        const inputValue = e.target.value;
+        const inputValue = (e.target as HTMLInputElement).value;
         const newValue = isNaN(Number(inputValue)) ? inputValue : Number(inputValue);
         const change: TierChangePayload<typeof field> = {
           id,
@@ -82,8 +87,41 @@ export const TierList: FC = memo(() => {
     });
   }, []);
 
+  const handleSelect = useCallback(
+    (id: string, value: 'crédito' | 'recompensa'): void => {
+      setTiers((prevTiers: Tier[]) =>
+        prevTiers.map((tier: Tier) =>
+          tier.id === id
+            ? {
+                ...tier,
+                benefitType: value,
+                creditValue: value === 'crédito' ? tier.creditValue || 0 : undefined,
+                rewardValues: value === 'recompensa' ? tier.rewardValues || [] : undefined
+              }
+            : tier
+        )
+      );
+    },
+    [setTiers]
+  );
+
+  const handleAutocompleteChange: IHandleChange = useCallback(
+    (id, field) =>
+      (e, newValue): void => {
+        const updatedValues = Array.isArray(newValue) ? newValue : [];
+        const change: TierChangePayload<typeof field> = {
+          id,
+          [field]: updatedValues
+        } as TierChangePayload<typeof field>;
+
+        setTiers((prevTiers: Tier[]) => prevTiers.map((tier) => (tier.id === id ? { ...tier, ...change } : tier)));
+      },
+    [setTiers]
+  );
+
   useEffect(() => {
     setTimeout(() => {
+      setOptions(fetchedOptions);
       setTiers(mockedTiers);
     });
   }, []);
@@ -92,14 +130,20 @@ export const TierList: FC = memo(() => {
     return tiers.map((tier: Tier) => {
       const isEditing: boolean = editingId === tier.id;
       const minValue: string = 'Valor mínimo';
-      const creditValue: string = 'Crédito';
+      const creditOption = tier.benefitType || options[0];
       return (
         <TierCard.Root key={tier.id}>
           <TierCard.Header
             title={tier.id}
             onEdit={() => handleEdit(tier.id)}
             onDelete={() => handleDelete(tier.id)}
-            ModalEl={<Typography>Modal Content for Tier {tier.id}</Typography>}
+            ModalEl={
+              <TierItem.Select
+                options={options}
+                selected={creditOption}
+                onSelect={(value) => handleSelect(tier.id, value as 'crédito' | 'recompensa')}
+              />
+            }
           />
           <Box sx={{ ...(((styles.TierList as Styles).Cards as Styles).Box as Styles) }}>
             <TierCard.ToggleInput
@@ -110,19 +154,35 @@ export const TierList: FC = memo(() => {
               editing={isEditing}
               onChange={handleChange(tier.id, 'minValue')}
             />
-            <TierCard.ToggleInput
-              key={tier.id + '-credit'}
-              title={creditValue}
-              label={creditValue}
-              value={tier.creditValue}
-              editing={isEditing}
-              onChange={handleChange(tier.id, 'creditValue')}
-            />
+            {tier.benefitType === 'recompensa' ? (
+              isEditing ? (
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  size="small"
+                  options={rewardList}
+                  value={tier.rewardValues as string[]}
+                  onChange={handleAutocompleteChange(tier.id, 'rewardValues')}
+                  renderInput={(params) => <TextField {...params} label={creditOption} />}
+                />
+              ) : (
+                <TierItem.Details title={creditOption} value={tier.rewardValues} />
+              )
+            ) : (
+              <TierCard.ToggleInput
+                key={tier.id + '-credit'}
+                title={creditOption}
+                label={creditOption}
+                value={tier.creditValue}
+                editing={isEditing}
+                onChange={handleChange(tier.id, 'creditValue')}
+              />
+            )}
           </Box>
         </TierCard.Root>
       ) as JSX.Element;
     });
-  }, [tiers, editingId, handleEdit, handleChange, handleDelete]);
+  }, [tiers, editingId, handleEdit, handleChange, handleDelete, handleSelect]);
 
   return (
     <>
