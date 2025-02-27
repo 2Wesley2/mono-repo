@@ -61,8 +61,6 @@ export interface TierItemSelectProps {
   selected: string;
   onSelect: (value: string) => void;
   sx?: SxProps<Theme>;
-  anchorEl: HTMLElement | null;
-  onAnchorChange: (anchorEl: HTMLElement | null) => void;
 }
 
 export interface TierItemComponents {

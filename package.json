@@ -11,7 +11,7 @@
     "c": "npm cache clean --force",
     "preinstall": "npx npm-force-resolutions",
     "audit:all": "lerna exec -- npm audit",
-    "ui": "npx kill-port 3001 && npm run --workspace ui start",
+    "ui": "npx kill-port 3000 && npm run --workspace ui start",
     "dev": "concurrently \"npm run --workspace api dev\" \"npm run --workspace ui start\"",
     "lint": "lerna run lint",
     "test": "lerna run test",
@@ -25,8 +25,7 @@
     "format-and-lint:all": "lerna exec --concurrency 1 -- npm run format && lerna exec --concurrency 1 -- npm run lint",
     "bootstrap:npm": "lerna bootstrap --npm-client npm",
     "clean:npm": "lerna clean && npm ci",
-    "test-fetch": "node --loader ts-node/esm --loader tsconfig-paths/register packages/ui/src/services/test-fetch.ts",
-    "kill": "npx kill-port 3001"
+    "test-fetch": "node --loader ts-node/esm --loader tsconfig-paths/register packages/ui/src/services/test-fetch.ts"
   },
   "workspaces": ["packages/api", "packages/ui"],
   "dependencies": {

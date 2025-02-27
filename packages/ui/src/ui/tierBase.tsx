@@ -1,4 +1,4 @@
-import React, { MouseEvent, FC, memo, cloneElement } from 'react';
+import React, { MouseEvent, FC, memo, cloneElement, useState, useCallback } from 'react';
 import { IconButton, Paper, ListItem, Typography, Menu, MenuItem } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import {
@@ -125,17 +125,24 @@ const TierMoreOptions: FC<TierMoreOptionsProps> = memo((props) => {
 TierMoreOptions.displayName = 'TierMoreOptions';
 
 const TierItemSelect: FC<TierItemSelectProps> = memo((props: TierItemSelectProps) => {
-  const { options, selected, onSelect, sx, anchorEl, onAnchorChange } = props;
+  const { options, selected, onSelect, sx } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleAnchorChange = useCallback((newAnchorEl: HTMLElement | null) => {
+    setAnchorEl(newAnchorEl);
+  }, []);
 
   return (
     <>
       <Typography sx={{ ...(sx as Styles) }}>
-        <span onClick={(event: MouseEvent<HTMLSpanElement>) => onAnchorChange(event.currentTarget)}>{selected}</span>
+        <span onClick={(event: MouseEvent<HTMLSpanElement>) => handleAnchorChange(event.currentTarget)}>
+          {selected}
+        </span>
       </Typography>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => onAnchorChange(null)}
+        onClose={() => handleAnchorChange(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         {options.map((option: string) => (
@@ -143,7 +150,7 @@ const TierItemSelect: FC<TierItemSelectProps> = memo((props: TierItemSelectProps
             key={option}
             onClick={() => {
               onSelect(option);
-              onAnchorChange(null);
+              handleAnchorChange(null);
             }}
           >
             {option}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, memo, FC } from 'react';
-import { List, Box, Paper, Typography, Modal } from '@mui/material';
+import { List, Box, Paper, Typography } from '@mui/material';
 import { Styles } from '../../types/style';
 import { Tier, TierChangePayload, IHandleChange } from '../../types/tier';
 import { TierCard } from '../ui/tierComponent';
@@ -40,7 +40,6 @@ type HandleAdd = () => void;
 export const TierList: FC = memo(() => {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [editingId, setEditingId] = useState<EditingId>(null);
-  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleEdit: HandleEdit = useCallback(
     (id: string): void => {
@@ -81,10 +80,6 @@ export const TierList: FC = memo(() => {
       const nextId = String(prevTiers.reduce((max, tier) => Math.max(max, Number(tier.id)), 0) + 1);
       return [...(prevTiers as Tier[]), { id: nextId, minValue: 0, creditValue: 0 } as Tier];
     });
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setModalOpen(false);
   }, []);
 
   useEffect(() => {
@@ -148,11 +143,6 @@ export const TierList: FC = memo(() => {
           {cards}
         </Box>
       </List>
-      <Modal open={isModalOpen} onClose={handleCloseModal}>
-        <Box>
-          <Typography>Conteúdo do Modal</Typography>
-        </Box>
-      </Modal>
     </>
   ) as JSX.Element;
 });
