@@ -96,23 +96,33 @@ const TierIconAdd: FC<TierIconAddProps> = memo((props: TierIconAddProps) => {
 TierIconAdd.displayName = 'TierIconAdd';
 
 const TierMoreOptions: FC<TierMoreOptionsProps> = memo((props) => {
-  const { triggerEl, labelTrigger, menuItems = [], anchorEl, onClose, onOpen, sx } = props;
+  const { triggerEl, labelTrigger, menuItems = [], sx } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleOpen = useCallback((event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
   return (
     <>
       {triggerEl ? (
-        cloneElement(triggerEl, { onClick: (event: MouseEvent<HTMLElement>) => onOpen(event) })
+        cloneElement(triggerEl, { onClick: handleOpen })
       ) : (
-        <Typography sx={sx} onClick={(event) => onOpen(event as unknown as MouseEvent<HTMLElement>)}>
+        <Typography sx={sx} onClick={handleOpen}>
           {labelTrigger}
         </Typography>
       )}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         {menuItems.map((item, index) => (
           <MenuItem
             key={index}
             onClick={() => {
               item.onClick();
-              onClose();
+              handleClose();
             }}
           >
             {item.element || item.label}

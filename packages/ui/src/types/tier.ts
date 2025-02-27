@@ -82,9 +82,6 @@ export interface MenuItemProps {
 export interface TierMoreOptionsProps {
   menuItems?: MenuItemProps[];
   triggerEl?: JSX.Element;
-  anchorEl: HTMLElement | null;
-  onClose: () => void;
-  onOpen: (event: MouseEvent<HTMLElement>) => void;
   sx?: SxProps<Theme>;
   labelTrigger?: string;
 }

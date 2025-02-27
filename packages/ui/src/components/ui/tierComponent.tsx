@@ -1,4 +1,4 @@
-import React, { MouseEvent, FC, memo, useState, useCallback } from 'react';
+import React, { FC, memo, useState, useCallback } from 'react';
 import { Typography, TextField, Box, Modal } from '@mui/material';
 import { TierItem } from '../../ui/tierBase';
 import { Styles } from '../../types/style';
@@ -41,16 +41,7 @@ TierCardRoot.displayName = 'TierCardRoot' as string;
 
 const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
   const { title, onEdit, onDelete, sx, ModalEl } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  const handleOpen = useCallback((event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
 
   const handleOpenModal = useCallback(() => {
     setModalOpen(true);
@@ -70,9 +61,6 @@ const TierHeader: FC<TierHeaderProps> = memo((props: TierHeaderProps) => {
             { label: 'Editar', onClick: onEdit },
             { label: 'Modal', onClick: handleOpenModal }
           ]}
-          anchorEl={anchorEl}
-          onOpen={handleOpen}
-          onClose={handleClose}
         />
         <TierItem.IconDelete onClick={onDelete} />
       </Box>
