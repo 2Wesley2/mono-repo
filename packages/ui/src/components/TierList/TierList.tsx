@@ -157,13 +157,13 @@ export const TierList: FC = memo(() => {
             {tier.benefitType === 'recompensa' ? (
               isEditing ? (
                 <Autocomplete
-                  multiple
-                  freeSolo
-                  size="small"
+                  multiple={true}
+                  fullWidth={true}
+                  disableCloseOnSelect={true}
                   options={rewardList}
                   value={tier.rewardValues as string[]}
                   onChange={handleAutocompleteChange(tier.id, 'rewardValues')}
-                  renderInput={(params) => <TextField {...params} label={creditOption} />}
+                  renderInput={(params) => <TextField {...params} fullWidth={true} label={creditOption} />}
                 />
               ) : (
                 <TierItem.Details title={creditOption} value={tier.rewardValues} />
