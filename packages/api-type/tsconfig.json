@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "mongoose-wrapper": ["src/libs/mongoose/type-mongoose-wrapper.ts"],
+      "#model-type": ["src/components/Model/type-model.ts"],
+      "#model": ["src/components/Model/model.ts"],
+      "person-model": ["src/resources/modules/account/person/PersonModel.ts"],
+      "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
+      "bcrypt-wrapper": ["src/libs/bcrypt/bcrypt-wrapper.ts"],
+      "#bcrypt-type": ["src/libs/bcrypt/type-bcrypt-wrapper.ts"],
+      "jwt-type": ["src/libs/jwt/type-jwt.ts"],
+      "jwt-wrapper": ["src/libs/jwt/jwt-wrapper.ts"]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
