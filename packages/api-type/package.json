@@ -33,7 +33,6 @@
     "@types/express": "^5.0.0",
     "@types/express-list-endpoints": "^6.0.3",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/mongoose": "^5.11.96",
     "@types/node": "^22.13.5",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
