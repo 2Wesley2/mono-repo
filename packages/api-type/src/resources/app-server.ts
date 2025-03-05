@@ -30,9 +30,7 @@ export default class AppServer {
   }
 
   async connectDatabase(): Promise<void> {
-    console.log("Connecting to database...");
-    await Database.connect();
-    console.log("Database connected");
+    await Database.connectDB();
   }
 
   setPort(): void {
@@ -96,7 +94,7 @@ export default class AppServer {
   }
 
   async disconnectDB(): Promise<void> {
-    await Database.disconnect();
+    await Database.disconnectDB();
   }
 
   setupGracefulShutdown(): void {
