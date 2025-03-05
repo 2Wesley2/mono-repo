@@ -34,23 +34,36 @@ export default class AppServer {
   }
 
   setPort(): void {
-    const port = config.apiPort || 3009;
-    this.app.set("port", port);
-    console.log(`Port set to ${port}`);
+    try {
+      const port = config.apiPort || 3009;
+      this.app.set("port", port);
+      console.log(`Port set to ${port}`);
+    } catch (error) {
+      console.error("Error in setPort:", error);
+      throw new Error(
+        `Failed to set port: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   configureMiddlewares(): void {
-    console.log("Configuring middlewares...");
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(
-      cors({
-        origin: "http://localhost:3000",
-        credentials: true,
-      }),
-    );
-    this.app.use(cookieParser());
-    console.log("Middlewares configured");
+    try {
+      this.app.use(express.json());
+      this.app.use(express.urlencoded({ extended: true }));
+      this.app.use(
+        cors({
+          origin: "http://localhost:3000",
+          credentials: true,
+        }),
+      );
+      this.app.use(cookieParser());
+      console.log("Middlewares configured");
+    } catch (error) {
+      console.error("Error configuring middlewares:", error);
+      throw new Error(
+        `Failed to configure middlewares: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   setRoutes(): void {
@@ -67,9 +80,16 @@ export default class AppServer {
   }
 
   handleErrors(): void {
-    console.log("Setting error handler...");
-    this.app.use(errorHandler);
-    console.log("Error handler set");
+    try {
+      console.log("Setting error handler...");
+      this.app.use(errorHandler);
+      console.log("Error handler set");
+    } catch (error) {
+      console.error("Error setting error handler:", error);
+      throw new Error(
+        `Failed to set error handler: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   async start(): Promise<void> {
@@ -79,13 +99,22 @@ export default class AppServer {
       const port = this.app.get("port");
       console.log(`Starting server on port ${port}`);
 
-      this.server = this.app.listen(port, () => {
-        console.log(`Server started on port ${port}`);
-        resolve();
-      });
-
+      try {
+        this.server = this.app.listen(port, () => {
+          console.log(`Server started on port ${port}`);
+          resolve();
+        });
+      } catch (error) {
+        return reject(
+          new Error(
+            `Failed to start server: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
+      }
       this.server.on("error", (error: Error) => {
-        console.error("Server error:", error);
+        console.error(
+          new Error(`Server encountered an error: ${error.message}`),
+        );
         reject(error);
       });
 
