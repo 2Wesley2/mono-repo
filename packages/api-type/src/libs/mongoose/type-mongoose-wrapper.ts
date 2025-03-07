@@ -4,7 +4,7 @@ import mongoose, {
   SchemaOptions,
   Model,
   model,
-  Document,
+  Document as MongooseDocument,
 } from "mongoose";
 
 export type Default = {};
@@ -64,12 +64,9 @@ export type PostMiddlewareConfig = {
 
 export type MiddlewareConfig = PreMiddlewareConfig | PostMiddlewareConfig;
 
-export interface RegisterMiddlewares {}
-export class RegisterMiddlewaresConfigurator<T extends Schema>
-  implements RegisterMiddlewares
-{
+export class RegisterMiddlewaresConfigurator {
   constructor(
-    public readonly schema: T,
+    public readonly schema: Schema,
     private readonly middlewares: MiddlewareConfig[],
   ) {
     this.registerMiddlewares();
@@ -87,12 +84,8 @@ export class RegisterMiddlewaresConfigurator<T extends Schema>
   }
 }
 
-export interface RegisterModel {}
-export class RegisterModelConfigurator<T extends Document>
-  implements RegisterModel
-{
-  public newModel: Model<T>;
-
+export class RegisterModelConfigurator {
+  public newModel: Model<MongooseDocument>;
   constructor(
     private readonly modelName: string,
     private readonly schema: Schema,
@@ -100,9 +93,9 @@ export class RegisterModelConfigurator<T extends Document>
     this.newModel = this.registerModel();
   }
 
-  private registerModel(): Model<T> {
+  private registerModel(): Model<MongooseDocument> {
     try {
-      return model<T>(this.modelName, this.schema);
+      return model<MongooseDocument>(this.modelName, this.schema);
     } catch (error: Error | any) {
       if (error.name === "OverwriteModelError") {
         throw new Error(
@@ -121,36 +114,29 @@ export class RegisterModelConfigurator<T extends Document>
   }
 }
 
-export interface RegisterDocumentParams<TDoc extends Document = Document> {
+export interface RegisterDocumentParams {
   readonly schema: SchemaDefinition;
   readonly modelName: string;
   readonly options?: options;
-  readonly middlewares?: MiddlewareConfig[];
-
-  readonly __docType?: TDoc;
+  readonly middlewares: MiddlewareConfig[];
 }
 
-export interface RegisterDocument {}
-export class RegisterDocumentConfigurator<
-  TDoc extends Document,
-  T extends RegisterDocumentParams<TDoc>,
-> implements RegisterDocument
-{
-  public model: NewDocMongoose<TDoc>;
+export class RegisterDocumentConfigurator {
+  public model: Model<MongooseDocument>;
   constructor(
-    private readonly schema: T["schema"],
-    private readonly modelName: T["modelName"],
-    private readonly options?: T["options"],
-    private readonly middlewares?: T["middlewares"],
+    private readonly schema: RegisterDocumentParams["schema"],
+    private readonly modelName: RegisterDocumentParams["modelName"],
+    private readonly options?: RegisterDocumentParams["options"],
+    private readonly middlewares?: RegisterDocumentParams["middlewares"],
   ) {
     this.model = this.registerDocument();
   }
 
-  private registerDocument(): NewDocMongoose<TDoc> {
-    const schema = new Schema(this.schema, this.options);
-    if (this.middlewares) {
+  private registerDocument(): Model<MongooseDocument> {
+    const schema = new Schema(this.schema, this.options || {});
+    if (this.middlewares && this.middlewares.length > 0) {
       new RegisterMiddlewaresConfigurator(schema, this.middlewares);
     }
-    return new RegisterModelConfigurator<TDoc>(this.modelName, schema).newModel;
+    return new RegisterModelConfigurator(this.modelName, schema).newModel;
   }
 }

@@ -1,11 +1,7 @@
-import {
-  Model as MongooseModel,
-  Document as MongooseDocument,
-  SchemaOptions,
-} from "mongoose";
+import { Model as MongooseModel, Document as MongooseDocument } from "mongoose";
 import { MongooseWrapper as Database } from "#mongoose-wrapper";
 import type { IMongooseModel } from "./type-model";
-import type { Middleware } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "mongoose-wrapper";
 
 const reservedMethods: string[] = [
   "save", // Salva o documento no banco
@@ -32,44 +28,29 @@ const reservedMethods: string[] = [
   "toJSON", // Converte o documento para JSON
   "create", // Cria e salva documentos
   "update", // (descontinuado) Atualiza documentos (não deve ser usado, mas ainda funciona em versões antigas)
-];
+] as const;
 
-export class Model<T extends MongooseDocument = MongooseDocument>
-  implements IMongooseModel<T>
-{
-  public model: MongooseModel<MongooseDocument & T>;
+export class Model implements IMongooseModel {
+  public model: MongooseModel<MongooseDocument>;
   constructor(
-    schema: Record<string, any> = {},
-    modelName: string,
-    options: SchemaOptions = {},
-    middlewares: Middleware[] = [],
+    schema: RegisterDocumentParams["schema"],
+    modelName: RegisterDocumentParams["modelName"],
+    options: RegisterDocumentParams["options"],
+    middlewares: RegisterDocumentParams["middlewares"],
   ) {
     if (Object.keys(schema).length === 0) {
       throw new Error("O esquema fornecido não pode estar vazio.");
     }
 
-    this.model = Database.registerModel({
+    this.model = Database.registerDocument(
       schema,
       modelName,
-      options,
-      middlewares,
-    });
+      options || {},
+      middlewares || [],
+    );
 
     this.attachCustomMethods();
   }
-
-  static isValidObjectId(id: string): boolean {
-    return Database.isValidObjectId(id);
-  }
-
-  static get getTypes() {
-    return Database.getTypes;
-  }
-
-  static get objectIdType() {
-    return Database.getObjectIdType;
-  }
-
   attachCustomMethods(): void {
     const customMethods = Object.getOwnPropertyNames(
       Object.getPrototypeOf(this),

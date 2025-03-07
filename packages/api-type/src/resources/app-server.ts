@@ -2,9 +2,20 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import express, { Application, Request, Response, NextFunction } from "express";
 import { Server as HTTPServer } from "http";
+import chalk from "chalk";
+import listEndpoints from "express-list-endpoints";
 import config from "../config/index";
 import { MongooseWrapper as Database } from "#mongoose-wrapper";
 import errorHandler from "../middlewares/errorHandler";
+import { controllers } from "./modules";
+
+const methodColors: { [key: string]: (text: string) => string } = {
+  GET: chalk.hex("#007f31"),
+  POST: chalk.hex("#ad7a03"),
+  PUT: chalk.hex("#0053b8"),
+  DELETE: chalk.hex("#8e1a10"),
+  PATCH: chalk.hex("#623497"),
+} as const;
 
 export default class AppServer {
   public app: Application;
@@ -13,8 +24,9 @@ export default class AppServer {
   constructor() {
     this.app = express();
   }
+  private readonly urlServer = `http://${config.dbHost}:${config.apiPort}`;
 
-  async configureApp(): Promise<void> {
+  private async configureApp(): Promise<void> {
     try {
       console.log("Configuring app...");
       await this.connectDatabase();
@@ -29,15 +41,14 @@ export default class AppServer {
     }
   }
 
-  async connectDatabase(): Promise<void> {
+  private async connectDatabase(): Promise<void> {
     await Database.connectDB();
   }
 
-  setPort(): void {
+  private setPort(): void {
     try {
       const port = config.apiPort || 3009;
       this.app.set("port", port);
-      console.log(`Port set to ${port}`);
     } catch (error) {
       console.error("Error in setPort:", error);
       throw new Error(
@@ -46,18 +57,18 @@ export default class AppServer {
     }
   }
 
-  configureMiddlewares(): void {
+  private configureMiddlewares(): void {
     try {
       this.app.use(express.json());
       this.app.use(express.urlencoded({ extended: true }));
       this.app.use(
         cors({
-          origin: "http://localhost:3000",
+          origin: this.urlServer,
           credentials: true,
         }),
       );
       this.app.use(cookieParser());
-      console.log("Middlewares configured");
+      this.app.use(this.logRequest.bind(this));
     } catch (error) {
       console.error("Error configuring middlewares:", error);
       throw new Error(
@@ -66,24 +77,34 @@ export default class AppServer {
     }
   }
 
-  setRoutes(): void {
+  private setRoutes(): void {
     try {
-      console.log("Setting routes...");
       this.app.get("/", (req: Request, res: Response, next: NextFunction) => {
         res.json("Hello World");
       });
-      console.log("Routes set");
+      this.app.use("/user", controllers.user.getRouter());
+
+      const endpoints = listEndpoints(this.app);
+      const port = this.app.get("port");
+      console.log(chalk.blue("Available endpoints:"));
+      endpoints.forEach((endpoint) => {
+        endpoint.methods.forEach((method) => {
+          const colorFn = methodColors[method] || chalk.white;
+          console.log(
+            colorFn(`[${method}]`),
+            chalk.blue(`${this.urlServer}${endpoint.path}`),
+          );
+        });
+      });
     } catch (error) {
       console.error("Error setting routes:", error);
       throw error;
     }
   }
 
-  handleErrors(): void {
+  private handleErrors(): void {
     try {
-      console.log("Setting error handler...");
       this.app.use(errorHandler);
-      console.log("Error handler set");
     } catch (error) {
       console.error("Error setting error handler:", error);
       throw new Error(
@@ -92,16 +113,14 @@ export default class AppServer {
     }
   }
 
-  async start(): Promise<void> {
+  public async start(): Promise<void> {
     await this.configureApp();
 
     return new Promise((resolve, reject) => {
       const port = this.app.get("port");
-      console.log(`Starting server on port ${port}`);
 
       try {
         this.server = this.app.listen(port, () => {
-          console.log(`Server started on port ${port}`);
           resolve();
         });
       } catch (error) {
@@ -122,11 +141,27 @@ export default class AppServer {
     });
   }
 
-  async disconnectDB(): Promise<void> {
+  public async disconnectDB(): Promise<void> {
     await Database.disconnectDB();
   }
 
-  setupGracefulShutdown(): void {
+  private logRequest(req: Request, res: Response, next: NextFunction): void {
+    const start = Date.now();
+    res.on("finish", () => {
+      const duration = Date.now() - start;
+      const methodColored = methodColors[req.method]
+        ? methodColors[req.method](req.method)
+        : chalk.white(req.method);
+      const urlColored = chalk.blue(`${this.urlServer}${req.originalUrl}`);
+      const statusColored = chalk.yellow(res.statusCode.toString());
+      console.log(
+        `${methodColored} ${urlColored} - ${statusColored} - ${duration}ms`,
+      );
+    });
+    next();
+  }
+
+  private setupGracefulShutdown(): void {
     const gracefulShutdown = async (signal: string) => {
       console.log(`Received signal ${signal}, shutting down gracefully...`);
       await this.disconnectDB();

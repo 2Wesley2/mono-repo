@@ -1,26 +1,23 @@
 import {
   Model as MongooseModel,
   Document as MongooseDocument,
-  SchemaOptions,
+  SchemaDefinition,
 } from "mongoose";
-import type { Middleware } from "../../libs/mongoose/type-mongoose-wrapper.ts";
 import { IMongooseModel } from "./type-model.ts";
-
+import type {
+  MiddlewareConfig,
+  options,
+} from "../../libs/mongoose/type-mongoose-wrapper.ts";
 declare module "model" {
-  export class MongooseModelWrapper<
-    T extends MongooseDocument = MongooseDocument,
-  > implements IMongooseModel<T>
-  {
-    public model: MongooseModel<MongooseDocument & T>;
+  export class MongooseModelWrappe implements IMongooseModel {
+    public model: MongooseModel<MongooseDocument>;
     constructor(
-      schema: Record<string, any>,
+      schema: SchemaDefinition,
       modelName: string,
-      options?: SchemaOptions,
-      middlewares?: Middleware[],
+      options?: options,
+      middlewares?: MiddlewareConfig[],
     );
-    static isValidObjectId(id: string): boolean;
-    static get getTypes(): any;
-    static get objectIdType(): any;
+
     attachCustomMethods(): void;
   }
 }

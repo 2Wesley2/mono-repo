@@ -1,7 +1,20 @@
+import { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
-import type { IPersonModel } from "./type-person.ts";
+import type { RegisterDocumentParams } from "mongoose-wrapper";
 
-const personSchema = {
+export interface IPerson {
+  cpf: string;
+  firstName: string;
+  lastName: string;
+  birthDate: Date;
+  street: string;
+  neighborhood: string;
+  houseNumber: string;
+  postalCode: string;
+  city: string;
+  state: string;
+}
+const personSchema: SchemaDefinition<IPerson> = {
   cpf: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -14,13 +27,18 @@ const personSchema = {
   state: { type: String, required: true },
 };
 
-export class PersonModel extends Model implements IPersonModel {
-  constructor(schema = {}, modelName: string, options = {}, middlewares = []) {
+export class PersonModel extends Model {
+  constructor(
+    schema: RegisterDocumentParams["schema"],
+    modelName: RegisterDocumentParams["modelName"],
+    options: RegisterDocumentParams["options"] = {},
+    middlewares: RegisterDocumentParams["middlewares"] = [],
+  ) {
     const combinedSchema = { ...personSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  async signUp(data: Record<string, any>): Promise<any> {
+  public async signUp(data: IPerson): Promise<any> {
     return this.model.create(data);
   }
 }

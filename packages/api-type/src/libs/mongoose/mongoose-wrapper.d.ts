@@ -15,7 +15,7 @@ declare module "mongoose-wrapper" {
     public static addMiddleware(
       schema: Schema,
       middlewares: MiddlewareConfig[],
-    ): RegisterMiddlewaresConfigurator<Schema>;
+    ): Schema;
 
     public static registerDocument(
       schema: SchemaDefinition,

@@ -14,17 +14,18 @@ import {
 } from "./type-mongoose-wrapper";
 import type {
   ConnectionDBType,
-  MiddlewareConfig,
   ConnectionEvents,
   options,
+  RegisterDocumentParams,
 } from "./type-mongoose-wrapper";
 import { MongooseWrapper as IMongooseWrapper } from "./mongoose-wrapper";
+
 const options: ConnectOptions = {
   connectTimeoutMS: 10000,
   socketTimeoutMS: 30000,
   serverSelectionTimeoutMS: 5000,
   heartbeatFrequencyMS: 10000,
-};
+} as const;
 
 const connectionEvents: ConnectionEvents = {
   connecting: () => console.log("Mongoose iniciando o processo de conexão..."),
@@ -36,27 +37,27 @@ const connectionEvents: ConnectionEvents = {
   close: () => console.log("Conexão fechada."),
   reconnected: () => console.log("Mongoose reconectado após perda de conexão."),
   error: (err: Error) => console.error("Erro na conexão com o MongoDB:", err),
-};
+} as const;
 
 export class MongooseWrapper implements IMongooseWrapper {
   public static addMiddleware(
     schema: Schema,
-    middlewares: MiddlewareConfig[],
-  ): RegisterMiddlewaresConfigurator<Schema> {
+    middlewares: RegisterDocumentParams["middlewares"],
+  ): RegisterMiddlewaresConfigurator {
     return new RegisterMiddlewaresConfigurator(schema, middlewares);
   }
 
   public static registerDocument(
-    schema: SchemaDefinition,
-    modelName: string,
-    options: options,
-    RegisterMiddlewares: MiddlewareConfig[],
+    schema: RegisterDocumentParams["schema"],
+    modelName: RegisterDocumentParams["modelName"],
+    options: RegisterDocumentConfigurator["options"],
+    middlewares: RegisterDocumentParams["middlewares"],
   ): Model<MongooseDocument> {
     return new RegisterDocumentConfigurator(
       schema,
       modelName,
       options,
-      RegisterMiddlewares,
+      middlewares,
     ).model;
   }
 
