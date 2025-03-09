@@ -2,32 +2,53 @@ import { PersonModel } from "../person/PersonModel";
 import BcryptWrapper from "../../../../libs/bcrypt/bcrypt-wrapper";
 import type { IPerson } from "../person/PersonModel";
 import type { RegisterDocumentParams } from "mongoose-wrapper";
-export interface TUser {
-  signUp: (userData: IUser) => Promise<any>;
-}
 
 export interface IUser extends IPerson {
   email: string;
   password: string;
 }
 
+export interface signInParams {
+  email: IUser["email"];
+  password: IUser["password"];
+}
+
+export interface TUser {
+  signIn: (credentials: signInParams) => Promise<any>;
+  signUp: (userData: IUser) => Promise<any>;
+}
 const userSchema = {
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-} as const;
+};
 
-export default class UserModel extends PersonModel implements TUser {
+export default class UserModel extends PersonModel<IUser> {
   constructor(
-    schema?: RegisterDocumentParams["schema"],
-    modelName?: RegisterDocumentParams["modelName"],
-    options?: RegisterDocumentParams["options"],
-    middlewares?: RegisterDocumentParams["middlewares"],
+    schema: RegisterDocumentParams<IUser>["schemaDefinition"] = {},
+    modelName: RegisterDocumentParams<IUser>["collection"] = "User",
+    options: RegisterDocumentParams<IUser>["options"] = {},
+    middlewares: RegisterDocumentParams<IUser>["middlewares"] = [],
   ) {
     const combinedSchema = { ...userSchema, ...schema };
-    super(combinedSchema, (modelName = "User"), options, middlewares);
+    super(combinedSchema, modelName, options, middlewares);
   }
 
-  async signUp(userData: IUser): Promise<any> {
+  public async signIn(credentials: signInParams): Promise<any> {
+    const user = await this.model.findOne({ email: credentials.email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const isPasswordValid = await BcryptWrapper.compare(
+      credentials.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+    return user;
+  }
+
+  public async signUp(userData: IUser): Promise<any> {
     const encryptedPassword = await BcryptWrapper.hash(userData.password, 10);
     userData.password = encryptedPassword;
     return await super.signUp(userData);

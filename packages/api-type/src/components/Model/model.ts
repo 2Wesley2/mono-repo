@@ -30,13 +30,13 @@ const reservedMethods: string[] = [
   "update", // (descontinuado) Atualiza documentos (não deve ser usado, mas ainda funciona em versões antigas)
 ] as const;
 
-export class Model implements IMongooseModel {
-  public model: MongooseModel<MongooseDocument>;
+export class Model<U> {
+  public model: MongooseModel<U>;
   constructor(
-    schema: RegisterDocumentParams["schema"],
-    modelName: RegisterDocumentParams["modelName"],
-    options: RegisterDocumentParams["options"],
-    middlewares: RegisterDocumentParams["middlewares"],
+    public schema: RegisterDocumentParams<U>["schemaDefinition"],
+    public modelName: RegisterDocumentParams<U>["collection"],
+    public options: RegisterDocumentParams<U>["options"],
+    public middlewares: RegisterDocumentParams<U>["middlewares"],
   ) {
     if (Object.keys(schema).length === 0) {
       throw new Error("O esquema fornecido não pode estar vazio.");

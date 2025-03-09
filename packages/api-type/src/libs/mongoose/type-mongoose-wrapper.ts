@@ -5,6 +5,8 @@ import mongoose, {
   Model,
   model,
   Document as MongooseDocument,
+  HydratedDocument,
+  MongooseError,
 } from "mongoose";
 
 export type Default = {};
@@ -41,7 +43,8 @@ export const registerConnectionEvents: RegisterConnectionEventsFunction = <
   });
 };
 
-export type NewDocMongoose<TDoc extends Document = Document> = Model<TDoc>;
+export type NewDocMongoose<TDoc extends MongooseDocument = MongooseDocument> =
+  Model<TDoc>;
 export type options = SchemaOptions<any, any, any, any, Default>;
 export type hookEventPre = "createCollection" | RegExp;
 export type hookEventPost =
@@ -66,13 +69,9 @@ export type MiddlewareConfig = PreMiddlewareConfig | PostMiddlewareConfig;
 
 export class RegisterMiddlewaresConfigurator {
   constructor(
-    public readonly schema: Schema,
-    private readonly middlewares: MiddlewareConfig[],
+    public schema: Schema,
+    public middlewares: MiddlewareConfig[],
   ) {
-    this.registerMiddlewares();
-  }
-
-  private registerMiddlewares(): Schema {
     this.middlewares.forEach((mw) => {
       if (mw.method === "pre") {
         this.schema.pre(mw.hookEvent, mw.fn);
@@ -80,63 +79,58 @@ export class RegisterMiddlewaresConfigurator {
         this.schema.post(mw.hookEvent, mw.fn);
       }
     });
-    return this.schema;
   }
 }
 
-export class RegisterModelConfigurator {
-  public newModel: Model<MongooseDocument>;
-  constructor(
-    private readonly modelName: string,
-    private readonly schema: Schema,
-  ) {
-    this.newModel = this.registerModel();
-  }
-
-  private registerModel(): Model<MongooseDocument> {
+// Classe que registra o modelo a partir de um Schema já criado
+export class RegisterModelConfigurator<U> {
+  public newModel: Model<U>;
+  constructor(collection: string, schema: Schema<U>) {
     try {
-      return model<MongooseDocument>(this.modelName, this.schema);
+      this.newModel = model<U>(collection, schema);
     } catch (error: Error | any) {
       if (error.name === "OverwriteModelError") {
         throw new Error(
-          `Erro: o modelo "${this.modelName}" já foi registrado (OverwriteModelError).`,
+          `Erro: o modelo "${collection}" já foi registrado (OverwriteModelError).`,
         );
       }
       if (error.name === "MissingSchemaError") {
         throw new Error(
-          `Erro: esquema não encontrado para o modelo "${this.modelName}" (MissingSchemaError).`,
+          `Erro: esquema não encontrado para o modelo "${collection}" (MissingSchemaError).`,
         );
       }
       throw new Error(
-        `Erro ao registrar o modelo "${this.modelName}": ${error.message}`,
+        `Erro ao registrar o modelo "${collection}": ${error.message}`,
       );
     }
   }
 }
 
-export interface RegisterDocumentParams {
-  readonly schema: SchemaDefinition;
-  readonly modelName: string;
-  readonly options?: options;
-  readonly middlewares: MiddlewareConfig[];
+export interface RegisterDocumentParams<U> {
+  schemaDefinition: SchemaDefinition<U>;
+  collection: string;
+  options?: options;
+  middlewares: MiddlewareConfig[];
 }
 
-export class RegisterDocumentConfigurator {
-  public model: Model<MongooseDocument>;
-  constructor(
-    private readonly schema: RegisterDocumentParams["schema"],
-    private readonly modelName: RegisterDocumentParams["modelName"],
-    private readonly options?: RegisterDocumentParams["options"],
-    private readonly middlewares?: RegisterDocumentParams["middlewares"],
-  ) {
-    this.model = this.registerDocument();
-  }
+export class RegisterDocumentConfigurator<U> {
+  public schema: Schema<U>;
+  private collection: string;
+  private options: options;
+  private middlewares: MiddlewareConfig[];
+  public model: Model<U>;
 
-  private registerDocument(): Model<MongooseDocument> {
-    const schema = new Schema(this.schema, this.options || {});
-    if (this.middlewares && this.middlewares.length > 0) {
-      new RegisterMiddlewaresConfigurator(schema, this.middlewares);
+  constructor(params: RegisterDocumentParams<U>) {
+    this.collection = params.collection;
+    this.options = { timestamps: true, ...params.options };
+    this.middlewares = params.middlewares || [];
+    this.schema = new Schema<U>(params.schemaDefinition, this.options);
+    if (this.middlewares.length > 0) {
+      new RegisterMiddlewaresConfigurator(this.schema, this.middlewares);
     }
-    return new RegisterModelConfigurator(this.modelName, schema).newModel;
+    this.model = new RegisterModelConfigurator<U>(
+      this.collection,
+      this.schema,
+    ).newModel;
   }
 }

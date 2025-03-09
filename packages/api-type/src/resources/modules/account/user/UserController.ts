@@ -13,12 +13,12 @@ export default class UserController extends Controller {
   }
 
   private async signUp(
-    req: Request,
+    req: Request<IUser>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      const data = req.body as IUser;
+      const data = req.body;
       const result = await this.model.signUp(data);
       res.json(result);
     } catch (error) {

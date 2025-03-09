@@ -27,18 +27,18 @@ const personSchema: SchemaDefinition<IPerson> = {
   state: { type: String, required: true },
 };
 
-export class PersonModel extends Model {
+export class PersonModel<T extends IPerson = IPerson> extends Model<T> {
   constructor(
-    schema: RegisterDocumentParams["schema"],
-    modelName: RegisterDocumentParams["modelName"],
-    options: RegisterDocumentParams["options"] = {},
-    middlewares: RegisterDocumentParams["middlewares"] = [],
+    schema: RegisterDocumentParams<T>["schemaDefinition"],
+    modelName: RegisterDocumentParams<T>["collection"] = "Person",
+    options: RegisterDocumentParams<T>["options"],
+    middlewares: RegisterDocumentParams<T>["middlewares"],
   ) {
     const combinedSchema = { ...personSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  public async signUp(data: IPerson): Promise<any> {
-    return this.model.create(data);
+  public async signUp(data: T): Promise<any> {
+    return await this.model.create(data);
   }
 }

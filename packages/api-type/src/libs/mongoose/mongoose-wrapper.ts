@@ -4,71 +4,48 @@ import mongoose, {
   Model,
   Document as MongooseDocument,
   ConnectOptions,
-  connect,
 } from "mongoose";
 import config from "../../config/index";
 import {
   RegisterDocumentConfigurator,
   RegisterMiddlewaresConfigurator,
-  registerConnectionEvents,
 } from "./type-mongoose-wrapper";
-import type {
-  ConnectionDBType,
-  ConnectionEvents,
-  options,
-  RegisterDocumentParams,
-} from "./type-mongoose-wrapper";
-import { MongooseWrapper as IMongooseWrapper } from "./mongoose-wrapper";
 
-const options: ConnectOptions = {
-  connectTimeoutMS: 10000,
-  socketTimeoutMS: 30000,
-  serverSelectionTimeoutMS: 5000,
-  heartbeatFrequencyMS: 10000,
-} as const;
-
-const connectionEvents: ConnectionEvents = {
-  connecting: () => console.log("Mongoose iniciando o processo de conexão..."),
-  connected: () => console.log("Mongoose conectado com sucesso."),
-  open: () => console.log("Conexão aberta e pronta para uso."),
-  disconnecting: () =>
-    console.log("Mongoose iniciando o processo de desconexão..."),
-  disconnected: () => console.log("Mongoose desconectado."),
-  close: () => console.log("Conexão fechada."),
-  reconnected: () => console.log("Mongoose reconectado após perda de conexão."),
-  error: (err: Error) => console.error("Erro na conexão com o MongoDB:", err),
-} as const;
-
-export class MongooseWrapper implements IMongooseWrapper {
-  public static addMiddleware(
+import type { MiddlewareConfig, options } from "./type-mongoose-wrapper";
+export class MongooseWrapper {
+  static addMiddleware(
     schema: Schema,
-    middlewares: RegisterDocumentParams["middlewares"],
-  ): RegisterMiddlewaresConfigurator {
-    return new RegisterMiddlewaresConfigurator(schema, middlewares);
+    middlewares: MiddlewareConfig[],
+  ): Schema {
+    return new RegisterMiddlewaresConfigurator(schema, middlewares).schema;
   }
 
-  public static registerDocument(
-    schema: RegisterDocumentParams["schema"],
-    modelName: RegisterDocumentParams["modelName"],
-    options: RegisterDocumentConfigurator["options"],
-    middlewares: RegisterDocumentParams["middlewares"],
-  ): Model<MongooseDocument> {
-    return new RegisterDocumentConfigurator(
-      schema,
-      modelName,
-      options,
-      middlewares,
-    ).model;
+  static registerDocument<U>(
+    schema: SchemaDefinition<U>,
+    modelName: string,
+    options: options,
+    middlewares: MiddlewareConfig[],
+  ): Model<U> {
+    return new RegisterDocumentConfigurator<U>({
+      schemaDefinition: schema,
+      collection: modelName,
+      options: options,
+      middlewares: middlewares,
+    }).model;
   }
 
-  public static connectDB: ConnectionDBType = async (
-    dbName = config.dbName,
-  ): Promise<void> => {
+  static connectDB = async (dbName = config.dbName) => {
     if (!dbName) {
       throw new Error("O nome do banco de dados não pode ser undefined.");
     }
 
     let dbUri: string;
+    const options: ConnectOptions = {
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000,
+      heartbeatFrequencyMS: 10000,
+    };
 
     try {
       if (config.dbAtlas) {
@@ -87,18 +64,32 @@ export class MongooseWrapper implements IMongooseWrapper {
           "Configuração do banco de dados inválida. Verifique dbAtlas ou dbHost e dbPort.",
         );
       }
-      registerConnectionEvents(connectionEvents);
-      await connect(dbUri, options);
-    } catch (error: Error | any) {
+
+      await mongoose.connect(dbUri, options);
+
+      mongoose.connection.on("connected", () => {
+        console.log(`Mongoose conectado a ${dbUri}`);
+      });
+
+      mongoose.connection.on("error", (err: Error) => {
+        console.error("Erro na conexão com o MongoDB:", err);
+      });
+
+      mongoose.connection.on("disconnected", () => {
+        console.log("Mongoose desconectado.");
+      });
+    } catch (error: any) {
+      console.error(`Falha ao conectar ao banco ${dbName}:`, error.message);
       throw error;
     }
   };
 
-  public static disconnectDB: ConnectionDBType = async (): Promise<void> => {
+  static disconnectDB = async () => {
     try {
       await mongoose.connection.close();
-    } catch (error: Error | any) {
-      throw error;
+      console.log("Conexão com o banco de dados encerrada.");
+    } catch (error: any) {
+      console.error("Erro ao encerrar a conexão:", error);
     }
   };
 }
