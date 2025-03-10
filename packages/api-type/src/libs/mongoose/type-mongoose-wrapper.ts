@@ -5,8 +5,6 @@ import mongoose, {
   Model,
   model,
   Document as MongooseDocument,
-  HydratedDocument,
-  MongooseError,
 } from "mongoose";
 
 export type Default = {};

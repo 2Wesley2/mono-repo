@@ -38,19 +38,10 @@ export default class UserModel extends PersonModel<IUser> {
     if (!user) {
       throw new Error("User not found");
     }
-    const isPasswordValid = await BcryptWrapper.compare(
-      credentials.password,
-      user.password,
-    );
-    if (!isPasswordValid) {
-      throw new Error("Invalid password");
-    }
     return user;
   }
 
   public async signUp(userData: IUser): Promise<any> {
-    const encryptedPassword = await BcryptWrapper.hash(userData.password, 10);
-    userData.password = encryptedPassword;
     return await super.signUp(userData);
   }
 }

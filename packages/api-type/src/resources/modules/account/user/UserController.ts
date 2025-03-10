@@ -1,6 +1,7 @@
 import Controller from "../../../../components/Controller/controller";
 import type { Request, Response, NextFunction } from "express";
 import type { TUser, IUser } from "./UserModel";
+import { signInParams } from "./UserModel";
 
 export default class UserController extends Controller {
   constructor(private model: TUser) {
@@ -9,7 +10,22 @@ export default class UserController extends Controller {
   }
 
   private initRouter(): void {
+    this.router.post("/sign-in", this.signIn.bind(this));
     this.router.post("/sign-up", this.signUp.bind(this));
+  }
+
+  private async signIn(
+    req: Request<signInParams>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const data = req.body;
+      const result = await this.model.signIn(data);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
   }
 
   private async signUp(

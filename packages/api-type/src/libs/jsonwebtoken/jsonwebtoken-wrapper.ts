@@ -2,15 +2,15 @@ import jwt from "jsonwebtoken";
 import config from "../../config/index";
 import { JWTSign, JWTVerify, JWTDecode } from "./type-jsonwebtoken-wrapper";
 
-export default class JSONWebToken {
-  static sign: JWTSign = (payload, options) => {
+export default class JSONWebTokenWrapper {
+  sign: JWTSign = (payload, options) => {
     if (!config.jwtSecret) {
       throw new Error("JWT secret não definido na configuração.");
     }
     return jwt.sign(payload, config.jwtSecret, options || {});
   };
 
-  static verify: JWTVerify = (token, options) => {
+  verify: JWTVerify = (token, options) => {
     if (!config.jwtSecret) {
       throw new Error("JWT secret não definido na configuração.");
     }
@@ -21,7 +21,7 @@ export default class JSONWebToken {
     }
   };
 
-  static decode: JWTDecode = (token, options) => {
+  decode: JWTDecode = (token, options) => {
     return jwt.decode(token, options);
   };
 }
