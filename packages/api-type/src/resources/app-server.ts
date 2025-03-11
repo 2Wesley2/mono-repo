@@ -82,7 +82,7 @@ export default class AppServer {
       this.app.get("/", (req: Request, res: Response, next: NextFunction) => {
         res.json("Hello World");
       });
-      this.app.use("/user", controllers.user.getRouter());
+      this.app.use("/owner", controllers.ownerUser.getRouter());
 
       const endpoints = listEndpoints(this.app);
       const port = this.app.get("port");

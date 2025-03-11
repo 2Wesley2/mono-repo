@@ -1,10 +1,9 @@
 import Controller from "../../../../components/Controller/controller";
 import type { Request, Response, NextFunction } from "express";
-import type { TUser, IUser } from "./UserModel";
-import { signInParams } from "./UserModel";
+import type { COwner, SOwner, signInParams } from "../contract/index";
 
-export default class UserController extends Controller {
-  constructor(private model: TUser) {
+export default class OwnerController extends Controller {
+  constructor(protected model: COwner) {
     super();
     this.initRouter();
   }
@@ -34,7 +33,7 @@ export default class UserController extends Controller {
   }
 
   private async signUp(
-    req: Request<IUser>,
+    req: Request<SOwner>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {

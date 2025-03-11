@@ -1,11 +1,11 @@
-import UserModel from "./account/user/UserModel";
-import UserService from "./account/user/UserService";
-import UserController from "./account/user/UserController";
+import OwnerModel from "./account/owner/OwnerModel";
+import OwnerService from "./account/owner/OwnerService";
+import OwnerController from "./account/owner/OwnerController";
 
-const userModel = new UserModel();
-const userService = new UserService(userModel);
-const userController = new UserController(userService);
+const ownerModel = new OwnerModel();
+const ownerService = new OwnerService(ownerModel);
+const ownerController = new OwnerController(ownerService);
 
 export const controllers = {
-  user: userController,
+  ownerUser: ownerController,
 } as const;

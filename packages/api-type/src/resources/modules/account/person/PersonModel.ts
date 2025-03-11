@@ -1,20 +1,9 @@
 import { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { SPerson } from "../contract/index";
 
-export interface IPerson {
-  cpf: string;
-  firstName: string;
-  lastName: string;
-  birthDate: Date;
-  street: string;
-  neighborhood: string;
-  houseNumber: string;
-  postalCode: string;
-  city: string;
-  state: string;
-}
-const personSchema: SchemaDefinition<IPerson> = {
+const personSchema: SchemaDefinition<SPerson> = {
   cpf: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -27,7 +16,7 @@ const personSchema: SchemaDefinition<IPerson> = {
   state: { type: String, required: true },
 };
 
-export class PersonModel<T extends IPerson = IPerson> extends Model<T> {
+export class PersonModel<T extends SPerson = SPerson> extends Model<T> {
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
     modelName: RegisterDocumentParams<T>["collection"] = "Person",
