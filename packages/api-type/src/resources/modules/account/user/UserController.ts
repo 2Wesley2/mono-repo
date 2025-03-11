@@ -27,6 +27,7 @@ export default class UserController extends Controller {
         secure: false,
         maxAge: 3600000,
       });
+      res.status(200).json("logged in");
     } catch (error) {
       next(error);
     }
