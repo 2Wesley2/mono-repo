@@ -21,8 +21,12 @@ export default class UserController extends Controller {
   ): Promise<void> {
     try {
       const data = req.body;
-      const result = await this.model.signIn(data);
-      res.json(result);
+      const token = await this.model.signIn(data);
+      res.cookie("facilite", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 3600000,
+      });
     } catch (error) {
       next(error);
     }
