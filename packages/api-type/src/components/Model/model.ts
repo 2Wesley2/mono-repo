@@ -1,6 +1,5 @@
-import { Model as MongooseModel, Document as MongooseDocument } from "mongoose";
+import { Model as MongooseModel } from "mongoose";
 import { MongooseWrapper as Database } from "#mongoose-wrapper";
-import type { IMongooseModel } from "./type-model";
 import type { RegisterDocumentParams } from "mongoose-wrapper";
 
 const reservedMethods: string[] = [
