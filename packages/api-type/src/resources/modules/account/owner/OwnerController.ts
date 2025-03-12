@@ -1,5 +1,5 @@
-import Controller from "../../../../components/Controller/controller";
 import type { Request, Response, NextFunction } from "express";
+import Controller from "../../../../components/Controller/controller";
 import type { COwner, SOwner, signInParams } from "../contract/index";
 
 export default class OwnerController extends Controller {
