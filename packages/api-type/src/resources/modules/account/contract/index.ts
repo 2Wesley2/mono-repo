@@ -40,21 +40,17 @@ export interface signInOwnerPayload extends signInPayload {
   tradeName: SOwner["tradeName"];
 }
 
-export interface MOwner {
-  signIn: (credentials: signInParams) => Promise<any>;
-  signUp: (data: SOwner) => Promise<any>;
-}
-
-export interface ROwner extends MOwner {}
-export interface COwner extends MOwner {
-  createEmployee: (employee: SEmployee) => Promise<any>;
-}
-
 export interface SEmployee extends SUser {
   owner_id: string;
 }
-
-export interface CEmployee {
+export interface IModel<T> {
   signIn: (credentials: signInParams) => Promise<any>;
-  signUp: (data: SEmployee) => Promise<any>;
+  signUp: (data: T) => Promise<any>;
 }
+export interface ModelOwner extends IModel<SOwner> {}
+export interface ModelEmployee extends IModel<SEmployee> {}
+export interface RepositoryOwner extends ModelOwner {}
+export interface ServiceOwner extends RepositoryOwner {
+  createEmployee: (employee: SEmployee) => Promise<any>;
+}
+export interface ServiceEmployee extends ModelEmployee {}

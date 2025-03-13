@@ -1,6 +1,6 @@
 import type { RegisterDocumentParams } from "mongoose-wrapper";
 import UserModel from "../user/UserModel";
-import type { MOwner, SOwner, signInParams } from "../contract/index";
+import type { ModelOwner, SOwner, signInParams } from "../contract/index";
 
 const ownerUserSchema = {
   cnpj: { type: String, required: true, unique: true },
@@ -8,7 +8,7 @@ const ownerUserSchema = {
   tradeName: { type: String },
 };
 
-export default class OwnerModel extends UserModel implements MOwner {
+export default class OwnerModel extends UserModel implements ModelOwner {
   constructor(
     schema: RegisterDocumentParams<SOwner>["schemaDefinition"] = {},
     modelName: RegisterDocumentParams<SOwner>["collection"] = "Owner",

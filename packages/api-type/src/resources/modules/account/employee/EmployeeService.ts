@@ -1,13 +1,13 @@
 import { UserServices } from "../../../../service/user";
 import type {
-  CEmployee,
+  ModelEmployee,
   SEmployee,
   signInParams,
   signInPayload,
 } from "../contract/index";
 
 export default class EmployeeService extends UserServices {
-  constructor(protected model: CEmployee) {
+  constructor(protected model: ModelEmployee) {
     super();
   }
 

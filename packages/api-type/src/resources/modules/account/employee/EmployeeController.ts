@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import Controller from "../../../../components/Controller/controller";
-import type { CEmployee, signInParams } from "../contract/index";
+import type { ServiceEmployee, signInParams } from "../contract/index";
 
 export default class EmployeeController extends Controller {
-  constructor(protected model: CEmployee) {
+  constructor(protected service: ServiceEmployee) {
     super();
     this.initRouter();
   }
@@ -19,7 +19,7 @@ export default class EmployeeController extends Controller {
   ): Promise<void> {
     try {
       const data = req.body;
-      const token = await this.model.signIn(data);
+      const token = await this.service.signIn(data);
       res.cookie("employee", token, {
         httpOnly: true,
         secure: false,

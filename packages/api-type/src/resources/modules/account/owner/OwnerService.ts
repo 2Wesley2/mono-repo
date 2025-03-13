@@ -1,8 +1,8 @@
 import { UserServices } from "../../../../service/user";
 import type {
-  ROwner,
+  RepositoryOwner,
   SOwner,
-  CEmployee,
+  ModelEmployee,
   SEmployee,
   signInParams,
   signInOwnerPayload,
@@ -10,8 +10,8 @@ import type {
 
 export default class OwnerService extends UserServices {
   constructor(
-    protected repository: ROwner,
-    protected employeeService: CEmployee,
+    protected repository: RepositoryOwner,
+    protected employeeService: ModelEmployee,
   ) {
     super();
   }

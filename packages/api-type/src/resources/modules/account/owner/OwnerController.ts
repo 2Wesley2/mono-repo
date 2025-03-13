@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 import Controller from "../../../../components/Controller/controller";
 import type {
-  COwner,
+  ServiceOwner,
   SOwner,
   SEmployee,
   signInParams,
 } from "../contract/index";
 
 export default class OwnerController extends Controller {
-  constructor(protected model: COwner) {
+  constructor(protected service: ServiceOwner) {
     super();
     this.initRouter();
   }
@@ -26,7 +26,7 @@ export default class OwnerController extends Controller {
   ): Promise<void> {
     try {
       const data = req.body;
-      const token = await this.model.signIn(data);
+      const token = await this.service.signIn(data);
       res.cookie("facilite", token, {
         httpOnly: true,
         secure: false,
@@ -45,7 +45,7 @@ export default class OwnerController extends Controller {
   ): Promise<void> {
     try {
       const data = req.body;
-      const result = await this.model.signUp(data);
+      const result = await this.service.signUp(data);
       res.json(result);
     } catch (error) {
       next(error);
@@ -59,7 +59,7 @@ export default class OwnerController extends Controller {
   ): Promise<void> {
     try {
       const data = req.body;
-      const result = await this.model.createEmployee(data);
+      const result = await this.service.createEmployee(data);
       res.json(result);
     } catch (error) {
       next(error);

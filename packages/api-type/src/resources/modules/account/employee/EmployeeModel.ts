@@ -1,12 +1,12 @@
 import type { RegisterDocumentParams } from "mongoose-wrapper";
-import type { signInParams, SEmployee, CEmployee } from "../contract/index";
+import type { signInParams, SEmployee, ModelEmployee } from "../contract/index";
 import UserModel from "../user/UserModel";
 
 const employeeSchema = {
   owner_id: { type: String, ref: "Owner", required: true },
 };
 
-export default class EmployeeModel extends UserModel implements CEmployee {
+export default class EmployeeModel extends UserModel implements ModelEmployee {
   constructor(
     schema: RegisterDocumentParams<SEmployee>["schemaDefinition"] = {},
     modelName: RegisterDocumentParams<SEmployee>["collection"] = "Employee",
