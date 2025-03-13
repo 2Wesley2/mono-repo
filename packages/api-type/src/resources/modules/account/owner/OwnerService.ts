@@ -54,4 +54,9 @@ export default class OwnerService extends UserServices {
     const user = await this.employeeService.signUp(employee);
     return user;
   }
+
+  isAuth(token: string) {
+    const decoded = this.verifyJWT(token);
+    return decoded;
+  }
 }

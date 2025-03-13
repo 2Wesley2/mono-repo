@@ -2,7 +2,6 @@ import mongoose, {
   Schema,
   SchemaDefinition,
   Model,
-  Document as MongooseDocument,
   ConnectOptions,
 } from "mongoose";
 import config from "../../config/index";
@@ -92,4 +91,12 @@ export class MongooseWrapper {
       console.error("Erro ao encerrar a conexão:", error);
     }
   };
+
+  static getCollectionByName<T>(collectionName: string): Model<T> {
+    if (!mongoose.modelNames().includes(collectionName)) {
+      throw new Error(`Modelo '${collectionName}' não encontrado.`);
+    }
+    const model = mongoose.model<T>(collectionName);
+    return model;
+  }
 }

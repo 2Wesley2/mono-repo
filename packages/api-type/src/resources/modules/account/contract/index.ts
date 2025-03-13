@@ -52,5 +52,6 @@ export interface ModelEmployee extends IModel<SEmployee> {}
 export interface RepositoryOwner extends ModelOwner {}
 export interface ServiceOwner extends RepositoryOwner {
   createEmployee: (employee: SEmployee) => Promise<any>;
+  isAuth: (token: string) => any;
 }
 export interface ServiceEmployee extends ModelEmployee {}

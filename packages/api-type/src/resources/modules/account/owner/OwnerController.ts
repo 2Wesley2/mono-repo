@@ -6,7 +6,7 @@ import type {
   SEmployee,
   signInParams,
 } from "../contract/index";
-
+import RbacHandler from "../../../../middlewares/rbacHandler";
 export default class OwnerController extends Controller {
   constructor(protected service: ServiceOwner) {
     super();
@@ -16,7 +16,11 @@ export default class OwnerController extends Controller {
   private initRouter(): void {
     this.router.post("/sign-in", this.signIn.bind(this));
     this.router.post("/sign-up", this.signUp.bind(this));
-    this.router.post("/create-employee", this.createEmployee.bind(this));
+    this.router.post(
+      "/create-employee",
+      this.checkPermission("CREATE_EMPLOYEE").bind(this),
+      this.createEmployee.bind(this),
+    );
   }
 
   private async signIn(
@@ -27,7 +31,7 @@ export default class OwnerController extends Controller {
     try {
       const data = req.body;
       const token = await this.service.signIn(data);
-      res.cookie("facilite", token, {
+      res.cookie("owner", token, {
         httpOnly: true,
         secure: false,
         maxAge: 3600000,
@@ -64,5 +68,38 @@ export default class OwnerController extends Controller {
     } catch (error) {
       next(error);
     }
+  }
+
+  private checkPermission(permission: string) {
+    return async (
+      req: Request<SEmployee>,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> => {
+      try {
+        const token = req.cookies.owner;
+
+        if (!token) {
+          res.status(403).json({ message: "Token não fornecido" });
+          return;
+        }
+
+        const decodedToken = this.service.isAuth(token);
+        const userId = decodedToken.id;
+        const allowed = await RbacHandler.can(permission, userId);
+
+        if (allowed) {
+          req.body.owner_id = userId;
+          next();
+          return;
+        } else {
+          res.status(403).json({ message: "Acesso negado" });
+          return;
+        }
+      } catch (error) {
+        next(error);
+        return;
+      }
+    };
   }
 }
