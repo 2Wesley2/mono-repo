@@ -2,6 +2,7 @@ import { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "mongoose-wrapper";
 import type { SRole, SPermission } from "../contract/index";
+import errors from "#errors";
 
 const roleSchema: SchemaDefinition<SRole> = {
   owner_id: { type: String, ref: "Owner", required: true, unique: true },
@@ -50,7 +51,10 @@ export default class Role<T extends SRole> extends Model<T> {
   public async setRoleOwner(ownerId: SRole["owner_id"]) {
     const existsRoleForOwner = await this.model.findOne({ owner_id: ownerId });
     if (existsRoleForOwner) {
-      throw new Error(`Role owner already exists`);
+      throw errors.Conflict(
+        [{ field: "owner_id", value: ownerId }],
+        "Role owner already exists",
+      );
     }
     const setNewRoleOwner: SRole = {
       owner_id: ownerId,
@@ -65,9 +69,15 @@ export default class Role<T extends SRole> extends Model<T> {
       role.name.toUpperCase() === "ADMIN" ||
       role.name.toUpperCase() === "OWNER"
     ) {
-      throw new Error(`Role name cannot be ${role.name}`);
+      throw errors.BadRequest(
+        [{ field: "name" }],
+        `Role name cannot be ${role.name}`,
+      );
     } else if (role.name.length < 3) {
-      throw new Error(`Role name must be at least 3 characters`);
+      throw errors.BadRequest(
+        [{ field: "name", message: "Role name must be at least 3 characters" }],
+        "Invalid role name",
+      );
     }
     return this.model.create(role);
   }
@@ -80,21 +90,27 @@ export default class Role<T extends SRole> extends Model<T> {
     const role = await this.model.findOne({ owner_id: userId });
 
     if (!role) {
-      throw new Error(`Role não encontrada para owner_id: ${userId}`);
+      throw errors.NotFound([{ field: "owner_id", value: userId }]);
     }
 
     if (
       role.name.toUpperCase() === "ADMIN" ||
       role.name.toUpperCase() === "OWNER"
     ) {
-      throw new Error(`Atualização não permitida para a role ${role.name}`);
+      throw errors.Forbidden(
+        [{ field: "name" }],
+        `Atualização não permitida para a role ${role.name}`,
+      );
     }
 
     const permissionsToPush = permissionsToAdd.map((name) => {
       const permission = hashMapPermission.get(name);
 
       if (!permission) {
-        throw new Error(`Permissão para adicionar (${name}) não encontrada.`);
+        throw errors.BadRequest(
+          [{ field: "permissions", value: name }],
+          `Permissão para (${name}) não encontrada.`,
+        );
       }
 
       return permission;

@@ -8,6 +8,7 @@ import config from "../config/index";
 import { MongooseWrapper as Database } from "#mongoose-wrapper";
 import errorHandler from "../middlewares/errorHandler";
 import { controllers } from "./modules";
+import errors from "#errors";
 
 const methodColors: { [key: string]: (text: string) => string } = {
   GET: chalk.hex("#007f31"),
@@ -42,7 +43,11 @@ export default class AppServer {
   }
 
   private async connectDatabase(): Promise<void> {
-    await Database.connectDB();
+    try {
+      await Database.connectDB();
+    } catch (error) {
+      throw error;
+    }
   }
 
   private setPort(): void {
@@ -51,8 +56,14 @@ export default class AppServer {
       this.app.set("port", port);
     } catch (error) {
       console.error("Error in setPort:", error);
-      throw new Error(
-        `Failed to set port: ${error instanceof Error ? error.message : String(error)}`,
+      throw errors.GenericError(
+        [
+          {
+            function: "setPort",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        ],
+        "Failed to set port",
       );
     }
   }
@@ -71,8 +82,14 @@ export default class AppServer {
       this.app.use(this.logRequest.bind(this));
     } catch (error) {
       console.error("Error configuring middlewares:", error);
-      throw new Error(
-        `Failed to configure middlewares: ${error instanceof Error ? error.message : String(error)}`,
+      throw errors.GenericError(
+        [
+          {
+            function: "configureMiddlewares",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        ],
+        "Failed to configure middlewares",
       );
     }
   }
@@ -100,7 +117,15 @@ export default class AppServer {
       });
     } catch (error) {
       console.error("Error setting routes:", error);
-      throw error;
+      throw errors.GenericError(
+        [
+          {
+            function: "setRoutes",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        ],
+        "Failed to set routes",
+      );
     }
   }
 
@@ -127,14 +152,23 @@ export default class AppServer {
         });
       } catch (error) {
         return reject(
-          new Error(
-            `Failed to start server: ${error instanceof Error ? error.message : String(error)}`,
+          errors.GenericError(
+            [
+              {
+                function: "start",
+                error: error instanceof Error ? error.message : String(error),
+              },
+            ],
+            "Failed to start server",
           ),
         );
       }
       this.server.on("error", (error: Error) => {
         console.error(
-          new Error(`Server encountered an error: ${error.message}`),
+          errors.GenericError(
+            [{ function: "server.onError", error: error.message }],
+            "Server encountered an error",
+          ),
         );
         reject(error);
       });

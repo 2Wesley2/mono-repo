@@ -9,8 +9,8 @@ import {
   RegisterDocumentConfigurator,
   RegisterMiddlewaresConfigurator,
 } from "./type-mongoose-wrapper";
-
 import type { MiddlewareConfig, options } from "./type-mongoose-wrapper";
+import errors from "#errors";
 export class MongooseWrapper {
   static addMiddleware(
     schema: Schema,
@@ -35,7 +35,10 @@ export class MongooseWrapper {
 
   static connectDB = async (dbName = config.dbName) => {
     if (!dbName) {
-      throw new Error("O nome do banco de dados não pode ser undefined.");
+      throw errors.BadRequest(
+        [],
+        "O nome do banco de dados não pode ser undefined.",
+      );
     }
 
     let dbUri: string;
@@ -49,7 +52,10 @@ export class MongooseWrapper {
     try {
       if (config.dbAtlas) {
         if (!config.dbUser || !config.dbPassword || !config.dbHost) {
-          throw new Error("Configurações do Atlas estão incompletas.");
+          throw errors.BadRequest(
+            [],
+            "Configurações do Atlas estão incompletas.",
+          );
         }
         dbUri = `mongodb+srv://${encodeURIComponent(config.dbUser)}:${encodeURIComponent(config.dbPassword)}@${config.dbHost}/${dbName}?retryWrites=true&w=majority`;
         console.log(`MongoDB conectado ao banco ${dbName} no Atlas.`);
@@ -59,7 +65,8 @@ export class MongooseWrapper {
           `MongoDB conectado ao banco ${dbName} na porta ${config.dbPort}.`,
         );
       } else {
-        throw new Error(
+        throw errors.BadRequest(
+          [],
           "Configuração do banco de dados inválida. Verifique dbAtlas ou dbHost e dbPort.",
         );
       }
@@ -79,7 +86,10 @@ export class MongooseWrapper {
       });
     } catch (error: any) {
       console.error(`Falha ao conectar ao banco ${dbName}:`, error.message);
-      throw error;
+      throw errors.GenericError(
+        [{ dbName, originalError: error.message }],
+        "Falha ao conectar ao banco de dados",
+      );
     }
   };
 
@@ -89,6 +99,10 @@ export class MongooseWrapper {
       console.log("Conexão com o banco de dados encerrada.");
     } catch (error: any) {
       console.error("Erro ao encerrar a conexão:", error);
+      throw errors.GenericError(
+        [{ function: "disconnectDB", originalError: error.message }],
+        "Erro ao encerrar a conexão com o banco de dados",
+      );
     }
   };
 
