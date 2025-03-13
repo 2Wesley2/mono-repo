@@ -1,6 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import Controller from "../../../../components/Controller/controller";
-import type { COwner, SOwner, signInParams } from "../contract/index";
+import type {
+  COwner,
+  SOwner,
+  SEmployee,
+  signInParams,
+} from "../contract/index";
 
 export default class OwnerController extends Controller {
   constructor(protected model: COwner) {
@@ -11,6 +16,7 @@ export default class OwnerController extends Controller {
   private initRouter(): void {
     this.router.post("/sign-in", this.signIn.bind(this));
     this.router.post("/sign-up", this.signUp.bind(this));
+    this.router.post("/create-employee", this.createEmployee.bind(this));
   }
 
   private async signIn(
@@ -40,6 +46,20 @@ export default class OwnerController extends Controller {
     try {
       const data = req.body;
       const result = await this.model.signUp(data);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  private async createEmployee(
+    req: Request<SEmployee>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const data = req.body;
+      const result = await this.model.createEmployee(data);
       res.json(result);
     } catch (error) {
       next(error);

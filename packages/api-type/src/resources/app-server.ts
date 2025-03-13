@@ -83,6 +83,7 @@ export default class AppServer {
         res.json("Hello World");
       });
       this.app.use("/owner", controllers.ownerUser.getRouter());
+      this.app.use("/employee", controllers.employeeUser.getRouter());
       this.app.use("/rbac", controllers.permission.getRouter());
 
       const endpoints = listEndpoints(this.app);

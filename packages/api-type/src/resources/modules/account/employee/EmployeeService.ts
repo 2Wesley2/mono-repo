@@ -1,23 +1,18 @@
 import { UserServices } from "../../../../service/user";
 import type {
-  ROwner,
-  SOwner,
   CEmployee,
   SEmployee,
   signInParams,
-  signInOwnerPayload,
+  signInPayload,
 } from "../contract/index";
 
-export default class OwnerService extends UserServices {
-  constructor(
-    protected repository: ROwner,
-    protected employeeService: CEmployee,
-  ) {
+export default class EmployeeService extends UserServices {
+  constructor(protected model: CEmployee) {
     super();
   }
 
   async signIn(credentials: signInParams) {
-    const user = await this.repository.signIn(credentials);
+    const user = await this.model.signIn(credentials);
     const isPasswordValid = await this.compare(
       credentials.password,
       user.password,
@@ -27,31 +22,23 @@ export default class OwnerService extends UserServices {
       throw new Error("Invalid password");
     }
 
-    const payload: signInOwnerPayload = {
+    const payload: signInPayload = {
       id: user._id,
       email: user.email,
       name: user.name,
       lastName: user.lastName,
-      cnpj: user.cnpj,
-      legalName: user.legalName,
-      tradeName: user.tradeName,
     };
 
     const token = this.signJWT(payload);
     return token;
   }
 
-  async signUp(userData: SOwner) {
+  async signUp(userData: SEmployee) {
     const hashedPassword = await this.hash(userData.password, 10);
-    const user = await this.repository.signUp({
+    const user = await this.model.signUp({
       ...userData,
       password: hashedPassword,
     });
-    return user;
-  }
-
-  async createEmployee(employee: SEmployee) {
-    const user = await this.employeeService.signUp(employee);
     return user;
   }
 }

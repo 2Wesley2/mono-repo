@@ -1,8 +1,8 @@
-import type { COwner, SOwner, signInParams } from "../contract/index";
+import type { ROwner, SOwner, signInParams } from "../contract/index";
 import type { CRole } from "../../auth/contract/index";
 export default class OwnerRepository {
   constructor(
-    protected model: COwner,
+    protected model: ROwner,
     protected roleRepository: CRole,
   ) {}
 
