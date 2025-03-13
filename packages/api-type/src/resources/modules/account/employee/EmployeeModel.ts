@@ -1,6 +1,7 @@
 import type { RegisterDocumentParams } from "mongoose-wrapper";
 import type { signInParams, SEmployee, ModelEmployee } from "../contract/index";
 import UserModel from "../user/UserModel";
+import errors from "#errors";
 
 const employeeSchema = {
   owner_id: { type: String, ref: "Owner", required: true },
@@ -20,7 +21,7 @@ export default class EmployeeModel extends UserModel implements ModelEmployee {
   public async signIn(credentials: signInParams): Promise<any> {
     const user = await this.model.findOne({ email: credentials.email });
     if (!user) {
-      throw new Error("Employee not found");
+      throw errors.NotFound([{ field: "email", message: "User not found" }]);
     }
     return user;
   }

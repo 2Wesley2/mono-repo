@@ -48,10 +48,10 @@ export interface IModel<T> {
   signUp: (data: T) => Promise<any>;
 }
 export interface ModelOwner extends IModel<SOwner> {}
-export interface ModelEmployee extends IModel<SEmployee> {}
 export interface RepositoryOwner extends ModelOwner {}
 export interface ServiceOwner extends RepositoryOwner {
   createEmployee: (employee: SEmployee) => Promise<any>;
   isAuth: (token: string) => any;
 }
+export interface ModelEmployee extends IModel<SEmployee> {}
 export interface ServiceEmployee extends ModelEmployee {}

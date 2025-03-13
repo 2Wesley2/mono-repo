@@ -19,7 +19,8 @@
       "bcrypt-wrapper": ["src/libs/bcrypt/bcrypt-wrapper.ts"],
       "#bcrypt-type": ["src/libs/bcrypt/type-bcrypt-wrapper.ts"],
       "jwt-type": ["src/libs/jwt/type-jwt.ts"],
-      "jwt-wrapper": ["src/libs/jwt/jwt-wrapper.ts"]
+      "jwt-wrapper": ["src/libs/jwt/jwt-wrapper.ts"],
+      "#errors": ["src/errors/Exceptions.ts"],
     }
   },
   "ts-node": {

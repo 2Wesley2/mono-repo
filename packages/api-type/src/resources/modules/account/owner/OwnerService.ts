@@ -2,16 +2,17 @@ import { UserServices } from "../../../../service/user";
 import type {
   RepositoryOwner,
   SOwner,
-  ModelEmployee,
+  ServiceEmployee,
   SEmployee,
   signInParams,
   signInOwnerPayload,
 } from "../contract/index";
+import errors from "#errors";
 
 export default class OwnerService extends UserServices {
   constructor(
     protected repository: RepositoryOwner,
-    protected employeeService: ModelEmployee,
+    protected employeeService: ServiceEmployee,
   ) {
     super();
   }
@@ -24,7 +25,7 @@ export default class OwnerService extends UserServices {
     );
 
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw errors.Unauthorized([], "Invalid password");
     }
 
     const payload: signInOwnerPayload = {

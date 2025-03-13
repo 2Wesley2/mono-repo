@@ -1,6 +1,7 @@
 import type { RegisterDocumentParams } from "mongoose-wrapper";
 import UserModel from "../user/UserModel";
 import type { ModelOwner, SOwner, signInParams } from "../contract/index";
+import errors from "#errors";
 
 const ownerUserSchema = {
   cnpj: { type: String, required: true, unique: true },
@@ -22,7 +23,7 @@ export default class OwnerModel extends UserModel implements ModelOwner {
   public async signIn(credentials: signInParams): Promise<any> {
     const user = await this.model.findOne({ email: credentials.email });
     if (!user) {
-      throw new Error("User not found");
+      throw errors.NotFound([{ field: "email", message: "User not found" }]);
     }
     return user;
   }

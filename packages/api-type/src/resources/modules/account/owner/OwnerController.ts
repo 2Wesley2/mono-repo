@@ -7,6 +7,8 @@ import type {
   signInParams,
 } from "../contract/index";
 import RbacHandler from "../../../../middlewares/rbacHandler";
+import errors from "#errors";
+
 export default class OwnerController extends Controller {
   constructor(protected service: ServiceOwner) {
     super();
@@ -80,25 +82,20 @@ export default class OwnerController extends Controller {
         const token = req.cookies.owner;
 
         if (!token) {
-          res.status(403).json({ message: "Token não fornecido" });
-          return;
+          throw errors.Forbidden([], "Token não fornecido");
         }
-
         const decodedToken = this.service.isAuth(token);
         const userId = decodedToken.id;
         const allowed = await RbacHandler.can(permission, userId);
 
-        if (allowed) {
+        if (!allowed) {
+          throw errors.Forbidden([], "Acesso negado");
+        } else {
           req.body.owner_id = userId;
           next();
-          return;
-        } else {
-          res.status(403).json({ message: "Acesso negado" });
-          return;
         }
       } catch (error) {
         next(error);
-        return;
       }
     };
   }

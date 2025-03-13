@@ -5,7 +5,7 @@ import type {
   signInParams,
   signInPayload,
 } from "../contract/index";
-
+import errors from "#errors";
 export default class EmployeeService extends UserServices {
   constructor(protected model: ModelEmployee) {
     super();
@@ -19,7 +19,7 @@ export default class EmployeeService extends UserServices {
     );
 
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw errors.Unauthorized([], "Invalid password");
     }
 
     const payload: signInPayload = {

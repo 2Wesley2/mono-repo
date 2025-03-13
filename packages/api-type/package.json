@@ -59,6 +59,9 @@
     "#person-model": "./src/resources/modules/account/person/PersonModel.ts",
     "#mongoose-wrapper": [
       "./src/libs/mongoose/mongoose-wrapper.ts"
+    ],
+    "#errors": [
+      "./src/errors/Exceptions.ts"
     ]
   }
 }
