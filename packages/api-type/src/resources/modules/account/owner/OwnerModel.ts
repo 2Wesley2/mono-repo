@@ -1,8 +1,7 @@
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import UserModel from "../user/UserModel";
 import type { ModelOwner, SOwner, signInParams } from "../contract/index";
 import errors from "#errors";
-
 const ownerUserSchema = {
   cnpj: { type: String, required: true, unique: true },
   legalName: { type: String, required: true, unique: true },

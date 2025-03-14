@@ -1,6 +1,6 @@
 import { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SPerson } from "../contract/index";
 
 const personSchema: SchemaDefinition<SPerson> = {

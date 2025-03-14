@@ -1,4 +1,4 @@
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { signInParams, SEmployee, ModelEmployee } from "../contract/index";
 import UserModel from "../user/UserModel";
 import errors from "#errors";

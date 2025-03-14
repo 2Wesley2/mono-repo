@@ -11,17 +11,15 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
-      "mongoose-wrapper": ["src/libs/mongoose/type-mongoose-wrapper.ts"],
       "#model-type": ["src/components/Model/type-model.ts"],
-      "#model": ["src/components/Model/model.ts"],
-      "person-model": ["src/resources/modules/account/person/PersonModel.ts"],
-      "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
-      "bcrypt-wrapper": ["src/libs/bcrypt/bcrypt-wrapper.ts"],
+      "#person-model-type": ["src/resources/modules/account/person/type-person.ts"],
       "#bcrypt-type": ["src/libs/bcrypt/type-bcrypt-wrapper.ts"],
-      "jwt-type": ["src/libs/jwt/type-jwt.ts"],
-      "jwt-wrapper": ["src/libs/jwt/jwt-wrapper.ts"],
-      "#errors": ["src/errors/Exceptions.ts"],
-    }
+      "#model": ["src/components/Model/model.ts"],
+      "#person-model": ["src/resources/modules/account/person/PersonModel.ts"],
+      "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
+      "#errors": ["src/errors/Exceptions.ts"]
+    },
+    "resolveJsonModule": true
   },
   "ts-node": {
     "esm": true,

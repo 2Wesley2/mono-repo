@@ -1,5 +1,5 @@
 import { PersonModel } from "../person/PersonModel";
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SUser } from "../contract/index";
 
 const userSchema = {

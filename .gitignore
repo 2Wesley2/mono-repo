@@ -13,3 +13,5 @@
 .nx/cache
 .nx/
 logs/
+coverage/
+dist/

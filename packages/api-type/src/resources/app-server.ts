@@ -151,7 +151,7 @@ export default class AppServer {
           resolve();
         });
       } catch (error) {
-        return reject(
+        reject(
           errors.GenericError(
             [
               {
@@ -162,6 +162,7 @@ export default class AppServer {
             "Failed to start server",
           ),
         );
+        this.shutdown();
       }
       this.server.on("error", (error: Error) => {
         console.error(
@@ -171,9 +172,8 @@ export default class AppServer {
           ),
         );
         reject(error);
+        this.shutdown();
       });
-
-      this.setupGracefulShutdown();
     });
   }
 
@@ -197,23 +197,17 @@ export default class AppServer {
     next();
   }
 
-  private setupGracefulShutdown(): void {
-    const gracefulShutdown = async (signal: string) => {
-      console.log(`Received signal ${signal}, shutting down gracefully...`);
-      await this.disconnectDB();
-      this.server.close(() => {
-        console.log("Server closed");
-        process.exit(0);
+  public async shutdown(): Promise<void> {
+    await Database.disconnectDB();
+    return new Promise((resolve, reject) => {
+      this.server.close((err?: Error) => {
+        if (err) {
+          console.error("Erro ao fechar o servidor:", err);
+          return reject(err);
+        }
+        console.log("Servidor fechado com sucesso.");
+        resolve();
       });
-
-      setTimeout(() => {
-        console.error("Forcefully shutting down");
-        process.exit(1);
-      }, 10000);
-    };
-
-    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-    process.on("SIGUSR2", () => gracefulShutdown("SIGUSR2"));
+    });
   }
 }

@@ -1,6 +1,6 @@
 import { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SPermission } from "../contract/index";
 
 const permissionSchema: SchemaDefinition<SPermission> = {

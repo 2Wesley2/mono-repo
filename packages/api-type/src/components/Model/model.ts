@@ -1,6 +1,8 @@
 import { Model as MongooseModel } from "mongoose";
-import { MongooseWrapper as Database } from "#mongoose-wrapper";
-import type { RegisterDocumentParams } from "mongoose-wrapper";
+import {
+  MongooseWrapper as Database,
+  RegisterDocumentParams,
+} from "#mongoose-wrapper";
 
 const reservedMethods: string[] = [
   "save", // Salva o documento no banco

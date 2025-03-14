@@ -11,6 +11,8 @@ import {
 } from "./type-mongoose-wrapper";
 import type { MiddlewareConfig, options } from "./type-mongoose-wrapper";
 import errors from "#errors";
+export { RegisterDocumentParams } from "./type-mongoose-wrapper";
+
 export class MongooseWrapper {
   static addMiddleware(
     schema: Schema,
@@ -113,4 +115,25 @@ export class MongooseWrapper {
     const model = mongoose.model<T>(collectionName);
     return model;
   }
+
+  static deleteDB = async (dbName: string) => {
+    if (!dbName) {
+      throw errors.BadRequest(
+        [],
+        "O nome do banco de dados não pode ser undefined.",
+      );
+    }
+
+    try {
+      const db = mongoose.connection.useDb(dbName);
+      await db.dropDatabase();
+      console.log(`Banco de dados ${dbName} deletado com sucesso.`);
+    } catch (error: any) {
+      console.error(`Falha ao deletar o banco ${dbName}:`, error.message);
+      throw errors.GenericError(
+        [{ dbName, originalError: error.message }],
+        "Falha ao deletar o banco de dados",
+      );
+    }
+  };
 }
