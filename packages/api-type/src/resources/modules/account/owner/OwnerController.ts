@@ -52,7 +52,7 @@ export default class OwnerController extends Controller {
     try {
       const data = req.body;
       const result = await this.service.signUp(data);
-      res.json(result);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
@@ -66,7 +66,7 @@ export default class OwnerController extends Controller {
     try {
       const data = req.body;
       const result = await this.service.createEmployee(data);
-      res.json(result);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
@@ -84,6 +84,7 @@ export default class OwnerController extends Controller {
         if (!token) {
           throw errors.Forbidden([], "Token não fornecido");
         }
+
         const decodedToken = this.service.isAuth(token);
         const userId = decodedToken.id;
         const allowed = await RbacHandler.can(permission, userId);
