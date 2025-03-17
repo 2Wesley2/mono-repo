@@ -74,4 +74,42 @@ describe("Owner endpoint's", () => {
     expect(response.status).toBe(201);
     expect(response.body).toBeDefined();
   });
+  it("Não deve cadastrar um novo usuário owner com dados inválidos\n [POST][/owner/sign-up]", async () => {
+    const response = await request(app).post("/owner/sign-up").send({
+      email: "invalid-email",
+      password: "short",
+      cnpj: "invalid-cnpj",
+      legalName: "",
+      cpf: "invalid-cpf",
+      firstName: "",
+      lastName: "",
+      birthDate: "invalid-date",
+    });
+    expect(response.status).toBe(400);
+  });
+  it("Não deve logar o usuário owner com senha incorreta\n [POST][/owner/sign-in]", async () => {
+    const response = await request(app).post("/owner/sign-in").send({
+      email: "test@example.com",
+      password: "wrongpassword",
+    });
+    expect(response.status).toBe(401);
+  });
+
+  it("Não deve cadastrar um novo funcionário sem estar autenticado\n [POST][/owner/create-employee]", async () => {
+    const response = await request(app).post("/owner/create-employee").send({
+      email: "jane.doe@example.com",
+      password: "password123",
+      cpf: "12345678901",
+      firstName: "Jane",
+      lastName: "Doe",
+      birthDate: "1990-01-01",
+      street: "Test Street",
+      neighborhood: "Test Neighborhood",
+      houseNumber: "123",
+      postalCode: "12345678",
+      city: "Test City",
+      state: "TS",
+    });
+    expect(response.status).toBe(403);
+  });
 });

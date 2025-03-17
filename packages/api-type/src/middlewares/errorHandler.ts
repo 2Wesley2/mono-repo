@@ -18,7 +18,6 @@ export default (
     err instanceof BaseError && err.details.length ? err.details : undefined;
 
   if (config.nodeEnv !== "production") {
-    console.error(err);
     res.status(statusCode).json({
       status: "error",
       statusCode,
@@ -27,7 +26,6 @@ export default (
       stack: err.stack,
     });
   } else {
-    console.error(err.message);
     res.status(statusCode).json({
       status: "error",
       statusCode,

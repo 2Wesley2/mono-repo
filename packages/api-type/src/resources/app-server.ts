@@ -36,7 +36,6 @@ export default class AppServer {
       this.setRoutes();
       this.handleErrors();
     } catch (error) {
-      console.error("Error during app configuration:", error);
       throw error;
     }
   }
@@ -58,7 +57,6 @@ export default class AppServer {
       const port = config.apiPort || 3009;
       this.app.set("port", port);
     } catch (error) {
-      console.error("Error in setPort:", error);
       throw errors.GenericError(
         [
           {
@@ -84,7 +82,6 @@ export default class AppServer {
       this.app.use(cookieParser());
       this.app.use(this.logRequest.bind(this));
     } catch (error) {
-      console.error("Error configuring middlewares:", error);
       throw errors.GenericError(
         [
           {
@@ -107,7 +104,6 @@ export default class AppServer {
       this.app.use("/rbac", controllers.permission.getRouter());
       this.logAvailableEndpoints();
     } catch (error) {
-      console.error("Error setting routes:", error);
       throw errors.GenericError(
         [
           {
@@ -124,7 +120,6 @@ export default class AppServer {
     try {
       this.app.use(errorHandler);
     } catch (error) {
-      console.error("Error setting error handler:", error);
       throw new Error(
         `Failed to set error handler: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -159,10 +154,8 @@ export default class AppServer {
       return new Promise((resolve, reject) => {
         this.server.close((err?: Error) => {
           if (err) {
-            console.error("Erro ao fechar o servidor:", err);
             return reject(err);
           }
-          console.log("Servidor fechado com sucesso.");
           resolve();
         });
       });
@@ -200,12 +193,10 @@ export default class AppServer {
   private setupShutdownListeners(): void {
     if (!this.isTest) {
       process.on("SIGINT", async () => {
-        console.log("Recebido SIGINT. Encerrando servidor...");
         await this.shutdown();
         process.exit(0);
       });
       process.on("SIGTERM", async () => {
-        console.log("Recebido SIGTERM. Encerrando servidor...");
         await this.shutdown();
         process.exit(0);
       });

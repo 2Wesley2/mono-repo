@@ -87,7 +87,6 @@ export class MongooseWrapper {
         console.log("Mongoose desconectado.");
       });
     } catch (error: any) {
-      console.error(`Falha ao conectar ao banco ${dbName}:`, error.message);
       throw errors.GenericError(
         [{ dbName, originalError: error.message }],
         "Falha ao conectar ao banco de dados",
@@ -100,7 +99,6 @@ export class MongooseWrapper {
       await mongoose.connection.close();
       console.log("Conexão com o banco de dados encerrada.");
     } catch (error: any) {
-      console.error("Erro ao encerrar a conexão:", error);
       throw errors.GenericError(
         [{ function: "disconnectDB", originalError: error.message }],
         "Erro ao encerrar a conexão com o banco de dados",
@@ -127,9 +125,7 @@ export class MongooseWrapper {
     try {
       const db = mongoose.connection.useDb(dbName);
       await db.dropDatabase();
-      console.log(`Banco de dados ${dbName} deletado com sucesso.`);
     } catch (error: any) {
-      console.error(`Falha ao deletar o banco ${dbName}:`, error.message);
       throw errors.GenericError(
         [{ dbName, originalError: error.message }],
         "Falha ao deletar o banco de dados",

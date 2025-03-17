@@ -3,12 +3,12 @@ export interface SPerson {
   firstName: string;
   lastName: string;
   birthDate: Date;
-  street: string;
-  neighborhood: string;
-  houseNumber: string;
-  postalCode: string;
-  city: string;
-  state: string;
+  street?: string;
+  neighborhood?: string;
+  houseNumber?: string;
+  postalCode?: string;
+  city?: string;
+  state?: string;
 }
 
 export interface SUser extends SPerson {
@@ -19,7 +19,7 @@ export interface SUser extends SPerson {
 export interface SOwner extends SUser {
   cnpj: string;
   legalName: string;
-  tradeName: string;
+  tradeName?: string;
 }
 
 export interface signInParams {

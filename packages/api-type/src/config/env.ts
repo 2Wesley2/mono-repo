@@ -38,7 +38,6 @@ if (envSpecificPath) {
 const requiredEnv = ["PORT", "DB_HOST", "DB_NAME", "JWT_SECRET"];
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
-    console.error(`env.ts: A variável de ambiente ${envVar} é necessária.`);
     process.exit(1);
   }
 });

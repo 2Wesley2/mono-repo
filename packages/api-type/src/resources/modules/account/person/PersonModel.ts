@@ -5,15 +5,15 @@ import type { SPerson } from "../contract/index";
 
 const personSchema: SchemaDefinition<SPerson> = {
   cpf: { type: String, unique: true },
-  firstName: { type: String },
-  lastName: { type: String },
-  birthDate: { type: Date },
-  street: { type: String },
-  neighborhood: { type: String },
-  houseNumber: { type: String },
-  postalCode: { type: String },
-  city: { type: String },
-  state: { type: String },
+  firstName: { type: String, require: true },
+  lastName: { type: String, require: true },
+  birthDate: { type: Date, require: true },
+  street: { type: String, default: "" },
+  neighborhood: { type: String, default: "" },
+  houseNumber: { type: String, default: "" },
+  postalCode: { type: String, default: "" },
+  city: { type: String, default: "" },
+  state: { type: String, default: "" },
 };
 
 export class PersonModel<T extends SPerson = SPerson> extends Model<T> {

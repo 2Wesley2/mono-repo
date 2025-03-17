@@ -5,7 +5,6 @@ const startServer = async (): Promise<void> => {
     const appServer = new AppServer();
     await appServer.start();
   } catch (error) {
-    console.error("Error starting server:", error);
     process.exit(0);
   }
 };

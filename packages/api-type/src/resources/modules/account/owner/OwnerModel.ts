@@ -5,7 +5,7 @@ import errors from "#errors";
 const ownerUserSchema = {
   cnpj: { type: String, required: true, unique: true },
   legalName: { type: String, required: true, unique: true },
-  tradeName: { type: String },
+  tradeName: { type: String, default: "" },
 };
 
 export default class OwnerModel extends UserModel implements ModelOwner {
