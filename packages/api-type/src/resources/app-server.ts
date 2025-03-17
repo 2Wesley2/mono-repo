@@ -21,16 +21,17 @@ const methodColors: { [key: string]: (text: string) => string } = {
 export default class AppServer {
   public app: Application;
   private server!: HTTPServer;
+  private readonly isTest: boolean = config.nodeEnv === "test";
+  private readonly urlServer = `http://${config.dbHost}:${config.apiPort}`;
 
   constructor() {
     this.app = express();
   }
-  private readonly urlServer = `http://${config.dbHost}:${config.apiPort}`;
 
   private async configureApp(): Promise<void> {
     try {
       console.log("Configuring app...");
-      await this.connectDatabase();
+      await this.connectDB();
       this.setPort();
       this.configureMiddlewares();
       this.setRoutes();
@@ -42,12 +43,16 @@ export default class AppServer {
     }
   }
 
-  private async connectDatabase(): Promise<void> {
+  private async connectDB(): Promise<void> {
     try {
       await Database.connectDB();
     } catch (error) {
       throw error;
     }
+  }
+
+  public async disconnectDB(): Promise<void> {
+    await Database.disconnectDB();
   }
 
   private setPort(): void {
@@ -102,19 +107,7 @@ export default class AppServer {
       this.app.use("/owner", controllers.ownerUser.getRouter());
       this.app.use("/employee", controllers.employeeUser.getRouter());
       this.app.use("/rbac", controllers.permission.getRouter());
-
-      const endpoints = listEndpoints(this.app);
-      const port = this.app.get("port");
-      console.log(chalk.blue("Available endpoints:"));
-      endpoints.forEach((endpoint) => {
-        endpoint.methods.forEach((method) => {
-          const colorFn = methodColors[method] || chalk.white;
-          console.log(
-            colorFn(`[${method}]`),
-            chalk.blue(`${this.urlServer}${endpoint.path}`),
-          );
-        });
-      });
+      this.logAvailableEndpoints();
     } catch (error) {
       console.error("Error setting routes:", error);
       throw errors.GenericError(
@@ -142,43 +135,40 @@ export default class AppServer {
 
   public async start(): Promise<void> {
     await this.configureApp();
-
-    return new Promise((resolve, reject) => {
-      const port = this.app.get("port");
-
-      try {
-        this.server = this.app.listen(port, () => {
+    const port = this.app.get("port");
+    try {
+      this.server = this.app.listen(port, () => {
+        if (!this.isTest) {
+          this.setupShutdownListeners();
+        }
+      });
+    } catch (error) {
+      errors.GenericError(
+        [
+          {
+            function: "start",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        ],
+        "Failed to start server",
+      ),
+        await this.shutdown();
+    }
+  }
+  public async shutdown(): Promise<void> {
+    await this.disconnectDB();
+    if (this.server) {
+      return new Promise((resolve, reject) => {
+        this.server.close((err?: Error) => {
+          if (err) {
+            console.error("Erro ao fechar o servidor:", err);
+            return reject(err);
+          }
+          console.log("Servidor fechado com sucesso.");
           resolve();
         });
-      } catch (error) {
-        reject(
-          errors.GenericError(
-            [
-              {
-                function: "start",
-                error: error instanceof Error ? error.message : String(error),
-              },
-            ],
-            "Failed to start server",
-          ),
-        );
-        this.shutdown();
-      }
-      this.server.on("error", (error: Error) => {
-        console.error(
-          errors.GenericError(
-            [{ function: "server.onError", error: error.message }],
-            "Server encountered an error",
-          ),
-        );
-        reject(error);
-        this.shutdown();
       });
-    });
-  }
-
-  public async disconnectDB(): Promise<void> {
-    await Database.disconnectDB();
+    }
   }
 
   private logRequest(req: Request, res: Response, next: NextFunction): void {
@@ -197,17 +187,30 @@ export default class AppServer {
     next();
   }
 
-  public async shutdown(): Promise<void> {
-    await Database.disconnectDB();
-    return new Promise((resolve, reject) => {
-      this.server.close((err?: Error) => {
-        if (err) {
-          console.error("Erro ao fechar o servidor:", err);
-          return reject(err);
-        }
-        console.log("Servidor fechado com sucesso.");
-        resolve();
+  private logAvailableEndpoints(): void {
+    console.log(chalk.blue("Available endpoints:"));
+    listEndpoints(this.app).forEach((endpoint) => {
+      endpoint.methods.forEach((method) => {
+        console.log(
+          methodColors[method](`[${method}]`),
+          chalk.blue(`${this.urlServer}${endpoint.path}`),
+        );
       });
     });
+  }
+
+  private setupShutdownListeners(): void {
+    if (!this.isTest) {
+      process.on("SIGINT", async () => {
+        console.log("Recebido SIGINT. Encerrando servidor...");
+        await this.shutdown();
+        process.exit(0);
+      });
+      process.on("SIGTERM", async () => {
+        console.log("Recebido SIGTERM. Encerrando servidor...");
+        await this.shutdown();
+        process.exit(0);
+      });
+    }
   }
 }

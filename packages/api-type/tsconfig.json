@@ -11,6 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
+      "#src/utils/toArray": ["src/utils/toArray.ts"],
       "#model-type": ["src/components/Model/type-model.ts"],
       "#person-model-type": ["src/resources/modules/account/person/type-person.ts"],
       "#bcrypt-type": ["src/libs/bcrypt/type-bcrypt-wrapper.ts"],

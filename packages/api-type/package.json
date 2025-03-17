@@ -9,7 +9,7 @@
     "build": "tsc",
     "c": "npm cache clean --force",
     "test": "jest",
-    "test:owner": "jest src/tests/owner/owner.spec.ts"
+    "test:owner": "jest --detectOpenHandles src/tests/owner/owner.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -53,6 +53,7 @@
     "typescript": "^5.7.3"
   },
   "imports": {
+    "#src": "./src",
     "#model-type": [
       "./src/components/Model/type-model.ts"
     ],

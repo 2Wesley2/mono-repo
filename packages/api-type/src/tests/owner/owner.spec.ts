@@ -2,9 +2,13 @@ import request from "supertest";
 import { Application } from "express";
 import AppServer from "../../resources/app-server";
 import { MongooseWrapper } from "#mongoose-wrapper";
+import { toArray } from "#src/utils/toArray";
 
 let app: Application;
+let ownerCookie: string;
+
 const appServer = new AppServer();
+
 beforeAll(async () => {
   await appServer.start();
   app = appServer.app;
@@ -12,7 +16,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await MongooseWrapper.deleteDB("system_test");
-  await appServer.shutdown();
+  await appServer.disconnectDB();
 });
 
 describe("Owner endpoint's", () => {
@@ -35,5 +39,20 @@ describe("Owner endpoint's", () => {
       state: "TS",
     });
     expect(response.status).toBe(201);
+  });
+  it("Deve logar o novo usuário owner\n [POST][/owner/sign-in]", async () => {
+    const response = await request(app).post("/owner/sign-in").send({
+      email: "test@example.com",
+      password: "password123",
+    });
+    expect(response.status).toBe(200);
+
+    const cookiesHeader = response.header["set-cookie"];
+    const cookies = toArray(cookiesHeader);
+
+    expect(cookies).toBeDefined();
+    expect(cookies.length).toBeGreaterThan(0);
+    ownerCookie = cookies.find((cookie: string) => cookie.startsWith("owner="));
+    expect(ownerCookie).toBeDefined();
   });
 });
