@@ -18,7 +18,9 @@
       "#model": ["src/components/Model/model.ts"],
       "#person-model": ["src/resources/modules/account/person/PersonModel.ts"],
       "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
-      "#errors": ["src/errors/Exceptions.ts"]
+      "#errors": ["src/errors/Exceptions.ts"],
+      "#middlewares": ["src/middlewares/validationHandler.ts"],
+      "#http-request": ["src/http/type-request.ts"]
     },
     "resolveJsonModule": true
   },

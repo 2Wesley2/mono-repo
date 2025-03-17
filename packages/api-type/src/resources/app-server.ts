@@ -163,31 +163,35 @@ export default class AppServer {
   }
 
   private logRequest(req: Request, res: Response, next: NextFunction): void {
-    const start = Date.now();
-    res.on("finish", () => {
-      const duration = Date.now() - start;
-      const methodColored = methodColors[req.method]
-        ? methodColors[req.method](req.method)
-        : chalk.white(req.method);
-      const urlColored = chalk.blue(`${this.urlServer}${req.originalUrl}`);
-      const statusColored = chalk.yellow(res.statusCode.toString());
-      console.log(
-        `${methodColored} ${urlColored} - ${statusColored} - ${duration}ms`,
-      );
-    });
+    if (!this.isTest) {
+      const start = Date.now();
+      res.on("finish", () => {
+        const duration = Date.now() - start;
+        const methodColored = methodColors[req.method]
+          ? methodColors[req.method](req.method)
+          : chalk.white(req.method);
+        const urlColored = chalk.blue(`${this.urlServer}${req.originalUrl}`);
+        const statusColored = chalk.yellow(res.statusCode.toString());
+        console.log(
+          `${methodColored} ${urlColored} - ${statusColored} - ${duration}ms`,
+        );
+      });
+    }
     next();
   }
 
   private logAvailableEndpoints(): void {
-    console.log(chalk.blue("Available endpoints:"));
-    listEndpoints(this.app).forEach((endpoint) => {
-      endpoint.methods.forEach((method) => {
-        console.log(
-          methodColors[method](`[${method}]`),
-          chalk.blue(`${this.urlServer}${endpoint.path}`),
-        );
+    if (!this.isTest) {
+      console.log(chalk.blue("Available endpoints:"));
+      listEndpoints(this.app).forEach((endpoint) => {
+        endpoint.methods.forEach((method) => {
+          console.log(
+            methodColors[method](`[${method}]`),
+            chalk.blue(`${this.urlServer}${endpoint.path}`),
+          );
+        });
       });
-    });
+    }
   }
 
   private setupShutdownListeners(): void {

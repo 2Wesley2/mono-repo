@@ -2,13 +2,13 @@ import type { Request, Response, NextFunction } from "express";
 import Controller from "../../../../components/Controller/controller";
 import type {
   ServiceOwner,
-  SOwner,
   SEmployee,
   EmployeeBodyRequest,
-  signInParams,
 } from "../contract/index";
 import RbacHandler from "../../../../middlewares/rbacHandler";
 import errors from "#errors";
+import { validateOwner } from "#middlewares";
+import type { SignInRequest, SignUpRequest } from "#http-request";
 
 export default class OwnerController extends Controller {
   constructor(protected service: ServiceOwner) {
@@ -18,7 +18,7 @@ export default class OwnerController extends Controller {
 
   private initRouter(): void {
     this.router.post("/sign-in", this.signIn.bind(this));
-    this.router.post("/sign-up", this.signUp.bind(this));
+    this.router.post("/sign-up", validateOwner, this.signUp.bind(this));
     this.router.post(
       "/create-employee",
       this.checkPermission("CREATE_EMPLOYEE").bind(this),
@@ -27,7 +27,7 @@ export default class OwnerController extends Controller {
   }
 
   private async signIn(
-    req: Request<signInParams>,
+    req: SignInRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
@@ -46,7 +46,7 @@ export default class OwnerController extends Controller {
   }
 
   private async signUp(
-    req: Request<SOwner>,
+    req: SignUpRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {

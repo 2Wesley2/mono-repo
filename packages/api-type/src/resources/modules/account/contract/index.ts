@@ -1,3 +1,5 @@
+import type { Request } from "express";
+
 export interface SPerson {
   cpf: string;
   firstName: string;
