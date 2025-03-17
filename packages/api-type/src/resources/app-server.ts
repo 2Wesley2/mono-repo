@@ -30,13 +30,11 @@ export default class AppServer {
 
   private async configureApp(): Promise<void> {
     try {
-      console.log("Configuring app...");
       await this.connectDB();
       this.setPort();
       this.configureMiddlewares();
       this.setRoutes();
       this.handleErrors();
-      console.log("App configured");
     } catch (error) {
       console.error("Error during app configuration:", error);
       throw error;

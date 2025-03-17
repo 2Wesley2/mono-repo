@@ -4,16 +4,16 @@ import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SPerson } from "../contract/index";
 
 const personSchema: SchemaDefinition<SPerson> = {
-  cpf: { type: String, required: true, unique: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  birthDate: { type: Date, required: true },
-  street: { type: String, required: true },
-  neighborhood: { type: String, required: true },
-  houseNumber: { type: String, required: true },
-  postalCode: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
+  cpf: { type: String, unique: true },
+  firstName: { type: String },
+  lastName: { type: String },
+  birthDate: { type: Date },
+  street: { type: String },
+  neighborhood: { type: String },
+  houseNumber: { type: String },
+  postalCode: { type: String },
+  city: { type: String },
+  state: { type: String },
 };
 
 export class PersonModel<T extends SPerson = SPerson> extends Model<T> {

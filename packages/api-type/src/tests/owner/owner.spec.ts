@@ -46,13 +46,32 @@ describe("Owner endpoint's", () => {
       password: "password123",
     });
     expect(response.status).toBe(200);
-
     const cookiesHeader = response.header["set-cookie"];
     const cookies = toArray(cookiesHeader);
-
     expect(cookies).toBeDefined();
     expect(cookies.length).toBeGreaterThan(0);
     ownerCookie = cookies.find((cookie: string) => cookie.startsWith("owner="));
     expect(ownerCookie).toBeDefined();
+  });
+  it("Deve cadastrar um novo funcionário\n [POST][/owner/create-employee]", async () => {
+    const response = await request(app)
+      .post("/owner/create-employee")
+      .set("Cookie", ownerCookie)
+      .send({
+        email: "john.doe@example.com",
+        password: "password123",
+        cpf: "12345678901",
+        firstName: "Test",
+        lastName: "Employee",
+        birthDate: "1990-01-01",
+        street: "Test Street",
+        neighborhood: "Test Neighborhood",
+        houseNumber: "123",
+        postalCode: "12345678",
+        city: "Test City",
+        state: "TS",
+      });
+    expect(response.status).toBe(201);
+    expect(response.body).toBeDefined();
   });
 });

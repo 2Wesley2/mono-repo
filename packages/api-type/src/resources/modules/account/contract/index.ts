@@ -43,6 +43,8 @@ export interface signInOwnerPayload extends signInPayload {
 export interface SEmployee extends SUser {
   owner_id: string;
 }
+
+export type EmployeeBodyRequest = Omit<SEmployee, "owner_id">;
 export interface IModel<T> {
   signIn: (credentials: signInParams) => Promise<any>;
   signUp: (data: T) => Promise<any>;

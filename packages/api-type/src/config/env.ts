@@ -5,7 +5,6 @@ import { Config } from "./type";
 
 const baseDir = process.cwd();
 
-// Função para encontrar o arquivo .env
 const findEnvFile = (startDir: string, fileName: string): string | null => {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
@@ -18,7 +17,6 @@ const findEnvFile = (startDir: string, fileName: string): string | null => {
   return null;
 };
 
-// Carrega o arquivo base .env para obter o NODE_ENV
 const baseEnvPath = findEnvFile(baseDir, ".env");
 if (!baseEnvPath) {
   throw new Error("env.ts: Arquivo base .env não encontrado.");
@@ -26,15 +24,10 @@ if (!baseEnvPath) {
 
 dotenv.config({ path: baseEnvPath });
 
-// Define o ambiente padrão caso NODE_ENV não esteja definido
 const nodeEnv = process.env.NODE_ENV || "development";
 
-// Tenta carregar o arquivo de ambiente específico, se existir
 const envSpecificPath = findEnvFile(baseDir, `.env.${nodeEnv}`);
 if (envSpecificPath) {
-  console.log(
-    `env.ts: Usando arquivo de configuração específico ${envSpecificPath}`,
-  );
   dotenv.config({ path: envSpecificPath });
 } else {
   console.warn(

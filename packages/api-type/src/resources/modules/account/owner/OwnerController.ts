@@ -4,6 +4,7 @@ import type {
   ServiceOwner,
   SOwner,
   SEmployee,
+  EmployeeBodyRequest,
   signInParams,
 } from "../contract/index";
 import RbacHandler from "../../../../middlewares/rbacHandler";
@@ -59,7 +60,7 @@ export default class OwnerController extends Controller {
   }
 
   private async createEmployee(
-    req: Request<SEmployee>,
+    req: Request<EmployeeBodyRequest>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
