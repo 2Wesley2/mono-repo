@@ -18,8 +18,11 @@ export default class EmployeeController extends Controller {
     next: NextFunction,
   ): Promise<void> {
     try {
+      console.log("Iniciando login de funcionário. Dados recebidos:", req.body);
+      console.log("Tipo dos dados recebidos:", typeof req.body);
       const data = req.body;
       const token = await this.service.signIn(data);
+      console.log("Token gerado com sucesso. Tipo do token:", typeof token);
       res.cookie("employee", token, {
         httpOnly: true,
         secure: false,
@@ -27,6 +30,7 @@ export default class EmployeeController extends Controller {
       });
       res.status(200).json("logged in");
     } catch (error) {
+      console.error("Erro ao realizar login de funcionário:", error);
       next(error);
     }
   }

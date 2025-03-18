@@ -1,5 +1,4 @@
-import type { Request } from "express";
-
+import { Schema } from "mongoose";
 export interface SPerson {
   cpf: string;
   firstName: string;
@@ -43,7 +42,7 @@ export interface signInOwnerPayload extends signInPayload {
 }
 
 export interface SEmployee extends SUser {
-  owner_id: string;
+  owner_id: Schema.Types.ObjectId;
 }
 
 export type EmployeeBodyRequest = Omit<SEmployee, "owner_id">;

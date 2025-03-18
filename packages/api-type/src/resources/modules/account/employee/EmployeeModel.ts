@@ -1,10 +1,11 @@
+import { Schema } from "mongoose";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { signInParams, SEmployee, ModelEmployee } from "../contract/index";
 import UserModel from "../user/UserModel";
 import errors from "#errors";
 
 const employeeSchema = {
-  owner_id: { type: String, ref: "Owner", required: true },
+  owner_id: { type: Schema.Types.ObjectId, ref: "Owner", required: true },
 };
 
 export default class EmployeeModel extends UserModel implements ModelEmployee {

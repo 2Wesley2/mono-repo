@@ -8,6 +8,7 @@ export default class OwnerRepository {
 
   public async signUp(data: SOwner): Promise<any> {
     const owner = await this.model.signUp(data);
+    console.log("owner", typeof owner);
     await this.roleRepository.setRoleOwner(owner._id);
     return owner;
   }

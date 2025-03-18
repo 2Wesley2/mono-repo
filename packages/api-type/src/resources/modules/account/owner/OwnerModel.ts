@@ -20,7 +20,7 @@ export default class OwnerModel extends UserModel implements ModelOwner {
   }
 
   public async signIn(credentials: signInParams): Promise<any> {
-    const user = await this.model.findOne({ email: credentials.email });
+    const user = await this.model.findOne({ email: credentials.email }).lean();
     if (!user) {
       throw errors.NotFound([{ field: "email", message: "User not found" }]);
     }

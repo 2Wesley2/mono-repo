@@ -1,5 +1,7 @@
+import { Schema } from "mongoose";
+
 export interface SRole {
-  owner_id: string;
+  owner_id: Schema.Types.ObjectId;
   name: string;
   permissions: SPermission[];
 }

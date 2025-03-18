@@ -52,7 +52,14 @@ export default class OwnerService extends UserServices {
   }
 
   async createEmployee(employee: SEmployee) {
+    console.log(
+      "Iniciando criação de funcionário no serviço. Dados recebidos:",
+      employee,
+    );
+    console.log("Tipo dos dados recebidos:", typeof employee);
     const user = await this.employeeService.signUp(employee);
+    console.log("Funcionário criado no serviço com sucesso. Resultado:", user);
+    console.log("Tipo do resultado:", typeof user);
     return user;
   }
 

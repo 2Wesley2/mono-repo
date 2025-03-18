@@ -55,6 +55,7 @@ export default class OwnerController extends Controller {
       const result = await this.service.signUp(data);
       res.status(201).json(result);
     } catch (error) {
+      console.error("Erro ao criar Owner:", error);
       next(error);
     }
   }
@@ -65,10 +66,18 @@ export default class OwnerController extends Controller {
     next: NextFunction,
   ): Promise<void> {
     try {
+      console.log(
+        "Iniciando criação de funcionário. Dados recebidos:",
+        req.body,
+      );
+      console.log("Tipo dos dados recebidos:", typeof req.body);
       const data = req.body;
       const result = await this.service.createEmployee(data);
+      console.log("Funcionário criado com sucesso. Resultado:", result);
+      console.log("Tipo do resultado:", typeof result);
       res.status(201).json(result);
     } catch (error) {
+      console.error("Erro ao criar funcionário:", error);
       next(error);
     }
   }
@@ -83,14 +92,15 @@ export default class OwnerController extends Controller {
         const token = req.cookies.owner;
 
         if (!token) {
+          console.error("Token não fornecido");
           throw errors.Forbidden([], "Token não fornecido");
         }
 
         const decodedToken = this.service.isAuth(token);
         const userId = decodedToken.id;
         const allowed = await RbacHandler.can(permission, userId);
-
         if (!allowed) {
+          console.error("Acesso negado para usuário:", userId);
           throw errors.Forbidden([], "Acesso negado");
         } else {
           req.body.owner_id = userId;

@@ -11,6 +11,7 @@ import {
   invalidSignIn,
   responseNewOwner,
   responseNewEmployee,
+  invalidSignUpNewEmployee,
 } from "./objects";
 
 let app: Application;
@@ -18,7 +19,7 @@ let ownerCookie: string;
 
 const appServer = new AppServer();
 
-const invalidSignUpNewEmployee = beforeAll(async () => {
+beforeAll(async () => {
   await appServer.start();
   app = appServer.app;
 });

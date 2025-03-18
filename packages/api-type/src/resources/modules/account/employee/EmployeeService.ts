@@ -34,11 +34,25 @@ export default class EmployeeService extends UserServices {
   }
 
   async signUp(userData: SEmployee) {
+    console.log(
+      "Iniciando cadastro de funcionário. Dados recebidos:",
+      userData,
+    );
+    console.log("Tipo dos dados recebidos:", typeof userData);
     const hashedPassword = await this.hash(userData.password, 10);
+    console.log(
+      "Senha criptografada com sucesso. Tipo da senha:",
+      typeof hashedPassword,
+    );
     const user = await this.model.signUp({
       ...userData,
       password: hashedPassword,
     });
+    console.log(
+      "Funcionário cadastrado com sucesso no modelo. Resultado:",
+      user,
+    );
+    console.log("Tipo do resultado:", typeof user);
     return user;
   }
 }

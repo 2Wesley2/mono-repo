@@ -69,6 +69,9 @@
     "#mongoose-wrapper": [
       "./src/libs/mongoose/mongoose-wrapper.ts"
     ],
+    "#type-mongoose-wrapper": [
+      "./src/libs/mongoose/type-mongoose-wrapper.ts"
+    ],
     "#errors": [
       "./src/errors/Exceptions.ts"
     ],

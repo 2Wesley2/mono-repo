@@ -20,7 +20,8 @@
       "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
       "#errors": ["src/errors/Exceptions.ts"],
       "#middlewares": ["src/middlewares/validationHandler.ts"],
-      "#http-request": ["src/http/type-request.ts"]
+      "#http-request": ["src/http/type-request.ts"],
+      "#type-mongoose-wrapper": [ "src/libs/mongoose/type-mongoose-wrapper.ts"]
     },
     "resolveJsonModule": true
   },

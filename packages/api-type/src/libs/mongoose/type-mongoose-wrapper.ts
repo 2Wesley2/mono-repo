@@ -132,3 +132,8 @@ export class RegisterDocumentConfigurator<U> {
     ).newModel;
   }
 }
+
+export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
+
+export const toObjectId: ToObjectId = (id: string) =>
+  new mongoose.Types.ObjectId(id);

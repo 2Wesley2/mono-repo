@@ -1,11 +1,17 @@
-import { SchemaDefinition } from "mongoose";
+import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
+import { ToObjectId } from "#type-mongoose-wrapper";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SRole, SPermission } from "../contract/index";
 import errors from "#errors";
 
 const roleSchema: SchemaDefinition<SRole> = {
-  owner_id: { type: String, ref: "Owner", required: true, unique: true },
+  owner_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Owner",
+    required: true,
+    unique: true,
+  },
   name: { type: String, required: true },
   permissions: [
     {
@@ -49,6 +55,7 @@ export default class Role<T extends SRole> extends Model<T> {
   }
 
   public async setRoleOwner(ownerId: SRole["owner_id"]) {
+    console.log("ownerId setRole ", typeof ownerId);
     const existsRoleForOwner = await this.model.findOne({ owner_id: ownerId });
     if (existsRoleForOwner) {
       throw errors.Conflict(

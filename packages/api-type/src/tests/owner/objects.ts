@@ -93,3 +93,14 @@ export const invalidSignIn = {
   email: "test@example.com",
   password: "wrongpassword",
 };
+
+export const invalidSignUpNewEmployee = {
+  email: "invalid-email",
+  password: "short",
+  cnpj: "invalid-cnpj",
+  legalName: "",
+  cpf: "invalid-cpf",
+  firstName: "",
+  lastName: "",
+  birthDate: "invalid-date",
+};
