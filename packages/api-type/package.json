@@ -65,6 +65,9 @@
     "#model": [
       "./src/components/Model/model.ts"
     ],
+    "#controller": [
+      "./src/components/Controller/controller.ts"
+    ],
     "#person-model": "./src/resources/modules/account/person/PersonModel.ts",
     "#mongoose-wrapper": [
       "./src/libs/mongoose/mongoose-wrapper.ts"
@@ -78,8 +81,17 @@
     "#middlewares": [
       "./src/middlewares/validationHandler.ts"
     ],
-    "#http-request": [
-      "./src/http/type-request.ts"
+    "#http": [
+      "./src/http/index.ts"
+    ],
+    "#schema": [
+      "./src/schema/index.ts"
+    ],
+    "#rbac": [
+      "./src/middlewares/rbacHandler.ts"
+    ],
+    "#services": [
+      "./src/service/index.ts"
     ]
   }
 }

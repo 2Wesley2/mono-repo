@@ -1,8 +1,12 @@
-import type { RegisterDocumentParams } from "#mongoose-wrapper";
+import { SchemaDefinition } from "mongoose";
 import UserModel from "../user/UserModel";
-import type { ModelOwner, SOwner, signInParams } from "../contract/index";
 import errors from "#errors";
-const ownerUserSchema = {
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
+import type { SOwner } from "#schema";
+import type { ModelOwner } from "../contract/index";
+import type { SignInBody as SignInParams } from "#http";
+
+const ownerUserSchema: SchemaDefinition<SOwner> = {
   cnpj: { type: String, required: true, unique: true },
   legalName: { type: String, required: true, unique: true },
   tradeName: { type: String, default: "" },
@@ -19,7 +23,7 @@ export default class OwnerModel extends UserModel implements ModelOwner {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  public async signIn(credentials: signInParams): Promise<any> {
+  public async signIn(credentials: SignInParams): Promise<any> {
     const user = await this.model.findOne({ email: credentials.email }).lean();
     if (!user) {
       throw errors.NotFound([{ field: "email", message: "User not found" }]);

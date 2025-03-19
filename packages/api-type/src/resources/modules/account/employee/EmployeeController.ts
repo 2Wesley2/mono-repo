@@ -1,6 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
-import Controller from "../../../../components/Controller/controller";
-import type { ServiceEmployee, signInParams } from "../contract/index";
+import type { Response, NextFunction } from "express";
+import Controller from "#controller";
+import type { ServiceEmployee } from "../contract/index";
+import type { SignInRequest } from "#http";
 
 export default class EmployeeController extends Controller {
   constructor(protected service: ServiceEmployee) {
@@ -13,16 +14,13 @@ export default class EmployeeController extends Controller {
   }
 
   private async signIn(
-    req: Request<signInParams>,
+    req: SignInRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      console.log("Iniciando login de funcionário. Dados recebidos:", req.body);
-      console.log("Tipo dos dados recebidos:", typeof req.body);
       const data = req.body;
       const token = await this.service.signIn(data);
-      console.log("Token gerado com sucesso. Tipo do token:", typeof token);
       res.cookie("employee", token, {
         httpOnly: true,
         secure: false,
@@ -30,7 +28,6 @@ export default class EmployeeController extends Controller {
       });
       res.status(200).json("logged in");
     } catch (error) {
-      console.error("Erro ao realizar login de funcionário:", error);
       next(error);
     }
   }

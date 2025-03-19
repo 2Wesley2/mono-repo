@@ -1,14 +1,15 @@
 import type { Request, Response, NextFunction } from "express";
-import Controller from "../../../../components/Controller/controller";
-import type {
-  ServiceOwner,
-  SEmployee,
-  EmployeeBodyRequest,
-} from "../contract/index";
-import RbacHandler from "../../../../middlewares/rbacHandler";
+import Controller from "#controller";
+import type { ServiceOwner } from "../contract/index";
+import RbacHandler from "#rbac";
 import errors from "#errors";
 import { validateOwner } from "#middlewares";
-import type { SignInRequest, SignUpRequest } from "#http-request";
+import type {
+  SignUpOwnerRequest,
+  EmployeeBodyRequest,
+  SignUpEmployeeRequest,
+  SignInRequest,
+} from "#http";
 
 export default class OwnerController extends Controller {
   constructor(protected service: ServiceOwner) {
@@ -46,7 +47,7 @@ export default class OwnerController extends Controller {
   }
 
   private async signUp(
-    req: SignUpRequest,
+    req: SignUpOwnerRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
@@ -55,36 +56,27 @@ export default class OwnerController extends Controller {
       const result = await this.service.signUp(data);
       res.status(201).json(result);
     } catch (error) {
-      console.error("Erro ao criar Owner:", error);
       next(error);
     }
   }
 
   private async createEmployee(
-    req: Request<EmployeeBodyRequest>,
+    req: SignUpEmployeeRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      console.log(
-        "Iniciando criação de funcionário. Dados recebidos:",
-        req.body,
-      );
-      console.log("Tipo dos dados recebidos:", typeof req.body);
       const data = req.body;
       const result = await this.service.createEmployee(data);
-      console.log("Funcionário criado com sucesso. Resultado:", result);
-      console.log("Tipo do resultado:", typeof result);
       res.status(201).json(result);
     } catch (error) {
-      console.error("Erro ao criar funcionário:", error);
       next(error);
     }
   }
 
   private checkPermission(permission: string) {
     return async (
-      req: Request<SEmployee>,
+      req: Request<EmployeeBodyRequest>,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
@@ -92,7 +84,6 @@ export default class OwnerController extends Controller {
         const token = req.cookies.owner;
 
         if (!token) {
-          console.error("Token não fornecido");
           throw errors.Forbidden([], "Token não fornecido");
         }
 
@@ -100,7 +91,6 @@ export default class OwnerController extends Controller {
         const userId = decodedToken.id;
         const allowed = await RbacHandler.can(permission, userId);
         if (!allowed) {
-          console.error("Acesso negado para usuário:", userId);
           throw errors.Forbidden([], "Acesso negado");
         } else {
           req.body.owner_id = userId;

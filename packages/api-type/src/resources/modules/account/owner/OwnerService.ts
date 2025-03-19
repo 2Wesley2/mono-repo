@@ -1,12 +1,7 @@
-import { UserServices } from "../../../../service/user";
-import type {
-  RepositoryOwner,
-  SOwner,
-  ServiceEmployee,
-  SEmployee,
-  signInParams,
-  signInOwnerPayload,
-} from "../contract/index";
+import { UserServices } from "#services";
+import type { RepositoryOwner, ServiceEmployee } from "../contract/index";
+import type { SOwner, SEmployee } from "#schema";
+import type { SignInOwnerPayload, SignInBody as SignInParams } from "#http";
 import errors from "#errors";
 
 export default class OwnerService extends UserServices {
@@ -17,7 +12,7 @@ export default class OwnerService extends UserServices {
     super();
   }
 
-  async signIn(credentials: signInParams) {
+  async signIn(credentials: SignInParams) {
     const user = await this.repository.signIn(credentials);
     const isPasswordValid = await this.compare(
       credentials.password,
@@ -28,7 +23,7 @@ export default class OwnerService extends UserServices {
       throw errors.Unauthorized([], "Invalid password");
     }
 
-    const payload: signInOwnerPayload = {
+    const payload: SignInOwnerPayload = {
       id: user._id,
       email: user.email,
       name: user.name,
@@ -52,14 +47,7 @@ export default class OwnerService extends UserServices {
   }
 
   async createEmployee(employee: SEmployee) {
-    console.log(
-      "Iniciando criação de funcionário no serviço. Dados recebidos:",
-      employee,
-    );
-    console.log("Tipo dos dados recebidos:", typeof employee);
     const user = await this.employeeService.signUp(employee);
-    console.log("Funcionário criado no serviço com sucesso. Resultado:", user);
-    console.log("Tipo do resultado:", typeof user);
     return user;
   }
 

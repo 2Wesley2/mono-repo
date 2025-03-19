@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import type { CPermission } from "../contract/index";
-import Controller from "../../../../components/Controller/controller";
+import Controller from "#controller";
 
 export default class PermissionController extends Controller {
   constructor(protected model: CPermission) {

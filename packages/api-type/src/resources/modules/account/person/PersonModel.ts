@@ -1,7 +1,7 @@
-import { SchemaDefinition } from "mongoose";
+import type { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SPerson } from "../contract/index";
+import type { SPerson } from "#schema";
 
 const personSchema: SchemaDefinition<SPerson> = {
   cpf: { type: String, unique: true },

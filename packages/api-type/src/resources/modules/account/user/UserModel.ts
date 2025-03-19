@@ -1,8 +1,9 @@
+import { SchemaDefinition } from "mongoose";
 import { PersonModel } from "../person/PersonModel";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SUser } from "../contract/index";
+import type { SUser } from "#schema";
 
-const userSchema = {
+const userSchema: SchemaDefinition<SUser> = {
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 };
