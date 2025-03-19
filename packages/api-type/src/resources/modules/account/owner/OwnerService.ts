@@ -12,7 +12,7 @@ export default class OwnerService extends Services {
     super();
   }
 
-  async signIn(credentials: SignInParams) {
+  public async signIn(credentials: SignInParams) {
     const user = await this.repository.signIn(credentials);
     const isPasswordValid = await this.compare(
       credentials.password,
@@ -37,7 +37,7 @@ export default class OwnerService extends Services {
     return token;
   }
 
-  async signUp(userData: SOwner) {
+  public async signUp(userData: SOwner) {
     const hashedPassword = await this.hash(userData.password, 10);
     const user = await this.repository.signUp({
       ...userData,

@@ -1,8 +1,8 @@
 import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SProduct } from "./contract/index";
-
+import type { SProduct } from "#schema";
+import { IProductModel } from "./contract/index";
 const productSchema: SchemaDefinition<SProduct> = {
   owner_id: {
     type: Schema.Types.ObjectId,
@@ -37,7 +37,10 @@ const productSchema: SchemaDefinition<SProduct> = {
   },
 };
 
-export default class ProductModel<T extends SProduct> extends Model<T> {
+export default class ProductModel<T extends SProduct = SProduct>
+  extends Model<T>
+  implements IProductModel<T>
+{
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
     modelName: RegisterDocumentParams<T>["collection"] = "Product",
@@ -48,7 +51,7 @@ export default class ProductModel<T extends SProduct> extends Model<T> {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  async setNewProduct(product: SProduct) {
+  public async setNewProduct(product: T): Promise<any> {
     return this.model.create(product);
   }
 }

@@ -27,7 +27,7 @@ export class PersonModel<T extends SPerson = SPerson> extends Model<T> {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  public async signUp(data: T): Promise<any> {
+  protected async signUp(data: T): Promise<any> {
     return await this.model.create(data);
   }
 }

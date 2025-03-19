@@ -1,22 +1,5 @@
-import { Schema } from "mongoose";
+import type { SProduct } from "#schema";
 
-export interface Variation {
-  name: string;
-  value: string;
-}
-
-export interface SProduct {
-  owner_id: Schema.Types.ObjectId;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  stock: number;
-  sku?: string;
-  subcategory?: string;
-  brand?: string;
-  barcode?: string;
-  images?: string[];
-  condition?: "new" | "used" | "refurbished";
-  variations?: Variation[];
+export interface IProductModel<T extends SProduct = SProduct> {
+  setNewProduct: (data: T) => Promise<any>;
 }

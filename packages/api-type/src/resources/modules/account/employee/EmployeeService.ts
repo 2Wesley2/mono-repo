@@ -8,7 +8,7 @@ export default class EmployeeService extends Services {
     super();
   }
 
-  async signIn(credentials: SignInParams) {
+  public async signIn(credentials: SignInParams) {
     const user = await this.model.signIn(credentials);
     const isPasswordValid = await this.compare(
       credentials.password,
@@ -30,7 +30,7 @@ export default class EmployeeService extends Services {
     return token;
   }
 
-  async signUp(userData: SEmployee) {
+  public async signUp(userData: SEmployee) {
     const hashedPassword = await this.hash(userData.password, 10);
     const user = await this.model.signUp({
       ...userData,
