@@ -2,7 +2,7 @@ import { SEmployee, SOwner } from "#schema";
 import { SignInBody as SignInParams } from "#http";
 
 export interface IUserModel<T> {
-  readonly signIn: (credentials: SignInParams) => Promise<any>;
+  signIn: (credentials: SignInParams) => Promise<any>;
   signUp: (data: T) => Promise<any>;
 }
 export interface ModelOwner extends IUserModel<SOwner> {}
