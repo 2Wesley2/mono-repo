@@ -1,9 +1,9 @@
-import { UserServices } from "#services";
+import { Services } from "#services";
 import type { ModelEmployee } from "../contract/index";
 import type { SEmployee } from "#schema";
 import type { SignInPayload, SignInBody as SignInParams } from "#http";
 import errors from "#errors";
-export default class EmployeeService extends UserServices {
+export default class EmployeeService extends Services {
   constructor(protected model: ModelEmployee) {
     super();
   }

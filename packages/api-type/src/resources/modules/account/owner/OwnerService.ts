@@ -1,10 +1,10 @@
-import { UserServices } from "#services";
+import { Services } from "#services";
 import type { RepositoryOwner, ServiceEmployee } from "../contract/index";
 import type { SOwner, SEmployee } from "#schema";
 import type { SignInOwnerPayload, SignInBody as SignInParams } from "#http";
 import errors from "#errors";
 
-export default class OwnerService extends UserServices {
+export default class OwnerService extends Services {
   constructor(
     protected repository: RepositoryOwner,
     protected employeeService: ServiceEmployee,

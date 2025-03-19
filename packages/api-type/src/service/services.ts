@@ -1,6 +1,6 @@
 import services from "../libs/index";
 
-export class UserServices {
+export class Services {
   private s: typeof services;
   constructor() {
     this.s = services;

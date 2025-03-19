@@ -47,4 +47,8 @@ export default class ProductModel<T extends SProduct> extends Model<T> {
     const combinedSchema = { ...productSchema, ...schema };
     super(combinedSchema, modelName, options, middlewares);
   }
+
+  async setNewProduct(product: SProduct) {
+    return this.model.create(product);
+  }
 }
