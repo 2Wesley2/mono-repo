@@ -25,7 +25,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await MongooseWrapper.deleteDB("system_test");
+  // await MongooseWrapper.deleteDB("system_test");
   await appServer.disconnectDB();
 });
 

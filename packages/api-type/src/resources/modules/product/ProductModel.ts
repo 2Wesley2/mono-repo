@@ -15,14 +15,15 @@ const productSchema: SchemaDefinition<SProduct> = {
   category: { type: String, required: true },
   price: { type: Number, required: true },
   stock: { type: Number, required: true },
-  sku: { type: String },
-  subcategory: { type: String },
-  brand: { type: String },
-  barcode: { type: String },
-  images: { type: [String] },
+  sku: { type: String, default: "" },
+  subcategory: { type: String, default: "" },
+  brand: { type: String, default: "" },
+  barcode: { type: String, default: "" },
+  images: { type: [String], default: [] },
   condition: {
     type: String,
     enum: ["new", "used", "refurbished"],
+    default: "new",
   },
   variations: {
     type: [
@@ -32,6 +33,7 @@ const productSchema: SchemaDefinition<SProduct> = {
         value: { type: String, required: true },
       },
     ],
+    default: [],
   },
 };
 
