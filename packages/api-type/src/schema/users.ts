@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 export interface SPerson {
   cpf: string;
@@ -25,5 +25,5 @@ export interface SOwner extends SUser {
 }
 
 export interface SEmployee extends SUser {
-  owner_id: Schema.Types.ObjectId;
+  owner_id: Types.ObjectId;
 }

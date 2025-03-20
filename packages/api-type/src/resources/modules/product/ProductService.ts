@@ -1,12 +1,15 @@
 import { Services } from "#services";
 import type { SProduct } from "#schema";
-import type { IProductModel } from "./contract/index";
-export default class ProductService extends Services {
+import type { IProductModel, IProductService } from "./contract/index";
+export default class ProductService
+  extends Services
+  implements IProductService
+{
   constructor(protected model: IProductModel) {
     super();
   }
 
-  public async setNewProduct(product: SProduct) {
+  public async setNewProduct(product: SProduct): Promise<any> {
     return await this.model.setNewProduct(product);
   }
 }

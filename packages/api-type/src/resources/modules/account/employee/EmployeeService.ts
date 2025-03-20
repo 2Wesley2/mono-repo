@@ -1,15 +1,15 @@
 import { Services } from "#services";
+import errors from "#errors";
 import type { ModelEmployee } from "../contract/index";
 import type { SEmployee } from "#schema";
 import type { SignInPayload, SignInBody as SignInParams } from "#http";
-import errors from "#errors";
 export default class EmployeeService extends Services {
   constructor(protected model: ModelEmployee) {
     super();
   }
 
   public async signIn(credentials: SignInParams) {
-    const user = await this.model.signIn(credentials);
+    const user = await this.model.signIn(credentials.email);
     const isPasswordValid = await this.compare(
       credentials.password,
       user.password,

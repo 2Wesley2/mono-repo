@@ -2,6 +2,7 @@ import type { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SPerson } from "#schema";
+import type { NewDocumentPromise } from "#type-mongoose-wrapper";
 
 const personSchema: SchemaDefinition<SPerson> = {
   cpf: { type: String, unique: true },
@@ -27,7 +28,7 @@ export class PersonModel<T extends SPerson = SPerson> extends Model<T> {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  protected async signUp(data: T): Promise<any> {
-    return await this.model.create(data);
+  protected async signUp(data: T): NewDocumentPromise<T> {
+    return (await this.model.create(data)).toObject();
   }
 }

@@ -137,3 +137,20 @@ export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
 
 export const toObjectId: ToObjectId = (id: string) =>
   new mongoose.Types.ObjectId(id);
+
+export type PlainDocument<T> = T & {
+  _id: mongoose.Types.ObjectId;
+  __v: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Document<T> = MongooseDocument<unknown, any, T> &
+  T &
+  PlainDocument<T>;
+
+export type NewDocumentPromise<T> = Promise<PlainDocument<T>>;
+
+export type LeanDocument<T> = Omit<T, keyof MongooseDocument>;
+
+export type SignInPromise<T> = Promise<LeanDocument<T>>;

@@ -13,7 +13,7 @@ export default class OwnerService extends Services {
   }
 
   public async signIn(credentials: SignInParams) {
-    const user = await this.repository.signIn(credentials);
+    const user = await this.repository.signIn(credentials.email);
     const isPasswordValid = await this.compare(
       credentials.password,
       user.password,
