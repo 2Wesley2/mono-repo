@@ -20,12 +20,12 @@ export default class UserModel<T extends SUser>
 {
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
-    modelName: RegisterDocumentParams<T>["collection"] = "User",
+    collection: RegisterDocumentParams<T>["collection"] = "User",
     options: RegisterDocumentParams<T>["options"] = {},
     middlewares: RegisterDocumentParams<T>["middlewares"] = [],
   ) {
     const combinedSchema = { ...userSchema, ...schema };
-    super(combinedSchema, modelName, options, middlewares);
+    super(combinedSchema, collection, options, middlewares);
   }
 
   public async signIn(

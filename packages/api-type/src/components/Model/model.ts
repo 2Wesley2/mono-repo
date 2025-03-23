@@ -33,7 +33,7 @@ export class Model<U> {
   public model: MongooseModel<U>;
   constructor(
     public schema: RegisterDocumentParams<U>["schemaDefinition"],
-    public modelName: RegisterDocumentParams<U>["collection"],
+    public collection: RegisterDocumentParams<U>["collection"],
     public options: RegisterDocumentParams<U>["options"],
     public middlewares: RegisterDocumentParams<U>["middlewares"],
   ) {
@@ -43,7 +43,7 @@ export class Model<U> {
 
     this.model = Database.registerDocument(
       schema,
-      modelName,
+      collection,
       options || {},
       middlewares || [],
     );

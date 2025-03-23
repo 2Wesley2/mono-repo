@@ -26,12 +26,12 @@ export class PersonModel<T extends SPerson = SPerson>
 {
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
-    modelName: RegisterDocumentParams<T>["collection"] = "Person",
+    collection: RegisterDocumentParams<T>["collection"] = "Person",
     options: RegisterDocumentParams<T>["options"],
     middlewares: RegisterDocumentParams<T>["middlewares"],
   ) {
     const combinedSchema = { ...personSchema, ...schema };
-    super(combinedSchema, modelName, options, middlewares);
+    super(combinedSchema, collection, options, middlewares);
   }
 
   public async signUp(data: T): Promise<ToObjectDocument<T>> {

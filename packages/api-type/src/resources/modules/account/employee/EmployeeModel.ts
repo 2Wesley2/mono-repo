@@ -19,12 +19,12 @@ export default class EmployeeModel
 {
   constructor(
     schema: RegisterDocumentParams<SEmployee>["schemaDefinition"] = {},
-    modelName: RegisterDocumentParams<SEmployee>["collection"] = "Employee",
+    collection: RegisterDocumentParams<SEmployee>["collection"] = "Employee",
     options: RegisterDocumentParams<SEmployee>["options"] = {},
     middlewares: RegisterDocumentParams<SEmployee>["middlewares"] = [],
   ) {
     const combinedSchema = { ...employeeSchema, ...schema };
-    super(combinedSchema, modelName, options, middlewares);
+    super(combinedSchema, collection, options, middlewares);
   }
 
   public async signIn(

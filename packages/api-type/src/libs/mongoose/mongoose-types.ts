@@ -1,9 +1,9 @@
-import mongoose, {
-  SchemaDefinition,
-  SchemaOptions,
+import type {
   HydratedDocument,
   Require_id,
   Default__v,
+  SchemaDefinition,
+  SchemaOptions,
 } from "mongoose";
 
 export type Default = {};
@@ -26,8 +26,10 @@ export type ConnectionEvents<ErrorType = Error> = Record<
 export type RegisterConnectionEventsFunction = <ErrorType = Error>(
   events: ConnectionEvents<ErrorType>,
 ) => void;
+export type options = SchemaOptions<any, any, any, any, Default> & {
+  timestamps?: boolean;
+};
 
-export type options = SchemaOptions<any, any, any, any, Default>;
 export type hookEventPre = "createCollection" | RegExp;
 export type hookEventPost =
   | "createCollection"
@@ -48,15 +50,12 @@ export type PostMiddlewareConfig = {
 };
 
 export type MiddlewareConfig = PreMiddlewareConfig | PostMiddlewareConfig;
-
 export interface RegisterDocumentParams<U> {
   schemaDefinition: SchemaDefinition<U>;
   collection: string;
   options?: options;
   middlewares: MiddlewareConfig[];
 }
-
-export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
 
 export type CreatedDocument<TSchema> = HydratedDocument<
   TSchema & {

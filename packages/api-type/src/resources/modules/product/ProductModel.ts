@@ -43,12 +43,12 @@ export default class ProductModel<T extends SProduct = SProduct>
 {
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
-    modelName: RegisterDocumentParams<T>["collection"] = "Product",
+    collection: RegisterDocumentParams<T>["collection"] = "Product",
     options: RegisterDocumentParams<T>["options"],
     middlewares: RegisterDocumentParams<T>["middlewares"],
   ) {
     const combinedSchema = { ...productSchema, ...schema };
-    super(combinedSchema, modelName, options, middlewares);
+    super(combinedSchema, collection, options, middlewares);
   }
 
   public async setNewProduct(product: T): Promise<any> {

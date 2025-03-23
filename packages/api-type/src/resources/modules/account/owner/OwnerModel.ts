@@ -20,12 +20,12 @@ export default class OwnerModel
 {
   constructor(
     schema: RegisterDocumentParams<SOwner>["schemaDefinition"] = {},
-    modelName: RegisterDocumentParams<SOwner>["collection"] = "Owner",
+    collection: RegisterDocumentParams<SOwner>["collection"] = "Owner",
     options: RegisterDocumentParams<SOwner>["options"] = {},
     middlewares: RegisterDocumentParams<SOwner>["middlewares"] = [],
   ) {
     const combinedSchema = { ...ownerUserSchema, ...schema };
-    super(combinedSchema, modelName, options, middlewares);
+    super(combinedSchema, collection, options, middlewares);
   }
 
   public async signIn(
