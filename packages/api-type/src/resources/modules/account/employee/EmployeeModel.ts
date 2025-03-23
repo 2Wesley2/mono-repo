@@ -1,8 +1,11 @@
-import { Schema, SchemaDefinition } from "mongoose";
-import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { NewDocumentPromise, SignInPromise } from "#type-mongoose-wrapper";
+import { Schema } from "mongoose";
+import type { SchemaDefinition } from "mongoose";
+import type {
+  RegisterDocumentParams,
+  ToObjectDocument,
+} from "#mongoose-wrapper";
 import type { SEmployee } from "#schema";
-import type { ModelEmployee } from "../contract/index";
+import type { ModelEmployee } from "#contract-account";
 import type { SignInBody as SignInParams } from "#http";
 import UserModel from "../user/UserModel";
 
@@ -24,11 +27,13 @@ export default class EmployeeModel
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  public async signIn(email: SignInParams["email"]): SignInPromise<SEmployee> {
+  public async signIn(
+    email: SignInParams["email"],
+  ): Promise<ToObjectDocument<SEmployee>> {
     return await super.signIn(email);
   }
 
-  public async signUp(data: SEmployee): NewDocumentPromise<SEmployee> {
+  public async signUp(data: SEmployee): Promise<ToObjectDocument<SEmployee>> {
     return await super.signUp(data);
   }
 }

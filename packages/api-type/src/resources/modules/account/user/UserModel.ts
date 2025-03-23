@@ -1,17 +1,23 @@
-import { SchemaDefinition } from "mongoose";
+import type { SchemaDefinition } from "mongoose";
 import { PersonModel } from "../person/PersonModel";
 import errors from "#errors";
-import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SignInPromise } from "#type-mongoose-wrapper";
+import type {
+  RegisterDocumentParams,
+  ToObjectDocument,
+} from "#mongoose-wrapper";
 import type { SUser } from "#schema";
 import type { SignInBody as SignInParams } from "#http";
+import type { IUserModel } from "#contract-account";
 
 const userSchema: SchemaDefinition<SUser> = {
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 };
 
-export default class UserModel<T extends SUser> extends PersonModel<T> {
+export default class UserModel<T extends SUser>
+  extends PersonModel<T>
+  implements IUserModel<T>
+{
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
     modelName: RegisterDocumentParams<T>["collection"] = "User",
@@ -22,8 +28,10 @@ export default class UserModel<T extends SUser> extends PersonModel<T> {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  protected async signIn(email: SignInParams["email"]): SignInPromise<T> {
-    const user = await this.model.findOne({ email: email });
+  public async signIn(
+    credential: SignInParams["email"],
+  ): Promise<ToObjectDocument<T>> {
+    const user = await this.model.findOne({ email: credential });
     if (!user) {
       throw errors.NotFound([{ field: "email", message: "User not found" }]);
     }

@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import Controller from "#controller";
-import type { ServiceOwner } from "../contract/index";
+import type { ServiceOwner } from "#contract-account";
 import RbacHandler from "#rbac";
 import errors from "#errors";
 import { validateOwner } from "#middlewares";

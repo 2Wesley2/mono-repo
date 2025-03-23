@@ -18,14 +18,16 @@
       "#model": ["src/components/Model/model.ts"],
       "#controller": ["src/components/Controller/controller.ts" ],
       "#person-model": ["src/resources/modules/account/person/PersonModel.ts"],
-      "#mongoose-wrapper": ["src/libs/mongoose/mongoose-wrapper.ts"],
       "#errors": ["src/errors/Exceptions.ts"],
       "#middlewares": ["src/middlewares/validationHandler.ts"],
       "#http": ["src/http/index.ts"],
-      "#type-mongoose-wrapper": [ "src/libs/mongoose/type-mongoose-wrapper.ts"],
       "#schema": ["src/schema/index.ts"],
       "#rbac": ["src/middlewares/rbacHandler.ts"],
-      "#services": ["src/service/index.ts"]
+      "#services": ["src/service/index.ts"],
+      "#config": ["src/config/index.ts"],
+      "#mongoose-wrapper": ["src/libs/mongoose/index.ts"],
+      "#contract-account": [ "src/contract/account/index.ts"],
+      "#contract-auth": [ "src/contract/auth/index.ts"]
     },
     "resolveJsonModule": true
   },

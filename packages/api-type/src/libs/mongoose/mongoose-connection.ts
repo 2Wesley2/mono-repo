@@ -1,41 +1,10 @@
-import mongoose, {
-  Schema,
-  SchemaDefinition,
-  Model,
-  ConnectOptions,
-} from "mongoose";
-import config from "../../config/index";
-import {
-  RegisterDocumentConfigurator,
-  RegisterMiddlewaresConfigurator,
-} from "./type-mongoose-wrapper";
-import type { MiddlewareConfig, options } from "./type-mongoose-wrapper";
+import mongoose from "mongoose";
+import type { ConnectOptions, Model } from "mongoose";
+import config from "#config";
 import errors from "#errors";
-export { RegisterDocumentParams } from "./type-mongoose-wrapper";
 
-export class MongooseWrapper {
-  static addMiddleware(
-    schema: Schema,
-    middlewares: MiddlewareConfig[],
-  ): Schema {
-    return new RegisterMiddlewaresConfigurator(schema, middlewares).schema;
-  }
-
-  static registerDocument<U>(
-    schema: SchemaDefinition<U>,
-    modelName: string,
-    options: options,
-    middlewares: MiddlewareConfig[],
-  ): Model<U> {
-    return new RegisterDocumentConfigurator<U>({
-      schemaDefinition: schema,
-      collection: modelName,
-      options: options,
-      middlewares: middlewares,
-    }).model;
-  }
-
-  static connectDB = async (dbName = config.dbName) => {
+export class MongooseConnection {
+  static async connectDB(dbName = config.dbName): Promise<void> {
     if (!dbName) {
       throw errors.BadRequest(
         [],
@@ -92,9 +61,9 @@ export class MongooseWrapper {
         "Falha ao conectar ao banco de dados",
       );
     }
-  };
+  }
 
-  static disconnectDB = async () => {
+  static async disconnectDB(): Promise<void> {
     try {
       await mongoose.connection.close();
       console.log("Conexão com o banco de dados encerrada.");
@@ -104,24 +73,22 @@ export class MongooseWrapper {
         "Erro ao encerrar a conexão com o banco de dados",
       );
     }
-  };
+  }
 
   static getCollectionByName<T>(collectionName: string): Model<T> {
     if (!mongoose.modelNames().includes(collectionName)) {
       throw new Error(`Modelo '${collectionName}' não encontrado.`);
     }
-    const model = mongoose.model<T>(collectionName);
-    return model;
+    return mongoose.model<T>(collectionName);
   }
 
-  static deleteDB = async (dbName: string) => {
+  static async deleteDB(dbName: string): Promise<void> {
     if (!dbName) {
       throw errors.BadRequest(
         [],
         "O nome do banco de dados não pode ser undefined.",
       );
     }
-
     try {
       const db = mongoose.connection.useDb(dbName);
       await db.dropDatabase();
@@ -131,5 +98,5 @@ export class MongooseWrapper {
         "Falha ao deletar o banco de dados",
       );
     }
-  };
+  }
 }

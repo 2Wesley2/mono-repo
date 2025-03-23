@@ -1,6 +1,6 @@
 import type { Response, NextFunction } from "express";
 import Controller from "#controller";
-import type { ServiceEmployee } from "../contract/index";
+import type { ServiceEmployee } from "#contract-account";
 import type { SignInRequest } from "#http";
 
 export default class EmployeeController extends Controller {

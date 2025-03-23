@@ -9,7 +9,8 @@
     "build": "tsc",
     "c": "npm cache clean --force",
     "test": "jest",
-    "test:owner": "jest --detectOpenHandles src/tests/owner/owner.spec.ts"
+    "test:owner": "jest --detectOpenHandles src/tests/owner/owner.spec.ts",
+    "test:c": "jest --detectOpenHandles src/tests/controller/getRouter.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -70,10 +71,7 @@
     ],
     "#person-model": "./src/resources/modules/account/person/PersonModel.ts",
     "#mongoose-wrapper": [
-      "./src/libs/mongoose/mongoose-wrapper.ts"
-    ],
-    "#type-mongoose-wrapper": [
-      "./src/libs/mongoose/type-mongoose-wrapper.ts"
+      "./src/libs/mongoose/index.ts"
     ],
     "#errors": [
       "./src/errors/Exceptions.ts"
@@ -92,6 +90,15 @@
     ],
     "#services": [
       "./src/service/index.ts"
+    ],
+    "#config": [
+      "./src/config/index.ts"
+    ],
+    "#contract-account": [
+      "./src/contract/account/index.ts"
+    ],
+    "#contract-auth": [
+      "./src/contract/auth/index.ts"
     ]
   }
 }

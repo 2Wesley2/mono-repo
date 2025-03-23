@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import config from "../config/index";
-import { BaseError } from "../errors/Exceptions";
+import config from "#config";
+import { BaseError } from "#errors";
 
 export default (
   err: Error,

@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
-import type { CPermission } from "../contract/index";
+import type { PermissionModel } from "#contract-auth";
 import Controller from "#controller";
 
 export default class PermissionController extends Controller {
-  constructor(protected model: CPermission) {
+  constructor(protected model: PermissionModel) {
     super();
     this.initRouter();
   }

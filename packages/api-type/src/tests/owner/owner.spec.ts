@@ -1,7 +1,7 @@
 import request from "supertest";
 import { Application } from "express";
 import AppServer from "../../resources/app-server";
-import { MongooseWrapper } from "#mongoose-wrapper";
+import { MongooseConnection } from "#mongoose-wrapper";
 import { toArray } from "#src/utils/toArray";
 import {
   newOwner,
@@ -25,7 +25,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await MongooseWrapper.deleteDB("system_test");
+  await MongooseConnection.deleteDB("system_test");
   await appServer.disconnectDB();
 });
 

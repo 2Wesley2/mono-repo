@@ -1,9 +1,9 @@
-import { SUser, SOwner } from "#schema";
-
+import type { SUser, SOwner } from "#schema";
+import type { Types } from "mongoose";
 export interface SignInPayload {
-  id: string;
+  id: Types.ObjectId;
   email: SUser["email"];
-  name: SUser["firstName"];
+  firstName: SUser["firstName"];
   lastName: SUser["lastName"];
 }
 

@@ -1,7 +1,7 @@
-import { SchemaDefinition } from "mongoose";
+import type { SchemaDefinition } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SPermission } from "../contract/index";
+import type { SPermission } from "#schema";
 
 const permissionSchema: SchemaDefinition<SPermission> = {
   name: { type: String, required: true, unique: true },

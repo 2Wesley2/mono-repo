@@ -1,10 +1,15 @@
 import { Services } from "#services";
-import type { RepositoryOwner, ServiceEmployee } from "../contract/index";
+import type {
+  RepositoryOwner,
+  ServiceEmployee,
+  ServiceOwner,
+} from "#contract-account";
 import type { SOwner, SEmployee } from "#schema";
 import type { SignInOwnerPayload, SignInBody as SignInParams } from "#http";
 import errors from "#errors";
+import type { ToObjectDocument } from "#mongoose-wrapper";
 
-export default class OwnerService extends Services {
+export default class OwnerService extends Services implements ServiceOwner {
   constructor(
     protected repository: RepositoryOwner,
     protected employeeService: ServiceEmployee,
@@ -12,7 +17,7 @@ export default class OwnerService extends Services {
     super();
   }
 
-  public async signIn(credentials: SignInParams) {
+  public async signIn(credentials: SignInParams): Promise<string> {
     const user = await this.repository.signIn(credentials.email);
     const isPasswordValid = await this.compare(
       credentials.password,
@@ -26,7 +31,7 @@ export default class OwnerService extends Services {
     const payload: SignInOwnerPayload = {
       id: user._id,
       email: user.email,
-      name: user.name,
+      firstName: user.firstName,
       lastName: user.lastName,
       cnpj: user.cnpj,
       legalName: user.legalName,
@@ -37,7 +42,7 @@ export default class OwnerService extends Services {
     return token;
   }
 
-  public async signUp(userData: SOwner) {
+  public async signUp(userData: SOwner): Promise<ToObjectDocument<SOwner>> {
     const hashedPassword = await this.hash(userData.password, 10);
     const user = await this.repository.signUp({
       ...userData,

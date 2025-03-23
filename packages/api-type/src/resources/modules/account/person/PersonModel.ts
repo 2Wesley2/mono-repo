@@ -1,8 +1,11 @@
 import type { SchemaDefinition } from "mongoose";
+import type { IPersonModel } from "#contract-account";
 import { Model } from "#model";
-import type { RegisterDocumentParams } from "#mongoose-wrapper";
+import type {
+  RegisterDocumentParams,
+  ToObjectDocument,
+} from "#mongoose-wrapper";
 import type { SPerson } from "#schema";
-import type { NewDocumentPromise } from "#type-mongoose-wrapper";
 
 const personSchema: SchemaDefinition<SPerson> = {
   cpf: { type: String, unique: true },
@@ -17,7 +20,10 @@ const personSchema: SchemaDefinition<SPerson> = {
   state: { type: String, default: "" },
 };
 
-export class PersonModel<T extends SPerson = SPerson> extends Model<T> {
+export class PersonModel<T extends SPerson = SPerson>
+  extends Model<T>
+  implements IPersonModel<T>
+{
   constructor(
     schema: RegisterDocumentParams<T>["schemaDefinition"],
     modelName: RegisterDocumentParams<T>["collection"] = "Person",
@@ -28,7 +34,7 @@ export class PersonModel<T extends SPerson = SPerson> extends Model<T> {
     super(combinedSchema, modelName, options, middlewares);
   }
 
-  protected async signUp(data: T): NewDocumentPromise<T> {
+  public async signUp(data: T): Promise<ToObjectDocument<T>> {
     return (await this.model.create(data)).toObject();
   }
 }

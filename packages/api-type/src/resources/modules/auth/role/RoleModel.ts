@@ -1,7 +1,7 @@
 import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
-import type { SRole, SPermission } from "../contract/index";
+import type { SRole, SPermission } from "#schema";
 import errors from "#errors";
 
 const roleSchema: SchemaDefinition<SRole> = {
