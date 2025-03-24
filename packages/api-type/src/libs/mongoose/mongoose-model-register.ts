@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 import type { Schema as TSchema, Model, SchemaDefinition } from "mongoose";
+import { MiddlewareContext } from "#mongoose-wrapper";
 import type {
   RegisterDocumentParams,
   MiddlewareConfig,
@@ -18,18 +19,26 @@ export class RegisterMiddlewaresConfigurator {
         "Middlewares deve ser um array do tipo MiddlewareConfig.",
       );
     }
+
+    const context = new MiddlewareContext();
+
     this.middlewares.forEach((mw: MiddlewareConfig) => {
-      if (!mw.hookEvent) {
+      if (
+        !mw.hookEvent ||
+        !(typeof mw.hookEvent === "string" || mw.hookEvent instanceof RegExp)
+      ) {
         throw new Error(`hookEvent inválido`);
       }
-      if (mw.method !== "pre" && mw.method !== "post") {
-        throw new Error(`Método de middleware inválido`);
+
+      if (mw.hookEvent instanceof RegExp) {
+        try {
+          new RegExp(mw.hookEvent.source);
+        } catch {
+          throw new Error(`hookEvent inválido: expressão regular inválida`);
+        }
       }
-      if (mw.method === "pre") {
-        this.schema.pre(mw.hookEvent, mw.fn);
-      } else if (mw.method === "post") {
-        this.schema.post(mw.hookEvent, mw.fn);
-      }
+
+      context.applyMiddleware(this.schema, mw);
     });
   }
 }
@@ -74,17 +83,26 @@ export class RegisterDocumentConfigurator<U> {
       if (params.options && typeof params.options !== "object") {
         throw new Error("Opções inválidas.");
       }
+      if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
+        throw new Error(
+          `O nome da coleção "${params.collection}" contém caracteres inválidos.`,
+        );
+      }
+      const fieldCount = Object.keys(params.schemaDefinition).length;
+      if (fieldCount > 10000) {
+        throw new Error(
+          `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
+        );
+      }
+      if (fieldCount > 500) {
+        console.warn(
+          `Aviso: O schema para a coleção "${params.collection}" contém ${fieldCount} campos.`,
+        );
+      }
       this.collection = params.collection;
       this.options = { timestamps: true, ...params.options };
       this.middlewares = params.middlewares || ([] as MiddlewareConfig[]);
       this.schema = new Schema<U>(params.schemaDefinition, this.options);
-
-      // Adicionar validação para grandes volumes de dados
-      if (Object.keys(params.schemaDefinition).length > 500) {
-        console.warn(
-          `Aviso: O schema para a coleção "${params.collection}" contém um grande número de campos (${Object.keys(params.schemaDefinition).length}).`,
-        );
-      }
 
       if (this.middlewares.length > 0) {
         new RegisterMiddlewaresConfigurator(this.schema, this.middlewares);
