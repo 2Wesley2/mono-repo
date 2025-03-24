@@ -8,7 +8,6 @@ import type { SOwner, SEmployee } from "#schema";
 import type { SignInOwnerPayload, SignInBody as SignInParams } from "#http";
 import errors from "#errors";
 import type { ToObjectDocument } from "#mongoose-wrapper";
-
 export default class OwnerService extends Services implements ServiceOwner {
   constructor(
     protected repository: RepositoryOwner,
@@ -51,12 +50,14 @@ export default class OwnerService extends Services implements ServiceOwner {
     return user;
   }
 
-  async createEmployee(employee: SEmployee) {
+  public async createEmployee(
+    employee: SEmployee,
+  ): Promise<ToObjectDocument<SEmployee>> {
     const user = await this.employeeService.signUp(employee);
     return user;
   }
 
-  isAuth(token: string) {
+  public isAuth(token: string): string | object {
     const decoded = this.verifyJWT(token);
     return decoded;
   }

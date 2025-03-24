@@ -1,5 +1,5 @@
 import BcryptWrapper from "./bcrypt/bcrypt-wrapper";
-import JSONWebTokenWrapper from "./jsonwebtoken/jsonwebtoken-wrapper";
+import { JSONWebTokenWrapper } from "#jwt-wrapper";
 
 type InstanceCallableKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never;

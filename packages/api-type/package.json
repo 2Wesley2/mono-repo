@@ -75,6 +75,9 @@
     "#mongoose-wrapper": [
       "./src/libs/mongoose/index.ts"
     ],
+    "#jwt-wrapper": [
+      "./src/libs/jsonwebtoken/index.ts"
+    ],
     "#errors": [
       "./src/errors/Exceptions.ts"
     ],

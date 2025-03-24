@@ -27,7 +27,8 @@
       "#config": ["src/config/index.ts"],
       "#mongoose-wrapper": ["src/libs/mongoose/index.ts"],
       "#contract-account": [ "src/contract/account/index.ts"],
-      "#contract-auth": [ "src/contract/auth/index.ts"]
+      "#contract-auth": [ "src/contract/auth/index.ts"],
+      "#jwt-wrapper": ["src/libs/jsonwebtoken/index.ts"],
     },
     "resolveJsonModule": true
   },

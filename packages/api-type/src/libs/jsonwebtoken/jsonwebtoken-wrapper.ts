@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import config from "../../config/index";
 import { JWTSign, JWTVerify, JWTDecode } from "./type-jsonwebtoken-wrapper";
 
-export default class JSONWebTokenWrapper {
+export class JSONWebTokenWrapper {
   sign: JWTSign = (payload, options) => {
     if (!config.jwtSecret) {
       throw new Error("JWT secret não definido na configuração.");
