@@ -1,6 +1,15 @@
 import mongoose, { Schema, model } from "mongoose";
 import type { Schema as TSchema, Model, SchemaDefinition } from "mongoose";
-import { MiddlewareContext } from "#mongoose-wrapper";
+import {
+  ValidationContext,
+  SchemaDefinitionValidation,
+  MiddlewareContext,
+  OptionsValidation,
+  MiddlewareValidationContext,
+  ErrorHandlingContext,
+  FieldCountValidation,
+  CollectionNameValidation,
+} from "#mongoose-wrapper";
 import type {
   RegisterDocumentParams,
   MiddlewareConfig,
@@ -21,23 +30,10 @@ export class RegisterMiddlewaresConfigurator {
     }
 
     const context = new MiddlewareContext();
+    const validationContext = new MiddlewareValidationContext();
 
     this.middlewares.forEach((mw: MiddlewareConfig) => {
-      if (
-        !mw.hookEvent ||
-        !(typeof mw.hookEvent === "string" || mw.hookEvent instanceof RegExp)
-      ) {
-        throw new Error(`hookEvent inválido`);
-      }
-
-      if (mw.hookEvent instanceof RegExp) {
-        try {
-          new RegExp(mw.hookEvent.source);
-        } catch {
-          throw new Error(`hookEvent inválido: expressão regular inválida`);
-        }
-      }
-
+      validationContext.validate(mw);
       context.applyMiddleware(this.schema, mw);
     });
   }
@@ -46,21 +42,12 @@ export class RegisterMiddlewaresConfigurator {
 export class RegisterModelConfigurator<U> {
   public newModel: Model<U>;
   constructor(collection: string, schema: TSchema<U>) {
+    const errorContext = new ErrorHandlingContext();
     try {
       this.newModel = model<U>(collection, schema);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      if (err.name === "OverwriteModelError") {
-        this.newModel = mongoose.models[collection];
-      } else if (err.name === "MissingSchemaError") {
-        throw new Error(
-          `Erro: esquema não encontrado para o modelo "${collection}" (MissingSchemaError).`,
-        );
-      } else {
-        throw new Error(
-          `Erro genérico ao registrar o modelo "${collection}": ${err.message}`,
-        );
-      }
+      this.newModel = errorContext.handleError(err, collection);
     }
   }
 }
@@ -74,31 +61,13 @@ export class RegisterDocumentConfigurator<U> {
 
   constructor(params: RegisterDocumentParams<U>) {
     try {
-      if (
-        !params.schemaDefinition ||
-        typeof params.schemaDefinition !== "object"
-      ) {
-        throw new Error("Definição de schema inválida.");
-      }
-      if (params.options && typeof params.options !== "object") {
-        throw new Error("Opções inválidas.");
-      }
-      if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
-        throw new Error(
-          `O nome da coleção "${params.collection}" contém caracteres inválidos.`,
-        );
-      }
-      const fieldCount = Object.keys(params.schemaDefinition).length;
-      if (fieldCount > 10000) {
-        throw new Error(
-          `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
-        );
-      }
-      if (fieldCount > 500) {
-        console.warn(
-          `Aviso: O schema para a coleção "${params.collection}" contém ${fieldCount} campos.`,
-        );
-      }
+      const validationContext = new ValidationContext();
+      validationContext.addValidation(new SchemaDefinitionValidation());
+      validationContext.addValidation(new OptionsValidation());
+      validationContext.addValidation(new CollectionNameValidation());
+      validationContext.addValidation(new FieldCountValidation());
+      validationContext.validate(params);
+
       this.collection = params.collection;
       this.options = { timestamps: true, ...params.options };
       this.middlewares = params.middlewares || ([] as MiddlewareConfig[]);

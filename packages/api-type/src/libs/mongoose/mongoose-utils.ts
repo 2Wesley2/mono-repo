@@ -1,9 +1,11 @@
 import mongoose, { Schema } from "mongoose";
+import type { Model } from "mongoose";
 import type {
   ToObjectId,
   RegisterConnectionEventsFunction,
   ConnectionEvents,
   MiddlewareConfig,
+  RegisterDocumentParams,
 } from "#mongoose-wrapper";
 
 export const toObjectId: ToObjectId = (id: string) =>
@@ -22,16 +24,45 @@ export const registerConnectionEvents: RegisterConnectionEventsFunction = <
   });
 };
 
-interface MiddlewareStrategy<TEvent> {
-  apply(
+/** Classes abstratas */
+
+/**
+ * Define a interface para aplicação de middlewares em schemas.
+ */
+abstract class Middleware {
+  abstract apply(
     schema: Schema,
-    middleware: MiddlewareConfig & { hookEvent: TEvent },
+    middleware: MiddlewareConfig & { hookEvent: any },
   ): void;
 }
 
-class PreMiddlewareStrategy
-  implements MiddlewareStrategy<"createCollection" | RegExp>
-{
+/**
+ * Validações abstratas para middlewares.
+ */
+abstract class MiddlewareValidator {
+  abstract validate(middleware: MiddlewareConfig): void;
+}
+
+/**
+ * Estratégia abstrata para tratamento de erros.
+ */
+abstract class ErrorHandling {
+  abstract handle(error: Error, collection: string): Model<any> | never;
+}
+
+/**
+ * Estratégia abstrata para validação de parâmetros de registro de documentos.
+ */
+abstract class Validation {
+  abstract validate(params: RegisterDocumentParams<any>): void;
+}
+
+/** Classes que estendem as abstratas */
+
+/**
+ * Implementação de middleware para eventos "pre".
+ */
+class PreMiddleware extends Middleware {
   apply(
     schema: Schema,
     middleware: MiddlewareConfig & { hookEvent: "createCollection" | RegExp },
@@ -40,10 +71,10 @@ class PreMiddlewareStrategy
   }
 }
 
-class PostMiddlewareStrategy
-  implements
-    MiddlewareStrategy<"createCollection" | "insertMany" | "bulkWrite" | RegExp>
-{
+/**
+ * Implementação de middleware para eventos "post".
+ */
+class PostMiddleware extends Middleware {
   apply(
     schema: Schema,
     middleware: MiddlewareConfig & {
@@ -54,21 +85,201 @@ class PostMiddlewareStrategy
   }
 }
 
+/**
+ * Validação para eventos de hook do tipo string.
+ */
+export class StringHookEventValidator extends MiddlewareValidator {
+  validate(middleware: MiddlewareConfig): void {
+    if (typeof middleware.hookEvent !== "string") {
+      throw new Error(`hookEvent inválido: esperado um valor do tipo string.`);
+    }
+  }
+}
+
+/**
+ * Validação para eventos de hook do tipo RegExp.
+ */
+export class RegExpHookEventValidator extends MiddlewareValidator {
+  validate(middleware: MiddlewareConfig): void {
+    if (!(middleware.hookEvent instanceof RegExp)) {
+      throw new Error(
+        `Tipo de hookEvent inválido: ${typeof middleware.hookEvent}`,
+      );
+    }
+    try {
+      new RegExp(middleware.hookEvent.source);
+    } catch {
+      throw new Error(`hookEvent inválido: expressão regular inválida.`);
+    }
+  }
+}
+
+/**
+ * Tratamento de erro para sobrescrever modelos existentes.
+ */
+export class OverwriteModelError extends ErrorHandling {
+  handle(error: Error, collection: string): Model<any> {
+    return mongoose.models[collection];
+  }
+}
+
+/**
+ * Tratamento de erro para esquemas ausentes.
+ */
+export class MissingSchemaError extends ErrorHandling {
+  handle(error: Error, collection: string): never {
+    throw new Error(
+      `Erro: esquema não encontrado para o modelo "${collection}" (MissingSchemaError).`,
+    );
+  }
+}
+
+/**
+ * Tratamento genérico de erros.
+ */
+export class GenericError extends ErrorHandling {
+  handle(error: Error, collection: string): never {
+    throw new Error(
+      `Erro genérico ao registrar o modelo "${collection}": ${error.message}`,
+    );
+  }
+}
+
+/**
+ * Validação da definição do schema.
+ */
+export class SchemaDefinitionValidation extends Validation {
+  validate(params: RegisterDocumentParams<any>): void {
+    if (
+      !params.schemaDefinition ||
+      typeof params.schemaDefinition !== "object" ||
+      Object.keys(params.schemaDefinition).length === 0
+    ) {
+      throw new Error("Definição de schema inválida.");
+    }
+  }
+}
+
+/**
+ * Validação das opções do schema.
+ */
+export class OptionsValidation extends Validation {
+  validate(params: RegisterDocumentParams<any>): void {
+    if (params.options && typeof params.options.timestamps !== "boolean") {
+      throw new Error("Opções inválidas.");
+    }
+  }
+}
+
+/**
+ * Validação do nome da coleção.
+ */
+export class CollectionNameValidation extends Validation {
+  validate(params: RegisterDocumentParams<any>): void {
+    if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
+      throw new Error(
+        `O nome da coleção "${params.collection}" contém caracteres inválidos.`,
+      );
+    }
+  }
+}
+
+/**
+ * Validação da contagem de campos no schema.
+ */
+export class FieldCountValidation extends Validation {
+  validate(params: RegisterDocumentParams<any>): void {
+    const fieldCount = Object.keys(params.schemaDefinition).length;
+    if (fieldCount > 10000) {
+      throw new Error(
+        `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
+      );
+    }
+    if (fieldCount > 500) {
+      console.warn(
+        `Aviso: O schema para a coleção "${params.collection}" contém ${fieldCount} campos.`,
+      );
+    }
+  }
+}
+
+/** Classes principais */
+
+/**
+ * Contexto para aplicação de middlewares.
+ */
 export class MiddlewareContext {
-  private strategies: Record<string, MiddlewareStrategy<any>>;
+  private middlewares: Record<string, Middleware>;
 
   constructor() {
-    this.strategies = {
-      pre: new PreMiddlewareStrategy(),
-      post: new PostMiddlewareStrategy(),
+    this.middlewares = {
+      pre: new PreMiddleware(),
+      post: new PostMiddleware(),
     };
   }
 
   applyMiddleware(schema: Schema, middleware: MiddlewareConfig): void {
-    const strategy = this.strategies[middleware.method];
-    if (!strategy) {
+    const middlewareInstance = this.middlewares[middleware.method];
+    if (!middlewareInstance) {
       throw new Error(`Método de middleware inválido: ${middleware.method}`);
     }
-    strategy.apply(schema, middleware);
+    middlewareInstance.apply(schema, middleware);
+  }
+}
+
+/**
+ * Contexto para validação de middlewares.
+ */
+export class MiddlewareValidationContext {
+  private validators: Record<string, MiddlewareValidator>;
+
+  constructor() {
+    this.validators = {
+      string: new StringHookEventValidator(),
+      regexp: new RegExpHookEventValidator(),
+    };
+  }
+
+  validate(middleware: MiddlewareConfig): void {
+    const type = typeof middleware.hookEvent === "string" ? "string" : "regexp";
+    const validator = this.validators[type];
+    if (!validator) {
+      throw new Error(`Tipo de hookEvent inválido: ${type}`);
+    }
+    validator.validate(middleware);
+  }
+}
+
+/**
+ * Contexto para tratamento de erros.
+ */
+export class ErrorHandlingContext {
+  private handlers: Record<string, ErrorHandling>;
+
+  constructor() {
+    this.handlers = {
+      OverwriteModelError: new OverwriteModelError(),
+      MissingSchemaError: new MissingSchemaError(),
+    };
+  }
+
+  handleError(error: Error, collection: string): Model<any> | never {
+    const handler = this.handlers[error.name] || new GenericError();
+    return handler.handle(error, collection);
+  }
+}
+
+/**
+ * Contexto para validação de parâmetros de registro de documentos.
+ */
+export class ValidationContext {
+  private validations: Validation[] = [];
+
+  addValidation(validation: Validation): void {
+    this.validations.push(validation);
+  }
+
+  validate(params: RegisterDocumentParams<any>): void {
+    this.validations.forEach((validation) => validation.validate(params));
   }
 }
