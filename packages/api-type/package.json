@@ -78,6 +78,9 @@
     "#jwt-wrapper": [
       "./src/libs/jsonwebtoken/index.ts"
     ],
+    "#bcrypt-wrapper": [
+      "./src/libs/bcrypt/index.ts"
+    ],
     "#errors": [
       "./src/errors/Exceptions.ts"
     ],

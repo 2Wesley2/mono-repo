@@ -29,6 +29,7 @@
       "#contract-account": [ "src/contract/account/index.ts"],
       "#contract-auth": [ "src/contract/auth/index.ts"],
       "#jwt-wrapper": ["src/libs/jsonwebtoken/index.ts"],
+      "#bcrypt-wrapper": ["./src/libs/bcrypt/index.ts"],
     },
     "resolveJsonModule": true
   },

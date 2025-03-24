@@ -1,16 +1,15 @@
 import bcrypt from "bcrypt";
 import { BcryptHash, BcryptCompare } from "#bcrypt-type";
-export default class BcryptWrapper {
-  public str: string;
-  constructor(public strArg: string) {
-    this.str = strArg;
-  }
 
-  hash: BcryptHash = async (saltOrRounds) => {
-    return await bcrypt.hash(this.str, saltOrRounds);
+export class BcryptWrapper {
+  public hash: BcryptHash = async (
+    data: string,
+    saltOrRounds: number | string,
+  ) => {
+    return await bcrypt.hash(data, saltOrRounds);
   };
 
-  compare: BcryptCompare = async (encrypted) => {
-    return await bcrypt.compare(this.str, encrypted);
+  public compare: BcryptCompare = async (data: string, encrypted: string) => {
+    return await bcrypt.compare(data, encrypted);
   };
 }
