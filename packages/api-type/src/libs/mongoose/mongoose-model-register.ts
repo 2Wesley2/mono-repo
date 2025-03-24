@@ -19,6 +19,9 @@ export class RegisterMiddlewaresConfigurator {
       );
     }
     this.middlewares.forEach((mw: MiddlewareConfig) => {
+      if (!mw.hookEvent) {
+        throw new Error(`hookEvent inválido`);
+      }
       if (mw.method !== "pre" && mw.method !== "post") {
         throw new Error(`Método de middleware inválido`);
       }
@@ -36,20 +39,19 @@ export class RegisterModelConfigurator<U> {
   constructor(collection: string, schema: TSchema<U>) {
     try {
       this.newModel = model<U>(collection, schema);
-    } catch (error: Error | any) {
-      if (error.name === "OverwriteModelError") {
-        throw new Error(
-          `Erro: o modelo "${collection}" já foi registrado (OverwriteModelError).`,
-        );
-      }
-      if (error.name === "MissingSchemaError") {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      if (err.name === "OverwriteModelError") {
+        this.newModel = mongoose.models[collection];
+      } else if (err.name === "MissingSchemaError") {
         throw new Error(
           `Erro: esquema não encontrado para o modelo "${collection}" (MissingSchemaError).`,
         );
+      } else {
+        throw new Error(
+          `Erro genérico ao registrar o modelo "${collection}": ${err.message}`,
+        );
       }
-      throw new Error(
-        `Erro ao registrar o modelo "${collection}": ${error.message}`,
-      );
     }
   }
 }
@@ -69,10 +71,21 @@ export class RegisterDocumentConfigurator<U> {
       ) {
         throw new Error("Definição de schema inválida.");
       }
+      if (params.options && typeof params.options !== "object") {
+        throw new Error("Opções inválidas.");
+      }
       this.collection = params.collection;
       this.options = { timestamps: true, ...params.options };
       this.middlewares = params.middlewares || ([] as MiddlewareConfig[]);
       this.schema = new Schema<U>(params.schemaDefinition, this.options);
+
+      // Adicionar validação para grandes volumes de dados
+      if (Object.keys(params.schemaDefinition).length > 500) {
+        console.warn(
+          `Aviso: O schema para a coleção "${params.collection}" contém um grande número de campos (${Object.keys(params.schemaDefinition).length}).`,
+        );
+      }
+
       if (this.middlewares.length > 0) {
         new RegisterMiddlewaresConfigurator(this.schema, this.middlewares);
       }
@@ -81,8 +94,9 @@ export class RegisterDocumentConfigurator<U> {
         this.schema,
       ).newModel;
     } catch (error: unknown | any) {
+      const err = error instanceof Error ? error : new Error(String(error));
       throw new Error(
-        `Erro ao configurar o documento para a coleção "${params.collection}": ${error.message}`,
+        `Erro ao configurar o documento para a coleção "${params.collection}": ${err.message}`,
       );
     }
   }
@@ -125,8 +139,9 @@ export class MongooseModelRegister {
         middlewares: middlewares,
       }).model;
     } catch (error: unknown | any) {
+      const err = error instanceof Error ? error : new Error(String(error));
       throw new Error(
-        `Erro ao registrar o documento "${collection}": ${error.message}`,
+        `Erro ao registrar o documento "${collection}": ${err.message}`,
       );
     }
   }

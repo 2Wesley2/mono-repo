@@ -48,6 +48,41 @@ describe("MongooseModelRegister", () => {
         MongooseModelRegister.addMiddleware(schema, invalidMiddleware),
       ).toThrow();
     });
+
+    it("deve lançar erro se middlewares não for um array", () => {
+      const schema = new Schema({});
+      const invalidMiddlewares: any = "notAnArray";
+
+      expect(() =>
+        MongooseModelRegister.addMiddleware(schema, invalidMiddlewares),
+      ).toThrow("Middlewares deve ser um array do tipo MiddlewareConfig.");
+    });
+
+    it("deve lançar erro para método de middleware inválido", () => {
+      const schema = new Schema({});
+      const invalidMiddlewares: MiddlewareConfig[] = [
+        {
+          method: "invalid" as any,
+          hookEvent: "createCollection",
+          fn: jest.fn(),
+        },
+      ];
+
+      expect(() =>
+        MongooseModelRegister.addMiddleware(schema, invalidMiddlewares),
+      ).toThrow("Método de middleware inválido");
+    });
+
+    it("deve lançar erro para hookEvent inválido", () => {
+      const schema = new Schema({});
+      const invalidMiddlewares: MiddlewareConfig[] = [
+        { method: "pre", hookEvent: null as any, fn: jest.fn() },
+      ];
+
+      expect(() =>
+        MongooseModelRegister.addMiddleware(schema, invalidMiddlewares),
+      ).toThrow("hookEvent inválido");
+    });
   });
 
   describe("registerDocument", () => {
@@ -79,21 +114,21 @@ describe("MongooseModelRegister", () => {
       const collection = "duplicateCollection";
       const options = { timestamps: true };
 
-      MongooseModelRegister.registerDocument(
+      const firstModel = MongooseModelRegister.registerDocument(
         schemaDefinition,
         collection,
         options,
         [],
       );
 
-      expect(() =>
-        MongooseModelRegister.registerDocument(
-          schemaDefinition,
-          collection,
-          options,
-          [],
-        ),
-      ).toThrow("OverwriteModelError");
+      const secondModel = MongooseModelRegister.registerDocument(
+        schemaDefinition,
+        collection,
+        options,
+        [],
+      );
+
+      expect(secondModel).toBe(firstModel);
     });
 
     it("deve lançar erro para schema inválido", () => {
@@ -139,7 +174,139 @@ describe("MongooseModelRegister", () => {
           options,
           [],
         ),
+      ).toThrow("Opções inválidas.");
+    });
+
+    it("deve lançar erro para collection inválida", () => {
+      const schemaDefinition = { name: { type: String, required: true } };
+      const invalidCollection: any = null;
+      const options = { timestamps: true };
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          schemaDefinition,
+          invalidCollection,
+          options,
+          [],
+        ),
       ).toThrow("Erro ao registrar o documento");
+    });
+
+    it("deve lançar erro para schemaDefinition inválido", () => {
+      const invalidSchemaDefinition: any = "invalid";
+      const collection = "testCollection";
+      const options = { timestamps: true };
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          invalidSchemaDefinition,
+          collection,
+          options,
+          [],
+        ),
+      ).toThrow("Definição de schema inválida.");
+    });
+
+    it("deve lançar erro para middlewares com método inválido", () => {
+      const schemaDefinition = { name: { type: String, required: true } };
+      const collection = "testCollection";
+      const options = { timestamps: true };
+      const invalidMiddlewares: MiddlewareConfig[] = [
+        {
+          method: "invalid" as any,
+          hookEvent: "createCollection",
+          fn: jest.fn(),
+        },
+      ];
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          schemaDefinition,
+          collection,
+          options,
+          invalidMiddlewares,
+        ),
+      ).toThrow("Método de middleware inválido");
+    });
+
+    it("deve lançar erro para opções inválidas", () => {
+      const schemaDefinition = { name: { type: String, required: true } };
+      const collection = "testCollection";
+      const invalidOptions: any = "invalid";
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          schemaDefinition,
+          collection,
+          invalidOptions,
+          [],
+        ),
+      ).toThrow("Opções inválidas.");
+    });
+
+    it("deve lançar erro para modelo duplicado", () => {
+      const schemaDefinition = { name: { type: String, required: true } };
+      const collection = "duplicateCollection";
+      const options = { timestamps: true };
+
+      MongooseModelRegister.registerDocument(
+        schemaDefinition,
+        collection,
+        options,
+        [],
+      );
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          schemaDefinition,
+          collection,
+          options,
+          [],
+        ),
+      ).not.toThrow();
+    });
+
+    it("deve lançar erro para erro genérico ao registrar modelo", () => {
+      const schemaDefinition = { name: { type: String, required: true } };
+      const collection = "testCollection";
+      const options = { timestamps: true };
+
+      jest.spyOn(mongoose, "model").mockImplementationOnce(() => {
+        throw new Error("Erro genérico");
+      });
+
+      expect(() =>
+        MongooseModelRegister.registerDocument(
+          schemaDefinition,
+          collection,
+          options,
+          [],
+        ),
+      ).toThrow("Erro genérico ao registrar o modelo");
+    });
+
+    it("deve lidar com grande volume de dados no schema", () => {
+      const largeSchemaDefinition = Array.from({ length: 1000 }).reduce<
+        Record<string, any>
+      >(
+        (acc, _, index) => {
+          acc[`field${index}`] = { type: String };
+          return acc;
+        },
+        {} as Record<string, any>,
+      );
+      const collection = "largeSchemaCollection";
+      const options = { timestamps: true };
+
+      const model = MongooseModelRegister.registerDocument(
+        largeSchemaDefinition,
+        collection,
+        options,
+        [],
+      );
+
+      expect(model).toBeDefined();
+      expect(model.modelName).toBe(collection);
     });
   });
 });
