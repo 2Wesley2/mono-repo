@@ -1,5 +1,4 @@
 import type {
-  Jwt,
   SignOptions,
   VerifyOptions,
   DecodeOptions,
@@ -16,4 +15,10 @@ export interface JWTVerify<T extends JwtPayload = JwtPayload> {
 }
 export interface JWTDecode {
   (token: string, options?: DecodeOptions): object | string | null;
+}
+
+export interface IJSONWebTokenWrapper {
+  sign: JWTSign;
+  verify: JWTVerify;
+  decode: JWTDecode;
 }

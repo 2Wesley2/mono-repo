@@ -20,11 +20,11 @@ export class Services {
     this.jwtWrapper = new JSONWebTokenWrapper();
   }
 
-  async hash(data: string, saltOrRounds: number) {
+  async hash(data: string, saltOrRounds: number): Promise<string> {
     return await this.bcryptWrapper.hash(data, saltOrRounds);
   }
 
-  async compare(data: string, encrypted: string) {
+  async compare(data: string, encrypted: string): Promise<boolean> {
     return await this.bcryptWrapper.compare(data, encrypted);
   }
 
@@ -47,7 +47,7 @@ export class Services {
     return this.jwtWrapper.decode(token, options);
   }
 
-  public async can(permission: string, userId: string) {
+  public async can(permission: string, userId: string): Promise<boolean> {
     permission = permission.toUpperCase();
     const userIdObj = toObjectId(userId);
     const RoleModel = MongooseConnection.getCollectionByName<SRole>("Role");

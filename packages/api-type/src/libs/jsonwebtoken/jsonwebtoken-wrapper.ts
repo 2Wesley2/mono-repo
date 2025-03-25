@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
-import type { Secret } from "jsonwebtoken";
+import type { Secret, JwtPayload } from "jsonwebtoken";
 import config from "#config";
-import { JWTSign, JWTVerify, JWTDecode } from "#jwt-wrapper";
+import type {
+  JWTSign,
+  JWTVerify,
+  JWTDecode,
+  IJSONWebTokenWrapper,
+} from "#jwt-wrapper";
 
-export class JSONWebTokenWrapper {
+export class JSONWebTokenWrapper implements IJSONWebTokenWrapper {
   private secret: Secret = config.jwtSecret;
   constructor() {
     if (!this.secret || typeof this.secret !== "string") {
@@ -11,11 +16,11 @@ export class JSONWebTokenWrapper {
     }
   }
 
-  sign: JWTSign = (payload, options) => {
+  sign: JWTSign = (payload, options): string => {
     return jwt.sign(payload, this.secret, options || {});
   };
 
-  verify: JWTVerify = (token, options) => {
+  verify: JWTVerify = (token, options): JwtPayload => {
     const result = jwt.verify(token, this.secret, options || {});
     if (typeof result === "string") {
       throw new Error("Token inválido ou malformado");
@@ -23,7 +28,7 @@ export class JSONWebTokenWrapper {
     return result;
   };
 
-  decode: JWTDecode = (token, options) => {
+  decode: JWTDecode = (token, options): object | string | null => {
     return jwt.decode(token, options);
   };
 }
