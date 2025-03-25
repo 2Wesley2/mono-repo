@@ -1,4 +1,5 @@
 import type {
+  Model,
   HydratedDocument,
   Require_id,
   Default__v,
@@ -53,6 +54,15 @@ export interface RegisterDocumentParams<U> {
   collection: string;
   options?: options;
   middlewares: MiddlewareConfig[];
+}
+
+export interface ModelRegister {
+  registerDocument<U>(
+    schema: RegisterDocumentParams<U>["schemaDefinition"],
+    collection: RegisterDocumentParams<U>["collection"],
+    options: RegisterDocumentParams<U>["options"],
+    middlewares: RegisterDocumentParams<U>["middlewares"],
+  ): Model<U>;
 }
 
 export type CreatedDocument<TSchema> = HydratedDocument<

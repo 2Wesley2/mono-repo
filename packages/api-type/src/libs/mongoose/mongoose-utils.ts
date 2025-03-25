@@ -8,6 +8,11 @@ import type {
   options,
 } from "#mongoose-wrapper";
 
+export const getMongooseReservedMethods = (): Set<string> => {
+  const dummyModel = {} as Model<any>;
+  return new Set(Object.getOwnPropertyNames(dummyModel));
+};
+
 export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
 export const toObjectId: ToObjectId = (id: string) =>
   new mongoose.Types.ObjectId(id);
