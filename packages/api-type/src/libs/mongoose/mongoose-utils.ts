@@ -1,13 +1,14 @@
-import mongoose, { Schema } from "mongoose";
-import type { Model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+import type { Model, SchemaTimestampsConfig } from "mongoose";
 import type {
-  ToObjectId,
   RegisterConnectionEventsFunction,
   ConnectionEvents,
   MiddlewareConfig,
   RegisterDocumentParams,
+  options,
 } from "#mongoose-wrapper";
 
+export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
 export const toObjectId: ToObjectId = (id: string) =>
   new mongoose.Types.ObjectId(id);
 
@@ -252,6 +253,10 @@ export class ErrorHandlingContext {
     };
   }
 
+  static getInstance(): ErrorHandlingContext {
+    return new ErrorHandlingContext();
+  }
+
   handleError(error: Error, collection: string): Model<any> | never {
     const handler = this.handlers[error.name] || new GenericError();
     return handler.handle(error, collection);
@@ -272,3 +277,46 @@ export class ValidationContext {
     this.validations.forEach((validation) => validation.validate(params));
   }
 }
+
+/**
+ * Aplica validações padrão para os parâmetros de registro de documentos.
+ * @param params - Parâmetros fornecidos para o registro do documento.
+ * @throws Lança erros de validação, se aplicável.
+ */
+export const applyValidations = (params: RegisterDocumentParams<any>): void => {
+  const validationContext = new ValidationContext();
+  validationContext.addValidation(new SchemaDefinitionValidation());
+  validationContext.addValidation(new CollectionNameValidation());
+  validationContext.addValidation(new FieldCountValidation());
+  validationContext.validate(params);
+};
+
+/**
+ * Configura as opções padrão para um schema.
+ * @param options - Opções fornecidas pelo usuário.
+ * @returns Opções configuradas com valores padrão.
+ * @throws Lança um erro se `timestamps` já estiver definido.
+ */
+export const configureOptions = (options: options = {}): options => {
+  const defaultOptions: options = { timestamps: true };
+
+  if (options.timestamps && typeof options.timestamps === "object") {
+    defaultOptions.timestamps = {
+      ...(defaultOptions.timestamps as SchemaTimestampsConfig),
+      ...(options.timestamps as SchemaTimestampsConfig),
+    };
+  } else if (typeof options.timestamps === "boolean") {
+    defaultOptions.timestamps = options.timestamps;
+  }
+
+  return { ...defaultOptions, ...options };
+};
+
+/**
+ * Abstração para o Schema do Mongoose.
+ */
+export const MongooseSchema = Schema;
+/**
+ * Abstração para o Model do Mongoose.
+ */
+export const mongooseModel = model;

@@ -26,9 +26,7 @@ export type ConnectionEvents<ErrorType = Error> = Record<
 export type RegisterConnectionEventsFunction = <ErrorType = Error>(
   events: ConnectionEvents<ErrorType>,
 ) => void;
-export type options = SchemaOptions<any, any, any, any, Default> & {
-  timestamps?: boolean;
-};
+export type options = SchemaOptions<any, any, any, any, Default>;
 
 export type hookEventPre = "createCollection" | RegExp;
 export type hookEventPost =

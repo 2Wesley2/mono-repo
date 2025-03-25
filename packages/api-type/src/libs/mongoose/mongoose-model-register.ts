@@ -1,13 +1,12 @@
-import mongoose, { Schema, model } from "mongoose";
-import type { Schema as TSchema, Model, SchemaDefinition } from "mongoose";
+import type { Model, Schema, SchemaDefinition } from "mongoose";
 import {
-  ValidationContext,
-  SchemaDefinitionValidation,
+  MongooseSchema,
   MiddlewareContext,
   MiddlewareValidationContext,
+  mongooseModel,
   ErrorHandlingContext,
-  FieldCountValidation,
-  CollectionNameValidation,
+  configureOptions,
+  applyValidations,
 } from "#mongoose-wrapper";
 import type {
   RegisterDocumentParams,
@@ -15,85 +14,64 @@ import type {
   options,
 } from "#mongoose-wrapper";
 
-export type ToObjectId = (id: string) => mongoose.Types.ObjectId;
+class MiddlewareProcessor {
+  private context: MiddlewareContext;
+  private validationContext: MiddlewareValidationContext;
 
-export class RegisterMiddlewaresConfigurator {
-  constructor(
-    public schema: TSchema,
-    public middlewares: MiddlewareConfig[],
-  ) {
-    if (!Array.isArray(this.middlewares)) {
-      throw new Error(
-        "Middlewares deve ser um array do tipo MiddlewareConfig.",
-      );
-    }
+  constructor() {
+    this.context = new MiddlewareContext();
+    this.validationContext = new MiddlewareValidationContext();
+  }
 
-    const context = new MiddlewareContext();
-    const validationContext = new MiddlewareValidationContext();
-
-    this.middlewares.forEach((mw: MiddlewareConfig) => {
-      validationContext.validate(mw);
-      context.applyMiddleware(this.schema, mw);
+  process(schema: Schema, middlewares: MiddlewareConfig[]): Schema {
+    const updatedSchema = schema.clone();
+    middlewares.forEach((mw: MiddlewareConfig) => {
+      this.validationContext.validate(mw);
+      this.context.applyMiddleware(updatedSchema, mw);
     });
+    return updatedSchema;
   }
 }
 
-export class RegisterModelConfigurator<U> {
-  public newModel: Model<U>;
-  constructor(collection: string, schema: TSchema<U>) {
-    const errorContext = new ErrorHandlingContext();
+/**
+ * Classe responsável por criar o schema do Mongoose.
+ */
+class SchemaCreator {
+  static create<U>(params: RegisterDocumentParams<U>): Schema<U> {
+    applyValidations(params);
+    return new MongooseSchema<U>(
+      params.schemaDefinition,
+      configureOptions(params.options),
+    );
+  }
+}
+
+/**
+ * Classe responsável por registrar um modelo do Mongoose.
+ */
+class ModelRegister<U> {
+  private errorContext: ErrorHandlingContext;
+
+  constructor(errorContext: ErrorHandlingContext) {
+    this.errorContext = errorContext;
+  }
+
+  register(collection: string, schema: Schema<U>): Model<U> {
     try {
-      this.newModel = model<U>(collection, schema);
+      return mongooseModel<U>(collection, schema);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      this.newModel = errorContext.handleError(err, collection);
+      return this.errorContext.handleError(err, collection);
     }
   }
 }
 
-export class RegisterDocumentConfigurator<U> {
-  public schema: TSchema<U>;
-  private collection: string;
-  private options: options;
-  private middlewares: MiddlewareConfig[];
-  public model: Model<U>;
-
-  constructor(params: RegisterDocumentParams<U>) {
-    try {
-      const validationContext = new ValidationContext();
-      validationContext.addValidation(new SchemaDefinitionValidation());
-      validationContext.addValidation(new CollectionNameValidation());
-      validationContext.addValidation(new FieldCountValidation());
-      validationContext.validate(params);
-
-      this.collection = params.collection;
-      this.options = { timestamps: true, ...params.options };
-      this.middlewares = params.middlewares || ([] as MiddlewareConfig[]);
-      this.schema = new Schema<U>(params.schemaDefinition, this.options);
-
-      if (this.middlewares.length > 0) {
-        new RegisterMiddlewaresConfigurator(this.schema, this.middlewares);
-      }
-      this.model = new RegisterModelConfigurator<U>(
-        this.collection,
-        this.schema,
-      ).newModel;
-    } catch (error: unknown | any) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      const debugInfo = {
-        collection: params.collection,
-        options: params.options,
-        schemaDefinition: params.schemaDefinition,
-        middlewares: params.middlewares,
-      };
-      throw new Error(
-        `Erro ao configurar o documento para a coleção "${params.collection}": ${err.message}. Detalhes: ${JSON.stringify(debugInfo, null, 2)}`,
-      );
-    }
-  }
-}
-
+/**
+ * Classe principal para registro de documentos.
+ */
 export class MongooseModelRegister {
+  private static errorContext: ErrorHandlingContext;
+
   /**
    * Adiciona middlewares a um schema do Mongoose.
    * @param schema - O schema do Mongoose ao qual os middlewares serão adicionados.
@@ -104,7 +82,7 @@ export class MongooseModelRegister {
     schema: Schema,
     middlewares: MiddlewareConfig[],
   ): Schema {
-    return new RegisterMiddlewaresConfigurator(schema, middlewares).schema;
+    return new MiddlewareProcessor().process(schema, middlewares);
   }
 
   /**
@@ -123,13 +101,24 @@ export class MongooseModelRegister {
     middlewares: MiddlewareConfig[],
   ): Model<U> {
     try {
-      return new RegisterDocumentConfigurator<U>({
+      const params: RegisterDocumentParams<U> = {
         schemaDefinition: schema,
-        collection: collection,
-        options: options,
-        middlewares: middlewares,
-      }).model;
-    } catch (error: unknown | any) {
+        collection,
+        options,
+        middlewares,
+      };
+
+      const schemaInstance = SchemaCreator.create(params);
+      const updatedSchema =
+        middlewares.length > 0
+          ? this.addMiddleware(schemaInstance, middlewares)
+          : schemaInstance;
+
+      return new ModelRegister<U>(this.errorContext).register(
+        collection,
+        updatedSchema,
+      );
+    } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       throw new Error(
         `Erro ao registrar o documento "${collection}": ${err.message}`,
