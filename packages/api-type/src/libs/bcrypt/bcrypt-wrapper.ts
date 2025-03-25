@@ -1,9 +1,5 @@
 import bcrypt from "bcrypt";
-import {
-  BcryptHash,
-  BcryptCompare,
-  BcryptWrapper as IBcryptWrapper,
-} from "#bcrypt-type";
+import { BcryptHash, BcryptCompare, IBcryptWrapper } from "#bcrypt-type";
 
 export class BcryptWrapper implements IBcryptWrapper {
   public hash: BcryptHash = async (

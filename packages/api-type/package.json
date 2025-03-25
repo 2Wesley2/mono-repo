@@ -110,6 +110,9 @@
     ],
     "#contract-product": [
       "./src/contract/product/index.ts"
+    ],
+    "#utils": [
+      "./src/utils/toArray.ts"
     ]
   }
 }

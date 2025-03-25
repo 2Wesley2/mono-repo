@@ -1,6 +1,6 @@
 import { Services } from "#services";
 import type { SProduct } from "#schema";
-import type { IProductModel, IProductService } from "./contract/index";
+import type { IProductModel, IProductService } from "#contract-product";
 export default class ProductService
   extends Services
   implements IProductService

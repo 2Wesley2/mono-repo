@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import Controller from "#controller";
 import type { ServiceOwner } from "#contract-account";
 import { validateOwner } from "#middlewares";
@@ -7,7 +7,6 @@ import type {
   SignUpEmployeeRequest,
   SignInRequest,
 } from "#http";
-
 import { PermissionChecker } from "#permission-checker";
 import type { PermissionChecker as TypePermissionChecker } from "#permission-checker";
 export default class OwnerController extends Controller {

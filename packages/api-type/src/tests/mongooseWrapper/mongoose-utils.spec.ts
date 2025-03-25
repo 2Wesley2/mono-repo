@@ -1,14 +1,11 @@
 import type { MiddlewareConfig } from "#mongoose-wrapper";
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import {
   StringHookEventValidator,
-  RegExpHookEventValidator,
-  MiddlewareContext,
   MiddlewareValidationContext,
   ErrorHandlingContext,
   ValidationContext,
   SchemaDefinitionValidation,
-  OptionsValidation,
   CollectionNameValidation,
   FieldCountValidation,
 } from "#mongoose-wrapper";
@@ -88,7 +85,6 @@ describe("ValidationContext", () => {
   beforeEach(() => {
     validationContext = new ValidationContext();
     validationContext.addValidation(new SchemaDefinitionValidation());
-    validationContext.addValidation(new OptionsValidation());
     validationContext.addValidation(new CollectionNameValidation());
     validationContext.addValidation(new FieldCountValidation());
   });

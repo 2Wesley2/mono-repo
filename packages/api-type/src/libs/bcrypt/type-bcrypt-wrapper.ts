@@ -7,7 +7,7 @@ export type BcryptCompare = (
   encrypted: string,
 ) => Promise<boolean>;
 
-export interface BcryptWrapper {
+export interface IBcryptWrapper {
   hash: BcryptHash;
   compare: BcryptCompare;
 }

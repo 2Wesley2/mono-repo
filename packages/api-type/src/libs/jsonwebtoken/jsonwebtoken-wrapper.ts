@@ -16,11 +16,11 @@ export class JSONWebTokenWrapper implements IJSONWebTokenWrapper {
     }
   }
 
-  sign: JWTSign = (payload, options): string => {
+  public sign: JWTSign = (payload, options): string => {
     return jwt.sign(payload, this.secret, options || {});
   };
 
-  verify: JWTVerify = (token, options): JwtPayload => {
+  public verify: JWTVerify = (token, options): JwtPayload => {
     const result = jwt.verify(token, this.secret, options || {});
     if (typeof result === "string") {
       throw new Error("Token inválido ou malformado");
@@ -28,7 +28,7 @@ export class JSONWebTokenWrapper implements IJSONWebTokenWrapper {
     return result;
   };
 
-  decode: JWTDecode = (token, options): object | string | null => {
+  public decode: JWTDecode = (token, options): object | string | null => {
     return jwt.decode(token, options);
   };
 }

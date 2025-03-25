@@ -30,7 +30,8 @@
       "#contract-auth": [ "src/contract/auth/index.ts"],
       "#jwt-wrapper": ["src/libs/jsonwebtoken/index.ts"],
       "#bcrypt-wrapper": ["src/libs/bcrypt/index.ts"],
-      "#contract-product": [ "src/contract/product/index.ts"]
+      "#contract-product": [ "src/contract/product/index.ts"],
+      "#utils": ["src/utils/toArray.ts"]
     },
     "resolveJsonModule": true
   },
@@ -39,5 +40,8 @@
     "experimentalSpecifierResolution": "node"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules", 
+    "**/*.test.ts",
+    "**/*.spec.ts"]
 }

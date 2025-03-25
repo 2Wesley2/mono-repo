@@ -2,7 +2,7 @@ import request from "supertest";
 import { Application } from "express";
 import AppServer from "../../resources/app-server";
 import { MongooseConnection } from "#mongoose-wrapper";
-import { toArray } from "#src/utils/toArray";
+import { toArray } from "#utils";
 import {
   newOwner,
   ownerSignIn,
