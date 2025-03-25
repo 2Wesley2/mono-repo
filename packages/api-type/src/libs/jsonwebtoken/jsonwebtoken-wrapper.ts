@@ -1,24 +1,26 @@
 import jwt from "jsonwebtoken";
-import config from "../../config/index";
-import { JWTSign, JWTVerify, JWTDecode } from "./type-jsonwebtoken-wrapper";
+import type { Secret } from "jsonwebtoken";
+import config from "#config";
+import { JWTSign, JWTVerify, JWTDecode } from "#jwt-wrapper";
 
 export class JSONWebTokenWrapper {
-  sign: JWTSign = (payload, options) => {
-    if (!config.jwtSecret) {
+  private secret: Secret = config.jwtSecret;
+  constructor() {
+    if (!this.secret || typeof this.secret !== "string") {
       throw new Error("JWT secret não definido na configuração.");
     }
-    return jwt.sign(payload, config.jwtSecret, options || {});
+  }
+
+  sign: JWTSign = (payload, options) => {
+    return jwt.sign(payload, this.secret, options || {});
   };
 
   verify: JWTVerify = (token, options) => {
-    if (!config.jwtSecret) {
-      throw new Error("JWT secret não definido na configuração.");
+    const result = jwt.verify(token, this.secret, options || {});
+    if (typeof result === "string") {
+      throw new Error("Token inválido ou malformado");
     }
-    try {
-      return jwt.verify(token, config.jwtSecret, options || {});
-    } catch (error: any) {
-      throw new Error(`Token inválido: ${error.message}`);
-    }
+    return result;
   };
 
   decode: JWTDecode = (token, options) => {

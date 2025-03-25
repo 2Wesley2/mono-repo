@@ -161,17 +161,6 @@ export class SchemaDefinitionValidation extends Validation {
 }
 
 /**
- * Validação das opções do schema.
- */
-export class OptionsValidation extends Validation {
-  validate(params: RegisterDocumentParams<any>): void {
-    if (params.options && typeof params.options.timestamps !== "boolean") {
-      throw new Error("Opções inválidas.");
-    }
-  }
-}
-
-/**
  * Validação do nome da coleção.
  */
 export class CollectionNameValidation extends Validation {

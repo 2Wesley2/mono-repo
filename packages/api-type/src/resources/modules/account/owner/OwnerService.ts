@@ -18,7 +18,7 @@ export default class OwnerService extends Services implements ServiceOwner {
 
   public async signIn(credentials: SignInParams): Promise<string> {
     const user = await this.repository.signIn(credentials.email);
-    const isPasswordValid = await this.compare(
+    const isPasswordValid = await super.compare(
       credentials.password,
       user.password,
     );
@@ -28,7 +28,7 @@ export default class OwnerService extends Services implements ServiceOwner {
     }
 
     const payload: SignInOwnerPayload = {
-      id: user._id,
+      sub: user._id.toString(),
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -37,7 +37,7 @@ export default class OwnerService extends Services implements ServiceOwner {
       tradeName: user.tradeName,
     };
 
-    const token = this.signJWT(payload);
+    const token = super.signJWT(payload);
     return token;
   }
 
@@ -49,7 +49,6 @@ export default class OwnerService extends Services implements ServiceOwner {
     });
     return user;
   }
-
   public async createEmployee(
     employee: SEmployee,
   ): Promise<ToObjectDocument<SEmployee>> {
@@ -57,8 +56,12 @@ export default class OwnerService extends Services implements ServiceOwner {
     return user;
   }
 
-  public isAuth(token: string): string | object {
-    const decoded = this.verifyJWT(token);
+  public isAuth(token: string): SignInOwnerPayload {
+    const decoded = super.verifyJWT<SignInOwnerPayload>(token);
     return decoded;
+  }
+
+  public async can(permission: string, userId: string): Promise<boolean> {
+    return await super.can(permission, userId);
   }
 }

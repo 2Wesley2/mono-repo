@@ -22,14 +22,15 @@
       "#middlewares": ["src/middlewares/validationHandler.ts"],
       "#http": ["src/http/index.ts"],
       "#schema": ["src/schema/index.ts"],
-      "#rbac": ["src/middlewares/rbacHandler.ts"],
+      "#permission-checker": ["src/middlewares/permissionChecker.ts"],
       "#services": ["src/service/index.ts"],
       "#config": ["src/config/index.ts"],
       "#mongoose-wrapper": ["src/libs/mongoose/index.ts"],
       "#contract-account": [ "src/contract/account/index.ts"],
       "#contract-auth": [ "src/contract/auth/index.ts"],
       "#jwt-wrapper": ["src/libs/jsonwebtoken/index.ts"],
-      "#bcrypt-wrapper": ["./src/libs/bcrypt/index.ts"],
+      "#bcrypt-wrapper": ["src/libs/bcrypt/index.ts"],
+      "#contract-product": [ "src/contract/product/index.ts"]
     },
     "resolveJsonModule": true
   },

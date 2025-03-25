@@ -4,7 +4,6 @@ import {
   ValidationContext,
   SchemaDefinitionValidation,
   MiddlewareContext,
-  OptionsValidation,
   MiddlewareValidationContext,
   ErrorHandlingContext,
   FieldCountValidation,
@@ -63,7 +62,6 @@ export class RegisterDocumentConfigurator<U> {
     try {
       const validationContext = new ValidationContext();
       validationContext.addValidation(new SchemaDefinitionValidation());
-      validationContext.addValidation(new OptionsValidation());
       validationContext.addValidation(new CollectionNameValidation());
       validationContext.addValidation(new FieldCountValidation());
       validationContext.validate(params);
@@ -82,8 +80,14 @@ export class RegisterDocumentConfigurator<U> {
       ).newModel;
     } catch (error: unknown | any) {
       const err = error instanceof Error ? error : new Error(String(error));
+      const debugInfo = {
+        collection: params.collection,
+        options: params.options,
+        schemaDefinition: params.schemaDefinition,
+        middlewares: params.middlewares,
+      };
       throw new Error(
-        `Erro ao configurar o documento para a coleção "${params.collection}": ${err.message}`,
+        `Erro ao configurar o documento para a coleção "${params.collection}": ${err.message}. Detalhes: ${JSON.stringify(debugInfo, null, 2)}`,
       );
     }
   }

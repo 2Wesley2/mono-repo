@@ -1,19 +1,20 @@
 import type { Request, Response, NextFunction } from "express";
 import Controller from "#controller";
 import type { ServiceOwner } from "#contract-account";
-import RbacHandler from "#rbac";
-import errors from "#errors";
 import { validateOwner } from "#middlewares";
 import type {
   SignUpOwnerRequest,
-  EmployeeBodyRequest,
   SignUpEmployeeRequest,
   SignInRequest,
 } from "#http";
 
+import { PermissionChecker } from "#permission-checker";
+import type { PermissionChecker as TypePermissionChecker } from "#permission-checker";
 export default class OwnerController extends Controller {
+  private permissionChecker: TypePermissionChecker;
   constructor(protected service: ServiceOwner) {
     super();
+    this.permissionChecker = new PermissionChecker(service);
     this.initRouter();
   }
 
@@ -22,7 +23,7 @@ export default class OwnerController extends Controller {
     this.router.post("/sign-up", validateOwner, this.signUp.bind(this));
     this.router.post(
       "/create-employee",
-      this.checkPermission("CREATE_EMPLOYEE").bind(this),
+      this.permissionChecker.middleware("CREATE_EMPLOYEE").bind(this),
       this.createEmployee.bind(this),
     );
   }
@@ -72,33 +73,5 @@ export default class OwnerController extends Controller {
     } catch (error) {
       next(error);
     }
-  }
-
-  private checkPermission(permission: string) {
-    return async (
-      req: Request<EmployeeBodyRequest>,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      try {
-        const token = req.cookies.owner;
-
-        if (!token) {
-          throw errors.Forbidden([], "Token não fornecido");
-        }
-
-        const decodedToken = this.service.isAuth(token);
-        const userId = decodedToken.id;
-        const allowed = await RbacHandler.can(permission, userId);
-        if (!allowed) {
-          throw errors.Forbidden([], "Acesso negado");
-        } else {
-          req.body.owner_id = userId;
-          next();
-        }
-      } catch (error) {
-        next(error);
-      }
-    };
   }
 }

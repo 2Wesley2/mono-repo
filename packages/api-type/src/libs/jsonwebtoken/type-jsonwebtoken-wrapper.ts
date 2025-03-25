@@ -1,13 +1,19 @@
-import { SignOptions, VerifyOptions, DecodeOptions } from "jsonwebtoken";
+import type {
+  Jwt,
+  SignOptions,
+  VerifyOptions,
+  DecodeOptions,
+  JwtPayload,
+  Secret,
+} from "jsonwebtoken";
 
 export interface JWTSign {
-  (payload: object, options?: SignOptions): string;
+  (payload: JwtPayload, options?: SignOptions): string;
 }
 
-export interface JWTVerify {
-  (token: string, options?: VerifyOptions): object | string;
+export interface JWTVerify<T extends JwtPayload = JwtPayload> {
+  (token: string, options?: VerifyOptions): T;
 }
-
 export interface JWTDecode {
   (token: string, options?: DecodeOptions): object | string | null;
 }

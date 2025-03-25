@@ -2,7 +2,7 @@ import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SProduct } from "#schema";
-import { IProductModel } from "./contract/index";
+import { IProductModel } from "#contract-product";
 const productSchema: SchemaDefinition<SProduct> = {
   owner_id: {
     type: Schema.Types.ObjectId,

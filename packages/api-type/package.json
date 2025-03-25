@@ -93,8 +93,8 @@
     "#schema": [
       "./src/schema/index.ts"
     ],
-    "#rbac": [
-      "./src/middlewares/rbacHandler.ts"
+    "#permission-checker": [
+      "./src/middlewares/permissionChecker.ts"
     ],
     "#services": [
       "./src/service/index.ts"
@@ -107,6 +107,9 @@
     ],
     "#contract-auth": [
       "./src/contract/auth/index.ts"
+    ],
+    "#contract-product": [
+      "./src/contract/product/index.ts"
     ]
   }
 }
