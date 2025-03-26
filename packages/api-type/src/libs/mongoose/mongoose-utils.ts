@@ -8,6 +8,8 @@ import type {
   options,
 } from "#mongoose-wrapper";
 import mongooseErrors from "#errors-mongoose";
+import { Conflict, NotFound } from "#http-errors";
+import type { IMongooseErrorHandler } from "#contract-mongoose";
 
 export const getMongooseReservedMethods = (): Set<string> => {
   const dummyModel = {} as Model<any>;
@@ -91,7 +93,7 @@ class PostMiddleware extends Middleware {
 export class StringHookEventValidator extends MiddlewareValidator {
   validate(middleware: MiddlewareConfig): void {
     if (typeof middleware.hookEvent !== "string") {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         "Middleware",
         [{ hookEvent: middleware.hookEvent }],
         `hookEvent inválido: esperado um valor do tipo string.`,
@@ -106,7 +108,7 @@ export class StringHookEventValidator extends MiddlewareValidator {
 export class RegExpHookEventValidator extends MiddlewareValidator {
   validate(middleware: MiddlewareConfig): void {
     if (!(middleware.hookEvent instanceof RegExp)) {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         "Middleware",
         [{ hookEvent: middleware.hookEvent }],
         `Tipo de hookEvent inválido: ${typeof middleware.hookEvent}`,
@@ -115,7 +117,7 @@ export class RegExpHookEventValidator extends MiddlewareValidator {
     try {
       new RegExp(middleware.hookEvent.source);
     } catch {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         "Middleware",
         [{ hookEvent: middleware.hookEvent }],
         `hookEvent inválido: expressão regular inválida.`,
@@ -125,16 +127,27 @@ export class RegExpHookEventValidator extends MiddlewareValidator {
 }
 
 /**
+ * Verifica se a definição do schema é válida.
+ * @param schemaDefinition - A definição do schema a ser validada.
+ * @returns Verdadeiro se a definição for válida, falso caso contrário.
+ */
+export const isValidSchemaDefinition = (
+  schemaDefinition: RegisterDocumentParams<any>["schemaDefinition"],
+): boolean => {
+  return (
+    schemaDefinition &&
+    typeof schemaDefinition === "object" &&
+    Object.keys(schemaDefinition).length > 0
+  );
+};
+
+/**
  * Validação da definição do schema.
  */
 export class SchemaDefinitionValidation extends Validation {
   validate(params: RegisterDocumentParams<any>): void {
-    if (
-      !params.schemaDefinition ||
-      typeof params.schemaDefinition !== "object" ||
-      Object.keys(params.schemaDefinition).length === 0
-    ) {
-      throw mongooseErrors.GenericMongooseError(
+    if (!isValidSchemaDefinition(params.schemaDefinition)) {
+      throw new mongooseErrors.GenericMongooseError(
         params.collection,
         [{ schemaDefinition: params.schemaDefinition }],
         "Definição de schema inválida.",
@@ -149,7 +162,7 @@ export class SchemaDefinitionValidation extends Validation {
 export class CollectionNameValidation extends Validation {
   validate(params: RegisterDocumentParams<any>): void {
     if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         params.collection,
         [{ collection: params.collection }],
         `O nome da coleção "${params.collection}" contém caracteres inválidos.`,
@@ -165,7 +178,7 @@ export class FieldCountValidation extends Validation {
   validate(params: RegisterDocumentParams<any>): void {
     const fieldCount = Object.keys(params.schemaDefinition).length;
     if (fieldCount > 10000) {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         params.collection,
         [{ fieldCount }],
         `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
@@ -207,22 +220,62 @@ export class MiddlewareContext {
  * Contexto para validação de middlewares.
  */
 export class MiddlewareValidationContext {
-  private validators: Record<string, MiddlewareValidator>;
+  private validators: Map<string, MiddlewareValidator>;
 
   constructor() {
-    this.validators = {
-      string: new StringHookEventValidator(),
-      regexp: new RegExpHookEventValidator(),
-    };
+    this.validators = new Map<string, MiddlewareValidator>([
+      ["string", new StringHookEventValidator()],
+      ["regexp", new RegExpHookEventValidator()],
+    ]);
   }
 
-  validate(middleware: MiddlewareConfig): void {
-    const type = typeof middleware.hookEvent === "string" ? "string" : "regexp";
-    const validator = this.validators[type];
-    if (!validator) {
-      throw new Error(`Tipo de hookEvent inválido: ${type}`);
+  /**
+   * Registra dinamicamente um validador.
+   * @param type - Tipo de hookEvent.
+   * @param validator - Instância do validador.
+   */
+  registerValidator(type: string, validator: MiddlewareValidator): void {
+    if (this.validators.has(type)) {
+      throw new Error(`Validador para o tipo "${type}" já está registrado.`);
     }
+    this.validators.set(type, validator);
+  }
+
+  /**
+   * Valida o middleware com base no tipo de hookEvent.
+   * @param middleware - Configuração do middleware.
+   * @throws Lança erro se o tipo de hookEvent for inválido ou não suportado.
+   */
+  validate(middleware: MiddlewareConfig): void {
+    const type = this.getHookEventType(middleware.hookEvent);
+    const validator = this.validators.get(type);
+
+    if (!validator) {
+      throw new Error(
+        `Tipo de hookEvent inválido ou não suportado: "${type}". Certifique-se de registrar um validador apropriado.`,
+      );
+    }
+
     validator.validate(middleware);
+  }
+
+  /**
+   * Determina o tipo de hookEvent.
+   * @param hookEvent - O evento a ser validado.
+   * @returns O tipo do hookEvent como string.
+   * @throws Lança erro se o hookEvent não for uma string ou RegExp.
+   */
+  private getHookEventType(hookEvent: unknown): string {
+    if (typeof hookEvent === "string") {
+      return "string";
+    }
+    if (hookEvent instanceof RegExp) {
+      return "regexp";
+    }
+    throw new mongooseErrors.InvalidHookEventError(
+      [{ hookEvent }],
+      `Tipo de hookEvent inválido: esperado "string" ou "RegExp", mas recebido "${typeof hookEvent}".`,
+    );
   }
 }
 
@@ -274,6 +327,91 @@ export const configureOptions = (options: options = {}): options => {
 
   return { ...defaultOptions, ...options };
 };
+
+/**
+ * Verifica se o erro é conhecido e deve ser reencaminhado.
+ * @param error - O erro a ser verificado.
+ * @returns Verdadeiro se o erro for conhecido, falso caso contrário.
+ */
+export const isKnownError = (error: unknown): boolean => {
+  return error instanceof Conflict || error instanceof NotFound;
+};
+
+/**
+ * Wrapper para centralizar o tratamento de erros.
+ * Este método encapsula a execução de uma função e delega o tratamento de erros
+ * ao serviço de tratamento de erros injetado.
+ * @param fn - Função a ser executada.
+ * @param errorHandler - Serviço de tratamento de erros.
+ * @param collection - Nome da coleção associada ao erro.
+ * @returns O resultado da função, se bem-sucedida.
+ * @throws Lança um erro tratado pelo errorHandler.
+ */
+export const withErrorHandling = <T>(
+  fn: () => T,
+  errorHandler: IMongooseErrorHandler,
+  collection: string,
+): T => {
+  try {
+    return fn();
+  } catch (error: unknown) {
+    errorHandler.handle(error, collection);
+  }
+};
+
+/**
+ * Wrapper centralizado para aplicar o withErrorHandling.
+ * @param fn - Função a ser executada.
+ * @param errorHandler - Serviço de tratamento de erros.
+ * @param context - Contexto associado ao erro.
+ * @returns O resultado da função, se bem-sucedida.
+ */
+export const handleWithErrorHandling = <T>(
+  fn: () => T,
+  errorHandler: IMongooseErrorHandler,
+  context: string,
+): T => {
+  return withErrorHandling(fn, errorHandler, context);
+};
+
+/**
+ * Valida se o array de middlewares é válido.
+ * @param middlewares - Array de middlewares a ser validado.
+ * @throws Lança um erro específico se algum middleware for inválido.
+ */
+export const validateMiddlewares = (middlewares?: MiddlewareConfig[]): void => {
+  if (!middlewares || middlewares.length === 0) {
+    return;
+  }
+  middlewares.forEach((middleware, index) => {
+    if (!middleware || typeof middleware !== "object") {
+      throw new mongooseErrors.InvalidMiddlewareError(
+        [{ index, middleware }],
+        `Middleware inválido na posição ${index}: esperado um objeto válido.`,
+      );
+    }
+    if (!middleware.method || !middleware.hookEvent || !middleware.fn) {
+      throw new mongooseErrors.InvalidMiddlewareError(
+        [{ index, middleware }],
+        `Middleware inválido na posição ${index}: propriedades obrigatórias ausentes.`,
+      );
+    }
+  });
+};
+
+/**
+ * Helper para verificar se o schema precisa ser clonado antes de aplicar middlewares.
+ * @param middlewares - Lista de middlewares a serem aplicados.
+ * @returns Verdadeiro se o schema precisar ser clonado, falso caso contrário.
+ */
+export const shouldCloneSchema = (middlewares: MiddlewareConfig[]): boolean => {
+  return middlewares.length > 0;
+};
+
+/**
+ * Constante para identificar o contexto de erros no MongooseModelRegister.
+ */
+export const MONGOOSE_MODEL_REGISTER_CONTEXT = "MongooseModelRegister";
 
 /**
  * Abstração para o Schema do Mongoose.

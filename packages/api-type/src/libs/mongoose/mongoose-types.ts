@@ -56,7 +56,7 @@ export interface RegisterDocumentParams<U> {
   middlewares: MiddlewareConfig[];
 }
 
-export interface ModelRegister {
+export interface IModelRegister {
   registerDocument<U>(
     schema: RegisterDocumentParams<U>["schemaDefinition"],
     collection: RegisterDocumentParams<U>["collection"],

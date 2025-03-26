@@ -57,7 +57,7 @@ export class MongooseConnection {
         console.log("Mongoose desconectado.");
       });
     } catch (error: any) {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         dbName,
         [{ originalError: error.message }],
         "Falha ao conectar ao banco de dados",
@@ -79,7 +79,7 @@ export class MongooseConnection {
 
   static getCollectionByName<T>(collectionName: string): Model<T> {
     if (!mongoose.modelNames().includes(collectionName)) {
-      throw mongooseErrors.MissingSchemaError(
+      throw new mongooseErrors.MissingSchemaError(
         collectionName,
         `Modelo '${collectionName}' não encontrado.`,
       );
@@ -98,7 +98,7 @@ export class MongooseConnection {
       const db = mongoose.connection.useDb(dbName);
       await db.dropDatabase();
     } catch (error: any) {
-      throw mongooseErrors.GenericMongooseError(
+      throw new mongooseErrors.GenericMongooseError(
         dbName,
         [{ originalError: error.message }],
         "Falha ao deletar o banco de dados",

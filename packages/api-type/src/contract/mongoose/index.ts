@@ -22,9 +22,9 @@ export interface ISchemaCreator {
 /**
  * Contrato para a classe MongooseModelRegister.
  */
-export interface IMongooseModelRegister {
+export interface IMongooseModelRegister<U extends Record<string, any>> {
   addMiddleware(schema: Schema, middlewares: MiddlewareConfig[]): Schema;
-  registerDocument<U>(
+  registerDocument(
     schema: SchemaDefinition<U>,
     collection: string,
     options: options,
@@ -44,4 +44,23 @@ export interface IModelRegister<U> {
  */
 export interface IMongooseErrorHandler {
   handle(error: unknown, collection: string): never;
+}
+
+/**
+ * Contrato para o serviço de tratamento de erros.
+ */
+export interface IErrorHandlerService {
+  handle(error: unknown, collection: string): never;
+}
+
+/**
+ * Contrato para a classe SchemaBuilder.
+ */
+export interface ISchemaBuilder<U> {
+  build(
+    schemaDefinition: SchemaDefinition<U>,
+    collection: string,
+    options: options,
+    middlewares: MiddlewareConfig[],
+  ): Schema<U>;
 }
