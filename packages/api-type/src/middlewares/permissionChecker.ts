@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import errors from "#errors";
+import errors from "#http-errors";
 import { toObjectId } from "#mongoose-wrapper";
 import type { ServiceOwner, ServiceEmployee } from "#contract-account";
 

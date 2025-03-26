@@ -7,6 +7,7 @@ import type {
   RegisterDocumentParams,
   options,
 } from "#mongoose-wrapper";
+import mongooseErrors from "#errors-mongoose";
 
 export const getMongooseReservedMethods = (): Set<string> => {
   const dummyModel = {} as Model<any>;
@@ -50,13 +51,6 @@ abstract class MiddlewareValidator {
 }
 
 /**
- * Estratégia abstrata para tratamento de erros.
- */
-abstract class ErrorHandling {
-  abstract handle(error: Error, collection: string): Model<any> | never;
-}
-
-/**
  * Estratégia abstrata para validação de parâmetros de registro de documentos.
  */
 abstract class Validation {
@@ -97,7 +91,11 @@ class PostMiddleware extends Middleware {
 export class StringHookEventValidator extends MiddlewareValidator {
   validate(middleware: MiddlewareConfig): void {
     if (typeof middleware.hookEvent !== "string") {
-      throw new Error(`hookEvent inválido: esperado um valor do tipo string.`);
+      throw mongooseErrors.GenericMongooseError(
+        "Middleware",
+        [{ hookEvent: middleware.hookEvent }],
+        `hookEvent inválido: esperado um valor do tipo string.`,
+      );
     }
   }
 }
@@ -108,46 +106,21 @@ export class StringHookEventValidator extends MiddlewareValidator {
 export class RegExpHookEventValidator extends MiddlewareValidator {
   validate(middleware: MiddlewareConfig): void {
     if (!(middleware.hookEvent instanceof RegExp)) {
-      throw new Error(
+      throw mongooseErrors.GenericMongooseError(
+        "Middleware",
+        [{ hookEvent: middleware.hookEvent }],
         `Tipo de hookEvent inválido: ${typeof middleware.hookEvent}`,
       );
     }
     try {
       new RegExp(middleware.hookEvent.source);
     } catch {
-      throw new Error(`hookEvent inválido: expressão regular inválida.`);
+      throw mongooseErrors.GenericMongooseError(
+        "Middleware",
+        [{ hookEvent: middleware.hookEvent }],
+        `hookEvent inválido: expressão regular inválida.`,
+      );
     }
-  }
-}
-
-/**
- * Tratamento de erro para sobrescrever modelos existentes.
- */
-export class OverwriteModelError extends ErrorHandling {
-  handle(error: Error, collection: string): Model<any> {
-    return mongoose.models[collection];
-  }
-}
-
-/**
- * Tratamento de erro para esquemas ausentes.
- */
-export class MissingSchemaError extends ErrorHandling {
-  handle(error: Error, collection: string): never {
-    throw new Error(
-      `Erro: esquema não encontrado para o modelo "${collection}" (MissingSchemaError).`,
-    );
-  }
-}
-
-/**
- * Tratamento genérico de erros.
- */
-export class GenericError extends ErrorHandling {
-  handle(error: Error, collection: string): never {
-    throw new Error(
-      `Erro genérico ao registrar o modelo "${collection}": ${error.message}`,
-    );
   }
 }
 
@@ -161,7 +134,11 @@ export class SchemaDefinitionValidation extends Validation {
       typeof params.schemaDefinition !== "object" ||
       Object.keys(params.schemaDefinition).length === 0
     ) {
-      throw new Error("Definição de schema inválida.");
+      throw mongooseErrors.GenericMongooseError(
+        params.collection,
+        [{ schemaDefinition: params.schemaDefinition }],
+        "Definição de schema inválida.",
+      );
     }
   }
 }
@@ -172,7 +149,9 @@ export class SchemaDefinitionValidation extends Validation {
 export class CollectionNameValidation extends Validation {
   validate(params: RegisterDocumentParams<any>): void {
     if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
-      throw new Error(
+      throw mongooseErrors.GenericMongooseError(
+        params.collection,
+        [{ collection: params.collection }],
         `O nome da coleção "${params.collection}" contém caracteres inválidos.`,
       );
     }
@@ -186,7 +165,9 @@ export class FieldCountValidation extends Validation {
   validate(params: RegisterDocumentParams<any>): void {
     const fieldCount = Object.keys(params.schemaDefinition).length;
     if (fieldCount > 10000) {
-      throw new Error(
+      throw mongooseErrors.GenericMongooseError(
+        params.collection,
+        [{ fieldCount }],
         `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
       );
     }
@@ -242,29 +223,6 @@ export class MiddlewareValidationContext {
       throw new Error(`Tipo de hookEvent inválido: ${type}`);
     }
     validator.validate(middleware);
-  }
-}
-
-/**
- * Contexto para tratamento de erros.
- */
-export class ErrorHandlingContext {
-  private handlers: Record<string, ErrorHandling>;
-
-  constructor() {
-    this.handlers = {
-      OverwriteModelError: new OverwriteModelError(),
-      MissingSchemaError: new MissingSchemaError(),
-    };
-  }
-
-  static getInstance(): ErrorHandlingContext {
-    return new ErrorHandlingContext();
-  }
-
-  handleError(error: Error, collection: string): Model<any> | never {
-    const handler = this.handlers[error.name] || new GenericError();
-    return handler.handle(error, collection);
   }
 }
 

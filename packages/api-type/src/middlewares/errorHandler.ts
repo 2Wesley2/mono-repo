@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import config from "#config";
-import { BaseError } from "#errors";
+import { GenericError } from "../errors/generic-error";
 
 export default (
   err: Error,
@@ -9,13 +9,13 @@ export default (
   _next: NextFunction,
 ): void => {
   const statusCode =
-    err instanceof BaseError && err.statusCode ? err.statusCode : 500;
+    err instanceof GenericError && err.statusCode ? err.statusCode : 500;
   const message =
-    err instanceof BaseError && err.message
+    err instanceof GenericError && err.message
       ? err.message
       : "Internal Server Error";
   const details =
-    err instanceof BaseError && err.details.length ? err.details : undefined;
+    err instanceof GenericError && err.details.length ? err.details : undefined;
 
   if (config.nodeEnv !== "production") {
     res.status(statusCode).json({

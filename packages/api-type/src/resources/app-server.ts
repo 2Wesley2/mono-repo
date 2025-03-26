@@ -8,7 +8,7 @@ import config from "#config";
 import { MongooseConnection as Database } from "#mongoose-wrapper";
 import errorHandler from "../middlewares/errorHandler";
 import { controllers } from "./modules";
-import errors from "#errors";
+import errors from "#http-errors";
 
 const methodColors: { [key: string]: (text: string) => string } = {
   GET: chalk.hex("#007f31"),
@@ -57,7 +57,7 @@ export default class AppServer {
       const port = config.apiPort || 3009;
       this.app.set("port", port);
     } catch (error) {
-      throw errors.GenericError(
+      throw errors.InternalServerError(
         [
           {
             function: "setPort",
@@ -82,7 +82,7 @@ export default class AppServer {
       this.app.use(cookieParser());
       this.app.use(this.logRequest.bind(this));
     } catch (error) {
-      throw errors.GenericError(
+      throw errors.InternalServerError(
         [
           {
             function: "configureMiddlewares",
@@ -104,7 +104,7 @@ export default class AppServer {
       this.app.use("/rbac", controllers.permission.getRouter());
       this.logAvailableEndpoints();
     } catch (error) {
-      throw errors.GenericError(
+      throw errors.InternalServerError(
         [
           {
             function: "setRoutes",
@@ -136,16 +136,18 @@ export default class AppServer {
         }
       });
     } catch (error) {
-      errors.GenericError(
-        [
-          {
-            function: "start",
-            error: error instanceof Error ? error.message : String(error),
-          },
-        ],
-        "Failed to start server",
-      ),
-        await this.shutdown();
+      throw (
+        (errors.InternalServerError(
+          [
+            {
+              function: "start",
+              error: error instanceof Error ? error.message : String(error),
+            },
+          ],
+          "Failed to start server",
+        ),
+        await this.shutdown())
+      );
     }
   }
   public async shutdown(): Promise<void> {

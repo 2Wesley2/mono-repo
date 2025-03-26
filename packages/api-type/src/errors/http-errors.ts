@@ -1,30 +1,6 @@
-export class BaseError extends Error {
-  statusCode: number;
-  details: Array<object>;
+import { GenericError } from "./generic-error";
 
-  constructor(
-    statusCode: number,
-    details: Array<object> = [],
-    message: string = "An unexpected error occurred",
-  ) {
-    super(message);
-    this.statusCode = statusCode;
-    this.details = details;
-    this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-export class GenericError extends BaseError {
-  constructor(
-    details: Array<object>,
-    message: string = "Internal Server Error",
-  ) {
-    super(500, details, message);
-  }
-}
-
-export class BadRequest extends BaseError {
+export class BadRequest extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Invalid request data",
@@ -33,7 +9,7 @@ export class BadRequest extends BaseError {
   }
 }
 
-export class Unauthorized extends BaseError {
+export class Unauthorized extends GenericError {
   constructor(
     details: Array<object> = [],
     message: string = "Unauthorized access",
@@ -42,37 +18,37 @@ export class Unauthorized extends BaseError {
   }
 }
 
-export class PaymentRequired extends BaseError {
+export class PaymentRequired extends GenericError {
   constructor(details: Array<object>, message: string = "Payment required") {
     super(402, details, message);
   }
 }
 
-export class Forbidden extends BaseError {
+export class Forbidden extends GenericError {
   constructor(details: Array<object>, message: string = "Forbidden access") {
     super(403, details, message);
   }
 }
 
-export class NotFound extends BaseError {
+export class NotFound extends GenericError {
   constructor(details: Array<object>, message: string = "Resource not found") {
     super(404, details, message);
   }
 }
 
-export class MethodNotAllowed extends BaseError {
+export class MethodNotAllowed extends GenericError {
   constructor(details: Array<object>, message: string = "Method not allowed") {
     super(405, details, message);
   }
 }
 
-export class NotAcceptable extends BaseError {
+export class NotAcceptable extends GenericError {
   constructor(details: Array<object>, message: string = "Not acceptable") {
     super(406, details, message);
   }
 }
 
-export class ProxyAuthenticationRequired extends BaseError {
+export class ProxyAuthenticationRequired extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Proxy authentication required",
@@ -81,49 +57,49 @@ export class ProxyAuthenticationRequired extends BaseError {
   }
 }
 
-export class RequestTimeout extends BaseError {
+export class RequestTimeout extends GenericError {
   constructor(details: Array<object>, message: string = "Request timeout") {
     super(408, details, message);
   }
 }
 
-export class Conflict extends BaseError {
+export class Conflict extends GenericError {
   constructor(details: Array<object>, message: string = "Conflict detected") {
     super(409, details, message);
   }
 }
 
-export class Gone extends BaseError {
+export class Gone extends GenericError {
   constructor(details: Array<object>, message: string = "Gone") {
     super(410, details, message);
   }
 }
 
-export class LengthRequired extends BaseError {
+export class LengthRequired extends GenericError {
   constructor(details: Array<object>, message: string = "Length required") {
     super(411, details, message);
   }
 }
 
-export class PreconditionFailed extends BaseError {
+export class PreconditionFailed extends GenericError {
   constructor(details: Array<object>, message: string = "Precondition failed") {
     super(412, details, message);
   }
 }
 
-export class PayloadTooLarge extends BaseError {
+export class PayloadTooLarge extends GenericError {
   constructor(details: Array<object>, message: string = "Payload too large") {
     super(413, details, message);
   }
 }
 
-export class URITooLong extends BaseError {
+export class URITooLong extends GenericError {
   constructor(details: Array<object>, message: string = "URI too long") {
     super(414, details, message);
   }
 }
 
-export class UnsupportedMediaType extends BaseError {
+export class UnsupportedMediaType extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Unsupported media type",
@@ -132,7 +108,7 @@ export class UnsupportedMediaType extends BaseError {
   }
 }
 
-export class RangeNotSatisfiable extends BaseError {
+export class RangeNotSatisfiable extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Range not satisfiable",
@@ -141,25 +117,25 @@ export class RangeNotSatisfiable extends BaseError {
   }
 }
 
-export class ExpectationFailed extends BaseError {
+export class ExpectationFailed extends GenericError {
   constructor(details: Array<object>, message: string = "Expectation failed") {
     super(417, details, message);
   }
 }
 
-export class ImATeapot extends BaseError {
+export class ImATeapot extends GenericError {
   constructor(details: Array<object>, message: string = "I'm a teapot") {
     super(418, details, message);
   }
 }
 
-export class MisdirectedRequest extends BaseError {
+export class MisdirectedRequest extends GenericError {
   constructor(details: Array<object>, message: string = "Misdirected request") {
     super(421, details, message);
   }
 }
 
-export class UnprocessableEntity extends BaseError {
+export class UnprocessableEntity extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Unprocessable entity",
@@ -168,25 +144,25 @@ export class UnprocessableEntity extends BaseError {
   }
 }
 
-export class Locked extends BaseError {
+export class Locked extends GenericError {
   constructor(details: Array<object>, message: string = "Locked") {
     super(423, details, message);
   }
 }
 
-export class FailedDependency extends BaseError {
+export class FailedDependency extends GenericError {
   constructor(details: Array<object>, message: string = "Failed dependency") {
     super(424, details, message);
   }
 }
 
-export class UpgradeRequired extends BaseError {
+export class UpgradeRequired extends GenericError {
   constructor(details: Array<object>, message: string = "Upgrade required") {
     super(426, details, message);
   }
 }
 
-export class PreconditionRequired extends BaseError {
+export class PreconditionRequired extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Precondition required",
@@ -195,7 +171,7 @@ export class PreconditionRequired extends BaseError {
   }
 }
 
-export class TooManyRequests extends BaseError {
+export class TooManyRequests extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Too many requests, please try again later",
@@ -204,7 +180,7 @@ export class TooManyRequests extends BaseError {
   }
 }
 
-export class RequestHeaderFieldsTooLarge extends BaseError {
+export class RequestHeaderFieldsTooLarge extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Request header fields too large",
@@ -213,7 +189,7 @@ export class RequestHeaderFieldsTooLarge extends BaseError {
   }
 }
 
-export class ConnectionClosedWithoutResponse extends BaseError {
+export class ConnectionClosedWithoutResponse extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Connection closed without response",
@@ -222,7 +198,7 @@ export class ConnectionClosedWithoutResponse extends BaseError {
   }
 }
 
-export class UnavailableForLegalReasons extends BaseError {
+export class UnavailableForLegalReasons extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Unavailable for legal reasons",
@@ -231,7 +207,7 @@ export class UnavailableForLegalReasons extends BaseError {
   }
 }
 
-export class ClientClosedRequest extends BaseError {
+export class ClientClosedRequest extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Client closed request",
@@ -240,37 +216,37 @@ export class ClientClosedRequest extends BaseError {
   }
 }
 
-export class NoContent extends BaseError {
+export class NoContent extends GenericError {
   constructor(message: string = "No content available") {
     super(204, [], message);
   }
 }
 
-export class NotImplemented extends BaseError {
+export class NotImplemented extends GenericError {
   constructor(details: Array<object>, message: string = "Not implemented") {
     super(501, details, message);
   }
 }
 
-export class BadGateway extends BaseError {
+export class BadGateway extends GenericError {
   constructor(details: Array<object>, message: string = "Bad gateway") {
     super(502, details, message);
   }
 }
 
-export class ServiceUnavailable extends BaseError {
+export class ServiceUnavailable extends GenericError {
   constructor(details: Array<object>, message: string = "Service unavailable") {
     super(503, details, message);
   }
 }
 
-export class GatewayTimeout extends BaseError {
+export class GatewayTimeout extends GenericError {
   constructor(details: Array<object>, message: string = "Gateway timeout") {
     super(504, details, message);
   }
 }
 
-export class HTTPVersionNotSupported extends BaseError {
+export class HTTPVersionNotSupported extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "HTTP version not supported",
@@ -279,7 +255,7 @@ export class HTTPVersionNotSupported extends BaseError {
   }
 }
 
-export class VariantAlsoNegotiates extends BaseError {
+export class VariantAlsoNegotiates extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Variant also negotiates",
@@ -288,7 +264,7 @@ export class VariantAlsoNegotiates extends BaseError {
   }
 }
 
-export class InsufficientStorage extends BaseError {
+export class InsufficientStorage extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Insufficient storage",
@@ -297,19 +273,19 @@ export class InsufficientStorage extends BaseError {
   }
 }
 
-export class LoopDetected extends BaseError {
+export class LoopDetected extends GenericError {
   constructor(details: Array<object>, message: string = "Loop detected") {
     super(508, details, message);
   }
 }
 
-export class NotExtended extends BaseError {
+export class NotExtended extends GenericError {
   constructor(details: Array<object>, message: string = "Not extended") {
     super(510, details, message);
   }
 }
 
-export class NetworkAuthenticationRequired extends BaseError {
+export class NetworkAuthenticationRequired extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Network authentication required",
@@ -318,7 +294,7 @@ export class NetworkAuthenticationRequired extends BaseError {
   }
 }
 
-export class NetworkConnectionTimeoutError extends BaseError {
+export class NetworkConnectionTimeoutError extends GenericError {
   constructor(
     details: Array<object>,
     message: string = "Network connection timeout error",
@@ -327,11 +303,16 @@ export class NetworkConnectionTimeoutError extends BaseError {
   }
 }
 
+export class InternalServerError extends GenericError {
+  constructor(
+    details: Array<object>,
+    message: string = "Internal server error",
+  ) {
+    super(500, details, message);
+  }
+}
+
 const errors = {
-  baseError: (...args: ConstructorParameters<typeof BaseError>) =>
-    new BaseError(...args),
-  GenericError: (...args: ConstructorParameters<typeof GenericError>) =>
-    new GenericError(...args),
   BadRequest: (...args: ConstructorParameters<typeof BadRequest>) =>
     new BadRequest(...args),
   Unauthorized: (...args: ConstructorParameters<typeof Unauthorized>) =>
@@ -433,5 +414,8 @@ const errors = {
   NetworkConnectionTimeoutError: (
     ...args: ConstructorParameters<typeof NetworkConnectionTimeoutError>
   ) => new NetworkConnectionTimeoutError(...args),
+  InternalServerError: (
+    ...args: ConstructorParameters<typeof InternalServerError>
+  ) => new InternalServerError(...args),
 };
 export default errors;

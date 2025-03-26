@@ -4,7 +4,6 @@ import {
   MiddlewareContext,
   MiddlewareValidationContext,
   mongooseModel,
-  ErrorHandlingContext,
   configureOptions,
   applyValidations,
 } from "#mongoose-wrapper";
@@ -13,6 +12,7 @@ import type {
   MiddlewareConfig,
   options,
 } from "#mongoose-wrapper";
+import mongooseErrors from "#errors-mongoose";
 
 class MiddlewareProcessor {
   private context: MiddlewareContext;
@@ -50,18 +50,22 @@ class SchemaCreator {
  * Classe responsável por registrar um modelo do Mongoose.
  */
 class ModelRegister<U> {
-  private errorContext: ErrorHandlingContext;
-
-  constructor(errorContext: ErrorHandlingContext) {
-    this.errorContext = errorContext;
-  }
-
   register(collection: string, schema: Schema<U>): Model<U> {
     try {
       return mongooseModel<U>(collection, schema);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      return this.errorContext.handleError(err, collection);
+      if (err.message.includes("OverwriteModelError")) {
+        throw mongooseErrors.OverwriteModelError(collection);
+      }
+      if (err.message.includes("MissingSchemaError")) {
+        throw mongooseErrors.MissingSchemaError(collection);
+      }
+      throw mongooseErrors.GenericMongooseError(
+        collection,
+        [],
+        `Erro ao registrar o modelo: ${err.message}`,
+      );
     }
   }
 }
@@ -70,8 +74,6 @@ class ModelRegister<U> {
  * Classe principal para registro de documentos.
  */
 export class MongooseModelRegister {
-  private static errorContext: ErrorHandlingContext;
-
   /**
    * Adiciona middlewares a um schema do Mongoose.
    * @param schema - O schema do Mongoose ao qual os middlewares serão adicionados.
@@ -109,15 +111,12 @@ export class MongooseModelRegister {
       };
 
       const schemaInstance = SchemaCreator.create(params);
-      const updatedSchema =
-        middlewares.length > 0
-          ? this.addMiddleware(schemaInstance, middlewares)
-          : schemaInstance;
+      if (!middlewares.length) {
+        return mongooseModel<U>(collection, schemaInstance);
+      }
+      const updatedSchema = this.addMiddleware(schemaInstance, middlewares);
 
-      return new ModelRegister<U>(this.errorContext).register(
-        collection,
-        updatedSchema,
-      );
+      return new ModelRegister<U>().register(collection, updatedSchema);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       throw new Error(

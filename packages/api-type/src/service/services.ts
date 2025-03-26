@@ -20,19 +20,19 @@ export class Services {
     this.jwtWrapper = new JSONWebTokenWrapper();
   }
 
-  async hash(data: string, saltOrRounds: number): Promise<string> {
+  protected async hash(data: string, saltOrRounds: number): Promise<string> {
     return await this.bcryptWrapper.hash(data, saltOrRounds);
   }
 
-  async compare(data: string, encrypted: string): Promise<boolean> {
+  protected async compare(data: string, encrypted: string): Promise<boolean> {
     return await this.bcryptWrapper.compare(data, encrypted);
   }
 
-  public signJWT(payload: JwtPayload, options?: SignOptions): string {
+  protected signJWT(payload: JwtPayload, options?: SignOptions): string {
     return this.jwtWrapper.sign(payload, options);
   }
 
-  public verifyJWT<T extends JwtPayload = JwtPayload>(
+  protected verifyJWT<T extends JwtPayload = JwtPayload>(
     token: string,
     options?: VerifyOptions,
   ): T {
@@ -43,11 +43,11 @@ export class Services {
     return result as T;
   }
 
-  public decodeJWT(token: string, options?: DecodeOptions) {
+  protected decodeJWT(token: string, options?: DecodeOptions) {
     return this.jwtWrapper.decode(token, options);
   }
 
-  public async can(permission: string, userId: string): Promise<boolean> {
+  protected async can(permission: string, userId: string): Promise<boolean> {
     permission = permission.toUpperCase();
     const userIdObj = toObjectId(userId);
     const RoleModel = MongooseConnection.getCollectionByName<SRole>("Role");

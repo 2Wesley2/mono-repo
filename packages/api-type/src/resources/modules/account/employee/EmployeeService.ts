@@ -1,5 +1,5 @@
 import { Services } from "#services";
-import errors from "#errors";
+import errors from "#http-errors";
 import type { ModelEmployee, ServiceEmployee } from "#contract-account";
 import type { SEmployee } from "#schema";
 import type { SignInEmployeePayload, SignInBody as SignInParams } from "#http";

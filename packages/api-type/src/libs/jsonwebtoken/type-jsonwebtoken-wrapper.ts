@@ -2,8 +2,7 @@ import type {
   SignOptions,
   VerifyOptions,
   DecodeOptions,
-  JwtPayload,
-  Secret,
+  JwtPayload
 } from "jsonwebtoken";
 
 export interface JWTSign {

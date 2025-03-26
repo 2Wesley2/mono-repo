@@ -57,62 +57,27 @@
     "typescript": "^5.7.3"
   },
   "imports": {
-    "#src": "./src",
-    "#model-type": [
-      "./src/components/Model/type-model.ts"
-    ],
-    "#person-model-type": "./src/resources/modules/account/person/type-person.ts",
-    "#bcrypt-type": [
-      "./src/libs/bcrypt/type-bcrypt-wrapper.ts"
-    ],
-    "#model": [
-      "./src/components/Model/model.ts"
-    ],
-    "#controller": [
-      "./src/components/Controller/controller.ts"
-    ],
+    "#bcrypt-type": "./src/libs/bcrypt/type-bcrypt-wrapper.ts",
+    "#bcrypt-wrapper": "./src/libs/bcrypt/index.ts",
+    "#config": "./src/config/index.ts",
+    "#contract-account": "./src/contract/account/index.ts",
+    "#contract-auth": "./src/contract/auth/index.ts",
+    "#contract-product": "./src/contract/product/index.ts",
+    "#controller": "./src/components/Controller/controller.ts",
+    "#errors-mongoose": "./src/errors/mongoose-errors.ts",
+    "#http": "./src/http/index.ts",
+    "#http-errors": "./src/errors/http-errors.ts",
+    "#jwt-wrapper": "./src/libs/jsonwebtoken/index.ts",
+    "#middlewares": "./src/middlewares/validationHandler.ts",
+    "#model": "./src/components/Model/model.ts",
+    "#model-type": "./src/components/Model/type-model.ts",
+    "#mongoose-wrapper": "./src/libs/mongoose/index.ts",
+    "#permission-checker": "./src/middlewares/permissionChecker.ts",
     "#person-model": "./src/resources/modules/account/person/PersonModel.ts",
-    "#mongoose-wrapper": [
-      "./src/libs/mongoose/index.ts"
-    ],
-    "#jwt-wrapper": [
-      "./src/libs/jsonwebtoken/index.ts"
-    ],
-    "#bcrypt-wrapper": [
-      "./src/libs/bcrypt/index.ts"
-    ],
-    "#errors": [
-      "./src/errors/Exceptions.ts"
-    ],
-    "#middlewares": [
-      "./src/middlewares/validationHandler.ts"
-    ],
-    "#http": [
-      "./src/http/index.ts"
-    ],
-    "#schema": [
-      "./src/schema/index.ts"
-    ],
-    "#permission-checker": [
-      "./src/middlewares/permissionChecker.ts"
-    ],
-    "#services": [
-      "./src/service/index.ts"
-    ],
-    "#config": [
-      "./src/config/index.ts"
-    ],
-    "#contract-account": [
-      "./src/contract/account/index.ts"
-    ],
-    "#contract-auth": [
-      "./src/contract/auth/index.ts"
-    ],
-    "#contract-product": [
-      "./src/contract/product/index.ts"
-    ],
-    "#utils": [
-      "./src/utils/toArray.ts"
-    ]
+    "#person-model-type": "./src/resources/modules/account/person/type-person.ts",
+    "#schema": "./src/schema/index.ts",
+    "#services": "./src/service/index.ts",
+    "#src": "./src",
+    "#utils": "./src/utils/toArray.ts"
   }
 }

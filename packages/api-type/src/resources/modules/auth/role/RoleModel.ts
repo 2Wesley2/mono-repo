@@ -2,7 +2,7 @@ import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
 import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import type { SRole, SPermission } from "#schema";
-import errors from "#errors";
+import errors from "#http-errors";
 
 const roleSchema: SchemaDefinition<SRole> = {
   owner_id: {

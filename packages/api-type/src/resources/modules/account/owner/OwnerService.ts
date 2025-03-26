@@ -6,7 +6,7 @@ import type {
 } from "#contract-account";
 import type { SOwner, SEmployee } from "#schema";
 import type { SignInOwnerPayload, SignInBody as SignInParams } from "#http";
-import errors from "#errors";
+import errors from "#http-errors";
 import type { ToObjectDocument } from "#mongoose-wrapper";
 export default class OwnerService extends Services implements ServiceOwner {
   constructor(

@@ -1,6 +1,6 @@
 import type { SchemaDefinition } from "mongoose";
 import { PersonModel } from "../person/PersonModel";
-import errors from "#errors";
+import errors from "#http-errors";
 import type {
   RegisterDocumentParams,
   ToObjectDocument,
