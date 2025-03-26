@@ -1,3 +1,5 @@
+import config from "#config";
+
 export class GenericError extends Error {
   statusCode: number;
   details: Array<object>;
@@ -9,8 +11,13 @@ export class GenericError extends Error {
   ) {
     super(message);
     this.statusCode = statusCode;
-    this.details = details;
     this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor);
+
+    if (config.nodeEnv !== "production") {
+      this.details = details;
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.details = [];
+    }
   }
 }

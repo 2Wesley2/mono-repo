@@ -3,12 +3,14 @@ import { Conflict, NotFound, InternalServerError } from "./http-errors";
 class OverwriteModelError extends Conflict {
   constructor(collection: string, message: string = "Model already exists") {
     super([{ collection }], message);
+    Object.setPrototypeOf(this, OverwriteModelError.prototype);
   }
 }
 
 class MissingSchemaError extends NotFound {
   constructor(collection: string, message: string = "Schema not found") {
     super([{ collection }], message);
+    Object.setPrototypeOf(this, MissingSchemaError.prototype);
   }
 }
 
@@ -34,6 +36,16 @@ class ModelRegistrationError extends InternalServerError {
   }
 }
 
+class UnknownMongooseError extends InternalServerError {
+  constructor(
+    collection: string,
+    details: Array<object> = [],
+    message: string = "Erro desconhecido no Mongoose",
+  ) {
+    super([{ collection, ...details }], message);
+  }
+}
+
 const mongooseErrors = {
   OverwriteModelError: (
     ...args: ConstructorParameters<typeof OverwriteModelError>
@@ -50,6 +62,9 @@ const mongooseErrors = {
   ModelRegistrationError: (
     ...args: ConstructorParameters<typeof ModelRegistrationError>
   ) => new ModelRegistrationError(...args),
+  UnknownMongooseError: (
+    ...args: ConstructorParameters<typeof UnknownMongooseError>
+  ) => new UnknownMongooseError(...args),
 };
 
 export default mongooseErrors;

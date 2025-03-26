@@ -12,9 +12,15 @@ import type {
   MiddlewareConfig,
   options,
 } from "#mongoose-wrapper";
-import mongooseErrors from "#errors-mongoose";
+import type {
+  IMiddlewareProcessor,
+  ISchemaCreator,
+  IMongooseModelRegister,
+  IModelRegister,
+} from "#contract-mongoose";
+import { MongooseErrorHandler } from "#mongoose-error-handler";
 
-class MiddlewareProcessor {
+class MiddlewareProcessor implements IMiddlewareProcessor {
   private context: MiddlewareContext;
   private validationContext: MiddlewareValidationContext;
 
@@ -23,49 +29,58 @@ class MiddlewareProcessor {
     this.validationContext = new MiddlewareValidationContext();
   }
 
-  process(schema: Schema, middlewares: MiddlewareConfig[]): Schema {
-    const updatedSchema = schema.clone();
-    middlewares.forEach((mw: MiddlewareConfig) => {
-      this.validationContext.validate(mw);
-      this.context.applyMiddleware(updatedSchema, mw);
-    });
-    return updatedSchema;
-  }
-}
-
-/**
- * Classe responsável por criar o schema do Mongoose.
- */
-class SchemaCreator {
-  static create<U>(params: RegisterDocumentParams<U>): Schema<U> {
-    applyValidations(params);
-    return new MongooseSchema<U>(
-      params.schemaDefinition,
-      configureOptions(params.options),
-    );
+  public process(schema: Schema, middlewares: MiddlewareConfig[]): Schema {
+    try {
+      const updatedSchema = schema.clone();
+      middlewares.forEach((mw: MiddlewareConfig) => {
+        this.validationContext.validate(mw);
+        this.context.applyMiddleware(updatedSchema, mw);
+      });
+      return updatedSchema;
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 }
 
 /**
  * Classe responsável por registrar um modelo do Mongoose.
  */
-class ModelRegister<U> {
-  register(collection: string, schema: Schema<U>): Model<U> {
+class ModelRegister<U> implements IModelRegister<U> {
+  private errorHandler: MongooseErrorHandler;
+
+  constructor(errorHandler: MongooseErrorHandler = new MongooseErrorHandler()) {
+    this.errorHandler = errorHandler;
+  }
+
+  public register(collection: string, schema: Schema<U>): Model<U> {
     try {
       return mongooseModel<U>(collection, schema);
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      if (err.message.includes("OverwriteModelError")) {
-        throw mongooseErrors.OverwriteModelError(collection);
-      }
-      if (err.message.includes("MissingSchemaError")) {
-        throw mongooseErrors.MissingSchemaError(collection);
-      }
-      throw mongooseErrors.GenericMongooseError(
-        collection,
-        [],
-        `Erro ao registrar o modelo: ${err.message}`,
+      this.errorHandler.handle(error, collection);
+    }
+  }
+}
+
+/**
+ * Classe responsável por criar o schema do Mongoose.
+ */
+class SchemaCreator implements ISchemaCreator {
+  private errorHandler: MongooseErrorHandler;
+
+  constructor(errorHandler: MongooseErrorHandler = new MongooseErrorHandler()) {
+    this.errorHandler = errorHandler;
+  }
+
+  public create<U>(params: RegisterDocumentParams<U>): Schema<U> {
+    try {
+      applyValidations(params);
+      return new MongooseSchema<U>(
+        params.schemaDefinition,
+        configureOptions(params.options),
       );
+    } catch (error: unknown) {
+      this.errorHandler.handle(error, "SchemaCreator");
     }
   }
 }
@@ -73,18 +88,35 @@ class ModelRegister<U> {
 /**
  * Classe principal para registro de documentos.
  */
-export class MongooseModelRegister {
+export class MongooseModelRegister implements IMongooseModelRegister {
+  private middlewareProcessor: IMiddlewareProcessor;
+  private schemaCreator: ISchemaCreator;
+  private modelRegister: IModelRegister<any>;
+  private errorHandler: MongooseErrorHandler;
+
+  constructor(
+    middlewareProcessor: IMiddlewareProcessor = new MiddlewareProcessor(),
+    schemaCreator: ISchemaCreator = new SchemaCreator(),
+    modelRegister: IModelRegister<any> = new ModelRegister<any>(),
+    errorHandler: MongooseErrorHandler = new MongooseErrorHandler(),
+  ) {
+    this.middlewareProcessor = middlewareProcessor;
+    this.schemaCreator = schemaCreator;
+    this.modelRegister = modelRegister;
+    this.errorHandler = errorHandler;
+  }
+
   /**
    * Adiciona middlewares a um schema do Mongoose.
    * @param schema - O schema do Mongoose ao qual os middlewares serão adicionados.
    * @param middlewares - Um array de configurações de middlewares.
    * @returns O schema atualizado com os middlewares aplicados.
    */
-  static addMiddleware(
+  public addMiddleware(
     schema: Schema,
     middlewares: MiddlewareConfig[],
   ): Schema {
-    return new MiddlewareProcessor().process(schema, middlewares);
+    return this.middlewareProcessor.process(schema, middlewares);
   }
 
   /**
@@ -96,32 +128,61 @@ export class MongooseModelRegister {
    * @returns O modelo do Mongoose registrado.
    * @throws Lança um erro se o registro do modelo falhar.
    */
-  static registerDocument<U>(
+  public registerDocument<U>(
     schema: SchemaDefinition<U>,
     collection: string,
     options: options,
     middlewares: MiddlewareConfig[],
   ): Model<U> {
     try {
-      const params: RegisterDocumentParams<U> = {
-        schemaDefinition: schema,
+      const schemaInstance = this.createSchemaInstance(
+        schema,
         collection,
         options,
         middlewares,
-      };
-
-      const schemaInstance = SchemaCreator.create(params);
-      if (!middlewares.length) {
-        return mongooseModel<U>(collection, schemaInstance);
-      }
-      const updatedSchema = this.addMiddleware(schemaInstance, middlewares);
-
-      return new ModelRegister<U>().register(collection, updatedSchema);
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      throw new Error(
-        `Erro ao registrar o documento "${collection}": ${err.message}`,
       );
+      return this.modelRegister.register(collection, schemaInstance);
+    } catch (error: unknown) {
+      this.handleError(error, collection);
     }
+  }
+
+  /**
+   * Cria uma instância de schema com validações e middlewares aplicados.
+   * @param schema - A definição do schema.
+   * @param collection - O nome da coleção.
+   * @param options - Opções do schema.
+   * @param middlewares - Middlewares a serem aplicados.
+   * @returns O schema atualizado.
+   */
+  private createSchemaInstance<U>(
+    schema: SchemaDefinition<U>,
+    collection: string,
+    options: options,
+    middlewares: MiddlewareConfig[],
+  ): Schema<U> {
+    const params: RegisterDocumentParams<U> = {
+      schemaDefinition: schema,
+      collection,
+      options,
+      middlewares,
+    };
+
+    const schemaInstance = this.schemaCreator.create(params);
+    return middlewares.length
+      ? this.addMiddleware(schemaInstance, middlewares)
+      : schemaInstance;
+  }
+
+  /**
+   * Trata erros lançados durante o registro do modelo.
+   * @param error - O erro capturado.
+   * @param collection - O nome da coleção associada ao erro.
+   */
+  private handleError(error: unknown, collection: string): never {
+    if (error instanceof MongooseErrorHandler) {
+      throw error;
+    }
+    this.errorHandler.handle(error, collection);
   }
 }

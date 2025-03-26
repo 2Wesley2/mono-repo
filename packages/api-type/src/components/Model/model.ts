@@ -1,7 +1,7 @@
 import type { Model as MongooseModel } from "mongoose";
-import type { RegisterDocumentParams, ModelRegister } from "#mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper";
 import {
-  MongooseModelRegister as Database,
+  MongooseModelRegister,
   getMongooseReservedMethods,
 } from "#mongoose-wrapper";
 
@@ -14,7 +14,7 @@ export class Model<U> {
     public collection: RegisterDocumentParams<U>["collection"],
     public options: RegisterDocumentParams<U>["options"],
     public middlewares: RegisterDocumentParams<U>["middlewares"],
-    private database: ModelRegister = Database,
+    private database: MongooseModelRegister = new MongooseModelRegister(),
   ) {
     this.reservedMethods = getMongooseReservedMethods();
 
