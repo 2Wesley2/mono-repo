@@ -3,10 +3,8 @@ import type {
   Schema as TSchema,
   SchemaDefinition,
 } from "mongoose";
-import {
-  handleWithErrorHandling,
-  mongooseModel as model,
-} from "#mongoose-wrapper/mongoose-utils";
+import { mongooseModel as model } from "#mongoose-wrapper/mongoose-common";
+import { handleWithErrorHandling } from "#mongoose-wrapper/utils/mongoose-error-handlers";
 import type {
   MiddlewareConfig,
   options,

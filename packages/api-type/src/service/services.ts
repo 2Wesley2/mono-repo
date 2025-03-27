@@ -5,20 +5,29 @@ import type {
   DecodeOptions,
 } from "jsonwebtoken";
 import { MongooseConnection } from "#mongoose-wrapper/mongoose-connection";
-import { toObjectId } from "#mongoose-wrapper/mongoose-utils";
+import { toObjectId } from "#mongoose-wrapper/utils/mongoose-ids";
 import { SRole } from "#schema";
 import { BcryptWrapper } from "#bcrypt-wrapper";
 import { JSONWebTokenWrapper } from "#jwt-wrapper";
 import type { BcryptWrapper as TypeBcryptWrapper } from "#bcrypt-wrapper";
 import type { JSONWebTokenWrapper as TypeJSONWebTokenWrapper } from "#jwt-wrapper";
+import config from "#config";
+import errors from "#http-errors";
+import mongooseErrors from "#errors-mongoose";
 
 export class Services {
   private bcryptWrapper: TypeBcryptWrapper;
   private jwtWrapper: TypeJSONWebTokenWrapper;
+  private mongooseConnection: MongooseConnection;
 
   constructor() {
     this.bcryptWrapper = new BcryptWrapper();
     this.jwtWrapper = new JSONWebTokenWrapper();
+    this.mongooseConnection = MongooseConnection.getInstance(
+      config,
+      errors,
+      mongooseErrors,
+    );
   }
 
   protected async hash(data: string, saltOrRounds: number): Promise<string> {
@@ -51,7 +60,9 @@ export class Services {
   protected async can(permission: string, userId: string): Promise<boolean> {
     permission = permission.toUpperCase();
     const userIdObj = toObjectId(userId);
-    const RoleModel = MongooseConnection.getCollectionByName<SRole>("Role");
+
+    const RoleModel =
+      this.mongooseConnection.getCollectionByName<SRole>("Role");
     const role = await RoleModel.findOne({ owner_id: userIdObj })
       .select("permissions")
       .lean();

@@ -17,43 +17,59 @@ export default class OwnerService extends Services implements ServiceOwner {
   }
 
   public async signIn(credentials: SignInParams): Promise<string> {
-    const user = await this.repository.signIn(credentials.email);
-    const isPasswordValid = await super.compare(
-      credentials.password,
-      user.password,
-    );
+    try {
+      const user = await this.repository.signIn(credentials.email);
+      const isPasswordValid = await super.compare(
+        credentials.password,
+        user.password,
+      );
 
-    if (!isPasswordValid) {
-      throw errors.Unauthorized([], "Invalid password");
+      if (!isPasswordValid) {
+        throw errors.Unauthorized([], "Invalid password");
+      }
+
+      const payload: SignInOwnerPayload = {
+        sub: user._id.toString(),
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        cnpj: user.cnpj,
+        legalName: user.legalName,
+        tradeName: user.tradeName,
+      };
+
+      const token = super.signJWT(payload);
+      return token;
+    } catch (error: any) {
+      if (error.statusCode === 401 || error.name === "Unauthorized") {
+        throw error;
+      }
+      throw errors.InternalServerError([], "Erro ao realizar login");
     }
-
-    const payload: SignInOwnerPayload = {
-      sub: user._id.toString(),
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      cnpj: user.cnpj,
-      legalName: user.legalName,
-      tradeName: user.tradeName,
-    };
-
-    const token = super.signJWT(payload);
-    return token;
   }
 
   public async signUp(userData: SOwner): Promise<ToObjectDocument<SOwner>> {
-    const hashedPassword = await this.hash(userData.password, 10);
-    const user = await this.repository.signUp({
-      ...userData,
-      password: hashedPassword,
-    });
-    return user;
+    try {
+      const hashedPassword = await this.hash(userData.password, 10);
+      const user = await this.repository.signUp({
+        ...userData,
+        password: hashedPassword,
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
   }
+
   public async createEmployee(
     employee: SEmployee,
   ): Promise<ToObjectDocument<SEmployee>> {
-    const user = await this.employeeService.signUp(employee);
-    return user;
+    try {
+      const user = await this.employeeService.signUp(employee);
+      return user;
+    } catch (error) {
+      throw error;
+    }
   }
 
   public isAuth(token: string): SignInOwnerPayload {

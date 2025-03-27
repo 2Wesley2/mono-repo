@@ -7,12 +7,11 @@ import {
   IMiddlewareProcessor,
 } from "#contract-mongoose";
 import {
-  throwValidationError,
-  validateHookEvent,
   isValidRegExp,
   shouldCloneSchema,
-} from "#mongoose-wrapper/mongoose-utils";
-
+} from "#mongoose-wrapper/mongoose-common";
+import { validateHookEvent } from "#mongoose-wrapper/utils/mongoose-validation";
+import { throwValidationError } from "#mongoose-wrapper/utils/mongoose-error-handlers";
 /**
  * Validação para eventos de hook do tipo string.
  */
@@ -145,6 +144,9 @@ export class MiddlewareContext {
 
 /**
  * Contexto para validação de middlewares.
+ *
+ * Observação: Para adicionar novos tipos de validação, registre dinamicamente
+ * novos validadores usando o método `registerValidator`.
  */
 export class MiddlewareValidationContext {
   private validators: Map<string, MiddlewareValidator>;

@@ -11,9 +11,13 @@ export default class OwnerRepository implements RepositoryOwner {
   ) {}
 
   public async signUp(data: SOwner): Promise<ToObjectDocument<SOwner>> {
-    const owner = await this.model.signUp(data);
-    await this.roleRepository.setRoleOwner(owner._id);
-    return owner;
+    try {
+      const owner = await this.model.signUp(data);
+      await this.roleRepository.setRoleOwner(owner._id);
+      return owner;
+    } catch (error) {
+      throw error;
+    }
   }
 
   public async signIn(

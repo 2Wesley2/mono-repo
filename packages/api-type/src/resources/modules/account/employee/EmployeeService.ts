@@ -37,12 +37,21 @@ export default class EmployeeService
   public async signUp(
     userData: SEmployee,
   ): Promise<ToObjectDocument<SEmployee>> {
-    const hashedPassword = await this.hash(userData.password, 10);
-    const user = await this.model.signUp({
-      ...userData,
-      password: hashedPassword,
-    });
-    return user;
+    try {
+      const hashedPassword = await this.hash(userData.password, 10);
+      const user = await this.model.signUp({
+        ...userData,
+        password: hashedPassword,
+      });
+      return user;
+    } catch (error: any) {
+      if (error.name === "MongoNetworkError") {
+        throw new Error(
+          "Erro de conexão com o banco de dados. Tente novamente mais tarde.",
+        );
+      }
+      throw error;
+    }
   }
 
   public isAuth(token: string): SignInEmployeePayload {

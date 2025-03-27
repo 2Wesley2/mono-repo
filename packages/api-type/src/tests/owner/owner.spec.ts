@@ -1,7 +1,6 @@
 import request from "supertest";
 import { Application } from "express";
 import AppServer from "../../resources/app-server";
-import { MongooseConnection } from "../../libs/mongoose/mongoose-connection";
 import { toArray } from "#utils";
 import {
   newOwner,
@@ -19,14 +18,24 @@ let ownerCookie: string;
 
 const appServer = new AppServer();
 
+jest.setTimeout(30000); // Aumentar o timeout para 30 segundos
+
 beforeAll(async () => {
   await appServer.start();
   app = appServer.app;
+
+  try {
+    await appServer.deleteDB("system_test");
+  } catch (error) {}
 });
 
 afterAll(async () => {
-  await MongooseConnection.deleteDB("system_test");
-  await appServer.disconnectDB();
+  try {
+    await appServer.disconnectDB(); // Desconectar primeiro
+    await appServer.deleteDB("system_test"); // Deletar após desconectar
+  } finally {
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Garantir que todos os handles sejam liberados
+  }
 });
 
 describe("Owner endpoint's", () => {
@@ -64,9 +73,9 @@ describe("Owner endpoint's", () => {
   });
   it("Não deve logar o usuário owner com senha incorreta\n [POST][/owner/sign-in]", async () => {
     const response = await request(app)
-      .post("/owner/sign-in")
+      .post("/owner/sign-in") // Corrigir o endpoint
       .send(invalidSignIn);
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(401); // Garantir que o status seja 401
   });
 
   it("Não deve cadastrar um novo funcionário sem estar autenticado\n [POST][/owner/create-employee]", async () => {

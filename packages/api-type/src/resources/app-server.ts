@@ -5,10 +5,12 @@ import { Server as HTTPServer } from "http";
 import chalk from "chalk";
 import listEndpoints from "express-list-endpoints";
 import config from "#config";
-import { MongooseConnection as Database } from "#mongoose-wrapper/mongoose-connection";
+import { MongooseConnection } from "#mongoose-wrapper/mongoose-connection";
 import errorHandler from "../middlewares/errorHandler";
 import { controllers } from "./modules";
 import errors from "#http-errors";
+import mongooseErrors from "#errors-mongoose";
+import { Services } from "../service/services"; // Importar a camada Services
 
 const methodColors: { [key: string]: (text: string) => string } = {
   GET: chalk.hex("#007f31"),
@@ -23,9 +25,17 @@ export default class AppServer {
   private server!: HTTPServer;
   private readonly isTest: boolean = config.nodeEnv === "test";
   private readonly urlServer = `http://${config.dbHost}:${config.apiPort}`;
+  private readonly database: MongooseConnection;
+  private readonly services: Services;
 
   constructor() {
     this.app = express();
+    this.database = MongooseConnection.getInstance(
+      config,
+      errors,
+      mongooseErrors,
+    );
+    this.services = new Services();
   }
 
   private async configureApp(): Promise<void> {
@@ -42,14 +52,18 @@ export default class AppServer {
 
   private async connectDB(): Promise<void> {
     try {
-      await Database.connectDB();
+      await this.database.connectDB();
     } catch (error) {
       throw error;
     }
   }
 
   public async disconnectDB(): Promise<void> {
-    await Database.disconnectDB();
+    try {
+      await this.database.disconnectDB();
+    } catch (error) {
+      throw error;
+    }
   }
 
   private setPort(): void {
@@ -207,5 +221,9 @@ export default class AppServer {
         process.exit(0);
       });
     }
+  }
+
+  public deleteDB(dbName: string): Promise<void> {
+    return this.database.deleteDB(dbName);
   }
 }

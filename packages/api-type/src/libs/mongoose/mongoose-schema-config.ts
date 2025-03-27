@@ -4,14 +4,16 @@ import type {
   options,
   MiddlewareConfig,
 } from "#mongoose-wrapper/mongoose-types";
+import { MongooseSchema as Schema } from "#mongoose-wrapper/mongoose-common";
 import {
-  MongooseSchema as Schema,
-  throwValidationError,
   isValidSchemaDefinition,
   ValidationContext,
-  configureOptions,
+} from "#mongoose-wrapper/utils/mongoose-validation";
+import { configureOptions } from "#mongoose-wrapper/utils/mongoose-options";
+import {
   handleWithErrorHandling,
-} from "#mongoose-wrapper/mongoose-utils";
+  throwValidationError,
+} from "#mongoose-wrapper/utils/mongoose-error-handlers";
 import { Validation } from "#contract-mongoose";
 import type {
   IMiddlewareProcessor,
@@ -89,6 +91,17 @@ export const applyValidations = (params: RegisterDocumentParams<any>): void => {
 
 /**
  * Classe responsável por criar o schema do Mongoose.
+ *
+ * Exemplo de uso:
+ * ```typescript
+ * const schemaCreator = new SchemaCreator(errorHandlerInstance);
+ * const schema = schemaCreator.create({
+ *   schemaDefinition: { name: String, age: Number },
+ *   collection: "users",
+ *   options: { timestamps: true },
+ *   middlewares: [],
+ * });
+ * ```
  */
 export class SchemaCreator implements ISchemaCreator {
   private readonly errorHandler: IMongooseErrorHandler;

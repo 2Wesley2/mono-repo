@@ -9,7 +9,7 @@ import {
   SchemaCreator,
   SchemaBuilder,
 } from "#mongoose-wrapper/mongoose-schema-config";
-import { getMongooseReservedMethods } from "#mongoose-wrapper/mongoose-utils";
+import { getMongooseReservedMethods } from "#mongoose-wrapper/mongoose-common";
 import {
   MiddlewareContext,
   MiddlewareValidationContext,
