@@ -1,4 +1,5 @@
-import type {
+import type mongoose from "mongoose";
+import {
   Model,
   HydratedDocument,
   Require_id,
@@ -6,6 +7,8 @@ import type {
   SchemaDefinition,
   SchemaOptions,
 } from "mongoose";
+
+export type ToObjectId = (id: string | number) => mongoose.Types.ObjectId;
 
 export type Default = {};
 
@@ -30,11 +33,7 @@ export type RegisterConnectionEventsFunction = <ErrorType = Error>(
 export type options = SchemaOptions<any, any, any, any, Default>;
 
 export type hookEventPre = "createCollection" | RegExp;
-export type hookEventPost =
-  | "createCollection"
-  | "insertMany"
-  | "bulkWrite"
-  | RegExp;
+export type hookEventPost = "insertMany" | "bulkWrite" | RegExp;
 
 export type PreMiddlewareConfig = {
   readonly method: "pre";

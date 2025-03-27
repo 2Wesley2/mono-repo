@@ -48,7 +48,7 @@ export class UnknownMongooseError extends InternalServerError {
 
 export class InvalidMiddlewareError extends InternalServerError {
   constructor(details: Array<object>, message: string = "Middleware inválido") {
-    super(details, message);
+    super(details, `Erro de Middleware: ${message}`);
   }
 }
 

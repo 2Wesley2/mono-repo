@@ -3,7 +3,7 @@ import type {
   RegisterDocumentParams,
   MiddlewareConfig,
   options,
-} from "#mongoose-wrapper";
+} from "#mongoose-wrapper/mongoose-types";
 
 /**
  * Contrato para a classe MiddlewareProcessor.
@@ -63,4 +63,38 @@ export interface ISchemaBuilder<U> {
     options: options,
     middlewares: MiddlewareConfig[],
   ): Schema<U>;
+}
+
+/**
+ * Contrato para o serviço de validação de middlewares.
+ */
+export interface IMiddlewareValidatorService {
+  hasValidMiddlewares(middlewares?: MiddlewareConfig[]): boolean;
+  validateMiddlewares(middlewares?: MiddlewareConfig[]): void;
+}
+
+/** Classes abstratas */
+
+/**
+ * Define a interface para aplicação de middlewares em schemas.
+ */
+export abstract class Middleware {
+  abstract apply(
+    schema: Schema,
+    middleware: MiddlewareConfig & { hookEvent: any },
+  ): void;
+}
+
+/**
+ * Validações abstratas para middlewares.
+ */
+export abstract class MiddlewareValidator {
+  abstract validate(middleware: MiddlewareConfig): void;
+}
+
+/**
+ * Estratégia abstrata para validação de parâmetros de registro de documentos.
+ */
+export abstract class Validation {
+  abstract validate(params: RegisterDocumentParams<any>): void;
 }

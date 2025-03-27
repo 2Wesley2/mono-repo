@@ -1,64 +1,26 @@
-import type { Model, Schema, SchemaDefinition } from "mongoose";
-import {
-  MongooseSchema,
-  MiddlewareContext,
-  MiddlewareValidationContext,
-  configureOptions,
-  applyValidations,
-  withErrorHandling,
-  mongooseModel,
-  shouldCloneSchema,
-  MONGOOSE_MODEL_REGISTER_CONTEXT,
-  handleWithErrorHandling,
-  validateMiddlewares,
-} from "#mongoose-wrapper";
 import type {
-  RegisterDocumentParams,
+  Model as TModel,
+  Schema as TSchema,
+  SchemaDefinition,
+} from "mongoose";
+import {
+  handleWithErrorHandling,
+  mongooseModel as model,
+} from "#mongoose-wrapper/mongoose-utils";
+import type {
   MiddlewareConfig,
   options,
-} from "#mongoose-wrapper";
+} from "#mongoose-wrapper/mongoose-types";
 import type {
-  IMiddlewareProcessor,
-  ISchemaCreator,
   IMongooseModelRegister,
   IModelRegister,
   IMongooseErrorHandler,
 } from "#contract-mongoose";
-
-export class MiddlewareProcessor implements IMiddlewareProcessor {
-  private readonly context: MiddlewareContext;
-  private readonly validationContext: MiddlewareValidationContext;
-
-  constructor(
-    context: MiddlewareContext,
-    validationContext: MiddlewareValidationContext,
-  ) {
-    this.context = context;
-    this.validationContext = validationContext;
-  }
-
-  public process(schema: Schema, middlewares?: MiddlewareConfig[]): Schema {
-    validateMiddlewares(middlewares); // Permite arrays vazios ou ausentes.
-    if (!middlewares || middlewares.length === 0) {
-      return schema; // Retorna o schema original se não houver middlewares.
-    }
-
-    const updatedSchema = shouldCloneSchema(middlewares)
-      ? schema.clone()
-      : schema;
-
-    middlewares.forEach((mw: MiddlewareConfig) => {
-      this.validationContext.validate(mw);
-      this.context.applyMiddleware(updatedSchema, mw);
-    });
-
-    return updatedSchema;
-  }
-}
+import { SchemaBuilder } from "#mongoose-wrapper/mongoose-schema-config";
 
 export class ModelFactory<U> {
-  public create(collection: string, schema: Schema<U>): Model<U> {
-    return mongooseModel<U>(collection, schema);
+  public create(collection: string, schema: TSchema<U>): TModel<U> {
+    return model<U>(collection, schema);
   }
 }
 
@@ -74,69 +36,12 @@ export class ModelRegister<U> implements IModelRegister<U> {
     this.modelFactory = modelFactory;
   }
 
-  public register(collection: string, schema: Schema<U>): Model<U> {
-    return withErrorHandling(
+  public register(collection: string, schema: TSchema<U>): TModel<U> {
+    return handleWithErrorHandling(
       () => this.modelFactory.create(collection, schema),
       this.errorHandler,
       collection,
     );
-  }
-}
-
-/**
- * Classe responsável por criar o schema do Mongoose.
- */
-export class SchemaCreator implements ISchemaCreator {
-  private readonly errorHandler: IMongooseErrorHandler;
-
-  constructor(errorHandler: IMongooseErrorHandler) {
-    this.errorHandler = errorHandler;
-  }
-
-  public create<U>(params: RegisterDocumentParams<U>): Schema<U> {
-    return withErrorHandling(
-      () => {
-        applyValidations(params);
-        return new MongooseSchema<U>(
-          params.schemaDefinition,
-          configureOptions(params.options),
-        );
-      },
-      this.errorHandler,
-      "SchemaCreator",
-    );
-  }
-}
-
-export class SchemaBuilder<U> {
-  private readonly schemaCreator: ISchemaCreator;
-  public readonly middlewareProcessor: IMiddlewareProcessor;
-
-  constructor(
-    schemaCreator: ISchemaCreator,
-    middlewareProcessor: IMiddlewareProcessor,
-  ) {
-    this.schemaCreator = schemaCreator;
-    this.middlewareProcessor = middlewareProcessor;
-  }
-
-  public build(
-    schemaDefinition: SchemaDefinition<U>,
-    collection: string,
-    options: options,
-    middlewares: MiddlewareConfig[],
-  ): Schema<U> {
-    const params: RegisterDocumentParams<U> = {
-      schemaDefinition,
-      collection,
-      options,
-      middlewares,
-    };
-
-    const schemaInstance = this.schemaCreator.create(params);
-    return middlewares.length
-      ? this.middlewareProcessor.process(schemaInstance, middlewares)
-      : schemaInstance;
   }
 }
 
@@ -148,16 +53,13 @@ export class MongooseModelRegister<U extends Record<string, any>>
 {
   private readonly schemaBuilder: SchemaBuilder<U>;
   private readonly modelRegister: IModelRegister<U>;
-  private readonly errorHandler: IMongooseErrorHandler;
 
   constructor(
     schemaBuilder: SchemaBuilder<U>,
     modelRegister: IModelRegister<U>,
-    errorHandler: IMongooseErrorHandler,
   ) {
     this.schemaBuilder = schemaBuilder;
     this.modelRegister = modelRegister;
-    this.errorHandler = errorHandler;
   }
 
   /**
@@ -167,49 +69,32 @@ export class MongooseModelRegister<U extends Record<string, any>>
    * @returns O schema atualizado com os middlewares aplicados.
    */
   public addMiddleware(
-    schema: Schema,
-    middlewares: MiddlewareConfig[],
-  ): Schema {
-    return handleWithErrorHandling(
-      () => {
-        validateMiddlewares(middlewares);
-        return this.schemaBuilder.middlewareProcessor.process(
-          schema,
-          middlewares,
-        );
-      },
-      this.errorHandler,
-      MONGOOSE_MODEL_REGISTER_CONTEXT,
-    );
+    schema: TSchema,
+    middlewares: MiddlewareConfig[] = [],
+  ): TSchema {
+    return this.schemaBuilder.middlewareProcessor.process(schema, middlewares);
   }
 
   /**
    * Registra um novo modelo do Mongoose com a definição de schema, opções e middlewares fornecidos.
-   * @param schema - A definição do schema para o modelo.
+   * @param schemaDefinition - A definição do schema para o modelo.
    * @param collection - O nome da coleção a ser registrada.
-   * @param options - Opções do schema, incluindo timestamps e outras configurações.
+   * @param schemaOptions - Opções do schema, incluindo timestamps e outras configurações.
    * @param middlewares - Um array de configurações de middlewares a serem aplicados ao schema.
    * @returns O modelo do Mongoose registrado.
    */
   public registerDocument(
-    schema: SchemaDefinition<U>,
+    schemaDefinition: SchemaDefinition<U>,
     collection: string,
-    options: options,
-    middlewares?: MiddlewareConfig[],
-  ): Model<U> {
-    return handleWithErrorHandling(
-      () => {
-        validateMiddlewares(middlewares); // Permite arrays vazios ou ausentes.
-        const schemaInstance = this.schemaBuilder.build(
-          schema,
-          collection,
-          options,
-          middlewares || [], // Garante que middlewares seja um array.
-        );
-        return this.modelRegister.register(collection, schemaInstance);
-      },
-      this.errorHandler,
-      MONGOOSE_MODEL_REGISTER_CONTEXT,
+    schemaOptions: options,
+    middlewares: MiddlewareConfig[] = [],
+  ): TModel<U> {
+    const schemaInstance = this.schemaBuilder.build(
+      schemaDefinition,
+      collection,
+      schemaOptions,
+      middlewares,
     );
+    return this.modelRegister.register(collection, schemaInstance);
   }
 }

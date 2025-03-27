@@ -4,7 +4,7 @@ import errors from "#http-errors";
 import type {
   RegisterDocumentParams,
   ToObjectDocument,
-} from "#mongoose-wrapper";
+} from "#mongoose-wrapper/mongoose-types";
 import type { SUser } from "#schema";
 import type { SignInBody as SignInParams } from "#http";
 import type { IUserModel } from "#contract-account";

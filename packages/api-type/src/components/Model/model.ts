@@ -1,16 +1,22 @@
 import type { Model as MongooseModel } from "mongoose";
-import type { RegisterDocumentParams } from "#mongoose-wrapper";
+import type { RegisterDocumentParams } from "#mongoose-wrapper/mongoose-types";
 import {
+  ModelRegister,
+  ModelFactory,
   MongooseModelRegister,
-  MiddlewareProcessor,
+} from "#mongoose-wrapper/mongoose-model-register";
+import {
   SchemaCreator,
   SchemaBuilder,
-  ModelRegister,
-  ModelFactory, // Adicionada a importação correta
-  getMongooseReservedMethods,
+} from "#mongoose-wrapper/mongoose-schema-config";
+import { getMongooseReservedMethods } from "#mongoose-wrapper/mongoose-utils";
+import {
   MiddlewareContext,
   MiddlewareValidationContext,
-} from "#mongoose-wrapper";
+  MiddlewareValidatorService,
+  MiddlewareProcessor,
+} from "#mongoose-wrapper/mongoose-middlewares";
+
 import { MongooseErrorHandler } from "#mongoose-error-handler";
 
 export class Model<U extends Record<string, any>> {
@@ -28,10 +34,10 @@ export class Model<U extends Record<string, any>> {
         new MiddlewareProcessor(
           new MiddlewareContext(),
           new MiddlewareValidationContext(),
+          new MiddlewareValidatorService(),
         ),
       ),
       new ModelRegister<U>(new MongooseErrorHandler(), new ModelFactory<U>()),
-      new MongooseErrorHandler(),
     ),
   ) {
     this.reservedMethods = getMongooseReservedMethods();

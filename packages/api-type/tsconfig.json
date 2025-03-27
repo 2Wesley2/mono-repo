@@ -27,7 +27,7 @@
       "#model": ["src/components/Model/model.ts"],
       "#model-type": ["src/components/Model/type-model.ts"],
       "#mongoose-error-handler": ["src/errors/mongoose-error-handler.ts"],
-      "#mongoose-wrapper": ["src/libs/mongoose/index.ts"],
+      "#mongoose-wrapper/*": ["src/libs/mongoose/*"],
       "#permission-checker": ["src/middlewares/permissionChecker.ts"],
       "#person-model": ["src/resources/modules/account/person/PersonModel.ts"],
       "#person-model-type": ["src/resources/modules/account/person/type-person.ts"],

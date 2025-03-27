@@ -1,7 +1,7 @@
 import request from "supertest";
 import { Application } from "express";
 import AppServer from "../../resources/app-server";
-import { MongooseConnection } from "#mongoose-wrapper";
+import { MongooseConnection } from "../../libs/mongoose/mongoose-connection";
 import { toArray } from "#utils";
 import {
   newOwner,

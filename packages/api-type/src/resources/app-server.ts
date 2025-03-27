@@ -5,7 +5,7 @@ import { Server as HTTPServer } from "http";
 import chalk from "chalk";
 import listEndpoints from "express-list-endpoints";
 import config from "#config";
-import { MongooseConnection as Database } from "#mongoose-wrapper";
+import { MongooseConnection as Database } from "#mongoose-wrapper/mongoose-connection";
 import errorHandler from "../middlewares/errorHandler";
 import { controllers } from "./modules";
 import errors from "#http-errors";

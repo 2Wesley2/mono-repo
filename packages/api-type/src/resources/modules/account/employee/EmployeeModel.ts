@@ -3,7 +3,7 @@ import type { SchemaDefinition } from "mongoose";
 import type {
   RegisterDocumentParams,
   ToObjectDocument,
-} from "#mongoose-wrapper";
+} from "#mongoose-wrapper/mongoose-types";
 import type { SEmployee } from "#schema";
 import type { ModelEmployee } from "#contract-account";
 import type { SignInBody as SignInParams } from "#http";
