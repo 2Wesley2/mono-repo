@@ -7,7 +7,7 @@ import { mongooseModel as model } from "#mongoose-wrapper/common/mongoose-common
 import { handleWithErrorHandling } from "#mongoose-wrapper/utils/mongoose-error-handlers";
 import type {
   MiddlewareConfig,
-  options,
+  Options,
 } from "#mongoose-wrapper/common/mongoose-types";
 import type {
   IMongooseModelRegister,
@@ -84,7 +84,7 @@ export class MongooseModelRegister<U extends Record<string, any>>
   public registerDocument(
     schemaDefinition: SchemaDefinition<U>,
     collection: string,
-    schemaOptions: options,
+    schemaOptions: Options,
     middlewares: MiddlewareConfig[] = [],
   ): TModel<U> {
     const schemaInstance = this.schemaBuilder.build(
