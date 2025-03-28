@@ -3,7 +3,7 @@ import UserModel from "../user/UserModel";
 import type {
   RegisterDocumentParams,
   ToObjectDocument,
-} from "#mongoose-wrapper/mongoose-types";
+} from "#mongoose-wrapper/common/mongoose-types";
 import type { SOwner } from "#schema";
 import type { ModelOwner } from "#contract-account";
 import type { SignInBody as SignInParams } from "#http";

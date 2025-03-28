@@ -12,7 +12,9 @@
     "test:owner": "jest --detectOpenHandles src/tests/owner/owner.spec.ts",
     "test:c": "jest --detectOpenHandles src/tests/controller/getRouter.spec.ts",
     "test:m": "jest --detectOpenHandles src/tests/mongooseWrapper/mongoose-model-register.spec.ts",
-    "test:mu": "jest --detectOpenHandles src/tests/mongooseWrapper/mongoose-utils.spec.ts"
+    "test:u": "jest --detectOpenHandles src/libs/mongoose/tests/mongoose-options.spec.ts",
+    "test:mu": "jest --detectOpenHandles src/tests/mongooseWrapper/mongoose-utils.spec.ts",
+    "test:s": "jest --detectOpenHandles src/libs/mongoose/tests/mongoose-schema-config.spec.ts"
   },
   "keywords": [],
   "author": "",

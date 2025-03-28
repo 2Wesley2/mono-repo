@@ -1,5 +1,5 @@
 import type { Schema } from "mongoose";
-import type { MiddlewareConfig } from "#mongoose-wrapper/mongoose-types";
+import type { MiddlewareConfig } from "#mongoose-wrapper/common/mongoose-types";
 import mongooseErrors from "#errors-mongoose";
 import {
   Middleware,
@@ -9,7 +9,7 @@ import {
 import {
   isValidRegExp,
   shouldCloneSchema,
-} from "#mongoose-wrapper/mongoose-common";
+} from "#mongoose-wrapper/common/mongoose-common";
 import { validateHookEvent } from "#mongoose-wrapper/utils/mongoose-validation";
 import { throwValidationError } from "#mongoose-wrapper/utils/mongoose-error-handlers";
 /**
@@ -50,6 +50,23 @@ export class RegExpHookEventValidator extends MiddlewareValidator {
         "Middleware",
         [{ hookEvent: middleware.hookEvent }],
         `hookEvent inválido: expressão regular inválida.`,
+      );
+    }
+  }
+}
+
+/**
+ * Validação para middlewares com métodos desconhecidos.
+ */
+export class UnknownMethodValidator extends MiddlewareValidator {
+  public validate(middleware: MiddlewareConfig): void {
+    const validMethods = ["pre", "post"];
+    if (!validMethods.includes(middleware.method)) {
+      throwValidationError(
+        mongooseErrors.GenericMongooseError,
+        "Middleware",
+        [{ method: middleware.method }],
+        `Método de middleware desconhecido: ${middleware.method}`,
       );
     }
   }
@@ -259,6 +276,11 @@ export class MiddlewareValidatorService {
   }
 }
 
+/**
+ * Sugestão futura:
+ * Considere extrair a lógica de aplicação de middlewares para um serviço dedicado,
+ * caso a complexidade ou o número de middlewares aumente.
+ */
 export class MiddlewareProcessor implements IMiddlewareProcessor {
   private readonly context: MiddlewareContext;
   private readonly validationContext: MiddlewareValidationContext;
@@ -285,10 +307,10 @@ export class MiddlewareProcessor implements IMiddlewareProcessor {
 
   public process(schema: Schema, middlewares: MiddlewareConfig[] = []): Schema {
     if (!this.validatorService.hasValidMiddlewares(middlewares)) {
-      return schema; // Retorna o schema original se não houver middlewares.
+      return schema;
     }
 
-    this.hooks.beforeProcess?.(schema, middlewares); // Hook antes do processamento.
+    this.hooks.beforeProcess?.(schema, middlewares);
 
     const updatedSchema = shouldCloneSchema(middlewares)
       ? schema.clone()
@@ -298,7 +320,7 @@ export class MiddlewareProcessor implements IMiddlewareProcessor {
       this.context.applyMiddleware(updatedSchema, mw);
     });
 
-    this.hooks.afterProcess?.(updatedSchema); // Hook após o processamento.
+    this.hooks.afterProcess?.(updatedSchema);
 
     return updatedSchema;
   }

@@ -1,23 +1,39 @@
-import type { options } from "#mongoose-wrapper/mongoose-types";
 import type { SchemaTimestampsConfig } from "mongoose";
+import type {
+  Options,
+  ConfigureOptionsType,
+} from "#mongoose-wrapper/common/mongoose-types";
+
+/**
+ * Normaliza o valor de `timestamps` para garantir que seja sempre `true` ou um objeto válido.
+ * @param timestamps - Valor fornecido pelo usuário.
+ * @returns Valor normalizado de `timestamps`.
+ */
+const normalizeTimestamps = (
+  timestamps: boolean | SchemaTimestampsConfig | undefined,
+): boolean | SchemaTimestampsConfig => {
+  if (typeof timestamps === "object") {
+    return { createdAt: true, updatedAt: true };
+  }
+  return timestamps === false || timestamps === undefined ? true : timestamps;
+};
 
 /**
  * Configura as opções padrão para um schema.
+ * Garante que `timestamps` esteja sempre habilitado e nunca seja duplicado.
  * @param options - Opções fornecidas pelo usuário.
  * @returns Opções configuradas com valores padrão.
- * @throws Lança um erro se `timestamps` já estiver definido.
  */
-export const configureOptions = (options: options = {}): options => {
-  const defaultOptions: options = { timestamps: true };
+export const configureOptions: ConfigureOptionsType = (options = {}) => {
+  const defaultOptions: Options = { timestamps: true };
 
-  if (options.timestamps && typeof options.timestamps === "object") {
-    defaultOptions.timestamps = {
-      ...(defaultOptions.timestamps as SchemaTimestampsConfig),
-      ...(options.timestamps as SchemaTimestampsConfig),
-    };
-  } else if (typeof options.timestamps === "boolean") {
-    defaultOptions.timestamps = options.timestamps;
-  }
+  const mergedOptions: Options = {
+    ...defaultOptions,
+    ...options,
+    timestamps: normalizeTimestamps(options.timestamps),
+  };
 
-  return { ...defaultOptions, ...options };
+  return mergedOptions as Omit<Options, "timestamps"> & {
+    timestamps: boolean | SchemaTimestampsConfig;
+  };
 };

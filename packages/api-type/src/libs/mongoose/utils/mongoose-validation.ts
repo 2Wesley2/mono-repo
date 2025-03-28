@@ -1,5 +1,5 @@
 import mongooseErrors from "#errors-mongoose";
-import type { RegisterDocumentParams } from "#mongoose-wrapper/mongoose-types";
+import type { RegisterDocumentParams } from "#mongoose-wrapper/common/mongoose-types";
 import { Validation } from "#contract-mongoose";
 
 /**
@@ -42,17 +42,17 @@ export const throwValidationError = (
 };
 
 /**
- * Verifica se a definição do schema é válida.
+ * Verifica se a definição do schema está vazia.
  * @param schemaDefinition - A definição do schema a ser validada.
- * @returns Verdadeiro se a definição for válida, falso caso contrário.
+ * @returns Verdadeiro se a definição estiver vazia, falso caso contrário.
  */
-export const isValidSchemaDefinition = (
+export const isEmptySchemaDefinition = (
   schemaDefinition: RegisterDocumentParams<any>["schemaDefinition"],
 ): boolean => {
   return (
-    schemaDefinition &&
-    typeof schemaDefinition === "object" &&
-    Object.keys(schemaDefinition).length > 0
+    !schemaDefinition ||
+    typeof schemaDefinition !== "object" ||
+    Object.keys(schemaDefinition).length === 0
   );
 };
 

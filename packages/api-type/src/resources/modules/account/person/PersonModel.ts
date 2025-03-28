@@ -4,7 +4,7 @@ import { Model } from "#model";
 import type {
   RegisterDocumentParams,
   ToObjectDocument,
-} from "#mongoose-wrapper/mongoose-types";
+} from "#mongoose-wrapper/common/mongoose-types";
 import type { SPerson } from "#schema";
 
 const personSchema: SchemaDefinition<SPerson> = {

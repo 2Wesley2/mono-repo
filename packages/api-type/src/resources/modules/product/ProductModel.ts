@@ -1,6 +1,6 @@
 import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
-import type { RegisterDocumentParams } from "#mongoose-wrapper/mongoose-types";
+import type { RegisterDocumentParams } from "#mongoose-wrapper/common/mongoose-types";
 import type { SProduct } from "#schema";
 import { IProductModel } from "#contract-product";
 const productSchema: SchemaDefinition<SProduct> = {

@@ -1,14 +1,15 @@
 import type { Schema as TSchema, SchemaDefinition } from "mongoose";
 import type {
   RegisterDocumentParams,
-  options,
+  Options,
   MiddlewareConfig,
-} from "#mongoose-wrapper/mongoose-types";
-import { MongooseSchema as Schema } from "#mongoose-wrapper/mongoose-common";
+  IValidationService,
+} from "#mongoose-wrapper/common/mongoose-types";
 import {
-  isValidSchemaDefinition,
-  ValidationContext,
-} from "#mongoose-wrapper/utils/mongoose-validation";
+  MongooseSchema as Schema,
+  hasRequiredFields,
+} from "#mongoose-wrapper/common/mongoose-common";
+import { isEmptySchemaDefinition } from "#mongoose-wrapper/utils/mongoose-validation";
 import { configureOptions } from "#mongoose-wrapper/utils/mongoose-options";
 import {
   handleWithErrorHandling,
@@ -21,14 +22,33 @@ import type {
   IMongooseErrorHandler,
 } from "#contract-mongoose";
 import mongooseErrors from "#errors-mongoose";
+import {
+  MAX_FIELD_COUNT,
+  WARNING_FIELD_COUNT,
+} from "../config/mongoose-constants";
+import { createValidations } from "#mongoose-wrapper/schemas/schema-validations";
+
+/**
+ * Classe base para validações.
+ */
+abstract class BaseValidation extends Validation {
+  protected throwError(
+    errorType: typeof mongooseErrors.GenericMongooseError,
+    collection: string,
+    details: Record<string, any>[],
+    message: string,
+  ): void {
+    throwValidationError(errorType, collection, details, message);
+  }
+}
 
 /**
  * Validação do nome da coleção.
  */
-export class CollectionNameValidation extends Validation {
+export class CollectionNameValidation extends BaseValidation {
   public validate(params: RegisterDocumentParams<any>): void {
     if (!/^[a-zA-Z0-9-_]+$/.test(params.collection)) {
-      throwValidationError(
+      this.throwError(
         mongooseErrors.GenericMongooseError,
         params.collection,
         [{ collection: params.collection }],
@@ -41,20 +61,24 @@ export class CollectionNameValidation extends Validation {
 /**
  * Validação da contagem de campos no schema.
  */
-export class FieldCountValidation extends Validation {
+export class FieldCountValidation extends BaseValidation {
   public validate(params: RegisterDocumentParams<any>): void {
     const fieldCount = Object.keys(params.schemaDefinition).length;
-    if (fieldCount > 10000) {
-      throwValidationError(
+    if (fieldCount > MAX_FIELD_COUNT) {
+      this.throwError(
         mongooseErrors.GenericMongooseError,
         params.collection,
         [{ fieldCount }],
-        `O schema para a coleção "${params.collection}" excede o limite de 10.000 campos.`,
+        `O schema da coleção "${params.collection}" excede o limite de ${MAX_FIELD_COUNT} campos.`,
       );
     }
-    if (fieldCount > 500) {
+    if (fieldCount > WARNING_FIELD_COUNT) {
       console.warn(
-        `Aviso: O schema para a coleção "${params.collection}" contém ${fieldCount} campos.`,
+        "Atenção: O schema da coleção",
+        params.collection,
+        "excede o limite de",
+        WARNING_FIELD_COUNT,
+        "campos.",
       );
     }
   }
@@ -63,57 +87,59 @@ export class FieldCountValidation extends Validation {
 /**
  * Validação da definição do schema.
  */
-export class SchemaDefinitionValidation extends Validation {
+export class SchemaDefinitionValidation extends BaseValidation {
   public validate(params: RegisterDocumentParams<any>): void {
-    if (!isValidSchemaDefinition(params.schemaDefinition)) {
-      throwValidationError(
+    if (isEmptySchemaDefinition(params.schemaDefinition)) {
+      this.throwError(
         mongooseErrors.GenericMongooseError,
         params.collection,
         [{ schemaDefinition: params.schemaDefinition }],
-        "Definição de schema inválida.",
+        "Definição de schema inválida: não pode ser vazia.",
       );
     }
   }
 }
 
 /**
- * Aplica validações padrão para os parâmetros de registro de documentos.
- * @param params - Parâmetros fornecidos para o registro do documento.
- * @throws Lança erros de validação, se aplicável.
+ * Validação para schemas sem campos obrigatórios.
  */
-export const applyValidations = (params: RegisterDocumentParams<any>): void => {
-  const validationContext = new ValidationContext();
-  validationContext.addValidation(new SchemaDefinitionValidation());
-  validationContext.addValidation(new CollectionNameValidation());
-  validationContext.addValidation(new FieldCountValidation());
-  validationContext.validate(params);
-};
+export class RequiredFieldsValidation extends BaseValidation {
+  public validate(params: RegisterDocumentParams<any>): void {
+    if (!hasRequiredFields(params.schemaDefinition)) {
+      this.throwError(
+        mongooseErrors.GenericMongooseError,
+        params.collection,
+        [{ schemaDefinition: params.schemaDefinition }],
+        "O schema deve conter pelo menos um campo obrigatório.",
+      );
+    }
+  }
+}
+
+/**
+ * Fábrica para criar instâncias de validações.
+ */
+export const createSchemaValidations = (): Validation[] => createValidations();
 
 /**
  * Classe responsável por criar o schema do Mongoose.
- *
- * Exemplo de uso:
- * ```typescript
- * const schemaCreator = new SchemaCreator(errorHandlerInstance);
- * const schema = schemaCreator.create({
- *   schemaDefinition: { name: String, age: Number },
- *   collection: "users",
- *   options: { timestamps: true },
- *   middlewares: [],
- * });
- * ```
  */
 export class SchemaCreator implements ISchemaCreator {
   private readonly errorHandler: IMongooseErrorHandler;
+  private readonly validationService: IValidationService;
 
-  constructor(errorHandler: IMongooseErrorHandler) {
+  constructor(
+    errorHandler: IMongooseErrorHandler,
+    validationService: IValidationService,
+  ) {
     this.errorHandler = errorHandler;
+    this.validationService = validationService;
   }
 
   public create<U>(params: RegisterDocumentParams<U>): TSchema<U> {
     return handleWithErrorHandling(
       () => {
-        applyValidations(params);
+        this.validationService.validate(params);
         return new Schema<U>(
           params.schemaDefinition,
           configureOptions(params.options),
@@ -140,7 +166,7 @@ export class SchemaBuilder<U> {
   public build(
     schemaDefinition: SchemaDefinition<U>,
     collection: string,
-    schemaOptions: options,
+    schemaOptions: Options,
     middlewares: MiddlewareConfig[],
   ): TSchema<U> {
     const params: RegisterDocumentParams<U> = {

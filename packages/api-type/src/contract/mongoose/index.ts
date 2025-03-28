@@ -2,8 +2,8 @@ import type { Model, Schema, SchemaDefinition } from "mongoose";
 import type {
   RegisterDocumentParams,
   MiddlewareConfig,
-  options,
-} from "#mongoose-wrapper/mongoose-types";
+  Options,
+} from "#mongoose-wrapper/common/mongoose-types";
 
 /**
  * Contrato para a classe MiddlewareProcessor.
@@ -27,7 +27,7 @@ export interface IMongooseModelRegister<U extends Record<string, any>> {
   registerDocument(
     schema: SchemaDefinition<U>,
     collection: string,
-    options: options,
+    options: Options,
     middlewares: MiddlewareConfig[],
   ): Model<U>;
 }
@@ -60,7 +60,7 @@ export interface ISchemaBuilder<U> {
   build(
     schemaDefinition: SchemaDefinition<U>,
     collection: string,
-    options: options,
+    options: Options,
     middlewares: MiddlewareConfig[],
   ): Schema<U>;
 }

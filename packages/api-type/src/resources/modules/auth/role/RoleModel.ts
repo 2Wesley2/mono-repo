@@ -1,6 +1,6 @@
 import { SchemaDefinition, Schema } from "mongoose";
 import { Model } from "#model";
-import type { RegisterDocumentParams } from "#mongoose-wrapper/mongoose-types";
+import type { RegisterDocumentParams } from "#mongoose-wrapper/common/mongoose-types";
 import type { SRole, SPermission } from "#schema";
 import errors from "#http-errors";
 

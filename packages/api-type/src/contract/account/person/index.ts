@@ -1,4 +1,4 @@
-import type { ToObjectDocument } from "#mongoose-wrapper/mongoose-types";
+import type { ToObjectDocument } from "#mongoose-wrapper/common/mongoose-types";
 
 export type SignUp<T> = (data: T) => Promise<ToObjectDocument<T>>;
 

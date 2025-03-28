@@ -3,18 +3,18 @@ import type {
   Schema as TSchema,
   SchemaDefinition,
 } from "mongoose";
-import { mongooseModel as model } from "#mongoose-wrapper/mongoose-common";
+import { mongooseModel as model } from "#mongoose-wrapper/common/mongoose-common";
 import { handleWithErrorHandling } from "#mongoose-wrapper/utils/mongoose-error-handlers";
 import type {
   MiddlewareConfig,
   options,
-} from "#mongoose-wrapper/mongoose-types";
+} from "#mongoose-wrapper/common/mongoose-types";
 import type {
   IMongooseModelRegister,
   IModelRegister,
   IMongooseErrorHandler,
 } from "#contract-mongoose";
-import { SchemaBuilder } from "#mongoose-wrapper/mongoose-schema-config";
+import { SchemaBuilder } from "#mongoose-wrapper/schemas/mongoose-schema-config";
 
 export class ModelFactory<U> {
   public create(collection: string, schema: TSchema<U>): TModel<U> {

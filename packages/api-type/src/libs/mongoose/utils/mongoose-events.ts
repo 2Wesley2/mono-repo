@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import type {
   RegisterConnectionEventsFunction,
   ConnectionEvents,
-} from "#mongoose-wrapper/mongoose-types";
+} from "#mongoose-wrapper/common/mongoose-types";
 
 export const registerConnectionEvents: RegisterConnectionEventsFunction = <
   ErrorType = Error,

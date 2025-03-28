@@ -4,7 +4,7 @@ import type {
   VerifyOptions,
   DecodeOptions,
 } from "jsonwebtoken";
-import { MongooseConnection } from "#mongoose-wrapper/mongoose-connection";
+import { MongooseConnection } from "#mongoose-wrapper/connections/mongoose-connection";
 import { toObjectId } from "#mongoose-wrapper/utils/mongoose-ids";
 import { SRole } from "#schema";
 import { BcryptWrapper } from "#bcrypt-wrapper";

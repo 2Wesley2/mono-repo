@@ -1,21 +1,21 @@
 import type { Model as MongooseModel } from "mongoose";
-import type { RegisterDocumentParams } from "#mongoose-wrapper/mongoose-types";
+import type { RegisterDocumentParams } from "#mongoose-wrapper/common/mongoose-types";
 import {
   ModelRegister,
   ModelFactory,
   MongooseModelRegister,
-} from "#mongoose-wrapper/mongoose-model-register";
+} from "#mongoose-wrapper/models/mongoose-model-register";
 import {
   SchemaCreator,
   SchemaBuilder,
-} from "#mongoose-wrapper/mongoose-schema-config";
-import { getMongooseReservedMethods } from "#mongoose-wrapper/mongoose-common";
+} from "#mongoose-wrapper/schemas/mongoose-schema-config";
+import { getMongooseReservedMethods } from "#mongoose-wrapper/common/mongoose-common";
 import {
   MiddlewareContext,
   MiddlewareValidationContext,
   MiddlewareValidatorService,
   MiddlewareProcessor,
-} from "#mongoose-wrapper/mongoose-middlewares";
+} from "#mongoose-wrapper/middlewares/mongoose-middlewares";
 
 import { MongooseErrorHandler } from "#mongoose-error-handler";
 

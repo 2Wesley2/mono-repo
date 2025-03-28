@@ -1,7 +1,7 @@
 import type { SignInBody as SignInParams } from "#http";
 import type { IUserModel } from "#contract-account";
 import type { SOwner, SEmployee } from "#schema";
-import type { ToObjectDocument } from "#mongoose-wrapper/mongoose-types";
+import type { ToObjectDocument } from "#mongoose-wrapper/common/mongoose-types";
 import type { SignInOwnerPayload } from "#http";
 
 export interface ModelOwner extends IUserModel<SOwner> {}

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { ToObjectId } from "#mongoose-wrapper/mongoose-types";
+import type { ToObjectId } from "#mongoose-wrapper/common/mongoose-types";
 
 export const toObjectId: ToObjectId = (id) => {
   if (typeof id === "number") {

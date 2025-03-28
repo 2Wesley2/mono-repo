@@ -2,7 +2,7 @@ import type { ModelOwner, RepositoryOwner } from "#contract-account";
 import type { RoleModel } from "#contract-auth";
 import type { SOwner } from "#schema";
 import type { SignInBody as SignInParams } from "#http";
-import type { ToObjectDocument } from "#mongoose-wrapper/mongoose-types";
+import type { ToObjectDocument } from "#mongoose-wrapper/common/mongoose-types";
 
 export default class OwnerRepository implements RepositoryOwner {
   constructor(
